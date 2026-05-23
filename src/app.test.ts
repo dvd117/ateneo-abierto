@@ -112,7 +112,29 @@ describe('POST /api/subscribe', () => {
     });
 
     expect(res.status).toBe(403);
-    process.env.SITE_ORIGIN = original;
+    if (original !== undefined) {
+      process.env.SITE_ORIGIN = original;
+    } else {
+      delete process.env.SITE_ORIGIN;
+    }
+  });
+
+  test('returns 422 when MailerLite reports invalid email', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(new Response('{}', { status: 422 }))
+    );
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'user@example.com', website: '' }),
+    });
+
+    expect(res.status).toBe(422);
+    const body = await res.json() as { ok: boolean; reason: string };
+    expect(body.ok).toBe(false);
+    expect(body.reason).toBe('invalid-email');
   });
 
   test('returns 502 when MailerLite call fails', async () => {
