@@ -4,12 +4,21 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite --host 127.0.0.1",
+    "dev": "concurrently \"vite --host 127.0.0.1\" \"tsx watch src/server.ts\"",
+    "dev:ui": "vite --host 127.0.0.1",
+    "dev:server": "tsx watch src/server.ts",
     "build": "tsc && vite build",
+    "start": "tsx src/server.ts",
     "test": "vitest run"
   },
-  "dependencies": {},
+  "dependencies": {
+    "@hono/node-server": "^2.0.3",
+    "hono": "^4.12.22",
+    "tsx": "^4.22.3"
+  },
   "devDependencies": {
+    "@types/node": "^25.9.1",
+    "concurrently": "^9.2.1",
     "typescript": "^5.6.3",
     "vite": "^5.4.11",
     "vitest": "^2.1.5"
