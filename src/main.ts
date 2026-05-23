@@ -1,6 +1,6 @@
 import { copy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
-import { createSubscribeHandler, placeholderSubscribeProvider } from './subscribe';
+import { createSubscribeHandler, mailerliteProvider } from './subscribe';
 import './styles.css';
 
 const app = document.querySelector<HTMLDivElement>('#app');
@@ -17,7 +17,7 @@ let currentLocale = detectLocale({
   browserLanguages: navigator.languages
 });
 
-const subscribe = createSubscribeHandler(placeholderSubscribeProvider);
+const subscribe = createSubscribeHandler(mailerliteProvider);
 
 function setLocale(locale: Locale): void {
   currentLocale = locale;
@@ -65,7 +65,15 @@ function render(): void {
         <div class="section-copy">
           <p class="eyebrow">${page.labels.manifesto}</p>
           <h2>${page.manifesto.title}</h2>
-          <p>${page.manifesto.body}</p>
+          <p>${page.manifesto.body.replace('\n\n', '</p><p>')}</p>
+        </div>
+      </section>
+
+      <section class="section audience-section">
+        <div class="section-copy">
+          <p class="eyebrow">${page.labels.audience}</p>
+          <h2>${page.audience.title}</h2>
+          <p>${page.audience.body}</p>
         </div>
       </section>
 
@@ -105,6 +113,7 @@ function render(): void {
           <p>${page.subscribe.body}</p>
         </div>
         <form class="subscribe-form" novalidate>
+          <input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none;position:absolute;left:-9999px" />
           <label>
             <span>${page.subscribe.nameLabel}</span>
             <input name="name" autocomplete="name" placeholder="${page.subscribe.namePlaceholder}" />
