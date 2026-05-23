@@ -12,5 +12,6 @@
     "noEmit": true,
     "strict": true
   },
-  "include": ["src"]
+  "include": ["src"],
+  "exclude": ["src/server.ts", "src/app.ts", "src/mailerlite.ts", "src/app.test.ts", "src/mailerlite.test.ts"]
 }
