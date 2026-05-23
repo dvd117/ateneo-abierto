@@ -42,7 +42,7 @@ describe('addSubscriber', () => {
 
   test('throws on any other error status', async () => {
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 500 })));
-    await expect(addSubscriber({ email: 'user@example.com' }, API_KEY)).rejects.toThrow();
+    await expect(addSubscriber({ email: 'user@example.com' }, API_KEY)).rejects.toThrow('mailerlite-error:');
   });
 
   test('omits fields.name when name is not provided', async () => {
