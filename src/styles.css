@@ -1,6 +1,6 @@
 :root {
   --paper: #f3eddf;
-  --paper-warm: var(--paper-warm);
+  --paper-warm: #ebe2d0;
   --ink: #171a16;
   --green: #235e4f;
   --terracotta: #b55234;
@@ -9,7 +9,6 @@
   --line: rgba(23, 26, 22, 0.16);
   --paper-soft: rgba(255, 255, 255, 0.22);
   --font-brand: "DM Sans", "Avenir Next", Avenir, ui-sans-serif, system-ui, sans-serif;
-  --font-display: "DM Serif Display", Georgia, serif;
   --font-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
   color: var(--ink);
   background: var(--paper);
@@ -114,9 +113,10 @@ input {
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  font-family: var(--font-brand);
   font-size: clamp(18px, 2vw, 22px);
   font-weight: 700;
-  letter-spacing: 0;
+  letter-spacing: -0.02em;
 }
 
 .nav-links {
@@ -181,18 +181,16 @@ p {
 h1 {
   margin-bottom: 0;
   margin-top: 28px;
-  font-family: var(--font-display);
   font-size: clamp(64px, 12vw, 132px);
-  font-weight: 400;
-  letter-spacing: -0.01em;
-  line-height: 0.9;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 0.88;
 }
 
 h2 {
   margin-bottom: 18px;
-  font-family: var(--font-display);
   font-size: clamp(36px, 6vw, 68px);
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: -0.01em;
   line-height: 0.98;
 }
@@ -266,6 +264,7 @@ h3 {
 }
 
 .open-room {
+  container-type: inline-size;
   display: grid;
   grid-template-rows: 1fr auto;
   align-items: end;
@@ -311,7 +310,7 @@ h3 {
 
 .open-room-label {
   color: var(--paper);
-  font-size: clamp(18px, 2vw, 22px);
+  font-size: clamp(11px, 4cqi, 22px);
   font-weight: 700;
   letter-spacing: 0;
   line-height: 1.02;
@@ -358,7 +357,7 @@ h3 {
 }
 
 .audience-section {
-  background: var(--paper);
+  background: color-mix(in srgb, var(--terracotta) 8%, var(--paper));
 }
 
 .audience-section .section-copy {
@@ -366,7 +365,7 @@ h3 {
 }
 
 .name-section {
-  background: var(--paper-warm);
+  background: color-mix(in srgb, var(--green) 10%, var(--paper));
 }
 
 .name-section .section-copy {
@@ -447,7 +446,7 @@ h3 {
 }
 
 .pillars-section {
-  background: color-mix(in srgb, var(--paper) 94%, white 6%);
+  background: var(--paper-warm);
 }
 
 .working-table {
@@ -502,7 +501,7 @@ h3 {
 }
 
 .not-section {
-  background: var(--paper-warm);
+  background: color-mix(in srgb, var(--ochre) 12%, var(--paper));
 }
 
 .not-list {
@@ -610,6 +609,32 @@ h3 {
 .site-footer p {
   margin: 0;
   font-size: 14px;
+}
+
+.back-to-top {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 20;
+  width: 44px;
+  height: 44px;
+  border: 0;
+  border-radius: 50%;
+  background: var(--terracotta);
+  color: var(--paper);
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
 @media (max-width: 900px) {

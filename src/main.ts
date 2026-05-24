@@ -203,6 +203,10 @@ function renderManifestoPage(page: PageCopy): string {
   `;
 }
 
+function renderBackToTop(): string {
+  return `<button class="back-to-top" aria-label="Volver arriba" type="button">↑</button>`;
+}
+
 function render(): void {
   const page = copy[currentLocale];
   const isManifestoPage = window.location.pathname === '/manifesto';
@@ -215,6 +219,7 @@ function render(): void {
     ${renderHeader(page)}
     ${isManifestoPage ? renderManifestoPage(page) : renderHome(page)}
     ${renderFooter(page)}
+    ${renderBackToTop()}
   `;
 
   bindEvents();
@@ -230,6 +235,14 @@ function bindEvents(): void {
       }
     });
   });
+
+  const backToTop = document.querySelector<HTMLButtonElement>('.back-to-top');
+  if (backToTop) {
+    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    const onScroll = () => backToTop.classList.toggle('is-visible', window.scrollY > 300);
+    window.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
 
   const form = document.querySelector<HTMLFormElement>('.subscribe-form');
   const message = document.querySelector<HTMLParagraphElement>('.form-message');
