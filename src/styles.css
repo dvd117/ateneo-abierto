@@ -1,15 +1,15 @@
 :root {
   --paper: #f3eddf;
+  --paper-warm: var(--paper-warm);
   --ink: #171a16;
   --green: #235e4f;
   --terracotta: #b55234;
   --ochre: #d39b35;
-  --graphite: #151719;
-  --slate: #71828b;
-  --workshop-signal: #dc5c3f;
+  --workshop-signal: #c47a1e;
   --line: rgba(23, 26, 22, 0.16);
   --paper-soft: rgba(255, 255, 255, 0.22);
-  --font-brand: "Avenir Next", Avenir, "Trebuchet MS", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  --font-brand: "DM Sans", "Avenir Next", Avenir, ui-sans-serif, system-ui, sans-serif;
+  --font-display: "DM Serif Display", Georgia, serif;
   --font-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
   color: var(--ink);
   background: var(--paper);
@@ -25,6 +25,58 @@
 
 html {
   scroll-behavior: smooth;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-copy .eyebrow {
+  animation: fade-up 0.5s ease both;
+  animation-delay: 80ms;
+}
+
+.hero-copy h1 {
+  animation: fade-up 0.55s ease both;
+  animation-delay: 180ms;
+}
+
+.hero-copy .promise {
+  animation: fade-up 0.55s ease both;
+  animation-delay: 280ms;
+}
+
+.hero-copy .intro {
+  animation: fade-up 0.55s ease both;
+  animation-delay: 360ms;
+}
+
+.hero-copy .hero-actions {
+  animation: fade-up 0.5s ease both;
+  animation-delay: 440ms;
+}
+
+.open-room {
+  animation: fade-up 0.6s ease both;
+  animation-delay: 300ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-copy .eyebrow,
+  .hero-copy h1,
+  .hero-copy .promise,
+  .hero-copy .intro,
+  .hero-copy .hero-actions,
+  .open-room {
+    animation: none;
+  }
 }
 
 body {
@@ -129,17 +181,19 @@ p {
 h1 {
   margin-bottom: 0;
   margin-top: 28px;
+  font-family: var(--font-display);
   font-size: clamp(64px, 12vw, 132px);
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 0.88;
+  font-weight: 400;
+  letter-spacing: -0.01em;
+  line-height: 0.9;
 }
 
 h2 {
   margin-bottom: 18px;
+  font-family: var(--font-display);
   font-size: clamp(36px, 6vw, 68px);
-  font-weight: 700;
-  letter-spacing: 0;
+  font-weight: 400;
+  letter-spacing: -0.01em;
   line-height: 0.98;
 }
 
@@ -155,8 +209,8 @@ h3 {
   margin-bottom: 0;
   margin-top: 30px;
   font-size: clamp(25px, 4vw, 42px);
-  font-weight: 650;
-  letter-spacing: 0;
+  font-weight: 600;
+  letter-spacing: -0.01em;
   line-height: 1.08;
 }
 
@@ -217,6 +271,7 @@ h3 {
   align-items: end;
   min-height: 360px;
   padding: 28px;
+  background: var(--green);
   border-bottom: 8px solid var(--terracotta);
   border-left: 8px solid var(--terracotta);
 }
@@ -243,11 +298,11 @@ h3 {
   min-height: 72px;
   gap: 8px;
   padding-top: 10px;
-  border-top: 1px solid rgba(23, 26, 22, 0.22);
+  border-top: 1px solid rgba(243, 237, 223, 0.28);
 }
 
 .open-room-number {
-  color: var(--terracotta);
+  color: var(--ochre);
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 700;
@@ -255,7 +310,7 @@ h3 {
 }
 
 .open-room-label {
-  color: var(--green);
+  color: var(--paper);
   font-size: clamp(18px, 2vw, 22px);
   font-weight: 700;
   letter-spacing: 0;
@@ -311,7 +366,7 @@ h3 {
 }
 
 .name-section {
-  background: #ebe2d0;
+  background: var(--paper-warm);
 }
 
 .name-section .section-copy {
@@ -447,7 +502,7 @@ h3 {
 }
 
 .not-section {
-  background: #ebe2d0;
+  background: var(--paper-warm);
 }
 
 .not-list {
@@ -469,7 +524,7 @@ h3 {
   grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.7fr);
   gap: clamp(28px, 6vw, 72px);
   align-items: start;
-  background: var(--graphite);
+  background: #1a1a12;
   color: var(--paper);
 }
 
@@ -516,7 +571,7 @@ h3 {
 .subscribe-form .button {
   width: fit-content;
   background: var(--workshop-signal);
-  color: var(--graphite);
+  color: var(--ink);
 }
 
 .form-message {
