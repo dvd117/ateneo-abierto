@@ -6,3 +6,6 @@ dist/
 docs/
 agent_docs/
 .claude/
+CLAUDE.md
+AGENTS.md
+.superpowers/
