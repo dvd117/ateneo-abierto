@@ -24,6 +24,15 @@ describe('security headers', () => {
   });
 });
 
+describe('static app routes', () => {
+  test('serves the app shell for the manifesto route', async () => {
+    const res = await app.request('/manifesto');
+
+    expect(res.status).toBe(200);
+    expect(res.headers.get('content-type')).toContain('text/html');
+  });
+});
+
 describe('POST /api/subscribe', () => {
   const validBody = JSON.stringify({ email: 'user@example.com', name: 'User', website: '' });
   const jsonHeaders = { 'Content-Type': 'application/json' };

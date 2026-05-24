@@ -25,6 +25,8 @@ app.use(
 
 app.get('/api/health', (c) => c.json({ ok: true }));
 
+app.get('/manifesto', serveStatic({ root: './dist', path: 'index.html' }));
+
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 app.post(

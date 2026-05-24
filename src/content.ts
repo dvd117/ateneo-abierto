@@ -22,11 +22,29 @@ export type PageCopy = {
   };
   labels: {
     manifesto: string;
+    audience: string;
     structure: string;
     boundaries: string;
     updates: string;
   };
   manifesto: {
+    title: string;
+    teaser: string;
+    body: string;
+    cta: string;
+    subscribeCta: string;
+    backCta: string;
+  };
+  audience: {
+    title: string;
+    body: string;
+  };
+  name: {
+    title: string;
+    body: string;
+  };
+  workingTable: {
+    label: string;
     title: string;
     body: string;
   };
@@ -72,46 +90,67 @@ export const copy: Record<Locale, PageCopy> = {
         'Una iniciativa venezolana para recuperar agencia práctica a través de aprendizaje, herramientas y acceso compartido.',
       primaryCta: 'Suscribirme',
       secondaryCta: 'Leer manifiesto',
-      room: ['Mismo espacio.', 'Mismos recursos.', 'Misma oportunidad.']
+      room: ['Espacio', 'Recursos', 'Oportunidad']
     },
     labels: {
       manifesto: 'Manifiesto',
+      audience: 'Para quién',
       structure: 'Estructura',
       boundaries: 'Límites',
       updates: 'Actualizaciones'
     },
     manifesto: {
       title: 'No estamos esperando a que el sistema educativo se arregle.',
+      teaser:
+        'Lo que se nos arrebató se reconstruye desde afuera del sistema que lo destruyó. Eso es lo que estamos haciendo.',
       body:
-        'Estamos construyendo, en paralelo, lo que la gente necesita ahora: espacios para aprender, herramientas para actuar y comunidades donde nadie tenga que empezar solo.'
+        'Hubo un tiempo en que Venezuela entendió que su recurso más valioso no era el petróleo, sino su gente. Esa apuesta fue desmontada deliberadamente: los profesores se fueron, las escuelas se vaciaron, el aprendizaje se volvió un lujo, y una generación entera se quedó con menos opciones. No por falta de capacidad. Por falta de acceso.\n\nLo que se nos arrebató se reconstruye desde afuera del sistema que lo destruyó. Eso es lo que estamos haciendo.',
+      cta: 'Leer manifiesto completo',
+      subscribeCta: 'Si quieres seguir el proceso, deja tu correo.',
+      backCta: 'Volver al inicio'
+    },
+    audience: {
+      title: 'Para venezolanos que están dispuestos a aprender otra vez.',
+      body:
+        'Para venezolanos —dentro y fuera del país— que entienden que la educación que recibimos no nos preparó para esto, y que están dispuestos a aprender otra vez. Profesores, profesionales, estudiantes, gente que trabaja dos turnos para llegar a fin de mes. No hace falta perfil técnico. Sólo curiosidad y ganas de empezar.'
+    },
+    name: {
+      title: 'Por qué Ateneo Abierto',
+      body:
+        'Ateneo —del griego athḗnaion, el templo dedicado a Atenea— es el nombre clásico de un espacio dedicado al aprendizaje cívico. No nombra a una institución en particular, ni al Ateneo de Caracas; nombra una forma: un lugar donde la gente se reúne a aprender, fuera del aparato del Estado.\n\nAbierto porque la condición de entrada no es el linaje, ni el cargo, ni la afiliación política. Es la disposición a empezar.'
+    },
+    workingTable: {
+      label: 'Mesa de trabajo',
+      title: 'Aprender con las manos sobre la mesa.',
+      body:
+        'En la práctica: grupos pequeños, ejercicios concretos y herramientas que cada persona pueda conservar. Lo suficiente para empezar, probar y volver a usar fuera del taller.'
     },
     pillars: {
       title: 'Tres pilares',
       items: [
         {
-          title: 'Talleres prácticos',
+          title: 'Talleres prácticos de IA y herramientas digitales',
           body:
-            'Grupos pequeños, hands-on, para aprender IA, herramientas digitales y capacidades útiles frente a problemas reales.'
+            'Grupos pequeños, hands-on. Aprender a usar inteligencia artificial, herramientas financieras prácticas y otras tecnologías que están cambiando, en lo concreto, lo que significa libertad. Ejecutable ya.'
         },
         {
           title: 'Alianzas universitarias',
           body:
-            'Trabajar con instituciones que siguen funcionando, dentro y fuera de Venezuela, para ampliar lo que ya existe.'
+            'Trabajar con las instituciones que siguen funcionando —dentro de Venezuela y en el exilio— para amplificar lo que ya están haciendo. Mediano plazo.'
         },
         {
-          title: 'Bibliotecas públicas del siglo XXI',
+          title: 'Red de bibliotecas públicas del siglo XXI',
           body:
-            'El norte estratégico: espacios donde internet, herramientas y aprendizaje sean un derecho público, no un privilegio individual.'
+            'El norte estratégico: espacios físicos donde el acceso a internet, herramientas y aprendizaje sea un derecho público, no un privilegio individual. Post-transición.'
         }
       ]
     },
     not: {
       title: 'Lo que no somos',
       items: [
-        'No somos un programa del Estado venezolano.',
-        'No somos un partido político ni una campaña electoral.',
-        'No somos un proyecto de criptomonedas.',
-        'No reclutamos a nadie para actividad pública confrontativa dentro de Venezuela.'
+        '<strong>No somos un programa del Estado venezolano</strong>, ni una iniciativa vinculada a ninguno de sus ministerios, planes o programas de extensión cultural.',
+        '<strong>No somos un proyecto de "cambio de régimen" patrocinado desde afuera.</strong> Trabajamos para venezolanos, con financiamiento independiente, y la decisión sobre el futuro político del país no nos corresponde.',
+        '<strong>No reclutamos a nadie</strong> para actividad pública confrontativa dentro de Venezuela. Lo que enseñamos son habilidades y herramientas; lo que cada quien hace con ellas es suyo.'
       ]
     },
     subscribe: {
@@ -149,45 +188,67 @@ export const copy: Record<Locale, PageCopy> = {
         'A Venezuelan civic learning initiative helping people rebuild practical agency through learning, tools, and shared access.',
       primaryCta: 'Subscribe',
       secondaryCta: 'Read manifesto',
-      room: ['Same room.', 'Same resources.', 'Same shot.']
+      room: ['Space', 'Resources', 'Opportunity']
     },
     labels: {
       manifesto: 'Manifesto',
+      audience: "Who it's for",
       structure: 'Structure',
       boundaries: 'Boundaries',
       updates: 'Updates'
     },
     manifesto: {
       title: 'We are not waiting for the education system to fix itself.',
+      teaser:
+        "What was taken is being rebuilt outside the system that destroyed it. That's what we're doing.",
       body:
-        'We are building, in parallel, what people need now: spaces to learn, tools to act, and communities where no one has to begin alone.'
+        "There was a time when Venezuela understood that its most valuable resource wasn't oil — it was its people. That bet was deliberately taken apart: teachers left, schools emptied out, learning became a luxury, and a whole generation was left with fewer options. Not for lack of capacity. For lack of access.\n\nWhat was taken is being rebuilt outside the system that destroyed it. That's what we're doing.",
+      cta: 'Read full manifesto',
+      subscribeCta: 'If you want to follow the process, leave your email.',
+      backCta: 'Back to home'
+    },
+    audience: {
+      title: 'For Venezuelans who are willing to learn again.',
+      body:
+        "Venezuelans — inside and outside the country — who understand that the education we received didn't prepare us for this, and who are willing to learn again. Teachers, professionals, students, people working two shifts to make rent. No technical background required. Just curiosity and willingness to begin."
+    },
+    name: {
+      title: 'Why “Ateneo Abierto”',
+      body:
+        'Ateneo — or athenaeum, from the Greek athḗnaion, the temple dedicated to Athena — is the classical name for a space devoted to civic learning. It does not name a particular institution, and it is not named after Ateneo de Caracas; it names a form: a place where people gather to learn, outside the apparatus of the state.\n\nAbierto — open — because the entry condition is not lineage, not credential, not political affiliation. It is willingness to begin.'
+    },
+    workingTable: {
+      label: 'Working Table',
+      title: 'Learning with hands on the table.',
+      body:
+        'In practice: small groups, concrete exercises, and tools they can keep. Enough to begin, test, and use again beyond the workshop.'
     },
     pillars: {
       title: 'Three pillars',
       items: [
         {
-          title: 'Hands-on workshops',
-          body: 'Small groups learning AI, digital tools, and practical capabilities for real constraints.'
+          title: 'Hands-on workshops in AI and digital tools',
+          body:
+            'Small groups, practical. Learning to use AI, practical financial tools, and other technologies quietly changing what freedom looks like in practice. Executable now.'
         },
         {
           title: 'University alliances',
           body:
-            'Working with institutions that are still functioning, inside Venezuela and in exile, to amplify what already exists.'
+            'Working with the institutions still functioning — inside Venezuela and in exile — to amplify what they\'re already doing. Mid-term.'
         },
         {
-          title: '21st-century public libraries',
+          title: 'A network of 21st-century public libraries',
           body:
-            'The north star: spaces where internet, tools, and learning are a public right, not an individual privilege.'
+            'The north star: physical spaces where access to internet, tools, and learning is a public right, not an individual privilege. Post-transition.'
         }
       ]
     },
     not: {
       title: 'What we are not',
       items: [
-        'We are not a Venezuelan state program.',
-        'We are not a political party or electoral campaign.',
-        'We are not a cryptocurrency project.',
-        'We do not recruit anyone into confrontational public activity inside Venezuela.'
+        '<strong>Not a Venezuelan state program</strong>, and not tied to any ministry, plan, or cultural-extension initiative of the state.',
+        '<strong>Not a foreign-funded regime-change project.</strong> We work for Venezuelans, with independent funding, and we are not in the business of deciding the country\'s political future.',
+        '<strong>Not recruiting anyone</strong> into confrontational public-facing activity inside Venezuela. What we teach are skills and tools; what each person does with them is theirs.'
       ]
     },
     subscribe: {

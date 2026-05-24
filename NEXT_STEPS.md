@@ -3,9 +3,10 @@
 ## While waiting for Deflect
 
 1. Settle the subscribe provider path.
-   - Brevo account exists.
+   - MailerLite is the current provider path.
+   - Brevo was discarded after account suspension.
    - Public sender should wait until domain/mailbox decisions are ready.
-   - The app can keep the provider-ready placeholder meanwhile.
+   - The app already posts to `/api/subscribe`; production still needs a real MailerLite API key and live subscription test.
 
 2. Decide the final production URL.
    - Likely root: `https://ateneo-abierto.org/`
@@ -28,12 +29,13 @@
 
 ## After Deflect is ready
 
-1. Confirm NS propagation.
-2. Configure the hosting target.
-3. Build the static site with `npm run build`.
-4. Deploy `dist/`.
-5. Verify `/?lang=es` and `/?lang=en` live.
-6. Wire Brevo or the chosen subscribe provider.
-7. Test a real subscription.
-8. Generate the final QR code.
-9. Test the QR code from the actual slide.
+1. Decide whether to cut over from temporary Cloudflare DNS/CDN to Deflect.
+2. Confirm NS propagation if cutting over.
+3. Configure the hosting target.
+4. Build the app with `npm run build`.
+5. Deploy the Hono server with `dist/` assets.
+6. Verify `/?lang=es`, `/?lang=en`, `/manifesto?lang=es`, and `/manifesto?lang=en` live.
+7. Configure MailerLite production credentials.
+8. Test a real subscription.
+9. Generate the final QR code.
+10. Test the QR code from the actual slide.
