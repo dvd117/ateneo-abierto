@@ -8,30 +8,29 @@ colors:
   infrastructure-green: "#235e4f"
   terracotta-signal: "#b55234"
   learning-ochre: "#d39b35"
-  graphite: "#151719"
-  muted-slate: "#71828b"
-  workshop-signal: "#dc5c3f"
+  warm-graphite: "#1a1a12"
+  workshop-signal: "#c47a1e"
 typography:
   display:
-    fontFamily: Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif
+    fontFamily: DM Sans, Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif
     fontSize: 64px
     fontWeight: 700
     lineHeight: 0.88
-    letterSpacing: 0
+    letterSpacing: -0.02em
   headline:
-    fontFamily: Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif
+    fontFamily: DM Sans, Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif
     fontSize: 42px
     fontWeight: 700
     lineHeight: 0.98
-    letterSpacing: 0
+    letterSpacing: -0.01em
   body:
-    fontFamily: Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif
+    fontFamily: DM Sans, Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif
     fontSize: 18px
     fontWeight: 400
     lineHeight: 1.45
     letterSpacing: 0
   label:
-    fontFamily: Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif
+    fontFamily: DM Sans, Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif
     fontSize: 12px
     fontWeight: 700
     lineHeight: 1
@@ -86,11 +85,13 @@ The mark appears in the nav wordmark (22px, beside the text) and as the favicon 
 
 ## Colors
 
-Use warm paper and ink as the foundation. Use infrastructure green for civic access and repair. Use terracotta signal sparingly for urgency and action. Use graphite and muted slate in practical workshop contexts.
+Use warm paper and ink as the foundation. Use infrastructure green for civic access and repair. Use terracotta for structure and sparing urgency. Use ochre/workshop signal for practical cues, numbering, and action accents. Use warm graphite only for the subscribe band.
 
 ## Typography
 
-Use a sturdy humanist sans as the main voice: warm enough for civic learning, practical enough for workshops and digital tools, and less product-coded than Inter. The current system stack is `Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif`; consider a bundled open font only if cross-device rendering proves inconsistent. Use monospace only as a controlled accent for workshop modules, exercises, commands, numbered cues, and technical labels.
+Use DM Sans as the main voice: warm enough for civic learning, practical enough for workshops and digital tools, and less product-coded than Inter. The public page self-hosts the normal variable Latin and Latin Extended WOFF2 subsets from `public/fonts/` and falls back to `Avenir Next, Avenir, Trebuchet MS, Segoe UI, ui-sans-serif, system-ui, sans-serif`. Do not load third-party web fonts from the public page. Use monospace only as a controlled accent for workshop modules, exercises, commands, numbered cues, and technical labels.
+
+For Google Slides, use DM Sans with the same weights and color tokens instead of approximating the look with another sans. For standalone SVG assets, include `@font-face` declarations that point to the self-hosted DM Sans files; a `font-family` name alone is not enough because renderers without DM Sans installed will fall back. Regenerate PNG assets with `npm run render:brand` so the output comes from the same browser font rendering path.
 
 ## Layout
 

@@ -32,10 +32,6 @@ export function createSubscribeHandler(provider: SubscribeProvider) {
   };
 }
 
-export const placeholderSubscribeProvider: SubscribeProvider = async () => {
-  await new Promise((resolve) => window.setTimeout(resolve, 300));
-};
-
 export const mailerliteProvider: SubscribeProvider = async ({ email, name }) => {
   const res = await fetch('/api/subscribe', {
     method: 'POST',

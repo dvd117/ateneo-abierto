@@ -8,6 +8,7 @@
     "dev:ui": "vite --host 127.0.0.1",
     "dev:server": "tsx watch src/server.ts",
     "build": "tsc && vite build",
+    "render:brand": "bash scripts/render-brand-assets.sh",
     "start": "tsx src/server.ts",
     "test": "vitest run"
   },

@@ -1,39 +1,73 @@
 <svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @font-face {
+      font-family: "DM Sans";
+      font-style: normal;
+      font-weight: 300 800;
+      font-display: swap;
+      src: url("fonts/dm-sans-latin-ext-variable.woff2") format("woff2");
+      unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+    }
+    @font-face {
+      font-family: "DM Sans";
+      font-style: normal;
+      font-weight: 300 800;
+      font-display: swap;
+      src: url("fonts/dm-sans-latin-variable.woff2") format("woff2");
+      unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+    }
+    .brand {
+      font-family: "DM Sans", "Avenir Next", Avenir, "Trebuchet MS", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+    }
+    .mono {
+      font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
+    }
+  </style>
   <rect width="1200" height="630" fill="#f3eddf"/>
-  <rect x="0" y="0" width="8" height="630" fill="#b55234"/>
 
-  <!-- Left column: wordmark + tagline -->
-  <text x="72" y="218"
-        font-family="Helvetica Neue, Arial, sans-serif"
-        font-size="108" font-weight="700" fill="#171a16"
+  <text class="brand" x="72" y="118"
+        font-size="14" font-weight="800" fill="#235e4f"
+        letter-spacing="5">OPEN CIVIC LEARNING SPACE</text>
+
+  <text class="brand" x="72" y="238"
+        font-size="116" font-weight="700" fill="#171a16"
         letter-spacing="-3">Ateneo</text>
-  <text x="72" y="334"
-        font-family="Helvetica Neue, Arial, sans-serif"
-        font-size="108" font-weight="700" fill="#171a16"
+  <text class="brand" x="72" y="342"
+        font-size="116" font-weight="700" fill="#171a16"
         letter-spacing="-3">Abierto</text>
 
-  <rect x="72" y="362" width="192" height="4" fill="#b55234"/>
+  <rect x="72" y="370" width="192" height="5" fill="#b55234"/>
 
-  <text x="72" y="418"
-        font-family="Helvetica Neue, Arial, sans-serif"
-        font-size="27" font-weight="600" fill="#235e4f">Skills and tools no government</text>
-  <text x="72" y="452"
-        font-family="Helvetica Neue, Arial, sans-serif"
-        font-size="27" font-weight="600" fill="#235e4f">can take away.</text>
+  <text class="brand" x="72" y="432"
+        font-size="31" font-weight="700" fill="#235e4f">Skills and tools no government</text>
+  <text class="brand" x="72" y="471"
+        font-size="31" font-weight="700" fill="#235e4f">can take away.</text>
 
-  <text x="72" y="572"
-        font-family="Helvetica Neue, Arial, sans-serif"
+  <text class="brand" x="72" y="572"
         font-size="13" font-weight="700" fill="#b55234"
         letter-spacing="3">ATENEO-ABIERTO.ORG</text>
 
-  <!-- Right column: large staircase mark (scale 5.5 from 80×80 source) -->
-  <!-- Original path: M14 68 L14 52 L32 52 L32 36 L50 36 L50 20 L66 20  -->
-  <!-- translate(680,80) scale(5.5): bottom=(757,454) top=(1043,190)     -->
-  <!-- stroke-width 2.5 × 5.5 = ~14px rendered                          -->
-  <g transform="translate(680, 80) scale(5.5)">
+  <rect x="770" y="126" width="342" height="374" fill="#235e4f"/>
+  <rect x="770" y="126" width="9" height="374" fill="#b55234"/>
+  <rect x="770" y="491" width="342" height="9" fill="#b55234"/>
+
+  <g transform="translate(804, 148) scale(3.8)">
     <path d="M14 68 L14 52 L32 52 L32 36 L50 36 L50 20 L66 20"
-          stroke="#b55234" stroke-width="2.5" fill="none"
+          stroke="#f3eddf" stroke-width="5.5" fill="none"
           stroke-linecap="square" stroke-linejoin="miter"/>
-    <rect x="52" y="12" width="8" height="8" fill="#235e4f"/>
+    <rect x="52" y="12" width="8" height="8" fill="#d39b35"/>
   </g>
+
+  <line x1="810" y1="418" x2="1072" y2="418" stroke="#f3eddf" stroke-opacity="0.28"/>
+  <line x1="897" y1="418" x2="897" y2="470" stroke="#f3eddf" stroke-opacity="0.22"/>
+  <line x1="985" y1="418" x2="985" y2="470" stroke="#f3eddf" stroke-opacity="0.22"/>
+
+  <text class="mono" x="810" y="445" font-size="12" font-weight="700" fill="#d39b35">01</text>
+  <text class="brand" x="810" y="468" font-size="16" font-weight="700" fill="#f3eddf">Space</text>
+
+  <text class="mono" x="910" y="445" font-size="12" font-weight="700" fill="#d39b35">02</text>
+  <text class="brand" x="910" y="468" font-size="16" font-weight="700" fill="#f3eddf">Resources</text>
+
+  <text class="mono" x="1002" y="445" font-size="12" font-weight="700" fill="#d39b35">03</text>
+  <text class="brand" x="1002" y="468" font-size="16" font-weight="700" fill="#f3eddf">Opportunity</text>
 </svg>

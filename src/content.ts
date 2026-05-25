@@ -26,6 +26,7 @@ export type PageCopy = {
     structure: string;
     boundaries: string;
     updates: string;
+    backToTop: string;
   };
   manifesto: {
     title: string;
@@ -97,7 +98,8 @@ export const copy: Record<Locale, PageCopy> = {
       audience: 'Para quién',
       structure: 'Estructura',
       boundaries: 'Límites',
-      updates: 'Actualizaciones'
+      updates: 'Actualizaciones',
+      backToTop: 'Volver arriba'
     },
     manifesto: {
       title: 'No estamos esperando a que el sistema educativo se arregle.',
@@ -195,7 +197,8 @@ export const copy: Record<Locale, PageCopy> = {
       audience: "Who it's for",
       structure: 'Structure',
       boundaries: 'Boundaries',
-      updates: 'Updates'
+      updates: 'Updates',
+      backToTop: 'Back to top'
     },
     manifesto: {
       title: 'We are not waiting for the education system to fix itself.',

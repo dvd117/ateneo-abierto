@@ -10,6 +10,7 @@ if (!app) {
 }
 
 const root = app;
+let removeBackToTopScrollListener: (() => void) | undefined;
 
 let currentLocale = detectLocale({
   search: window.location.search,
@@ -169,7 +170,7 @@ function renderHome(page: PageCopy): string {
           <p>${page.subscribe.body}</p>
         </div>
         <form class="subscribe-form" novalidate>
-          <input name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="display:none;position:absolute;left:-9999px" />
+          <input class="field-supplement" name="website" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
           <label>
             <span>${page.subscribe.nameLabel}</span>
             <input name="name" autocomplete="name" placeholder="${page.subscribe.namePlaceholder}" />
@@ -203,8 +204,8 @@ function renderManifestoPage(page: PageCopy): string {
   `;
 }
 
-function renderBackToTop(): string {
-  return `<button class="back-to-top" aria-label="Volver arriba" type="button">↑</button>`;
+function renderBackToTop(page: PageCopy): string {
+  return `<button class="back-to-top" aria-label="${page.labels.backToTop}" type="button">↑</button>`;
 }
 
 function render(): void {
@@ -219,7 +220,7 @@ function render(): void {
     ${renderHeader(page)}
     ${isManifestoPage ? renderManifestoPage(page) : renderHome(page)}
     ${renderFooter(page)}
-    ${renderBackToTop()}
+    ${renderBackToTop(page)}
   `;
 
   bindEvents();
@@ -236,11 +237,16 @@ function bindEvents(): void {
     });
   });
 
+  removeBackToTopScrollListener?.();
   const backToTop = document.querySelector<HTMLButtonElement>('.back-to-top');
   if (backToTop) {
     backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
-    const onScroll = () => backToTop.classList.toggle('is-visible', window.scrollY > 300);
+    const onScroll = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      backToTop.classList.toggle('is-visible', scrollable > 50 && window.scrollY > Math.min(300, scrollable * 0.3));
+    };
     window.addEventListener('scroll', onScroll, { passive: true });
+    removeBackToTopScrollListener = () => window.removeEventListener('scroll', onScroll);
     onScroll();
   }
 

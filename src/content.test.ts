@@ -45,4 +45,9 @@ describe('landing page copy', () => {
     const workingTableCopy = `${copy.es.workingTable.body} ${copy.en.workingTable.body}`;
     expect(workingTableCopy).not.toMatch(/\b\d{1,2}:\d{2}\b|venue|sede|partner|aliad/i);
   });
+
+  test('localizes utility controls in both languages', () => {
+    expect(copy.es.labels.backToTop).toBe('Volver arriba');
+    expect(copy.en.labels.backToTop).toBe('Back to top');
+  });
 });
