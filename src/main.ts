@@ -83,23 +83,11 @@ function renderHome(page: PageCopy): string {
             <a class="text-link" href="${localizedPath('/manifesto')}">${page.hero.secondaryCta}</a>
           </div>
         </div>
-        <div class="open-room" aria-label="${page.hero.room.join(' ')}">
+        <div class="open-room" aria-hidden="true">
           <svg class="open-room-mark" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
             <path d="M14 68 L14 52 L32 52 L32 36 L50 36 L50 20 L66 20" stroke="#f3eddf" stroke-width="5.5" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
             <rect x="52" y="12" width="8" height="8" fill="#d39b35"/>
           </svg>
-          <ul>
-            ${page.hero.room
-              .map(
-                (item, index) => `
-                  <li>
-                    <span class="open-room-number">${String(index + 1).padStart(2, '0')}</span>
-                    <span class="open-room-label">${item}</span>
-                  </li>
-                `
-              )
-              .join('')}
-          </ul>
         </div>
       </section>
 
@@ -132,13 +120,6 @@ function renderHome(page: PageCopy): string {
           <p class="eyebrow">${page.labels.structure}</p>
           <h2>${page.pillars.title}</h2>
         </div>
-        <aside class="working-table" aria-label="${page.workingTable.label}">
-          <p class="working-table-label">${page.workingTable.label}</p>
-          <div>
-            <h3>${page.workingTable.title}</h3>
-            <p>${page.workingTable.body}</p>
-          </div>
-        </aside>
         <div class="pillars">
           ${page.pillars.items
             .map(
@@ -154,13 +135,10 @@ function renderHome(page: PageCopy): string {
       </section>
 
       <section class="section not-section">
-        <div class="section-heading">
+        <div class="section-copy">
           <p class="eyebrow">${page.labels.boundaries}</p>
-          <h2>${page.not.title}</h2>
+          <p>${page.not.body}</p>
         </div>
-        <ul class="not-list">
-          ${page.not.items.map((item) => `<li>${item}</li>`).join('')}
-        </ul>
       </section>
 
       <section id="subscribe" class="section subscribe-section">
