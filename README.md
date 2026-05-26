@@ -7,13 +7,14 @@ Launch site for Ateneo Abierto.
 - Vite + TypeScript frontend served by a small Hono Node server in production.
 - Wordmark-first visual identity based on the Civic Hearth direction.
 - Bilingual Spanish/English copy.
-- Landing page plus full manifesto route at `/manifesto`.
+- One-page QR reveal landing page; `/manifesto` is retired and redirects to `/`.
 - Locale behavior:
   - `?lang=es` and `?lang=en` override everything.
   - Saved language preference is stored in `localStorage`.
   - Browser language is used when there is no override or saved preference.
   - English is the fallback.
 - Subscribe form posts to the Hono `/api/subscribe` endpoint and uses MailerLite.
+- Current Docker Compose routing points Traefik at `ateneo.aragort.com`; the durable Oslo QR URL is still pending.
 - DNS is temporarily on Cloudflare while Deflect account/NS setup remains blocked.
 
 ## Run locally
@@ -39,8 +40,6 @@ Useful language URLs:
 ```text
 /?lang=es
 /?lang=en
-/manifesto?lang=es
-/manifesto?lang=en
 ```
 
 ## Verify
@@ -50,7 +49,7 @@ npm test
 npm run build
 ```
 
-Run both before shipping. For release checks, also verify `/`, `/manifesto`, `?lang=es`, `?lang=en`, `/api/health`, and one real subscribe flow with production credentials.
+Run both before shipping. For release checks, also verify `/`, `/?lang=es`, `/?lang=en`, `/manifesto` redirects to `/`, `/api/health`, and one real subscribe flow with production credentials.
 
 ## Subscribe integration
 
@@ -74,7 +73,7 @@ Pending:
 
 - Deflect account/domain verification.
 - Final Deflect vs Cloudflare cutover decision.
-- Final production URL for the Oslo QR code.
+- Final durable URL for the Oslo QR code.
 - Production MailerLite API key and live subscribe test.
 - QR scan test from slide distance.
 

@@ -118,7 +118,7 @@ input {
   top: 0;
   z-index: 10;
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: 1fr auto;
   gap: 24px;
   align-items: center;
   min-height: 72px;
@@ -136,14 +136,6 @@ input {
   font-size: clamp(18px, 2vw, 22px);
   font-weight: 700;
   letter-spacing: -0.02em;
-}
-
-.nav-links {
-  display: flex;
-  gap: 18px;
-  color: var(--green);
-  font-size: 14px;
-  font-weight: 700;
 }
 
 .locale-toggle {
@@ -175,7 +167,7 @@ input {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.76fr);
   gap: clamp(32px, 6vw, 72px);
-  align-items: end;
+  align-items: center;
   min-height: calc(100vh - 72px);
   padding: clamp(52px, 7vw, 96px) clamp(22px, 5vw, 72px);
 }
@@ -340,7 +332,7 @@ h3 {
   border-top: 1px solid var(--line);
 }
 
-.manifesto-section {
+.origin-section {
   display: grid;
   grid-template-columns: minmax(0, 0.18fr) minmax(0, 0.82fr);
   gap: clamp(24px, 5vw, 72px);
@@ -348,27 +340,19 @@ h3 {
   color: var(--paper);
 }
 
-.manifesto-section::before {
+.origin-section::before {
   content: "";
   align-self: stretch;
   border-left: 8px solid var(--terracotta);
 }
 
-.manifesto-section .eyebrow,
-.manifesto-section p {
+.origin-section .eyebrow,
+.origin-section p {
   color: #dfe9df;
 }
 
-.manifesto-section .section-copy {
+.origin-section .section-copy {
   max-width: 880px;
-}
-
-.manifesto-link {
-  display: inline-flex;
-  margin-top: 12px;
-  width: fit-content;
-  background: var(--paper);
-  color: var(--green);
 }
 
 .section-copy {
@@ -395,69 +379,6 @@ h3 {
 
 .name-section h2 {
   max-width: 14ch;
-}
-
-.manifesto-page {
-  background: var(--green);
-  color: var(--paper);
-  min-height: calc(100vh - 72px);
-  padding: clamp(56px, 8vw, 104px) clamp(22px, 5vw, 72px);
-}
-
-.manifesto-article {
-  display: grid;
-  grid-template-columns: minmax(0, 0.18fr) minmax(0, 0.82fr);
-  gap: clamp(24px, 5vw, 72px);
-  max-width: 1180px;
-}
-
-.manifesto-article::before {
-  content: "";
-  align-self: stretch;
-  border-left: 8px solid var(--terracotta);
-}
-
-.manifesto-article .eyebrow,
-.manifesto-article p {
-  color: #dfe9df;
-}
-
-.manifesto-article h1,
-.manifesto-article p,
-.manifesto-actions {
-  grid-column: 2;
-}
-
-.manifesto-article h1 {
-  max-width: 960px;
-  margin-top: 0;
-  font-size: clamp(46px, 7vw, 92px);
-  line-height: 0.94;
-}
-
-.manifesto-article p {
-  max-width: 780px;
-}
-
-.manifesto-article .text-link {
-  color: var(--paper);
-}
-
-.manifesto-actions .button {
-  background: var(--paper);
-  color: var(--green);
-}
-
-.manifesto-actions .text-link {
-  color: #dfe9df;
-}
-
-.manifesto-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  align-items: center;
-  margin-top: 10px;
 }
 
 .section-heading {
@@ -675,14 +596,8 @@ h3 {
     padding-top: 12px;
   }
 
-  .nav-links {
-    grid-column: 1 / -1;
-    grid-row: 2;
-  }
-
   .hero,
-  .manifesto-section,
-  .manifesto-article,
+  .origin-section,
   .pillars,
   .working-table,
   .subscribe-section,
@@ -690,22 +605,10 @@ h3 {
     grid-template-columns: 1fr;
   }
 
-  .manifesto-section::before {
+  .origin-section::before {
     min-height: 8px;
     border-left: 0;
     border-top: 8px solid var(--terracotta);
-  }
-
-  .manifesto-article::before {
-    min-height: 8px;
-    border-left: 0;
-    border-top: 8px solid var(--terracotta);
-  }
-
-  .manifesto-article h1,
-  .manifesto-article p,
-  .manifesto-actions {
-    grid-column: 1;
   }
 
   .hero {
@@ -720,10 +623,6 @@ h3 {
 @media (max-width: 560px) {
   .site-header {
     position: static;
-  }
-
-  .nav-links {
-    font-size: 13px;
   }
 
   h1 {

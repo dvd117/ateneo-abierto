@@ -12,22 +12,73 @@ describe('landing page copy', () => {
     expect(copy.en.name.body).toContain('willingness');
   });
 
-  test('keeps the landing manifesto brief and full manifesto available separately', () => {
-    expect(copy.es.manifesto.teaser).toContain('se reconstruye desde afuera');
-    expect(copy.es.manifesto.body).toContain('Los profesores se fueron');
-    expect(copy.es.manifesto.body.length).toBeGreaterThan(copy.es.manifesto.teaser.length);
-    expect(copy.es.manifesto.cta).toBe('Leer manifiesto completo');
-    expect(copy.es.manifesto.subscribeCta).toBe('Si quieres seguir el proceso, deja tu correo.');
+  test('folds the manifesto starting point into the landing page in both languages', () => {
+    expect(copy.es.labels.origin).toBe('Punto de partida');
+    expect(copy.es.origin.title).toContain('sistema educativo');
+    expect(copy.es.origin.body).toContain('Fundayacucho');
+    expect(copy.es.origin.body).toContain('recortes presupuestarios');
+    expect(copy.es.origin.body).toContain('puente');
 
-    expect(copy.en.manifesto.teaser).toContain('being rebuilt outside the system');
-    expect(copy.en.manifesto.body).toContain('Teachers left');
-    expect(copy.en.manifesto.body.length).toBeGreaterThan(copy.en.manifesto.teaser.length);
-    expect(copy.en.manifesto.cta).toBe('Read full manifesto');
-    expect(copy.en.manifesto.subscribeCta).toBe('If you want to follow the process, leave your email.');
+    expect(copy.en.labels.origin).toBe('Starting point');
+    expect(copy.en.origin.title).toContain('education system');
+    expect(copy.en.origin.body).toContain('Fundayacucho');
+    expect(copy.en.origin.body).toContain('budget cuts');
+    expect(copy.en.origin.body).toContain('bridge');
   });
 
   test('localizes utility controls in both languages', () => {
     expect(copy.es.labels.backToTop).toBe('Volver arriba');
     expect(copy.en.labels.backToTop).toBe('Back to top');
+  });
+
+  test('keeps Spanish public copy free of English workshop jargon', () => {
+    const spanishCopy = JSON.stringify(copy.es);
+
+    expect(spanishCopy).not.toContain('hands-on');
+    expect(spanishCopy).not.toContain('Ejecutable ya');
+    expect(copy.es.hero.body).toContain('recuperar capacidad de acción');
+    expect(copy.es.pillars.items[0].body).toContain('Grupos pequeños, ejercicios prácticos.');
+    expect(copy.es.pillars.items[0].body).toContain('Para empezar ya.');
+  });
+
+  test('makes subscription calls to action explicit in both languages', () => {
+    expect(copy.es.hero.primaryCta).toBe('Recibir actualizaciones');
+    expect(copy.es.subscribe.button).toBe('Suscribirme');
+    expect(copy.es.subscribe.body).toContain('Déjanos tu correo');
+
+    expect(copy.en.hero.primaryCta).toBe('Get updates');
+    expect(copy.en.subscribe.button).toBe('Subscribe');
+    expect(copy.en.subscribe.body).toContain('Leave your email');
+  });
+
+  test('keeps origin and strategic pillar in institutional voice', () => {
+    const firstPersonSingular = [
+      /\byo\b/i,
+      /\bme\b/i,
+      /\bmi\b/i,
+      /\bentro\b/i,
+      /\bI\b/,
+      /\bme\b/i,
+      /\bmy\b/i,
+      /\bwalk into\b/i
+    ];
+
+    const institutionalCopy = [
+      copy.es.origin.body,
+      copy.es.pillars.items[2].body,
+      copy.en.origin.body,
+      copy.en.pillars.items[2].body
+    ];
+
+    for (const body of institutionalCopy) {
+      for (const phrase of firstPersonSingular) {
+        expect(body).not.toMatch(phrase);
+      }
+    }
+  });
+
+  test('keeps the English workshop body current without banning idiomatic title copy', () => {
+    expect(copy.en.pillars.items[0].title).toContain('Hands-on workshops');
+    expect(copy.en.pillars.items[0].body).not.toContain('Executable now');
   });
 });

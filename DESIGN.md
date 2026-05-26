@@ -95,7 +95,7 @@ For Google Slides, use DM Sans with the same weights and color tokens instead of
 
 ## Layout
 
-Prefer generous, clear layouts with strong typographic hierarchy. Use full-width bands and practical modules. Avoid decorative card-heavy layouts. The page rhythm should read as civic rooms: hero as invitation, manifesto teaser as declaration, audience and name as separate entry/context bands, and working table plus pillars as the practical register. The full manifesto lives on its own page.
+Prefer generous, clear layouts with strong typographic hierarchy. Use full-width bands and practical modules. Avoid decorative card-heavy layouts. The page rhythm should read as civic rooms: hero as invitation, origin as the historical starting point, audience and name as separate entry/context bands, pillars as the practical register, boundaries as safety framing, and subscribe as the clear update form. The former full-manifesto route is retired; `/manifesto` redirects to `/`.
 
 ## Elevation And Depth
 
@@ -113,15 +113,14 @@ The current implementation defines only the components needed for launch:
 - language toggle
 - hero
 - open-room layout gesture
-- manifesto teaser section
-- full manifesto page
+- origin / starting-point section
 - audience section
 - name etymology section
-- working table cue
 - pillar modules
-- boundaries list
+- boundaries statement
 - subscribe form
 - footer
+- back-to-top button
 
 ## Do's And Don'ts
 
@@ -129,4 +128,4 @@ The current implementation defines only the components needed for launch:
 - Do preserve the distinction between master identity and workshop register.
 - Do treat the Oslo slide template as an adapter, not the identity source.
 - Don't make the identity look like a state program, party campaign, AI startup, crypto product, or generic NGO.
-- Don't roll out an avatar or standalone mark until real surfaces prove the system.
+- Don't add a second mark or competing logo system. The staircase mark is the canonical public mark.

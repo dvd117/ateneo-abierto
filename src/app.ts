@@ -25,7 +25,10 @@ app.use(
 
 app.get('/api/health', (c) => c.json({ ok: true }));
 
-app.get('/manifesto', serveStatic({ root: './dist', path: 'index.html' }));
+app.get('/manifesto', (c) => {
+  const lang = c.req.query('lang');
+  return c.redirect(lang === 'es' || lang === 'en' ? `/?lang=${lang}` : '/', 301);
+});
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 

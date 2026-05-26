@@ -41,4 +41,18 @@ describe('CSP-safe source markup', () => {
     expect(css).toContain('.field-supplement');
     expect(css).not.toContain('display: none');
   });
+
+  test('keeps desktop hero content vertically centered', () => {
+    const css = readFileSync('src/styles.css', 'utf8');
+
+    expect(css).toMatch(/\.hero\s*\{[^}]*align-items:\s*center;/s);
+  });
+
+  test('keeps the simplified header to wordmark and language toggle columns', () => {
+    const main = readFileSync('src/main.ts', 'utf8');
+    const css = readFileSync('src/styles.css', 'utf8');
+
+    expect(main).not.toContain('class="nav-links"');
+    expect(css).toMatch(/\.site-header\s*\{[^}]*grid-template-columns:\s*1fr auto;/s);
+  });
 });

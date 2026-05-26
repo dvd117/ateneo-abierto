@@ -25,11 +25,25 @@ describe('security headers', () => {
 });
 
 describe('static app routes', () => {
-  test('serves the app shell for the manifesto route', async () => {
+  test('redirects the retired manifesto route to home', async () => {
     const res = await app.request('/manifesto');
 
-    expect(res.status).toBe(200);
-    expect(res.headers.get('content-type')).toContain('text/html');
+    expect(res.status).toBe(301);
+    expect(res.headers.get('location')).toBe('/');
+  });
+
+  test('preserves supported locales when redirecting the retired manifesto route', async () => {
+    const res = await app.request('/manifesto?lang=es');
+
+    expect(res.status).toBe(301);
+    expect(res.headers.get('location')).toBe('/?lang=es');
+  });
+
+  test('drops unsupported locales when redirecting the retired manifesto route', async () => {
+    const res = await app.request('/manifesto?lang=fr');
+
+    expect(res.status).toBe(301);
+    expect(res.headers.get('location')).toBe('/');
   });
 });
 

@@ -48,10 +48,6 @@ function renderHeader(page: PageCopy): string {
         </svg>
         Ateneo Abierto
       </a>
-      <nav class="nav-links" aria-label="Primary">
-        <a href="${localizedPath('/manifesto')}">${page.nav.manifesto}</a>
-        <a href="${localizedPath('/', '#subscribe')}">${page.nav.participate}</a>
-      </nav>
       <div class="locale-toggle" aria-label="${page.languageLabel}">
         <button class="locale-button ${currentLocale === 'es' ? 'is-active' : ''}" type="button" data-locale="es">ES</button>
         <button class="locale-button ${currentLocale === 'en' ? 'is-active' : ''}" type="button" data-locale="en">EN</button>
@@ -80,7 +76,6 @@ function renderHome(page: PageCopy): string {
           <p class="intro">${page.hero.body}</p>
           <div class="hero-actions">
             <a class="button" href="#subscribe">${page.hero.primaryCta}</a>
-            <a class="text-link" href="${localizedPath('/manifesto')}">${page.hero.secondaryCta}</a>
           </div>
         </div>
         <div class="open-room" aria-hidden="true">
@@ -91,12 +86,11 @@ function renderHome(page: PageCopy): string {
         </div>
       </section>
 
-      <section id="manifesto" class="section manifesto-section">
+      <section id="origin" class="section origin-section">
         <div class="section-copy">
-          <p class="eyebrow">${page.labels.manifesto}</p>
-          <h2>${page.manifesto.title}</h2>
-          <p>${page.manifesto.teaser}</p>
-          <a class="button manifesto-link" href="${localizedPath('/manifesto')}">${page.manifesto.cta}</a>
+          <p class="eyebrow">${page.labels.origin}</p>
+          <h2>${page.origin.title}</h2>
+          ${renderParagraphs(page.origin.body)}
         </div>
       </section>
 
@@ -166,37 +160,18 @@ function renderHome(page: PageCopy): string {
   `;
 }
 
-function renderManifestoPage(page: PageCopy): string {
-  return `
-    <main id="top" class="manifesto-page">
-      <article class="manifesto-article">
-        <p class="eyebrow">${page.labels.manifesto}</p>
-        <h1>${page.manifesto.title}</h1>
-        ${renderParagraphs(page.manifesto.body)}
-        <div class="manifesto-actions">
-          <a class="button" href="${localizedPath('/', '#subscribe')}">${page.manifesto.subscribeCta}</a>
-          <a class="text-link" href="${localizedPath('/', '#manifesto')}">${page.manifesto.backCta}</a>
-        </div>
-      </article>
-    </main>
-  `;
-}
-
 function renderBackToTop(page: PageCopy): string {
   return `<button class="back-to-top" aria-label="${page.labels.backToTop}" type="button">↑</button>`;
 }
 
 function render(): void {
   const page = copy[currentLocale];
-  const isManifestoPage = window.location.pathname === '/manifesto';
   document.documentElement.lang = currentLocale;
-  document.title = isManifestoPage
-    ? `Ateneo Abierto | ${page.nav.manifesto}`
-    : `Ateneo Abierto | ${page.hero.promise}`;
+  document.title = `Ateneo Abierto | ${page.hero.promise}`;
 
   root.innerHTML = `
     ${renderHeader(page)}
-    ${isManifestoPage ? renderManifestoPage(page) : renderHome(page)}
+    ${renderHome(page)}
     ${renderFooter(page)}
     ${renderBackToTop(page)}
   `;
