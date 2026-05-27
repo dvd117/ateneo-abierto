@@ -10,18 +10,20 @@ services:
       - dokploy-network
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.ateneo-abierto.rule=Host(`ateneo.aragort.com`)"
+      - "traefik.http.routers.ateneo-abierto.rule=Host(`ateneo-abierto.org`) || Host(`www.ateneo-abierto.org`)"
       - "traefik.http.routers.ateneo-abierto.entrypoints=websecure"
       - "traefik.http.routers.ateneo-abierto.tls=true"
+      - "traefik.http.routers.ateneo-abierto.tls.certresolver=letsencrypt"
       - "traefik.http.services.ateneo-abierto.loadbalancer.server.port=3000"
       - "traefik.docker.network=dokploy-network"
       # Rate-limit the subscribe endpoint: 5 requests per minute per IP
       - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.average=5"
       - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.period=1m"
       - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.burst=2"
-      - "traefik.http.routers.ateneo-subscribe.rule=Host(`ateneo.aragort.com`) && Path(`/api/subscribe`)"
+      - "traefik.http.routers.ateneo-subscribe.rule=(Host(`ateneo-abierto.org`) || Host(`www.ateneo-abierto.org`)) && Path(`/api/subscribe`)"
       - "traefik.http.routers.ateneo-subscribe.entrypoints=websecure"
       - "traefik.http.routers.ateneo-subscribe.tls=true"
+      - "traefik.http.routers.ateneo-subscribe.tls.certresolver=letsencrypt"
       - "traefik.http.routers.ateneo-subscribe.middlewares=ateneo-subscribe-ratelimit"
       - "traefik.http.routers.ateneo-subscribe.service=ateneo-abierto"
 
