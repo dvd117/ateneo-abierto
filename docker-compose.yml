@@ -21,10 +21,12 @@ services:
       - "traefik.http.routers.ateneo-abierto.service=ateneo-abierto"
       - "traefik.http.services.ateneo-abierto.loadbalancer.server.port=3000"
       - "traefik.docker.network=dokploy-network"
-      # Rate-limit the subscribe endpoint: 5 requests per minute per IP
+      # Rate-limit the subscribe endpoint: 5 requests per minute per real client IP
       - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.average=5"
       - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.period=1m"
       - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.burst=2"
+      # Use X-Forwarded-For so Deflect CDN doesn't collapse all users into one bucket
+      - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.sourceCriterion.ipStrategy.depth=1"
       - "traefik.http.routers.ateneo-subscribe.rule=(Host(`ateneo-abierto.org`) || Host(`www.ateneo-abierto.org`)) && Path(`/api/subscribe`)"
       - "traefik.http.routers.ateneo-subscribe.entrypoints=websecure"
       - "traefik.http.routers.ateneo-subscribe.tls=true"
