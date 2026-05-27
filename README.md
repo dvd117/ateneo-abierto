@@ -14,7 +14,7 @@ Launch site for Ateneo Abierto.
   - Browser language is used when there is no override or saved preference.
   - English is the fallback.
 - Subscribe form posts to the Hono `/api/subscribe` endpoint and uses MailerLite.
-- Current Docker Compose routing points Traefik at `ateneo.aragort.com`; the durable Oslo QR URL is still pending.
+- Current Docker Compose routing points Traefik at `ateneo-abierto.org`; the durable Oslo QR URL is still pending.
 - DNS is temporarily on Cloudflare while Deflect account/NS setup remains blocked.
 
 ## Run locally
@@ -54,7 +54,9 @@ Run both before shipping. For release checks, also verify `/`, `/?lang=es`, `/?l
 ## Subscribe integration
 
 The client uses `mailerliteProvider` in `src/subscribe.ts`, which posts to `/api/subscribe`.
+
 The server sanitizes input, rejects invalid emails, uses a honeypot field, enforces JSON content,
+
 and calls MailerLite through `src/mailerlite.ts`.
 
 Required environment:
@@ -92,3 +94,4 @@ Pending:
 - `scripts/render-brand-assets.sh`: regenerate PNG brand assets from SVG sources.
 - `DESIGN.md`: public visual identity reference.
 - `agent_docs/`: local agent-facing content, deployment, and structure notes.
+
