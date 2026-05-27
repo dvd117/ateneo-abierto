@@ -28,7 +28,10 @@ export function createSubscribeHandler(provider: SubscribeProvider) {
     try {
       await provider({ ...input, email });
       return { ok: true };
-    } catch {
+    } catch (err) {
+      if (err instanceof Error && err.message === 'invalid-email') {
+        return { ok: false, reason: 'invalid-email' };
+      }
       return { ok: false, reason: 'provider-error' };
     }
   };
@@ -41,12 +44,9 @@ export const mailerliteProvider: SubscribeProvider = async ({ email, name, newsl
     body: JSON.stringify({ email, name: name ?? '', newsletterLocale, participate: participate ?? false, website: '' }),
   });
 
-  if (!res.ok) {
-    throw new Error(`subscribe-failed: ${res.status}`);
-  }
+  const data = await res.json() as { ok: boolean; reason?: string };
 
-  const data = await res.json() as { ok: boolean };
   if (!data.ok) {
-    throw new Error('subscribe-failed');
+    throw new Error(data.reason === 'invalid-email' ? 'invalid-email' : 'subscribe-failed');
   }
 };
