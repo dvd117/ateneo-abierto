@@ -45,10 +45,12 @@ describe('landing page copy', () => {
     expect(copy.es.hero.primaryCta).toBe('Recibir actualizaciones');
     expect(copy.es.subscribe.button).toBe('Suscribirme');
     expect(copy.es.subscribe.body).toContain('Déjanos tu correo');
+    expect(copy.es.subscribe.newsletterLanguageLabel).toBe('Idioma del boletín');
 
     expect(copy.en.hero.primaryCta).toBe('Get updates');
     expect(copy.en.subscribe.button).toBe('Subscribe');
     expect(copy.en.subscribe.body).toContain('Leave your email');
+    expect(copy.en.subscribe.newsletterLanguageLabel).toBe('Newsletter language');
   });
 
   test('keeps origin and strategic pillar in institutional voice', () => {

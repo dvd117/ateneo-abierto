@@ -86,6 +86,10 @@ html {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .hero-copy .eyebrow,
   .hero-copy h1,
   .hero-copy .promise,
@@ -94,6 +98,20 @@ html {
   .open-room {
     animation: none;
   }
+
+  .back-to-top {
+    transition: none;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--green);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.subscribe-section :focus-visible {
+  outline-color: var(--ochre);
 }
 
 body {
@@ -125,7 +143,9 @@ input {
   padding: 0 clamp(18px, 4vw, 48px);
   border-bottom: 1px solid var(--line);
   background: var(--paper);
-  background: color-mix(in srgb, var(--paper) 92%, white 8%);
+  background: color-mix(in srgb, var(--paper) 96%, var(--ink) 4%);
+  box-shadow: 0 1px 0 rgba(23, 26, 22, 0.04), 0 6px 18px -16px rgba(23, 26, 22, 0.32);
+  backdrop-filter: saturate(1.05);
 }
 
 .nav-wordmark {
@@ -156,6 +176,11 @@ input {
   cursor: pointer;
   font-size: 13px;
   font-weight: 700;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.locale-button:hover:not(.is-active) {
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
 }
 
 .locale-button.is-active {
@@ -164,12 +189,16 @@ input {
 }
 
 .hero {
+  position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 0.76fr);
   gap: clamp(32px, 6vw, 72px);
   align-items: center;
   min-height: calc(100vh - 72px);
   padding: clamp(52px, 7vw, 96px) clamp(22px, 5vw, 72px);
+  background:
+    radial-gradient(ellipse 70% 60% at 12% 8%, color-mix(in srgb, var(--terracotta) 8%, transparent), transparent 65%),
+    radial-gradient(ellipse 50% 40% at 88% 92%, color-mix(in srgb, var(--green) 6%, transparent), transparent 70%);
 }
 
 .eyebrow {
@@ -261,11 +290,35 @@ h3 {
   cursor: pointer;
   font-size: 15px;
   font-weight: 700;
+  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.button:hover {
+  background: color-mix(in srgb, var(--green) 90%, black 10%);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px -8px rgba(35, 94, 79, 0.55);
+}
+
+.button:active {
+  transform: translateY(0);
+  box-shadow: none;
 }
 
 .button:disabled {
   cursor: wait;
   opacity: 0.7;
+  transform: none;
+  box-shadow: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .button {
+    transition: background-color 0.15s ease;
+  }
+  .button:hover,
+  .button:active {
+    transform: none;
+  }
 }
 
 .text-link {
@@ -361,7 +414,7 @@ h3 {
 
 .audience-section {
   background: var(--paper);
-  background: color-mix(in srgb, var(--terracotta) 8%, var(--paper));
+  background: color-mix(in srgb, var(--terracotta) 13%, var(--paper));
 }
 
 .audience-section .section-copy {
@@ -496,6 +549,28 @@ h3 {
   font-weight: 700;
 }
 
+.newsletter-language {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  border: 0;
+  margin: 0;
+}
+
+.newsletter-language legend {
+  margin-bottom: 8px;
+  color: var(--paper);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.newsletter-language label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
 .subscribe-form input {
   width: 100%;
   min-height: 48px;
@@ -504,6 +579,12 @@ h3 {
   background: rgba(243, 237, 223, 0.08);
   color: var(--paper);
   padding: 0 14px;
+}
+
+.subscribe-form .newsletter-language input {
+  width: auto;
+  min-height: auto;
+  padding: 0;
 }
 
 .field-supplement {
@@ -515,7 +596,7 @@ h3 {
 }
 
 .subscribe-form input::placeholder {
-  color: rgba(243, 237, 223, 0.54);
+  color: rgba(243, 237, 223, 0.68);
 }
 
 .subscribe-form .button {
@@ -578,14 +659,19 @@ h3 {
   line-height: 1;
   opacity: 0;
   pointer-events: none;
-  transform: translateY(8px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translateY(12px) scale(0.92);
+  box-shadow: 0 8px 22px -10px rgba(181, 82, 52, 0.55);
+  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1), background-color 0.15s ease;
 }
 
 .back-to-top.is-visible {
   opacity: 1;
   pointer-events: auto;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+}
+
+.back-to-top:hover {
+  background: color-mix(in srgb, var(--terracotta) 90%, black 10%);
 }
 
 @media (max-width: 900px) {

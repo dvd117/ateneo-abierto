@@ -7,6 +7,10 @@ export type Pillar = {
 
 export type PageCopy = {
   languageLabel: string;
+  languageSwitchTo: {
+    es: string;
+    en: string;
+  };
   hero: {
     eyebrow: string;
     title: string;
@@ -48,6 +52,8 @@ export type PageCopy = {
     emailPlaceholder: string;
     nameLabel: string;
     namePlaceholder: string;
+    newsletterLanguageLabel: string;
+    participateLabel: string;
     button: string;
     privacy: string;
     success: string;
@@ -63,6 +69,10 @@ export type PageCopy = {
 export const copy: Record<Locale, PageCopy> = {
   es: {
     languageLabel: 'Idioma',
+    languageSwitchTo: {
+      es: 'Cambiar a español',
+      en: 'Cambiar a inglés'
+    },
     hero: {
       eyebrow: 'Espacio abierto de aprendizaje cívico',
       title: 'Ateneo Abierto',
@@ -125,6 +135,8 @@ export const copy: Record<Locale, PageCopy> = {
       emailPlaceholder: 'tu@correo.com',
       nameLabel: 'Nombre',
       namePlaceholder: 'Tu nombre',
+      newsletterLanguageLabel: 'Idioma del boletín',
+      participateLabel: 'También quiero enterarme de formas de participar o colaborar.',
       button: 'Suscribirme',
       privacy: 'Si quieres apoyar o colaborar de alguna forma, escríbenos.',
       success: 'Listo. Te avisaremos cuando haya novedades.',
@@ -139,6 +151,10 @@ export const copy: Record<Locale, PageCopy> = {
   },
   en: {
     languageLabel: 'Language',
+    languageSwitchTo: {
+      es: 'Switch to Spanish',
+      en: 'Switch to English'
+    },
     hero: {
       eyebrow: 'Open civic learning space',
       title: 'Ateneo Abierto',
@@ -201,6 +217,8 @@ export const copy: Record<Locale, PageCopy> = {
       emailPlaceholder: 'you@example.org',
       nameLabel: 'Name',
       namePlaceholder: 'Your name',
+      newsletterLanguageLabel: 'Newsletter language',
+      participateLabel: 'I also want to hear about ways to participate or help.',
       button: 'Subscribe',
       privacy: 'If you want to support or collaborate, write to us.',
       success: "You're in. We'll be in touch when things are moving.",

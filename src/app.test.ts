@@ -21,6 +21,7 @@ describe('security headers', () => {
     expect(res.headers.get('x-content-type-options')).toBe('nosniff');
     expect(res.headers.get('referrer-policy')).toBe('strict-origin-when-cross-origin');
     expect(res.headers.get('content-security-policy')).toContain("default-src 'self'");
+    expect(res.headers.get('strict-transport-security')).toBe('max-age=31536000; includeSubDomains');
   });
 });
 
@@ -48,10 +49,23 @@ describe('static app routes', () => {
 });
 
 describe('POST /api/subscribe', () => {
-  const validBody = JSON.stringify({ email: 'user@example.com', name: 'User', website: '' });
+  const validBody = JSON.stringify({
+    email: 'user@example.com',
+    name: 'User',
+    newsletterLocale: 'es',
+    website: ''
+  });
   const jsonHeaders = { 'Content-Type': 'application/json' };
 
+  afterEach(() => {
+    delete process.env.MAILERLITE_GROUP_ES_ID;
+    delete process.env.MAILERLITE_GROUP_EN_ID;
+    delete process.env.MAILERLITE_PARTICIPATE_ES_ID;
+    delete process.env.MAILERLITE_PARTICIPATE_EN_ID;
+  });
+
   test('returns 200 ok:true for valid input', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 201 })));
 
     const res = await app.request('/api/subscribe', {
@@ -65,7 +79,132 @@ describe('POST /api/subscribe', () => {
     expect(body.ok).toBe(true);
   });
 
+  test('routes Spanish subscribers to the Spanish MailerLite group', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: JSON.stringify({
+        email: 'user@example.com',
+        name: 'User',
+        newsletterLocale: 'es',
+        website: ''
+      }),
+    });
+
+    expect(res.status).toBe(200);
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(init.body as string)).toEqual({
+      email: 'user@example.com',
+      fields: { name: 'User', preferred_language: 'es' },
+      groups: ['group-es'],
+    });
+  });
+
+  test('routes English subscribers to the English MailerLite group', async () => {
+    process.env.MAILERLITE_GROUP_EN_ID = 'group-en';
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: JSON.stringify({
+        email: 'user@example.com',
+        newsletterLocale: 'en',
+        website: ''
+      }),
+    });
+
+    expect(res.status).toBe(200);
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(init.body as string)).toEqual({
+      email: 'user@example.com',
+      fields: { preferred_language: 'en' },
+      groups: ['group-en'],
+    });
+  });
+
+  test('adds participate group when participate is true and env var is set', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    process.env.MAILERLITE_PARTICIPATE_ES_ID = 'participate-es';
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: JSON.stringify({ email: 'user@example.com', newsletterLocale: 'es', participate: true, website: '' }),
+    });
+
+    expect(res.status).toBe(200);
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string);
+    expect(body.groups).toEqual(['group-es', 'participate-es']);
+    expect(body.fields.participation_interest).toBe('yes');
+  });
+
+  test('omits participate group when participate is true but env var is not set', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: JSON.stringify({ email: 'user@example.com', newsletterLocale: 'es', participate: true, website: '' }),
+    });
+
+    expect(res.status).toBe(200);
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string);
+    expect(body.groups).toEqual(['group-es']);
+  });
+
+  test('does not add participate group when participate is false', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    process.env.MAILERLITE_PARTICIPATE_ES_ID = 'participate-es';
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: JSON.stringify({ email: 'user@example.com', newsletterLocale: 'es', participate: false, website: '' }),
+    });
+
+    expect(res.status).toBe(200);
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string);
+    expect(body.groups).toEqual(['group-es']);
+    expect(body.fields.participation_interest).toBeUndefined();
+  });
+
+  test('returns 400 for missing newsletter language', async () => {
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: JSON.stringify({ email: 'user@example.com', website: '' }),
+    });
+    expect(res.status).toBe(400);
+  });
+
+  test('returns 400 for invalid newsletter language', async () => {
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: JSON.stringify({ email: 'user@example.com', newsletterLocale: 'fr', website: '' }),
+    });
+    expect(res.status).toBe(400);
+  });
+
   test('returns 200 ok:true silently when honeypot is filled (bot trap)', async () => {
+    const mockFetch = vi.fn();
+    vi.stubGlobal('fetch', mockFetch);
+
     const res = await app.request('/api/subscribe', {
       method: 'POST',
       headers: jsonHeaders,
@@ -75,6 +214,7 @@ describe('POST /api/subscribe', () => {
     expect(res.status).toBe(200);
     const body = await res.json() as { ok: boolean };
     expect(body.ok).toBe(true);
+    expect(mockFetch).not.toHaveBeenCalled();
   });
 
   test('returns 400 for missing email', async () => {
@@ -143,6 +283,7 @@ describe('POST /api/subscribe', () => {
   });
 
   test('returns 422 when MailerLite reports invalid email', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
     vi.stubGlobal(
       'fetch',
       vi.fn().mockResolvedValue(new Response('{}', { status: 422 }))
@@ -151,7 +292,7 @@ describe('POST /api/subscribe', () => {
     const res = await app.request('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: 'user@example.com', website: '' }),
+      body: JSON.stringify({ email: 'user@example.com', newsletterLocale: 'es', website: '' }),
     });
 
     expect(res.status).toBe(422);
@@ -161,6 +302,7 @@ describe('POST /api/subscribe', () => {
   });
 
   test('returns 502 when MailerLite call fails', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 500 })));
 
     const res = await app.request('/api/subscribe', {

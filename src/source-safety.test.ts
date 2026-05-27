@@ -42,6 +42,15 @@ describe('CSP-safe source markup', () => {
     expect(css).not.toContain('display: none');
   });
 
+  test('renders newsletter language as radio choices in the subscribe form', () => {
+    const main = readFileSync('src/main.ts', 'utf8');
+
+    expect(main).toContain('name="newsletterLocale"');
+    expect(main).toContain('type="radio"');
+    expect(main).toContain('value="es"');
+    expect(main).toContain('value="en"');
+  });
+
   test('keeps desktop hero content vertically centered', () => {
     const css = readFileSync('src/styles.css', 'utf8');
 

@@ -48,9 +48,9 @@ function renderHeader(page: PageCopy): string {
         </svg>
         Ateneo Abierto
       </a>
-      <div class="locale-toggle" aria-label="${page.languageLabel}">
-        <button class="locale-button ${currentLocale === 'es' ? 'is-active' : ''}" type="button" data-locale="es">ES</button>
-        <button class="locale-button ${currentLocale === 'en' ? 'is-active' : ''}" type="button" data-locale="en">EN</button>
+      <div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
+        <button class="locale-button ${currentLocale === 'es' ? 'is-active' : ''}" type="button" data-locale="es" aria-pressed="${currentLocale === 'es'}" aria-label="${page.languageSwitchTo.es}">ES</button>
+        <button class="locale-button ${currentLocale === 'en' ? 'is-active' : ''}" type="button" data-locale="en" aria-pressed="${currentLocale === 'en'}" aria-label="${page.languageSwitchTo.en}">EN</button>
       </div>
     </header>
   `;
@@ -151,8 +151,23 @@ function renderHome(page: PageCopy): string {
             <span>${page.subscribe.emailLabel}</span>
             <input name="email" type="email" autocomplete="email" placeholder="${page.subscribe.emailPlaceholder}" required />
           </label>
+          <fieldset class="newsletter-language">
+            <legend>${page.subscribe.newsletterLanguageLabel}</legend>
+            <label>
+              <input name="newsletterLocale" type="radio" value="es" ${currentLocale === 'es' ? 'checked' : ''} />
+              <span>Español</span>
+            </label>
+            <label>
+              <input name="newsletterLocale" type="radio" value="en" ${currentLocale === 'en' ? 'checked' : ''} />
+              <span>English</span>
+            </label>
+          </fieldset>
+          <label class="participate-checkbox">
+            <input name="participate" type="checkbox" value="yes" />
+            <span>${page.subscribe.participateLabel}</span>
+          </label>
           <button class="button" type="submit">${page.subscribe.button}</button>
-          <p class="form-message" role="status"></p>
+          <p class="form-message" role="status" aria-live="polite"></p>
           <p class="privacy-note">${page.subscribe.privacy}</p>
         </form>
       </section>
@@ -161,13 +176,25 @@ function renderHome(page: PageCopy): string {
 }
 
 function renderBackToTop(page: PageCopy): string {
-  return `<button class="back-to-top" aria-label="${page.labels.backToTop}" type="button">↑</button>`;
+  return `<button class="back-to-top" aria-label="${page.labels.backToTop}" type="button"><span aria-hidden="true">↑</span></button>`;
+}
+
+function setMetaContent(selector: string, value: string): void {
+  const el = document.querySelector<HTMLMetaElement>(selector);
+  if (el) {
+    el.content = value;
+  }
 }
 
 function render(): void {
   const page = copy[currentLocale];
   document.documentElement.lang = currentLocale;
   document.title = `Ateneo Abierto | ${page.hero.promise}`;
+
+  setMetaContent('meta[name="description"]', page.hero.promise);
+  setMetaContent('meta[property="og:description"]', page.hero.promise);
+  setMetaContent('meta[property="og:locale"]', currentLocale === 'es' ? 'es_VE' : 'en_US');
+  setMetaContent('meta[name="twitter:description"]', page.hero.promise);
 
   root.innerHTML = `
     ${renderHeader(page)}
@@ -193,7 +220,10 @@ function bindEvents(): void {
   removeBackToTopScrollListener?.();
   const backToTop = document.querySelector<HTMLButtonElement>('.back-to-top');
   if (backToTop) {
-    backToTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    backToTop.addEventListener('click', () => {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+    });
     const onScroll = () => {
       const scrollable = document.documentElement.scrollHeight - window.innerHeight;
       backToTop.classList.toggle('is-visible', scrollable > 50 && window.scrollY > Math.min(300, scrollable * 0.3));
@@ -222,7 +252,9 @@ function bindEvents(): void {
 
     const result = await subscribe({
       name: String(data.get('name') ?? ''),
-      email: String(data.get('email') ?? '')
+      email: String(data.get('email') ?? ''),
+      newsletterLocale: data.get('newsletterLocale') === 'en' ? 'en' : 'es',
+      participate: data.get('participate') === 'yes'
     });
 
     button?.removeAttribute('disabled');

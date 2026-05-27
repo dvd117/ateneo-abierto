@@ -1,6 +1,8 @@
 export type SubscribeInput = {
   email: string;
   name?: string;
+  newsletterLocale: 'es' | 'en';
+  participate?: boolean;
 };
 
 export type SubscribeResult =
@@ -32,11 +34,11 @@ export function createSubscribeHandler(provider: SubscribeProvider) {
   };
 }
 
-export const mailerliteProvider: SubscribeProvider = async ({ email, name }) => {
+export const mailerliteProvider: SubscribeProvider = async ({ email, name, newsletterLocale, participate }) => {
   const res = await fetch('/api/subscribe', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, name: name ?? '', website: '' }),
+    body: JSON.stringify({ email, name: name ?? '', newsletterLocale, participate: participate ?? false, website: '' }),
   });
 
   if (!res.ok) {

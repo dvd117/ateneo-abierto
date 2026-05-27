@@ -12,6 +12,7 @@ app.use(
     xFrameOptions: 'DENY',
     xContentTypeOptions: 'nosniff',
     referrerPolicy: 'strict-origin-when-cross-origin',
+    strictTransportSecurity: 'max-age=31536000; includeSubDomains',
     contentSecurityPolicy: {
       defaultSrc: ["'self'"],
     },
@@ -31,6 +32,29 @@ app.get('/manifesto', (c) => {
 });
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+type NewsletterLocale = 'es' | 'en';
+
+function isNewsletterLocale(value: unknown): value is NewsletterLocale {
+  return value === 'es' || value === 'en';
+}
+
+function mailerLiteGroupIdFor(locale: NewsletterLocale): string {
+  const groupId = locale === 'es'
+    ? process.env.MAILERLITE_GROUP_ES_ID
+    : process.env.MAILERLITE_GROUP_EN_ID;
+
+  if (!groupId) {
+    throw new Error('missing-mailerlite-group-id');
+  }
+
+  return groupId;
+}
+
+function mailerLiteParticipateGroupIdFor(locale: NewsletterLocale): string | null {
+  return (locale === 'es'
+    ? process.env.MAILERLITE_PARTICIPATE_ES_ID
+    : process.env.MAILERLITE_PARTICIPATE_EN_ID) ?? null;
+}
 
 app.post(
   '/api/subscribe',
@@ -53,6 +77,7 @@ app.post(
 
     // Honeypot — return ok silently so bots think they succeeded
     if (body.website) {
+      console.warn('[subscribe] honeypot triggered');
       return c.json({ ok: true });
     }
 
@@ -61,21 +86,40 @@ app.post(
     const name = typeof body.name === 'string'
       ? body.name.trim().slice(0, 100).replace(/<[^>]*>/g, '')
       : '';
+    const newsletterLocale = body.newsletterLocale;
+    const participate = body.participate === true;
 
     if (!email || !emailPattern.test(email) || email.length > 254) {
       return c.json({ ok: false, reason: 'invalid-email' }, 400);
     }
 
+    if (!isNewsletterLocale(newsletterLocale)) {
+      return c.json({ ok: false, reason: 'invalid-newsletter-locale' }, 400);
+    }
+
     const apiKey = process.env.MAILERLITE_API_KEY ?? '';
 
+    const groups = [mailerLiteGroupIdFor(newsletterLocale)];
+    if (participate) {
+      const participateGroupId = mailerLiteParticipateGroupIdFor(newsletterLocale);
+      if (participateGroupId) groups.push(participateGroupId);
+    }
+
     try {
-      await addSubscriber({ email, name: name || undefined }, apiKey);
+      await addSubscriber({
+        email,
+        name: name || undefined,
+        newsletterLocale,
+        groups,
+        participationInterest: participate || undefined,
+      }, apiKey);
       return c.json({ ok: true });
     } catch (err) {
       const message = err instanceof Error ? err.message : '';
       if (message === 'invalid-email') {
         return c.json({ ok: false, reason: 'invalid-email' }, 422);
       }
+      console.error('[subscribe] provider error', message || err);
       return c.json({ ok: false, reason: 'provider-error' }, 502);
     }
   }
