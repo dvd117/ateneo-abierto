@@ -26,14 +26,6 @@ app.use(
 
 app.get('/api/health', (c) => c.json({ ok: true }));
 
-// TEMP: remove after debugging rate limit IP detection
-app.get('/api/debug-ip', (c) => c.json({
-  'x-forwarded-for': c.req.header('x-forwarded-for'),
-  'x-real-ip': c.req.header('x-real-ip'),
-  'cf-connecting-ip': c.req.header('cf-connecting-ip'),
-  remoteAddr: c.env?.incoming?.socket?.remoteAddress,
-}));
-
 app.get('/manifesto', (c) => {
   const lang = c.req.query('lang');
   return c.redirect(lang === 'es' || lang === 'en' ? `/?lang=${lang}` : '/', 301);
