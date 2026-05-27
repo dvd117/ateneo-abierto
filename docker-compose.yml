@@ -18,6 +18,7 @@ services:
       - "traefik.http.routers.ateneo-abierto.entrypoints=websecure"
       - "traefik.http.routers.ateneo-abierto.tls=true"
       - "traefik.http.routers.ateneo-abierto.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.ateneo-abierto.service=ateneo-abierto"
       - "traefik.http.services.ateneo-abierto.loadbalancer.server.port=3000"
       - "traefik.docker.network=dokploy-network"
       # Rate-limit the subscribe endpoint: 5 requests per minute per IP
