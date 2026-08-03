@@ -1,7 +1,13 @@
 import type { Locale } from './locale';
 
 export type Pillar = {
+  horizon: string;
   title: string;
+  body: string;
+};
+
+export type OriginBeat = {
+  heading: string;
   body: string;
 };
 
@@ -21,6 +27,7 @@ export type PageCopy = {
   labels: {
     origin: string;
     audience: string;
+    name: string;
     structure: string;
     boundaries: string;
     updates: string;
@@ -28,11 +35,13 @@ export type PageCopy = {
   };
   origin: {
     title: string;
-    body: string;
+    beats: OriginBeat[];
+    closing: string;
   };
   audience: {
     title: string;
     body: string;
+    who: string[];
   };
   name: {
     title: string;
@@ -43,6 +52,8 @@ export type PageCopy = {
     items: Pillar[];
   };
   not: {
+    title: string;
+    points: string[];
     body: string;
   };
   subscribe: {
@@ -83,6 +94,7 @@ export const copy: Record<Locale, PageCopy> = {
     labels: {
       origin: 'Punto de partida',
       audience: 'Para quién',
+      name: 'El nombre',
       structure: 'Estructura',
       boundaries: 'Límites',
       updates: 'Actualizaciones',
@@ -90,13 +102,35 @@ export const copy: Record<Locale, PageCopy> = {
     },
     origin: {
       title: 'El sistema educativo fue desmantelado. La respuesta se construye desde afuera.',
-      body:
-        'Hubo un tiempo en que Venezuela apostó por formar talento al más alto nivel. Fundayacucho fue una de las expresiones más visibles de esa apuesta: enviar estudiantes a prepararse afuera con la expectativa de que volvieran a enseñar, construir y multiplicar lo aprendido.\n\nEsa idea de país fue desmantelada. La educación siguió existiendo, pero golpeada por años de abandono, recortes presupuestarios, migración docente, instituciones debilitadas y acceso cada vez más desigual. El resultado no es sólo una generación con menos oportunidades: es una brecha acumulada frente a un mundo que siguió avanzando.\n\nAteneo Abierto no viene a reemplazar la educación formal. Viene a complementar lo que la gente ya aprendió con habilidades que muchas escuelas y universidades no pudieron enseñar a tiempo, porque esta época empezó a moverse más rápido que el sistema educativo venezolano incluso en sus mejores condiciones.\n\nLas herramientas y el conocimiento existen. Lo que falta es el puente: talleres prácticos, grupos pequeños y acceso compartido a herramientas que la gente puede llevarse y usar fuera del taller.\n\nLo que se arrebató se reconstruye desde afuera del sistema que lo destruyó. Ese es el punto de partida.'
+      beats: [
+        {
+          heading: 'La apuesta',
+          body:
+            'Hubo un tiempo en que Venezuela entendió que su recurso más valioso no era el petróleo, sino su gente. Fundayacucho envió a miles de estudiantes a las mejores universidades del mundo, con un compromiso: volver y enseñar lo aprendido. Muchos volvieron, y fueron profesores.'
+        },
+        {
+          heading: 'El desmantelamiento',
+          body:
+            'Esa apuesta fue desmontada deliberadamente. Cambió lo que se enseñaba. Llegaron los recortes presupuestarios. Los profesores se fueron, las escuelas se vaciaron y el aprendizaje se volvió un lujo.'
+        },
+        {
+          heading: 'La brecha',
+          body:
+            'Una generación entera se quedó con menos opciones. No por falta de capacidad. Por falta de acceso. Y mientras tanto, el mundo siguió avanzando.'
+        },
+        {
+          heading: 'El puente',
+          body:
+            'Las herramientas y el conocimiento existen. Lo que falta es el puente: talleres prácticos, grupos pequeños y acceso compartido a herramientas que la gente se puede llevar y usar fuera del taller.'
+        }
+      ],
+      closing: 'Lo que se nos arrebató se reconstruye desde afuera del sistema que lo destruyó.'
     },
     audience: {
       title: 'Para venezolanos que saben que el momento exige herramientas nuevas.',
       body:
-        'Para venezolanos que entienden que la educación que recibieron no los preparó para los retos y oportunidades de hoy, y que están listos para empezar. Profesores, profesionales, estudiantes, emprendedores, gente que tiene dos trabajos. No hace falta perfil técnico. Sólo curiosidad y ganas de empezar.'
+        'Para venezolanos que entienden que la educación que recibieron no los preparó para los retos y oportunidades de hoy, y que están listos para empezar. No hace falta perfil técnico. Sólo curiosidad y ganas de empezar.',
+      who: ['Profesores', 'Profesionales', 'Estudiantes', 'Emprendedores', 'Gente que tiene dos trabajos']
     },
     name: {
       title: 'Por qué Ateneo Abierto',
@@ -107,25 +141,34 @@ export const copy: Record<Locale, PageCopy> = {
       title: 'Tres pilares',
       items: [
         {
+          horizon: 'Para empezar ya',
           title: 'Talleres prácticos de IA y herramientas digitales',
           body:
-            'Grupos pequeños, ejercicios prácticos. Aprende a usar inteligencia artificial y otras tecnologías que están cambiando las formas en que ejercemos nuestra libertad. Para empezar ya.'
+            'Grupos pequeños, ejercicios prácticos. Aprende a usar inteligencia artificial y otras tecnologías que están cambiando las formas en que ejercemos nuestra libertad.'
         },
         {
+          horizon: 'Mediano plazo',
           title: 'Junto a la educación formal',
           body:
-            'Creemos que la educación formal sigue siendo fundamental. Donde las universidades y docentes siguen funcionando, queremos trabajar junto a ellos, no en su lugar. Las herramientas prácticas y los fundamentos del aula se complementan. Mediano plazo.'
+            'Creemos que la educación formal sigue siendo fundamental. Donde las universidades y docentes siguen funcionando, queremos trabajar junto a ellos, no en su lugar. Las herramientas prácticas y los fundamentos del aula se complementan.'
         },
         {
+          horizon: 'Post-transición',
           title: 'El norte estratégico',
           body:
-            'El norte es una red de espacios de aprendizaje cívico: siguiendo el ejemplo de las bibliotecas públicas del siglo XXI donde el acceso a internet, herramientas y aprendizaje sea un derecho público, no un privilegio individual. Post-transición.'
+            'El norte es una red de espacios de aprendizaje cívico: siguiendo el ejemplo de las bibliotecas públicas del siglo XXI donde el acceso a internet, herramientas y aprendizaje sea un derecho público, no un privilegio individual.'
         }
       ]
     },
     not: {
+      title: 'Lo que no somos',
+      points: [
+        'No somos parte del Estado venezolano, ni de ninguno de sus ministerios, planes o programas.',
+        'No somos una estructura partidista ni una campaña electoral.',
+        'No reclutamos a nadie para actividad pública confrontativa dentro de Venezuela.'
+      ],
       body:
-        'Ateneo Abierto es un proyecto independiente, civil y educativo. No somos parte del Estado venezolano, de ninguna estructura partidista, ni de ningún esfuerzo de reclutamiento público. Las habilidades que la gente aprende aquí son suyas.'
+        'Ateneo Abierto es un proyecto independiente, civil y educativo. Las habilidades que la gente aprende aquí son suyas.'
     },
     subscribe: {
       title: 'Recibe actualizaciones',
@@ -165,6 +208,7 @@ export const copy: Record<Locale, PageCopy> = {
     labels: {
       origin: 'Starting point',
       audience: "Who it's for",
+      name: 'The name',
       structure: 'Structure',
       boundaries: 'Boundaries',
       updates: 'Updates',
@@ -172,13 +216,35 @@ export const copy: Record<Locale, PageCopy> = {
     },
     origin: {
       title: 'The education system was dismantled. The response is being built outside it.',
-      body:
-        "There was a time when Venezuela invested in educating talent at the highest level. Fundayacucho was one of the clearest expressions of that bet: sending students abroad to study with the expectation that they would return to teach, build, and multiply what they learned.\n\nThat idea of the country was dismantled. Education continued to exist, but it was damaged by years of neglect, budget cuts, teacher migration, weakened institutions, and increasingly unequal access. The result is not only a generation with fewer opportunities: it is an accumulated gap with a world that kept moving forward.\n\nAteneo Abierto is not here to replace formal education. It is here to complement what people already learned with skills many schools and universities could not teach in time, because this era started moving faster than the Venezuelan education system could have moved even in better conditions.\n\nThe tools and knowledge exist. What is missing is the bridge: practical workshops, small groups, and shared access to tools people can take and use beyond the workshop.\n\nWhat was taken is being rebuilt outside the system that destroyed it. That is the starting point."
+      beats: [
+        {
+          heading: 'The bet',
+          body:
+            "There was a time when Venezuela understood that its most valuable resource wasn't oil — it was its people. Fundayacucho sent thousands of students to some of the best universities in the world, with one commitment: come back and teach what they learned. Many did, and became professors themselves."
+        },
+        {
+          heading: 'The dismantling',
+          body:
+            'That bet was deliberately taken apart. What was taught changed. Budget cuts followed. Teachers left, schools emptied out, and learning became a luxury.'
+        },
+        {
+          heading: 'The gap',
+          body:
+            'A whole generation was left with fewer options. Not for lack of capacity. For lack of access. And meanwhile, the world kept moving.'
+        },
+        {
+          heading: 'The bridge',
+          body:
+            'The tools and the knowledge exist. What is missing is the bridge: practical workshops, small groups, and shared access to tools people can take with them and use beyond the workshop.'
+        }
+      ],
+      closing: 'What was taken is being rebuilt outside the system that destroyed it.'
     },
     audience: {
       title: 'For Venezuelans who know the moment calls for new tools.',
       body:
-        "For Venezuelans who understand that the education they received didn't fully prepare them for today's challenges and opportunities, and who are ready to begin. Teachers, professionals, students, entrepreneurs, people working two jobs. No technical background required. Just curiosity and a reason to start."
+        "For Venezuelans who understand that the education they received didn't fully prepare them for today's challenges and opportunities, and who are ready to begin. No technical background required. Just curiosity and a reason to start.",
+      who: ['Teachers', 'Professionals', 'Students', 'Entrepreneurs', 'People working two jobs']
     },
     name: {
       title: 'Why "Ateneo Abierto"',
@@ -189,25 +255,34 @@ export const copy: Record<Locale, PageCopy> = {
       title: 'Three pillars',
       items: [
         {
+          horizon: 'Ready to start now',
           title: 'Hands-on workshops in AI and digital tools',
           body:
-            'Small groups, practical. Learning to use AI and other technologies quietly changing what freedom looks like in practice. Ready to start now.'
+            'Small groups, practical. Learning to use AI and other technologies quietly changing what freedom looks like in practice.'
         },
         {
+          horizon: 'Mid-term',
           title: 'Alongside formal education',
           body:
-            "We believe formal education still matters. Where universities and educators are still functioning, we want to work alongside them, not replace them. Practical tools and classroom foundations strengthen each other. Mid-term."
+            'We believe formal education still matters. Where universities and educators are still functioning, we want to work alongside them, not replace them. Practical tools and classroom foundations strengthen each other.'
         },
         {
+          horizon: 'Post-transition',
           title: 'Where this is heading',
           body:
-            'The goal is a network of civic learning spaces: inspired by the 21st-century public libraries where access to internet, tools, and learning is a public right, not an individual privilege. Post-transition.'
+            'The goal is a network of civic learning spaces: inspired by the 21st-century public libraries where access to internet, tools, and learning is a public right, not an individual privilege.'
         }
       ]
     },
     not: {
+      title: 'What we are not',
+      points: [
+        'Not a Venezuelan state program, and not tied to any of its ministries or plans.',
+        'Not a party structure or an electoral campaign.',
+        'Not recruiting anyone into confrontational public activity inside Venezuela.'
+      ],
       body:
-        'Ateneo Abierto is independent, civilian, and educational. We are not part of the Venezuelan state, a party structure, or any public recruitment effort. The skills people learn here belong to them.'
+        'Ateneo Abierto is independent, civilian, and educational. The skills people learn here belong to them.'
     },
     subscribe: {
       title: 'Get updates',

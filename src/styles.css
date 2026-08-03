@@ -55,19 +55,19 @@ html {
   }
 }
 
+.hero-copy .hero-brand {
+  animation: fade-up 0.5s ease both;
+  animation-delay: 60ms;
+}
+
 .hero-copy .eyebrow {
   animation: fade-up 0.5s ease both;
-  animation-delay: 80ms;
+  animation-delay: 140ms;
 }
 
 .hero-copy h1 {
   animation: fade-up 0.55s ease both;
-  animation-delay: 180ms;
-}
-
-.hero-copy .promise {
-  animation: fade-up 0.55s ease both;
-  animation-delay: 280ms;
+  animation-delay: 240ms;
 }
 
 .hero-copy .intro {
@@ -85,21 +85,82 @@ html {
   animation-delay: 300ms;
 }
 
+/* Signature moment: the staircase draws itself instead of sitting there as a
+   third copy of the logo. Path length of the mark is ~150 user units. */
+@keyframes draw-staircase {
+  from {
+    stroke-dashoffset: 160;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes dot-land {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.open-room-path {
+  stroke-dasharray: 160;
+  animation: draw-staircase 1.5s cubic-bezier(0.65, 0, 0.35, 1) both;
+  animation-delay: 500ms;
+}
+
+.open-room-dot {
+  transform-origin: center;
+  animation: dot-land 0.4s ease both;
+  animation-delay: 1.9s;
+}
+
+/* Scroll-reveal: elements start offset and settle when observed. */
+[data-reveal] {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+[data-reveal].is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
 
+  .hero-copy .hero-brand,
   .hero-copy .eyebrow,
   .hero-copy h1,
-  .hero-copy .promise,
   .hero-copy .intro,
   .hero-copy .hero-actions,
-  .open-room {
+  .open-room,
+  .open-room-path,
+  .open-room-dot {
     animation: none;
   }
 
+  .open-room-path {
+    stroke-dasharray: none;
+  }
+
+  /* initReveal() also short-circuits, but keep the CSS inert on its own. */
+  [data-reveal] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .hero-cue-line,
   .back-to-top {
+    animation: none;
     transition: none;
   }
 }
@@ -188,6 +249,24 @@ input {
   color: var(--paper);
 }
 
+.progress-rail {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  overflow: hidden;
+}
+
+.progress-rail::after {
+  content: "";
+  display: block;
+  height: 100%;
+  background: var(--terracotta);
+  transform: scaleX(var(--progress, 0));
+  transform-origin: left center;
+}
+
 .hero {
   position: relative;
   display: grid;
@@ -218,13 +297,27 @@ p {
   margin-top: 0;
 }
 
+/* The h1 is the promise, not the wordmark — it is a full sentence, so it is
+   set well below the old 132px display size. */
 h1 {
+  max-width: 15ch;
   margin-bottom: 0;
-  margin-top: 28px;
-  font-size: clamp(64px, 12vw, 132px);
+  margin-top: 22px;
+  font-size: clamp(38px, 6.4vw, 78px);
   font-weight: 700;
   letter-spacing: -0.02em;
-  line-height: 0.88;
+  line-height: 1;
+}
+
+.hero-brand {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 18px;
+  padding-bottom: 6px;
+  border-bottom: 3px solid var(--terracotta);
+  font-size: clamp(19px, 2.2vw, 24px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
 }
 
 h2 {
@@ -242,19 +335,8 @@ h3 {
   line-height: 1.05;
 }
 
-.promise {
-  max-width: 620px;
-  margin-bottom: 0;
-  margin-top: 30px;
-  font-size: clamp(25px, 4vw, 42px);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.08;
-}
-
 .intro,
 .section-copy p,
-.working-table p,
 .pillar p,
 .not-list,
 .privacy-note,
@@ -321,12 +403,6 @@ h3 {
   }
 }
 
-.text-link {
-  color: var(--green);
-  font-size: 15px;
-  font-weight: 700;
-}
-
 .open-room {
   container-type: inline-size;
   display: grid;
@@ -347,37 +423,34 @@ h3 {
   margin-bottom: clamp(26px, 4vw, 42px);
 }
 
-.open-room ul {
+/* Quiet cue that the full-height hero continues below. */
+.hero-cue {
+  position: absolute;
+  bottom: clamp(18px, 3vw, 30px);
+  left: clamp(22px, 5vw, 72px);
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
-  padding: 0;
-  margin: 0;
-  list-style: none;
+  place-items: center;
+  width: 34px;
+  height: 46px;
 }
 
-.open-room li {
-  display: grid;
-  min-height: 72px;
-  gap: 8px;
-  padding-top: 10px;
-  border-top: 1px solid rgba(243, 237, 223, 0.28);
+.hero-cue-line {
+  width: 1px;
+  height: 34px;
+  background: linear-gradient(to bottom, transparent, var(--terracotta));
+  animation: cue-drift 2.4s ease-in-out infinite;
 }
 
-.open-room-number {
-  color: var(--ochre);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
-  line-height: 1;
-}
-
-.open-room-label {
-  color: var(--paper);
-  font-size: clamp(11px, 4cqi, 22px);
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 1.02;
+@keyframes cue-drift {
+  0%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(-4px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(4px);
+  }
 }
 
 .section {
@@ -386,17 +459,9 @@ h3 {
 }
 
 .origin-section {
-  display: grid;
-  grid-template-columns: minmax(0, 0.18fr) minmax(0, 0.82fr);
-  gap: clamp(24px, 5vw, 72px);
   background: var(--green);
   color: var(--paper);
-}
-
-.origin-section::before {
-  content: "";
-  align-self: stretch;
-  border-left: 8px solid var(--terracotta);
+  border-top: 8px solid var(--terracotta);
 }
 
 .origin-section .eyebrow,
@@ -404,8 +469,101 @@ h3 {
   color: #dfe9df;
 }
 
+.origin-section .eyebrow {
+  color: var(--ochre);
+}
+
 .origin-section .section-copy {
-  max-width: 880px;
+  max-width: 900px;
+}
+
+.origin-section h2 {
+  max-width: 20ch;
+}
+
+/* The staircase made structural: each beat is a step, and the riser between
+   them is the same terracotta rule used everywhere else in the identity. */
+.origin-steps {
+  display: grid;
+  gap: 0;
+  max-width: 940px;
+  padding: 0;
+  margin: clamp(28px, 5vw, 48px) 0 0;
+  list-style: none;
+  counter-reset: origin-step;
+}
+
+.origin-step {
+  position: relative;
+  padding: 0 0 clamp(26px, 4vw, 38px) clamp(30px, 5vw, 56px);
+  border-left: 2px solid rgba(243, 237, 223, 0.22);
+}
+
+.origin-step:last-child {
+  padding-bottom: 0;
+  border-left-color: transparent;
+}
+
+/* Terracotta fills the riser only as far as the step has been revealed. */
+.origin-step::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -2px;
+  width: 2px;
+  height: 0;
+  background: var(--terracotta);
+  transition: height 0.7s ease 0.15s;
+}
+
+.origin-step.is-revealed::before {
+  height: 100%;
+}
+
+.origin-step-marker {
+  position: absolute;
+  top: -2px;
+  left: 0;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  transform: translateX(-50%);
+  border-radius: 2px;
+  background: var(--terracotta);
+  color: var(--paper);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.origin-step-heading {
+  margin-bottom: 8px;
+  color: var(--paper);
+  font-size: clamp(20px, 2.4vw, 27px);
+  letter-spacing: -0.01em;
+}
+
+.origin-step p {
+  max-width: 62ch;
+  margin-bottom: 0;
+}
+
+/* The line the whole section exists to deliver. */
+.origin-closing {
+  max-width: 24ch;
+  margin: clamp(34px, 5vw, 56px) 0 0;
+  padding-top: clamp(22px, 3vw, 32px);
+  border-top: 2px solid var(--ochre);
+  font-size: clamp(24px, 3.4vw, 42px);
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  line-height: 1.1;
+}
+
+.origin-section .origin-closing {
+  color: var(--paper);
 }
 
 .section-copy {
@@ -419,6 +577,25 @@ h3 {
 
 .audience-section .section-copy {
   max-width: 920px;
+}
+
+/* Audience types lifted out of the sentence so they can be scanned. */
+.audience-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 0;
+  margin: 26px 0 0;
+  list-style: none;
+}
+
+.audience-chip {
+  padding: 9px 15px;
+  border: 1px solid color-mix(in srgb, var(--terracotta) 40%, transparent);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--paper) 70%, transparent);
+  font-size: 15px;
+  font-weight: 700;
 }
 
 .name-section {
@@ -444,55 +621,66 @@ h3 {
   background: var(--paper-warm);
 }
 
-.working-table {
-  display: grid;
-  grid-template-columns: minmax(140px, 0.28fr) minmax(0, 1fr);
-  gap: clamp(16px, 3vw, 28px);
-  align-items: start;
-  max-width: 1040px;
-  margin-bottom: clamp(28px, 5vw, 52px);
-  padding: 20px 0 24px;
-  border-bottom: 1px solid var(--line);
-  border-top: 6px solid var(--workshop-signal);
-}
-
-.working-table-label {
-  margin: 0;
-  color: var(--workshop-signal);
-  font-family: var(--font-mono);
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0;
-  line-height: 1.2;
-  text-transform: uppercase;
-}
-
-.working-table h3 {
-  margin-bottom: 8px;
-}
-
-.working-table p:not(.working-table-label) {
-  max-width: 760px;
-  margin-bottom: 0;
-}
-
 .pillars {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: clamp(18px, 3vw, 34px);
+  align-items: start;
   max-width: 1180px;
 }
 
+/* Three ascending steps — the mark's own geometry, carrying the three time
+   horizons the content already names. */
 .pillar {
-  min-height: 240px;
   padding: 18px 0 0;
   border-top: 4px solid var(--green);
   border-radius: 0;
   background: transparent;
+  transition: transform 0.25s ease, border-top-color 0.25s ease;
+}
+
+.pillar[data-step="2"] {
+  margin-top: clamp(0px, 3vw, 34px);
+}
+
+.pillar[data-step="3"] {
+  margin-top: clamp(0px, 6vw, 68px);
+}
+
+.pillar:hover,
+.pillar:focus-within {
+  transform: translateY(-4px);
+  border-top-color: var(--terracotta);
+}
+
+.pillar-horizon {
+  margin-bottom: 12px;
+  color: var(--workshop-signal);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  text-transform: uppercase;
 }
 
 .pillar h3 {
-  max-width: 15ch;
+  max-width: 20ch;
+}
+
+.pillar p {
+  margin-bottom: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pillar {
+    transition: border-top-color 0.25s ease;
+  }
+
+  .pillar:hover,
+  .pillar:focus-within {
+    transform: none;
+  }
 }
 
 .not-section {
@@ -503,15 +691,23 @@ h3 {
 .not-list {
   display: grid;
   max-width: 900px;
-  gap: 12px;
+  gap: 14px;
   padding: 0;
-  margin: 0;
+  margin: 0 0 26px;
   list-style: none;
 }
 
 .not-list li {
-  padding-left: 18px;
+  padding: 2px 0 2px 18px;
   border-left: 4px solid var(--terracotta);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.not-closing {
+  max-width: 640px;
+  margin-bottom: 0;
 }
 
 .subscribe-section {
@@ -587,6 +783,8 @@ h3 {
   width: auto;
   min-height: auto;
   padding: 0;
+  /* Default UA blue reads as a stray system control on the warm dark band. */
+  accent-color: var(--ochre);
 }
 
 .field-supplement {
@@ -676,6 +874,25 @@ h3 {
   background: color-mix(in srgb, var(--terracotta) 90%, black 10%);
 }
 
+/* Three pillars stay cramped well above the old 900px breakpoint, so step
+   down to 2-up first rather than jumping straight to a single column. */
+@media (max-width: 1080px) {
+  .pillars {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Three items in two columns leaves a hole. Give the long-term pillar the
+     full width instead — it is the north star, so it reads as the closer. */
+  .pillar[data-step="3"] {
+    grid-column: 1 / -1;
+    margin-top: clamp(10px, 2vw, 24px);
+  }
+
+  .pillar[data-step="3"] p {
+    max-width: 62ch;
+  }
+}
+
 @media (max-width: 900px) {
   .site-header {
     grid-template-columns: 1fr auto;
@@ -685,22 +902,19 @@ h3 {
   }
 
   .hero,
-  .origin-section,
   .pillars,
-  .working-table,
   .subscribe-section,
   .site-footer {
     grid-template-columns: 1fr;
   }
 
-  .origin-section::before {
-    min-height: 8px;
-    border-left: 0;
-    border-top: 8px solid var(--terracotta);
+  .pillar[data-step="2"] {
+    margin-top: 0;
   }
 
   .hero {
     min-height: auto;
+    padding-bottom: clamp(70px, 12vw, 96px);
   }
 
   .open-room {
@@ -710,15 +924,12 @@ h3 {
 
 @media (max-width: 560px) {
   .site-header {
-    position: static;
+    position: relative;
   }
 
   h1 {
-    font-size: clamp(58px, 18vw, 86px);
-  }
-
-  .promise {
-    font-size: 26px;
+    max-width: none;
+    font-size: clamp(32px, 8.6vw, 44px);
   }
 
   .hero-actions,
@@ -726,9 +937,19 @@ h3 {
     width: 100%;
   }
 
-  .text-link {
-    display: inline-flex;
-    min-height: 40px;
-    align-items: center;
+  .origin-step {
+    padding-left: 24px;
+  }
+
+  .origin-step-marker {
+    width: 22px;
+    height: 22px;
+    font-size: 10px;
+  }
+
+  /* Keep the floating button clear of the subscribe submit button. */
+  .back-to-top {
+    right: 16px;
+    bottom: 16px;
   }
 }

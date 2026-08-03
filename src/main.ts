@@ -1,6 +1,7 @@
 import { copy, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
+import { initProgressRail, initReveal } from './reveal';
 import './styles.css';
 
 const app = document.querySelector<HTMLDivElement>('#app');
@@ -11,6 +12,8 @@ if (!app) {
 
 const root = app;
 let removeBackToTopScrollListener: (() => void) | undefined;
+let teardownReveal: (() => void) | undefined;
+let teardownProgressRail: (() => void) | undefined;
 
 let currentLocale = detectLocale({
   search: window.location.search,
@@ -49,11 +52,22 @@ function renderHeader(page: PageCopy): string {
         Ateneo Abierto
       </a>
       <div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
-        <button class="locale-button ${currentLocale === 'es' ? 'is-active' : ''}" type="button" data-locale="es" aria-pressed="${currentLocale === 'es'}" aria-label="${page.languageSwitchTo.es}">ES</button>
-        <button class="locale-button ${currentLocale === 'en' ? 'is-active' : ''}" type="button" data-locale="en" aria-pressed="${currentLocale === 'en'}" aria-label="${page.languageSwitchTo.en}">EN</button>
+        ${renderLocaleButton(page, 'es', 'ES')}
+        ${renderLocaleButton(page, 'en', 'EN')}
       </div>
+      <div class="progress-rail" aria-hidden="true"></div>
     </header>
   `;
+}
+
+function renderLocaleButton(page: PageCopy, locale: Locale, label: string): string {
+  const isActive = currentLocale === locale;
+
+  // Only the inactive button describes a switch. Labelling the active one
+  // "switch to Spanish" while it is already Spanish misleads screen readers.
+  const describe = isActive ? '' : ` aria-label="${page.languageSwitchTo[locale]}"`;
+
+  return `<button class="locale-button ${isActive ? 'is-active' : ''}" type="button" data-locale="${locale}" aria-pressed="${isActive}"${describe}>${label}</button>`;
 }
 
 function renderFooter(page: PageCopy): string {
@@ -70,9 +84,9 @@ function renderHome(page: PageCopy): string {
     <main id="top">
       <section class="hero">
         <div class="hero-copy">
+          <p class="hero-brand">${page.hero.title}</p>
           <p class="eyebrow">${page.hero.eyebrow}</p>
-          <h1>${page.hero.title.replace(' ', '<br />')}</h1>
-          <p class="promise">${page.hero.promise}</p>
+          <h1>${page.hero.promise}</h1>
           <p class="intro">${page.hero.body}</p>
           <div class="hero-actions">
             <a class="button" href="#subscribe">${page.hero.primaryCta}</a>
@@ -80,31 +94,56 @@ function renderHome(page: PageCopy): string {
         </div>
         <div class="open-room" aria-hidden="true">
           <svg class="open-room-mark" viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M14 68 L14 52 L32 52 L32 36 L50 36 L50 20 L66 20" stroke="#f3eddf" stroke-width="5.5" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
-            <rect x="52" y="12" width="8" height="8" fill="#d39b35"/>
+            <path class="open-room-path" d="M14 68 L14 52 L32 52 L32 36 L50 36 L50 20 L66 20" stroke="#f3eddf" stroke-width="5.5" fill="none" stroke-linecap="square" stroke-linejoin="miter"/>
+            <rect class="open-room-dot" x="52" y="12" width="8" height="8" fill="#d39b35"/>
           </svg>
         </div>
+        <a class="hero-cue" href="#origin" aria-label="${page.labels.origin}">
+          <span class="hero-cue-line" aria-hidden="true"></span>
+        </a>
       </section>
 
       <section id="origin" class="section origin-section">
         <div class="section-copy">
           <p class="eyebrow">${page.labels.origin}</p>
-          <h2>${page.origin.title}</h2>
-          ${renderParagraphs(page.origin.body)}
+          <h2 data-reveal>${page.origin.title}</h2>
         </div>
+        <ol class="origin-steps">
+          ${page.origin.beats
+            .map(
+              (beat, index) => `
+                <li class="origin-step" data-reveal data-reveal-delay="${index * 90}">
+                  <span class="origin-step-marker" aria-hidden="true">${String(index + 1).padStart(2, '0')}</span>
+                  <h3 class="origin-step-heading">${beat.heading}</h3>
+                  <p>${beat.body}</p>
+                </li>
+              `
+            )
+            .join('')}
+        </ol>
+        <p class="origin-closing" data-reveal>${page.origin.closing}</p>
       </section>
 
       <section class="section audience-section">
         <div class="section-copy">
           <p class="eyebrow">${page.labels.audience}</p>
-          <h2>${page.audience.title}</h2>
+          <h2 data-reveal>${page.audience.title}</h2>
           <p>${page.audience.body}</p>
+          <ul class="audience-chips">
+            ${page.audience.who
+              .map(
+                (who, index) =>
+                  `<li class="audience-chip" data-reveal data-reveal-delay="${index * 70}">${who}</li>`
+              )
+              .join('')}
+          </ul>
         </div>
       </section>
 
       <section class="section name-section">
         <div class="section-copy">
-          <h2>${page.name.title}</h2>
+          <p class="eyebrow">${page.labels.name}</p>
+          <h2 data-reveal>${page.name.title}</h2>
           ${renderParagraphs(page.name.body)}
         </div>
       </section>
@@ -112,13 +151,14 @@ function renderHome(page: PageCopy): string {
       <section class="section pillars-section">
         <div class="section-heading">
           <p class="eyebrow">${page.labels.structure}</p>
-          <h2>${page.pillars.title}</h2>
+          <h2 data-reveal>${page.pillars.title}</h2>
         </div>
         <div class="pillars">
           ${page.pillars.items
             .map(
-              (pillar) => `
-                <article class="pillar">
+              (pillar, index) => `
+                <article class="pillar" data-step="${index + 1}" data-reveal data-reveal-delay="${index * 110}">
+                  <p class="pillar-horizon">${pillar.horizon}</p>
                   <h3>${pillar.title}</h3>
                   <p>${pillar.body}</p>
                 </article>
@@ -131,14 +171,23 @@ function renderHome(page: PageCopy): string {
       <section class="section not-section">
         <div class="section-copy">
           <p class="eyebrow">${page.labels.boundaries}</p>
-          <p>${page.not.body}</p>
+          <h2 data-reveal>${page.not.title}</h2>
+          <ul class="not-list">
+            ${page.not.points
+              .map(
+                (point, index) =>
+                  `<li data-reveal data-reveal-delay="${index * 80}">${point}</li>`
+              )
+              .join('')}
+          </ul>
+          <p class="not-closing">${page.not.body}</p>
         </div>
       </section>
 
       <section id="subscribe" class="section subscribe-section">
         <div class="section-copy">
           <p class="eyebrow">${page.labels.updates}</p>
-          <h2>${page.subscribe.title}</h2>
+          <h2 data-reveal>${page.subscribe.title}</h2>
           <p>${page.subscribe.body}</p>
         </div>
         <form class="subscribe-form" novalidate>
@@ -166,8 +215,8 @@ function renderHome(page: PageCopy): string {
             <input name="participate" type="checkbox" value="yes" />
             <span>${page.subscribe.participateLabel}</span>
           </label>
+          <p class="form-message" role="status" aria-live="polite" tabindex="-1"></p>
           <button class="button" type="submit">${page.subscribe.button}</button>
-          <p class="form-message" role="status" aria-live="polite"></p>
           <p class="privacy-note">${page.subscribe.privacy}</p>
         </form>
       </section>
@@ -207,6 +256,14 @@ function render(): void {
 }
 
 function bindEvents(): void {
+  // render() replaces the whole tree, so the observers from the previous
+  // render point at detached nodes and have to be torn down first.
+  teardownReveal?.();
+  teardownReveal = initReveal(root);
+
+  teardownProgressRail?.();
+  teardownProgressRail = initProgressRail(root.querySelector<HTMLElement>('.progress-rail'));
+
   document.querySelectorAll<HTMLButtonElement>('[data-locale]').forEach((button) => {
     button.addEventListener('click', () => {
       const locale = button.dataset.locale;
@@ -249,6 +306,7 @@ function bindEvents(): void {
     button?.setAttribute('disabled', 'true');
     message.textContent = '';
     message.className = 'form-message';
+    message.setAttribute('role', 'status');
 
     const result = await subscribe({
       name: String(data.get('name') ?? ''),
@@ -263,12 +321,17 @@ function bindEvents(): void {
       form.reset();
       message.textContent = page.subscribe.success;
       message.classList.add('is-success');
+      message.focus();
       return;
     }
 
     message.textContent =
       result.reason === 'invalid-email' ? page.subscribe.invalidEmail : page.subscribe.providerError;
     message.classList.add('is-error');
+    // A polite status after the button leaves keyboard and screen-reader users
+    // with no signal that the submit failed. Announce it and move to it.
+    message.setAttribute('role', 'alert');
+    message.focus();
   });
 }
 

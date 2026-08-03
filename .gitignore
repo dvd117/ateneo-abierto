@@ -1,11 +1,32 @@
+# macOS
+.DS_Store
+*/.DS_Store
+
+# Code, tests, and secrets
 node_modules/
 .env
-.env.*
 dist/
-.DS_Store
-docs/
+
+# Local browser/automation artifacts
+.playwright-mcp/
+
+# Specs and planning artifacts
 agent_docs/
-.claude/
-CLAUDE.md
-AGENTS.md
+docs/
 .superpowers/
+
+# Agent/context files
+AGENTS.md
+CLAUDE.md
+.agents/
+.codex/
+.claude/
+.gemini/
+
+# Logs and temporary files
+*.log
+*.tmp
+
+# Gentle-AI
+.config/
+.atl/

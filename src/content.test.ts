@@ -13,17 +13,80 @@ describe('landing page copy', () => {
   });
 
   test('folds the manifesto starting point into the landing page in both languages', () => {
+    const spanishBeats = copy.es.origin.beats.map((beat) => beat.body).join(' ');
+    const englishBeats = copy.en.origin.beats.map((beat) => beat.body).join(' ');
+
     expect(copy.es.labels.origin).toBe('Punto de partida');
     expect(copy.es.origin.title).toContain('sistema educativo');
-    expect(copy.es.origin.body).toContain('Fundayacucho');
-    expect(copy.es.origin.body).toContain('recortes presupuestarios');
-    expect(copy.es.origin.body).toContain('puente');
+    expect(spanishBeats).toContain('Fundayacucho');
+    expect(spanishBeats).toContain('recortes presupuestarios');
+    expect(spanishBeats).toContain('puente');
 
     expect(copy.en.labels.origin).toBe('Starting point');
     expect(copy.en.origin.title).toContain('education system');
-    expect(copy.en.origin.body).toContain('Fundayacucho');
-    expect(copy.en.origin.body).toContain('budget cuts');
-    expect(copy.en.origin.body).toContain('bridge');
+    expect(englishBeats).toContain('Fundayacucho');
+    // Case-insensitive: these anchors may begin a sentence after a rewrite.
+    expect(englishBeats).toMatch(/budget cuts/i);
+    expect(englishBeats).toMatch(/bridge/i);
+  });
+
+  test('keeps the origin section scannable rather than a single prose block', () => {
+    for (const locale of ['es', 'en'] as const) {
+      const { beats, closing } = copy[locale].origin;
+
+      expect(beats.length).toBeGreaterThanOrEqual(3);
+
+      for (const beat of beats) {
+        expect(beat.heading.length).toBeGreaterThan(0);
+        // Each beat should stay short enough to read at a glance.
+        expect(beat.body.length).toBeLessThan(360);
+      }
+
+      expect(closing.length).toBeGreaterThan(0);
+    }
+
+    // The line the section exists to deliver is promoted out of the prose.
+    expect(copy.es.origin.closing).toContain('se reconstruye desde afuera');
+    expect(copy.en.origin.closing).toContain('rebuilt outside the system');
+  });
+
+  test('surfaces the pillar time horizons as labels instead of trailing prose', () => {
+    expect(copy.es.pillars.items.map((pillar) => pillar.horizon)).toEqual([
+      'Para empezar ya',
+      'Mediano plazo',
+      'Post-transición'
+    ]);
+    expect(copy.en.pillars.items.map((pillar) => pillar.horizon)).toEqual([
+      'Ready to start now',
+      'Mid-term',
+      'Post-transition'
+    ]);
+
+    // The horizon must not also be left dangling at the end of the body copy.
+    for (const locale of ['es', 'en'] as const) {
+      for (const pillar of copy[locale].pillars.items) {
+        expect(pillar.body).not.toContain(pillar.horizon);
+      }
+    }
+  });
+
+  test('lists the boundaries as discrete points in both languages', () => {
+    for (const locale of ['es', 'en'] as const) {
+      expect(copy[locale].not.title.length).toBeGreaterThan(0);
+      expect(copy[locale].not.points.length).toBeGreaterThanOrEqual(3);
+    }
+
+    expect(copy.es.not.points[0]).toContain('Estado venezolano');
+    expect(copy.en.not.points[0]).toContain('Venezuelan state');
+  });
+
+  test('lists audience types as discrete entries in both languages', () => {
+    expect(copy.es.audience.who).toContain('Profesores');
+    expect(copy.en.audience.who).toContain('Teachers');
+
+    for (const locale of ['es', 'en'] as const) {
+      expect(copy[locale].audience.who.length).toBeGreaterThanOrEqual(4);
+    }
   });
 
   test('localizes utility controls in both languages', () => {
@@ -38,7 +101,7 @@ describe('landing page copy', () => {
     expect(spanishCopy).not.toContain('Ejecutable ya');
     expect(copy.es.hero.body).toContain('recuperar capacidad de acción');
     expect(copy.es.pillars.items[0].body).toContain('Grupos pequeños, ejercicios prácticos.');
-    expect(copy.es.pillars.items[0].body).toContain('Para empezar ya.');
+    expect(copy.es.pillars.items[0].horizon).toBe('Para empezar ya');
   });
 
   test('makes subscription calls to action explicit in both languages', () => {
@@ -65,11 +128,18 @@ describe('landing page copy', () => {
       /\bwalk into\b/i
     ];
 
+    const originCopy = (locale: 'es' | 'en') => [
+      ...copy[locale].origin.beats.flatMap((beat) => [beat.heading, beat.body]),
+      copy[locale].origin.closing
+    ];
+
     const institutionalCopy = [
-      copy.es.origin.body,
+      ...originCopy('es'),
       copy.es.pillars.items[2].body,
-      copy.en.origin.body,
-      copy.en.pillars.items[2].body
+      copy.es.pillars.items[2].horizon,
+      ...originCopy('en'),
+      copy.en.pillars.items[2].body,
+      copy.en.pillars.items[2].horizon
     ];
 
     for (const body of institutionalCopy) {

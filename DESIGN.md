@@ -97,6 +97,20 @@ For Google Slides, use DM Sans with the same weights and color tokens instead of
 
 Prefer generous, clear layouts with strong typographic hierarchy. Use full-width bands and practical modules. Avoid decorative card-heavy layouts. The page rhythm should read as civic rooms: hero as invitation, origin as the historical starting point, audience and name as separate entry/context bands, pillars as the practical register, boundaries as safety framing, and subscribe as the clear update form. The former full-manifesto route is retired; `/manifesto` redirects to `/`.
 
+### The staircase as structure, not ornament
+
+The mark is three ascending steps meaning access and progression. It carries that meaning structurally rather than appearing as a repeated logo:
+
+- **Hero:** the path draws itself once on load (`stroke-dashoffset`), ochre dot landing last. This is the page's single orchestrated motion moment.
+- **Origin:** the section is a stepped sequence of four beats, each with a mono step marker, joined by a terracotta riser that fills as each step is revealed.
+- **Pillars:** the three pillars sit at ascending offsets, matching the mark's geometry to the three time horizons the copy already names.
+
+Per the launch brief, the open-room gesture is layout language, not a logo. Do not place the mark on a panel purely as decoration.
+
+### Prose is structured, never a wall
+
+`content.ts` types sections so the markup can express sequence and emphasis: `origin` is `beats[]` plus a promoted `closing` pull-quote, `pillars.items[]` carry a `horizon` label, `audience` carries `who[]`, and `not` carries `points[]`. Signal that belongs in a label or a list must never be left buried at the end of a paragraph. Body copy stays under ~360 characters per beat — enforced in `content.test.ts`.
+
 ## Elevation And Depth
 
 Use flat tonal layers, borders, and contrast. Avoid heavy shadows and glossy surfaces.
@@ -111,16 +125,22 @@ The current implementation defines only the components needed for launch:
 
 - wordmark navigation
 - language toggle
-- hero
-- open-room layout gesture
-- origin / starting-point section
-- audience section
+- reading-progress rail (terracotta, under the sticky header)
+- hero (promise as the display line; the wordmark carries the name)
+- open-room layout gesture with the staircase draw-on
+- hero scroll cue
+- origin / starting-point stepped sequence + closing pull-quote
+- audience section with audience-type chips
 - name etymology section
-- pillar modules
-- boundaries statement
+- pillar modules with mono time-horizon labels
+- boundaries list
 - subscribe form
 - footer
 - back-to-top button
+
+### Motion
+
+All scroll-triggered motion goes through `src/reveal.ts` (`[data-reveal]`, optional `data-reveal-delay` for stagger). It short-circuits under `prefers-reduced-motion: reduce`, and the CSS carries a matching guard so the page is inert on its own. Both observers are torn down and re-armed on locale switch, because `render()` replaces the whole tree.
 
 ## Do's And Don'ts
 
