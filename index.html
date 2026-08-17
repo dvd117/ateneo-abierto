@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Habilidades y herramientas que nadie te puede quitar. Skills and tools no one can take from you."
+      content="Una iniciativa venezolana de aprendizaje cívico para recuperar capacidad de acción a través de talleres, herramientas y comunidad."
     />
+    <meta property="og:site_name" content="Ateneo Abierto" />
     <meta property="og:title" content="Ateneo Abierto" />
     <meta
       property="og:description"
-      content="Habilidades y herramientas que nadie te puede quitar. Skills and tools no one can take from you."
+      content="Una iniciativa venezolana de aprendizaje cívico para recuperar capacidad de acción a través de talleres, herramientas y comunidad."
     />
     <meta property="og:image" content="https://ateneo-abierto.org/og.png" />
     <meta property="og:type" content="website" />
@@ -21,7 +22,7 @@
     <meta name="twitter:title" content="Ateneo Abierto" />
     <meta
       name="twitter:description"
-      content="Habilidades y herramientas que nadie te puede quitar. Skills and tools no one can take from you."
+      content="Una iniciativa venezolana de aprendizaje cívico para recuperar capacidad de acción a través de talleres, herramientas y comunidad."
     />
     <meta name="twitter:image" content="https://ateneo-abierto.org/og.png" />
     <link rel="canonical" href="https://ateneo-abierto.org/" />
@@ -37,6 +38,38 @@
     />
     <title>Ateneo Abierto</title>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <!-- Google reads the SERP site name from WebSite.name here first, ahead of
+         og:site_name and <title>. Without it, it falls back to the bare domain. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "@id": "https://ateneo-abierto.org/#website",
+            "url": "https://ateneo-abierto.org/",
+            "name": "Ateneo Abierto",
+            "alternateName": "Ateneo Abierto — aprendizaje cívico",
+            "description": "Una iniciativa venezolana de aprendizaje cívico para recuperar capacidad de acción a través de talleres, herramientas y comunidad.",
+            "inLanguage": ["es", "en"],
+            "publisher": { "@id": "https://ateneo-abierto.org/#organization" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://ateneo-abierto.org/#organization",
+            "name": "Ateneo Abierto",
+            "url": "https://ateneo-abierto.org/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://ateneo-abierto.org/avatar-1024.png",
+              "width": 1024,
+              "height": 1024
+            },
+            "email": "ateneo@aragort.com"
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="app"></div>

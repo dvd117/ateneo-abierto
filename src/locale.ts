@@ -32,7 +32,7 @@ export function detectLocale(input: LocaleDetectionInput): Locale {
     }
   }
 
-  return 'en';
+  return 'es';
 }
 
 export function readSavedLocale(storage: Storage): Locale | null {

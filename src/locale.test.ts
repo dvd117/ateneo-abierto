@@ -42,13 +42,13 @@ describe('detectLocale', () => {
     ).toBe('es');
   });
 
-  test('defaults to English when language is unclear', () => {
+  test('defaults to Spanish when language is unclear', () => {
     expect(
       detectLocale({
         search: '',
         savedLocale: null,
         browserLanguages: ['fr-FR']
       })
-    ).toBe('en');
+    ).toBe('es');
   });
 });

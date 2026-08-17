@@ -240,10 +240,12 @@ function render(): void {
   document.documentElement.lang = currentLocale;
   document.title = `Ateneo Abierto | ${page.hero.promise}`;
 
-  setMetaContent('meta[name="description"]', page.hero.promise);
-  setMetaContent('meta[property="og:description"]', page.hero.promise);
+  // hero.body, not hero.promise: the promise is already the tail of the title,
+  // and a description that repeats the title gets discarded by search engines.
+  setMetaContent('meta[name="description"]', page.hero.body);
+  setMetaContent('meta[property="og:description"]', page.hero.body);
   setMetaContent('meta[property="og:locale"]', currentLocale === 'es' ? 'es_VE' : 'en_US');
-  setMetaContent('meta[name="twitter:description"]', page.hero.promise);
+  setMetaContent('meta[name="twitter:description"]', page.hero.body);
 
   root.innerHTML = `
     ${renderHeader(page)}
