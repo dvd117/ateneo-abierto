@@ -132,8 +132,11 @@ function bindLighting(): void {
 
 /**
  * How much of the window has to be on screen before its sequence may start.
- * Most of it, so the later beats do not land off screen — but never more than
- * a short viewport can show, or on a small phone the sequence would never run.
+ *
+ * Where the whole window fits (a desktop), all of it: at 85 % the input box
+ * along its bottom edge — where the follow-up types itself — was still below
+ * the fold when the run began (David, 2026-09-11). Where it cannot fit (a
+ * phone), as much as the viewport can show, or the sequence would never run.
  */
 function visibleEnough(element: HTMLElement): number {
   const height = element.getBoundingClientRect().height;
@@ -142,8 +145,15 @@ function visibleEnough(element: HTMLElement): number {
     return 0.85;
   }
 
+  if (height <= window.innerHeight * 0.95) {
+    return 0.98;
+  }
+
   return Math.min(0.85, (window.innerHeight * 0.85) / height);
 }
+
+/** Below this much of the window on screen, a running sequence is dropped. */
+const GONE = 0.3;
 
 function bindAgent(page: PageCopy): void {
   const thread = root.querySelector<HTMLElement>('[data-thread]');
@@ -326,16 +336,16 @@ function bindAgent(page: PageCopy): void {
 
   /**
    * The sequence only starts once the window is properly on screen, and it
-   * starts over when it comes back. On a phone the thread is taller than half
-   * the viewport, so a bare threshold fires while a sliver of the window is
-   * peeking and the opening beats play off screen; shrinking the root from the
-   * bottom means "in view" is measured against the part of the screen someone
-   * is actually reading.
+   * starts over when it comes back. Start and stop are two different lines:
+   * it starts at `start` and is only dropped once the window is mostly gone,
+   * so a small scroll after it starts does not restart it. Decided on the
+   * ratio, not isIntersecting, whose meaning under a threshold varies.
    */
+  const start = visibleEnough(window_);
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
-        if (entry.isIntersecting) {
+        if (entry.intersectionRatio >= start - 0.005) {
           if (!played) {
             played = true;
 
@@ -352,6 +362,10 @@ function bindAgent(page: PageCopy): void {
           continue;
         }
 
+        if (entry.intersectionRatio >= GONE) {
+          continue;
+        }
+
         // Gone from view: drop whatever was running and arm the next entrance,
         // so nobody comes back to a conversation that started without them.
         played = false;
@@ -359,7 +373,7 @@ function bindAgent(page: PageCopy): void {
         scenePlayer = undefined;
       }
     },
-    { threshold: visibleEnough(window_) }
+    { threshold: [0, GONE, start] }
   );
 
   observer.observe(window_);
