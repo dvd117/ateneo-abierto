@@ -996,7 +996,10 @@ main [id] {
   overflow-y: auto;
   scrollbar-width: thin;
   scrollbar-color: var(--c-border) transparent;
-  overscroll-behavior: contain;
+  /* No `overscroll-behavior: contain` here, deliberately. Contained, a thumb
+     that lands on the thread scrolls it to its end and then stops dead: the
+     page never takes over and the site reads as broken (David, on a phone,
+     2026-09-11). Chaining hands the page back at the top and bottom edges. */
   scrollbar-gutter: stable;
   display: flex;
   flex-direction: column;
@@ -1019,6 +1022,14 @@ main [id] {
    is what the markup already says, so no-JS and reduced-motion land on it.
    Beats not yet reached take no space: the window's height is fixed, so the
    thread can grow like a real conversation without moving the page. */
+/* While the sequence runs the runner owns the scroll position — it follows the
+   newest beat. A thumb dragging here would only fight it, and on a phone that
+   swipe is almost always meant for the page, so hand it over. Programmatic
+   scrolling still works on a hidden overflow, so `follow()` is unaffected. */
+.agent-thread.is-playing {
+  overflow-y: hidden;
+}
+
 .agent-thread.is-playing [data-beat]:not(.is-in) {
   display: none;
 }

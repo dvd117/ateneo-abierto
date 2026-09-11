@@ -261,6 +261,20 @@ describe('the one embed on the page', () => {
   });
 });
 
+describe('the agent thread never traps the page scroll', () => {
+  test('does not contain its overscroll: a thumb at the edge scrolls the page', () => {
+    // Comments stripped first: the block explains why the property is absent.
+    const declarations = cssBelowFence().replace(/\/\*[\s\S]*?\*\//g, '');
+    const thread = declarations.slice(declarations.indexOf('.agent-thread {'));
+
+    expect(thread.slice(0, thread.indexOf('}'))).not.toContain('overscroll-behavior');
+  });
+
+  test('hands touch to the page while the runner drives the scroll', () => {
+    expect(cssBelowFence()).toMatch(/\.agent-thread\.is-playing\s*\{[^}]*overflow-y:\s*hidden/);
+  });
+});
+
 describe('back to top', () => {
   test('targets the document top, not the sticky header', () => {
     const render = readFileSync('src/render.ts', 'utf8');
