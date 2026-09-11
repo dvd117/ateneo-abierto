@@ -303,13 +303,85 @@ button {
 /* ---------- header ---------- */
 
 .site-header {
-  position: relative;
-  z-index: 5;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  background: color-mix(in srgb, var(--c-bg) 96%, transparent);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.header-inner {
   display: flex;
   align-items: center;
   gap: var(--gap-md);
-  padding-block: 1rem;
-  border-bottom: 1px solid var(--c-border);
+  padding-block: 0.85rem;
+}
+
+/* Fills left to right as the page is read. --progress is written by
+   initProgressRail through the CSSOM, which the CSP allows. */
+.progress-rail {
+  position: absolute;
+  inset-inline: 0;
+  bottom: -1px;
+  height: 2px;
+  pointer-events: none;
+}
+
+.progress-rail span {
+  display: block;
+  height: 100%;
+  background: var(--c-accent);
+  transform-origin: 0 50%;
+  transform: scaleX(var(--progress, 0));
+}
+
+/* Anchored sections land below the sticky header, not under it. */
+main [id] {
+  scroll-margin-top: 4.5rem;
+}
+
+.to-top {
+  position: fixed;
+  right: clamp(1rem, 3vw, 2rem);
+  bottom: clamp(1rem, 3vw, 2rem);
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border-radius: var(--r-pill);
+  background: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  color: var(--c-fg);
+  box-shadow: 0 12px 28px -14px rgba(0, 0, 0, 0.7);
+  opacity: 0;
+  transform: translateY(0.75rem);
+  pointer-events: none;
+  transition: opacity var(--duration-overlay) var(--ease-out),
+    transform var(--duration-overlay) var(--ease-out),
+    border-color var(--duration-ui) var(--ease-out), color var(--duration-ui) var(--ease-out);
+}
+
+.to-top svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.to-top.is-shown {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
+.to-top:hover {
+  border-color: var(--c-accent);
+  color: var(--c-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .to-top {
+    transition: none;
+  }
 }
 
 .nav-wordmark {
@@ -376,9 +448,16 @@ button {
   background: var(--c-bg-panel);
 }
 
+/* On a phone the header keeps only the call to action; the footer carries
+   the rest. */
 @media (max-width: 640px) {
-  .nav-links {
+  .nav-links a:not(:last-child) {
     display: none;
+  }
+
+  .nav-links a:last-child {
+    color: var(--c-accent);
+    font-weight: 600;
   }
 }
 

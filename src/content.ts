@@ -302,6 +302,8 @@ export type PageCopy = {
   };
   skipToContent: string;
   sectionsLabel: string;
+  /** The floating button that returns to the top of the page. */
+  toTop: string;
   nav: NavLink[];
   hero: {
     eyebrow: string;
@@ -342,6 +344,7 @@ export const copy: Record<Locale, PageCopy> = {
     },
     skipToContent: 'Saltar al contenido',
     sectionsLabel: 'Secciones',
+    toTop: 'Volver arriba',
     nav: [
       { label: 'Programa', href: '#programa' },
       { label: 'El norte', href: '#norte' },
@@ -722,6 +725,7 @@ export const copy: Record<Locale, PageCopy> = {
     },
     skipToContent: 'Skip to content',
     sectionsLabel: 'Sections',
+    toTop: 'Back to top',
     nav: [
       { label: 'Program', href: '#programa' },
       { label: 'Where this goes', href: '#norte' },

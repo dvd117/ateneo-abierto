@@ -97,21 +97,38 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
   return `<button class="locale-button ${isActive ? 'is-active' : ''}" type="button" data-locale="${locale}" aria-pressed="${isActive}">${label}${describe}</button>`;
 }
 
+/**
+ * The header follows the scroll, so the way to every section is always one
+ * tap away. The rail along its bottom edge fills as the visitor reads; it is
+ * decoration for anyone who cannot see it, so it is hidden from the tree.
+ */
 function renderHeader(page: PageCopy, locale: Locale): string {
   return `
-    <header class="site-header shell">
-      <a class="nav-wordmark" href="/?lang=${locale}">
-        ${renderMark()}
-        <span class="wordmark">Ateneo Abierto</span>
-      </a>
-      <nav class="nav-links" aria-label="${page.sectionsLabel}">
-        ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
-      </nav>
-      <div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
-        ${renderLocaleButton(page, locale, 'es', 'ES')}
-        ${renderLocaleButton(page, locale, 'en', 'EN')}
+    <header class="site-header" id="arriba">
+      <div class="shell header-inner">
+        <a class="nav-wordmark" href="/?lang=${locale}">
+          ${renderMark()}
+          <span class="wordmark">Ateneo Abierto</span>
+        </a>
+        <nav class="nav-links" aria-label="${page.sectionsLabel}">
+          ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
+        </nav>
+        <div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
+          ${renderLocaleButton(page, locale, 'es', 'ES')}
+          ${renderLocaleButton(page, locale, 'en', 'EN')}
+        </div>
       </div>
+      <div class="progress-rail" data-progress aria-hidden="true"><span></span></div>
     </header>
+  `;
+}
+
+/** A plain link, so it works before and without the script that shows it. */
+function renderToTop(page: PageCopy): string {
+  return `
+    <a class="to-top" href="#arriba" data-to-top aria-label="${page.toTop}">
+      <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 15V5M5 10l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
   `;
 }
 
@@ -691,9 +708,8 @@ function renderFooter(page: PageCopy, locale: Locale): string {
     <footer class="site-footer shell">
       <div class="footer-brand">
         <span class="wordmark">Ateneo Abierto</span>
-        <!-- The header's links are hidden on a phone and the header does not
-             follow the scroll, so on a long page the footer is the only way
-             back. Same three destinations, same words. -->
+        <!-- The header's section links are hidden on a phone, where it keeps
+             only the call to action. Same three destinations, same words. -->
         <nav class="footer-nav" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
         </nav>
@@ -788,5 +804,6 @@ export function renderPage(locale: Locale): string {
       ${renderForm(page, locale)}
     </main>
     ${renderFooter(page, locale)}
+    ${renderToTop(page)}
   `;
 }

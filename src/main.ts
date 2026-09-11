@@ -1,6 +1,6 @@
 import { copy, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
-import { initReveal } from './reveal';
+import { initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
 import { pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
 import type { ScenePlayer } from './scene';
@@ -55,6 +55,8 @@ function render(): void {
   agentObserver = undefined;
   teardownReveal?.();
   teardownReveal = undefined;
+  teardownChrome?.();
+  teardownChrome = undefined;
   lightingPlayers.forEach((player) => player.cancel());
   lightingPlayers = [];
 
@@ -477,6 +479,34 @@ function bindForm(page: PageCopy): void {
 }
 
 let teardownReveal: (() => void) | undefined;
+let teardownChrome: (() => void) | undefined;
+
+/**
+ * The reading rail under the header, and the way back up. The button only
+ * shows once the hero has left the screen: at the top there is nowhere to
+ * return to. Both are position and opacity only, so they stay under reduced
+ * motion — the transition is what reduced motion takes away, in CSS.
+ */
+function bindChrome(): () => void {
+  const stopRail = initProgressRail(root.querySelector<HTMLElement>('[data-progress]'));
+  const toTop = root.querySelector<HTMLElement>('[data-to-top]');
+  const hero = root.querySelector<HTMLElement>('.hero');
+
+  if (!toTop || !hero || typeof IntersectionObserver === 'undefined') {
+    toTop?.classList.add('is-shown');
+    return stopRail;
+  }
+
+  const observer = new IntersectionObserver(([entry]) => {
+    toTop.classList.toggle('is-shown', !entry.isIntersecting);
+  });
+  observer.observe(hero);
+
+  return () => {
+    stopRail();
+    observer.disconnect();
+  };
+}
 
 function bindEvents(page: PageCopy): void {
   root.querySelectorAll<HTMLButtonElement>('[data-locale]').forEach((button) => {
@@ -494,6 +524,7 @@ function bindEvents(page: PageCopy): void {
   bindForm(page);
   bindLighting();
   teardownReveal = initReveal(root, { animate: motionAllowed() });
+  teardownChrome = bindChrome();
 }
 
 // The server already sent this page, rendered, in the locale it chose. Keep that
