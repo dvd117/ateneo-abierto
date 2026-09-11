@@ -4,7 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <title>Bienvenido — Ateneo Abierto</title>
+  <meta name="color-scheme" content="dark">
+  <meta name="supported-color-schemes" content="dark">
+  <title>Te sumaste — Ateneo Abierto</title>
   <style type="text/css">
     /* Resets */
     body, table, td, a { -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
@@ -15,41 +17,38 @@
     @media screen and (max-width: 620px) {
       .email-container { width: 100% !important; }
       .stack-column { display: block !important; width: 100% !important; }
-      .hero-number { font-size: 38px !important; }
+      .hero-head { font-size: 34px !important; }
       .pad { padding-left: 24px !important; padding-right: 24px !important; }
     }
   </style>
 </head>
-<body style="margin: 0; padding: 0; background-color: #ebe3d1;">
+<body style="margin: 0; padding: 0; background-color: #16150f;">
 
-  <!-- Preheader (texto de vista previa oculto) -->
+  <!-- Preheader -->
   <div style="display: none; max-height: 0; overflow: hidden; mso-hide: all;">
-    Ateneo Abierto está en preparación. Aquí está lo que viene.
+    Un agente hace el trabajo contigo. Esto es lo que viene.
     &nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;&nbsp;&zwnj;
   </div>
 
-  <!-- Outer wrapper -->
-  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #ebe3d1;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color: #16150f;">
     <tr>
       <td align="center" style="padding: 36px 16px 48px;">
 
-        <!-- Email container: 600px -->
         <table class="email-container" role="presentation" cellspacing="0" cellpadding="0" border="0" width="600" style="max-width: 600px; width: 100%;">
 
-
-          <!-- ─── ENCABEZADO ─────────────────────────────────────────── -->
+          <!-- Header -->
           <tr>
-            <td bgcolor="#235e4f" style="background-color: #235e4f; padding: 26px 48px;">
+            <td bgcolor="#100f0b" style="background-color: #100f0b; padding: 24px 48px;">
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%">
                 <tr>
                   <td>
-                    <span style="font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 18px; font-weight: 700; color: #f3eddf; letter-spacing: -0.02em; line-height: 1;">
+                    <span style="font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 15px; font-weight: 700; color: #f0ece2; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1;">
                       Ateneo Abierto
                     </span>
                   </td>
                   <td align="right" valign="middle">
-                    <span style="font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 12px; font-weight: 700; color: rgba(243,237,223,0.78); letter-spacing: 0.08em; text-transform: uppercase;">
-                      Aprendizaje cívico
+                    <span style="font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 11px; font-weight: 700; color: #a8a293; letter-spacing: 0.14em; text-transform: uppercase;">
+                      Delegar, no preguntar
                     </span>
                   </td>
                 </tr>
@@ -57,104 +56,88 @@
             </td>
           </tr>
 
-          <!-- Barra terracota -->
+          <!-- The one ochre rule -->
           <tr>
-            <td bgcolor="#b55234" style="background-color: #b55234; height: 5px; line-height: 5px; font-size: 1px; mso-line-height-rule: exactly;">&nbsp;</td>
+            <td bgcolor="#e2a638" style="background-color: #e2a638; height: 4px; line-height: 4px; font-size: 1px; mso-line-height-rule: exactly;">&nbsp;</td>
           </tr>
 
-
-          <!-- ─── HERO ──────────────────────────────────────────────── -->
+          <!-- Hero -->
           <tr>
-            <td class="pad" bgcolor="#f3eddf" style="background-color: #f3eddf; padding: 52px 48px 16px;">
-
-              <!-- Saludo -->
-              <p style="margin: 0 0 32px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 14px; font-weight: 600; color: #235e4f; letter-spacing: 0.06em; text-transform: uppercase; line-height: 1;">
+            <td class="pad" bgcolor="#1f1d16" style="background-color: #1f1d16; padding: 48px 48px 8px;">
+              <p style="margin: 0 0 28px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 12px; font-weight: 700; color: #e2a638; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1;">
                 Hola {$name},
               </p>
-
-              <!-- "Bienvenido." -->
-              <p class="hero-number" style="margin: 0; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 48px; font-weight: 700; color: #171a16; letter-spacing: -0.02em; line-height: 1.05;">
-                ¡Bienvenido!
+              <p class="hero-head" style="margin: 0; font-family: 'Iowan Old Style', Palatino, Georgia, 'Times New Roman', serif; font-size: 42px; font-weight: 400; color: #f0ece2; letter-spacing: -0.012em; line-height: 1.08;">
+                Gracias por sumarte.
               </p>
-
             </td>
           </tr>
 
-
-          <!-- ─── CUERPO ─────────────────────────────────────────────── -->
+          <!-- Body -->
           <tr>
-            <td class="pad" bgcolor="#f3eddf" style="background-color: #f3eddf; padding: 40px 48px 52px;">
+            <td class="pad" bgcolor="#1f1d16" style="background-color: #1f1d16; padding: 36px 48px 48px;">
 
-              <!-- Párrafo principal — borde izquierdo terracota -->
               <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 32px;">
                 <tr>
-                  <td width="4" bgcolor="#b55234" style="background-color: #b55234; width: 4px; mso-line-height-rule: exactly;">&nbsp;</td>
+                  <td width="3" bgcolor="#e2a638" style="background-color: #e2a638; width: 3px; mso-line-height-rule: exactly;">&nbsp;</td>
                   <td width="24" style="width: 24px; min-width: 24px;">&nbsp;</td>
                   <td>
-                    <p style="margin: 0; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 17px; font-weight: 400; color: #2e3329; line-height: 1.6;">
-                      Ateneo Abierto es una iniciativa venezolana de aprendizaje cívico. El sistema educativo venezolano lleva años dañado — recortes presupuestarios, migración docente, instituciones que no pudieron mantenerse al día. Esta es la respuesta que se construye desde afuera de ese sistema: talleres prácticos de IA y otras herramientas digitales, grupos pequeños, habilidades que la gente puede llevarse y usar fuera del taller.
+                    <p style="margin: 0; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 16px; font-weight: 400; color: #cfc9bb; line-height: 1.6;">
+                      Ateneo Abierto enseña a delegarle trabajo de oficina a un agente, con herramientas libres, desde Venezuela. Un chatbot te responde; un agente lee tus archivos, sigue un plan y te entrega un documento. Eso ya está al alcance de cualquiera aquí, y es justo lo que venimos a enseñar.
                     </p>
                   </td>
                 </tr>
               </table>
 
-              <!-- Condición de entrada — énfasis -->
-              <p style="margin: 0 0 40px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 18px; font-weight: 700; color: #235e4f; line-height: 1.4; letter-spacing: -0.01em;">
-                No hace falta perfil técnico.<br>Sólo curiosidad y ganas de empezar.
+              <p style="margin: 0 0 36px; font-family: 'Iowan Old Style', Palatino, Georgia, 'Times New Roman', serif; font-size: 20px; font-weight: 400; color: #f0ece2; line-height: 1.4;">
+                No hace falta perfil técnico.<br>Solo curiosidad y ganas de empezar.
               </p>
 
-              <!-- Divisor -->
-              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 36px;">
+              <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="margin-bottom: 32px;">
                 <tr>
-                  <td height="1" bgcolor="#d0cbbf" style="background-color: #d0cbbf; height: 1px; line-height: 1px; font-size: 1px; mso-line-height-rule: exactly;">&nbsp;</td>
+                  <td height="1" bgcolor="#34312a" style="background-color: #34312a; height: 1px; line-height: 1px; font-size: 1px; mso-line-height-rule: exactly;">&nbsp;</td>
                 </tr>
               </table>
 
-              <!-- Etiqueta de sección -->
-              <p style="margin: 0 0 10px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 12px; font-weight: 700; color: #235e4f; letter-spacing: 0.08em; text-transform: uppercase; line-height: 1;">
-                Qué esperar
+              <p style="margin: 0 0 10px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 11px; font-weight: 700; color: #a8a293; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1;">
+                Qué esperar
               </p>
 
-              <!-- Párrafo de expectativas -->
-              <p style="margin: 0 0 36px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 17px; font-weight: 400; color: #2e3329; line-height: 1.6;">
-                Estamos comenzando. Los primeros pilotos están en preparación. Cuando haya algo real que compartir — un taller abierto, un nuevo recurso, una forma de participar — te avisaremos. No enviamos relleno.
+              <p style="margin: 0 0 32px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 16px; font-weight: 400; color: #cfc9bb; line-height: 1.6;">
+                Estamos comenzando. Cuando haya algo real que contarte —una hackatón abierta, una mentoría, una Demo Night— te escribimos. Nada de relleno.
               </p>
 
-              <!-- Invitación a escribir -->
-              <p style="margin: 0; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 17px; font-weight: 400; color: #2e3329; line-height: 1.6;">
-                Si quieres colaborar o apoyar el proyecto, escríbenos a: <strong><a href="mailto:ateneo@aragort.com" style="color: #235e4f; text-decoration: none;">ateneo@aragort.com</a></strong>
+              <p style="margin: 0; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 16px; font-weight: 400; color: #cfc9bb; line-height: 1.6;">
+                ¿Financias, enseñas o tienes un espacio? Escríbenos a <a href="mailto:ateneo@aragort.com" style="color: #e2a638; text-decoration: none; font-weight: 600;">ateneo@aragort.com</a>
               </p>
 
             </td>
           </tr>
 
-
-          <!-- ─── PIE DE PÁGINA ──────────────────────────────────────── -->
+          <!-- Footer -->
           <tr>
-            <td class="pad" bgcolor="#1a1a12" style="background-color: #1a1a12; padding: 36px 48px;">
-              <p style="margin: 0 0 4px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 15px; font-weight: 700; color: #f3eddf; letter-spacing: -0.01em; line-height: 1.2;">
+            <td class="pad" bgcolor="#100f0b" style="background-color: #100f0b; padding: 32px 48px;">
+              <p style="margin: 0 0 4px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 13px; font-weight: 700; color: #f0ece2; letter-spacing: 0.14em; text-transform: uppercase; line-height: 1.2;">
                 Ateneo Abierto
               </p>
-              <p style="margin: 0 0 24px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 13px; font-weight: 400; color: rgba(243,237,223,0.55); line-height: 1.4;">
-                <a href="mailto:ateneo@aragort.com" style="color: rgba(243,237,223,0.55); text-decoration: none;">ateneo@aragort.com</a>
+              <p style="margin: 0 0 22px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 13px; font-weight: 400; color: #8e887a; line-height: 1.4;">
+                <a href="mailto:ateneo@aragort.com" style="color: #8e887a; text-decoration: none;">ateneo@aragort.com</a>
               </p>
-              <p style="margin: 0 0 20px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 12px; font-weight: 400; color: rgba(243,237,223,0.65); line-height: 1.55;">
-                La seguridad es parte de cómo trabajamos. No compartimos información que pueda poner en riesgo a quienes participan en este proyecto — incluyendo detalles operativos.
+              <p style="margin: 0 0 18px; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 12px; font-weight: 400; color: #a8a293; line-height: 1.55;">
+                La seguridad es parte de cómo trabajamos. No compartimos información que pueda poner en riesgo a quienes participan en este proyecto, incluidos los detalles operativos.
               </p>
-              <p style="margin: 0; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 12px; color: rgba(243,237,223,0.6); line-height: 1.4;">
-                <a href="{$unsubscribe}" style="color: rgba(243,237,223,0.6); text-decoration: underline;">Cancelar suscripción</a>  |  
-                <a href="{$url}" style="color: rgba(243,237,223,0.6); text-decoration: underline;">Ver en el navegador</a>
+              <p style="margin: 0; font-family: 'Avenir Next', Avenir, 'Trebuchet MS', 'Segoe UI', sans-serif; font-size: 12px; color: #8e887a; line-height: 1.4;">
+                <a href="{$unsubscribe}" style="color: #8e887a; text-decoration: underline;">Cancelar suscripción</a>  |  
+                <a href="{$url}" style="color: #8e887a; text-decoration: underline;">Ver en el navegador</a>
               </p>
             </td>
           </tr>
 
-          <!-- Espacio inferior -->
           <tr>
-            <td bgcolor="#ebe3d1" style="background-color: #ebe3d1; height: 1px; font-size: 1px; line-height: 1px; mso-line-height-rule: exactly;">&nbsp;</td>
+            <td bgcolor="#16150f" style="background-color: #16150f; height: 1px; font-size: 1px; line-height: 1px; mso-line-height-rule: exactly;">&nbsp;</td>
           </tr>
 
         </table>
-        <!-- Fin del contenedor -->
 
       </td>
     </tr>
