@@ -326,7 +326,7 @@ function renderHero(page: PageCopy): string {
         <h1 class="display hero-title">${headline}</h1>
         <p class="lead hero-manifesto">${inline(page.hero.manifesto)}</p>
         <div class="hero-actions">
-          <a class="button button--fill" href="#sumarme">${page.hero.primaryCta}</a>
+          <a class="button button--fill" href="#unete">${page.hero.primaryCta}</a>
         </div>
       </div>
       ${renderAgentWindow(page)}
@@ -405,7 +405,7 @@ function renderDoor(door: Door, order: number): string {
         <span class="door-who-label">${inline(door.whoLabel)}</span>
         ${inline(door.who)}
       </p>
-      <a class="door-cta link" href="#sumarme">${inline(door.cta)} <span aria-hidden="true">&rarr;</span></a>
+      <a class="door-cta link" href="#unete">${inline(door.cta)} <span aria-hidden="true">&rarr;</span></a>
     </article>
   `;
 }
@@ -423,7 +423,7 @@ function renderDoors(page: PageCopy): string {
       </div>
       <p class="doors-extra">
         <b>${inline(doors.workshops.label)}</b> ${inline(doors.workshops.text)}
-        <a class="link" href="#sumarme">${inline(doors.workshops.cta)} <span aria-hidden="true">&rarr;</span></a>
+        <a class="link" href="#unete">${inline(doors.workshops.cta)} <span aria-hidden="true">&rarr;</span></a>
       </p>
     </section>
   `;
@@ -623,9 +623,9 @@ function renderForm(page: PageCopy, locale: Locale): string {
   const { form } = page;
 
   return `
-    <section class="join shell" id="sumarme" aria-labelledby="sumarme-title">
+    <section class="join shell" id="unete" aria-labelledby="unete-title">
       <p class="eyebrow">${inline(form.eyebrow)}</p>
-      <h2 class="section-title join-title" id="sumarme-title">${inline(form.title)}</h2>
+      <h2 class="section-title join-title" id="unete-title">${inline(form.title)}</h2>
       <p class="lead join-lead">${inline(form.lead)}</p>
 
       <form class="join-form" data-join novalidate>

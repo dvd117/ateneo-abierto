@@ -20,7 +20,7 @@ describe('landing page copy', () => {
   });
 
   test('offers one call to action, and it goes to the form', () => {
-    expect(copy.es.hero.primaryCta).toBe('Sumarme');
+    expect(copy.es.hero.primaryCta).toBe('Únete');
     expect(copy.en.hero.primaryCta).toBe('Join');
     expect('secondaryCta' in copy.es.hero).toBe(false);
   });
@@ -273,12 +273,12 @@ describe('landing page copy', () => {
       expect(resilience).not.toMatch(/android|gama media|3G/i);
     }
 
+    // David, 2026-09-11: the connection claim was not true and the phone line
+    // said nothing the visitor needed.
     expect(copy.es.principles.items[3].body).toMatch(/laptop modesta/);
-    expect(copy.es.principles.items[3].body).toMatch(/conexión inestable/);
-    expect(copy.es.principles.items[3].body).toMatch(/teléfono/);
+    expect(copy.es.principles.items[3].body).not.toMatch(/inestable|teléfono|teclado/);
     expect(copy.en.principles.items[3].body).toMatch(/modest laptop/);
-    expect(copy.en.principles.items[3].body).toMatch(/unstable connection/);
-    expect(copy.en.principles.items[3].body).toMatch(/phone/i);
+    expect(copy.en.principles.items[3].body).not.toMatch(/unstable|phone|keyboard/i);
   });
 
 

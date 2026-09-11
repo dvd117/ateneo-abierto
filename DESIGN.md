@@ -286,13 +286,13 @@ against a rendered hero before the build locks it.
 ## Layout
 
 Page order (decision 8): hero → De preguntar a delegar → Tres puertas (+ Talleres) → Cómo
-trabajamos → El norte (map) → Ignite Talk slot → Sumarme / Hablemos → footer with the security
+trabajamos → El norte (map) → Ignite Talk slot → Únete → footer with the security
 line and ES/EN.
 
 - **Hero.** Two columns on desktop, headline left, agent window right. On mobile the window
   stacks under the headline, and the window's session list — its one control, as in the real
   tools — becomes a swipeable row above the conversation; each sequence plays on tap. One call
-  to action in the hero (Sumarme), and it goes to the form.
+  to action in the hero (Únete), and it goes to the form.
 - **Two rounds per sequence.** Each task settles in Markdown, rendered on paper, and then the
   visitor's follow-up is typed into the input, sent, and answered with the file they would
   actually send: Excel, PowerPoint, PDF or Word. The converted file arrives as a card with a

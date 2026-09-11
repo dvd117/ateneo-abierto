@@ -860,7 +860,7 @@ button {
 }
 
 /* With text in the box the send button lights, as in the real tools. Bone,
-   not ochre: the hero already spends its one ochre fill on Sumarme. */
+   not ochre: the hero already spends its one ochre fill on Únete. */
 .agent-input.is-typing .agent-send {
   background: var(--c-fg);
   border-color: var(--c-fg);
@@ -2080,7 +2080,7 @@ button {
   color: var(--c-fg-3);
 }
 
-/* ---------- sumarme ----------
+/* ---------- únete ----------
    One door, four fields. The form is the page's one place that asks for
    something, so it stays narrow and quiet: labels in the interface voice,
    fields on the panel surface, and the promise under the button. */

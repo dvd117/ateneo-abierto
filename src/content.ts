@@ -343,14 +343,14 @@ export const copy: Record<Locale, PageCopy> = {
     nav: [
       { label: 'Programa', href: '#programa' },
       { label: 'El norte', href: '#norte' },
-      { label: 'Sumarme', href: '#sumarme' }
+      { label: 'Únete', href: '#unete' }
     ],
     hero: {
       eyebrow: 'Más allá del chatbot',
       titleLines: [{ text: 'Deja de preguntarle.' }, { text: 'Empieza a delegarle.', em: true }],
       manifesto:
         'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega un documento. Aprende a delegar con herramientas libres, desde Venezuela, sin pagar nada para empezar.',
-      primaryCta: 'Sumarme',
+      primaryCta: 'Únete',
       windowCaption:
         'Elige otra tarea en la lista para verla. Es una demostración local: no se conecta a nada y las cifras son de ejemplo.'
     },
@@ -536,7 +536,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'El cambio',
       titleLines: [{ text: 'De preguntar' }, { text: 'a delegar', em: true }],
       lead:
-        'La frontera ya no está en hacerle mejores preguntas a un chatbot. Está en delegarle el trabajo a un agente y revisar lo que te entrega: lo que te comía la tarde se resuelve mientras haces otra cosa, y el criterio sigue siendo tuyo. Ya está al alcance de cualquiera en Venezuela, con herramientas gratuitas.',
+        'La frontera ya no está en hacerle mejores preguntas a un chatbot. Está en delegarle el trabajo a un agente y revisar lo que te entrega: lo que antes te consumía demasiado tiempo se resuelve mientras haces otra cosa, y el criterio sigue siendo tuyo. Ya está al alcance de cualquiera en Venezuela, con herramientas gratuitas.',
       task: 'La misma tarea: *juntar los gastos de tres meses y decidir dónde recortar.*',
       columns: [
         {
@@ -577,10 +577,10 @@ export const copy: Record<Locale, PageCopy> = {
         {
           n: '01',
           title: 'Hackatón para no técnicos',
-          body: 'En un fin de semana armas tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código.',
+          body: 'En un fin de semana aprendes a usar tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código.',
           whoLabel: 'Para quién',
           who: 'Gente de oficina, docentes, comerciantes, equipos de organizaciones.',
-          cta: 'Sumarme'
+          cta: 'Únete'
         },
         {
           n: '02',
@@ -588,15 +588,15 @@ export const copy: Record<Locale, PageCopy> = {
           body: 'Alguien que ya lo hizo acompaña a tu equipo hasta que el agente trabaje de verdad, no solo en la demo.',
           whoLabel: 'Para quién',
           who: 'Los equipos que salieron de la hackatón y quieren terminar lo que empezaron.',
-          cta: 'Sumarme'
+          cta: 'Únete'
         },
         {
           n: '03',
           title: 'Demo Nights',
-          body: 'Entre 2 y 5 minutos: muestras la herramienta que te resolvió un dolor real y cuentas cómo llegaste ahí.',
+          body: 'Entre 2 y 5 minutos: muestras la herramienta que te ha sido útil en tu trabajo y cuentas cómo llegaste ahí.',
           whoLabel: 'Para quién',
           who: 'Quien ya armó algo y quiere enseñarlo, o aprender del intento de otro.',
-          cta: 'Sumarme'
+          cta: 'Únete'
         }
       ],
       workshops: {
@@ -628,7 +628,7 @@ export const copy: Record<Locale, PageCopy> = {
         {
           icon: 'resilient',
           title: 'Resiliencia',
-          body: 'Todo funciona en una laptop modesta y con una conexión inestable. El teléfono alcanza para leer y seguir el hilo; para construir hace falta el teclado.'
+          body: 'Todo funciona en una laptop modesta.'
         }
       ]
     },
@@ -681,10 +681,10 @@ export const copy: Record<Locale, PageCopy> = {
       privacy: 'El video se carga desde YouTube solo cuando le das play.'
     },
     form: {
-      eyebrow: 'Súmate',
-      title: 'Sumarme',
+      eyebrow: 'Mantente al tanto',
+      title: 'Únete',
       lead:
-        'Déjanos tu correo y te escribimos cuando abra la próxima hackatón o mentoría cerca de ti.',
+        'Déjanos tu correo para mantenerte al tanto de las próximas oportunidades y actividades.',
       nameLabel: 'Nombre',
       namePlaceholder: 'Cómo te llamas',
       emailLabel: 'Correo',
@@ -692,7 +692,7 @@ export const copy: Record<Locale, PageCopy> = {
       newsletterLegend: 'Idioma del boletín',
       newsletterOptions: { es: 'Español', en: 'Inglés' },
       participateLabel: 'Quiero participar en una hackatón o una mentoría',
-      submit: 'Sumarme',
+      submit: 'Únete',
       privacy: 'Solo usamos estos datos para escribirte.',
       allies: '¿Financias, enseñas o tienes un espacio? Escríbenos:',
       supplement: 'No llenes este campo',
@@ -722,7 +722,7 @@ export const copy: Record<Locale, PageCopy> = {
     nav: [
       { label: 'Program', href: '#programa' },
       { label: 'Where this goes', href: '#norte' },
-      { label: 'Join', href: '#sumarme' }
+      { label: 'Join', href: '#unete' }
     ],
     hero: {
       eyebrow: 'Past the chatbot',
@@ -913,7 +913,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'The shift',
       titleLines: [{ text: 'From asking' }, { text: 'to delegating', em: true }],
       lead:
-        'The frontier is no longer about asking a chatbot better questions. It is about handing an agent the work and checking what comes back: what used to eat your afternoon gets done while you do something else, and the judgement stays yours. It is already within reach for anyone in Venezuela, with free tools.',
+        'The frontier is no longer about asking a chatbot better questions. It is about handing an agent the work and checking what comes back: what used to take far too much of your time gets done while you do something else, and the judgement stays yours. It is already within reach for anyone in Venezuela, with free tools.',
       task: 'The same task: *merge three months of spending and decide where to cut.*',
       columns: [
         {
@@ -954,7 +954,7 @@ export const copy: Record<Locale, PageCopy> = {
         {
           n: '01',
           title: 'Hackathon for non-technical people',
-          body: 'In one weekend you build your first agent and walk out with it working, even if you have never written a line of code.',
+          body: 'In one weekend you learn to use your first agent and walk out with it working, even if you have never written a line of code.',
           whoLabel: 'Who it is for',
           who: 'Office workers, teachers, shopkeepers, teams inside organisations.',
           cta: 'Join'
@@ -970,7 +970,7 @@ export const copy: Record<Locale, PageCopy> = {
         {
           n: '03',
           title: 'Demo Nights',
-          body: 'Two to five minutes: you show the tool that solved a real problem for you, and how you got there.',
+          body: 'Two to five minutes: you show the tool that has been useful in your work, and how you got there.',
           whoLabel: 'Who it is for',
           who: 'Anyone who has built something and wants to show it, or to learn from someone else\u2019s attempt.',
           cta: 'Join'
@@ -1005,7 +1005,7 @@ export const copy: Record<Locale, PageCopy> = {
         {
           icon: 'resilient',
           title: 'Resilience',
-          body: 'Everything works on a modest laptop over an unstable connection. A phone is enough to read and follow along; building needs a keyboard.'
+          body: 'Everything works on a modest laptop.'
         }
       ]
     },
@@ -1058,10 +1058,10 @@ export const copy: Record<Locale, PageCopy> = {
       privacy: 'The video loads from YouTube only when you press play.'
     },
     form: {
-      eyebrow: 'Join',
-      title: 'Sign me up',
+      eyebrow: 'Stay in the loop',
+      title: 'Join',
       lead:
-        'Leave us your email and we will write when the next hackathon or mentorship opens near you.',
+        'Leave us your email and we will keep you posted on upcoming opportunities and activities.',
       nameLabel: 'Name',
       namePlaceholder: 'What we should call you',
       emailLabel: 'Email',
