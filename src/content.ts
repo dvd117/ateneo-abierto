@@ -84,6 +84,27 @@ export type FollowUp = {
   };
 };
 
+/**
+ * The node network under the hero's call to action: the cities the program
+ * wants to reach, lighting one at a time. Nothing here is a confirmed site,
+ * so the copy never says one has joined.
+ */
+export type NetworkCopy = {
+  label: string;
+  /** Resting caption, shown whenever no node is lit. */
+  caption: string;
+  /** Read out to screen readers in place of the drawing. */
+  alt: string;
+  /**
+   * `x`/`y` place the node in the 480×110 viewBox; `lx`/`ly` place its label
+   * in the same space, because the labels have to dodge each other and the
+   * edges — they are set by eye, as in the approved mockup.
+   */
+  cities: { name: string; x: number; y: number; lx: number; ly: number }[];
+  /** Index pairs into `cities`, drawn in order as the nodes light. */
+  edges: [number, number][];
+};
+
 export type AgentChrome = {
   /** Accessible name for the whole window. */
   windowLabel: string;
@@ -128,9 +149,8 @@ export type ShiftColumn = {
 export type ShiftCopy = {
   eyebrow: string;
   titleLines: { text: string; em?: boolean }[];
-  /** Opens on what the country needs, not on what was dismantled. */
+  /** Three sentences: where the frontier is now, what it buys, who can reach it. */
   lead: string;
-  body: string;
   /** "La misma tarea: *…*" — the task both columns run. */
   task: string;
   columns: [ShiftColumn, ShiftColumn];
@@ -159,6 +179,7 @@ export type PageCopy = {
     windowCaption: string;
   };
   agent: AgentChrome;
+  network: NetworkCopy;
   scenes: Scene[];
   shift: ShiftCopy;
   footer: {
@@ -203,6 +224,31 @@ export const copy: Record<Locale, PageCopy> = {
       saved: 'guardado',
       replay: 'Repetir',
       finished: 'El agente terminó la tarea y guardó el documento.'
+    },
+    network: {
+      label: 'La red que estamos tejiendo',
+      caption: 'Bibliotecas, mentores y ciudades',
+      alt: 'Ocho ciudades venezolanas unidas por una red: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná y Ciudad Guayana. Son ciudades que queremos alcanzar, no sedes confirmadas.',
+      cities: [
+        { name: 'Caracas', x: 244, y: 16, lx: 244, ly: 30 },
+        { name: 'Valencia', x: 203, y: 26, lx: 197, ly: 44 },
+        { name: 'Barquisimeto', x: 155, y: 29, lx: 150, ly: 4 },
+        { name: 'Maracaibo', x: 70, y: 11, lx: 70, ly: 25 },
+        { name: 'Mérida', x: 88, y: 76, lx: 100, ly: 78 },
+        { name: 'San Cristóbal', x: 48, y: 101, lx: 62, ly: 103 },
+        { name: 'Cumaná', x: 344, y: 17, lx: 344, ly: 31 },
+        { name: 'Ciudad Guayana', x: 397, y: 85, lx: 397, ly: 99 }
+      ],
+      edges: [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [2, 4],
+        [4, 5],
+        [0, 6],
+        [6, 7],
+        [0, 7]
+      ]
     },
     scenes: [
       {
@@ -349,9 +395,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'El cambio',
       titleLines: [{ text: 'De preguntar' }, { text: 'a delegar', em: true }],
       lead:
-        'Venezuela necesita gente que haga más con lo poco que tiene: menos horas, menos equipo, menos dinero.',
-      body:
-        'Eso ya está al alcance de cualquiera aquí, con herramientas gratuitas y sin saber programar. El sistema que debía enseñarlo lleva años desarmado, así que no esperamos a que alguien lo arregle: lo enseñamos nosotros.',
+        'La frontera ya no está en hacerle mejores preguntas a un chatbot. Está en delegarle el trabajo a un agente y revisar lo que te entrega: lo que te comía la tarde se resuelve mientras haces otra cosa, y el criterio sigue siendo tuyo. Ya está al alcance de cualquiera en Venezuela, con herramientas gratuitas.',
       task: 'La misma tarea: *juntar los gastos de tres meses y decidir dónde recortar.*',
       columns: [
         {
@@ -359,9 +403,9 @@ export const copy: Record<Locale, PageCopy> = {
           title: 'Con un chatbot',
           sub: 'Tú preguntas, él responde, y el trabajo sigue siendo tuyo.',
           steps: [
-            { actor: 'Tú', text: 'Le preguntas cómo comparar tres meses de gastos.' },
-            { actor: 'Chatbot', text: 'Te explica el método. Los números se los pegas tú.' },
-            { actor: 'Tú', text: 'Copias y pegas las tres hojas, columna por columna.' },
+            { actor: 'Tú', text: 'Le preguntas cómo comparar los tres meses.' },
+            { actor: 'Chatbot', text: 'Te explica el método; los números los pegas tú.' },
+            { actor: 'Tú', text: 'Copias y pegas las hojas, columna por columna.' },
             { actor: 'Tú', text: 'Revisas a mano qué subió y qué bajó.' },
             { actor: 'Tú', text: 'Escribes el resumen y lo guardas.' }
           ],
@@ -425,6 +469,31 @@ export const copy: Record<Locale, PageCopy> = {
       saved: 'saved',
       replay: 'Replay',
       finished: 'The agent finished the task and saved the document.'
+    },
+    network: {
+      label: 'The network we are weaving',
+      caption: 'Libraries, mentors and cities',
+      alt: 'Eight Venezuelan cities joined in a network: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná and Ciudad Guayana. These are cities we want to reach, not confirmed sites.',
+      cities: [
+        { name: 'Caracas', x: 244, y: 16, lx: 244, ly: 30 },
+        { name: 'Valencia', x: 203, y: 26, lx: 197, ly: 44 },
+        { name: 'Barquisimeto', x: 155, y: 29, lx: 150, ly: 4 },
+        { name: 'Maracaibo', x: 70, y: 11, lx: 70, ly: 25 },
+        { name: 'Mérida', x: 88, y: 76, lx: 100, ly: 78 },
+        { name: 'San Cristóbal', x: 48, y: 101, lx: 62, ly: 103 },
+        { name: 'Cumaná', x: 344, y: 17, lx: 344, ly: 31 },
+        { name: 'Ciudad Guayana', x: 397, y: 85, lx: 397, ly: 99 }
+      ],
+      edges: [
+        [0, 1],
+        [1, 2],
+        [2, 3],
+        [2, 4],
+        [4, 5],
+        [0, 6],
+        [6, 7],
+        [0, 7]
+      ]
     },
     scenes: [
       {
@@ -569,9 +638,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'The shift',
       titleLines: [{ text: 'From asking' }, { text: 'to delegating', em: true }],
       lead:
-        'Venezuela needs people who can do more with the little they have: fewer hours, less equipment, less money.',
-      body:
-        'That is already within reach here, with free tools and without knowing how to code. The system that should have taught it has been taken apart for years, so we did not wait for anyone to fix it: we teach it ourselves.',
+        'The frontier is no longer about asking a chatbot better questions. It is about handing an agent the work and checking what comes back: what used to eat your afternoon gets done while you do something else, and the judgement stays yours. It is already within reach for anyone in Venezuela, with free tools.',
       task: 'The same task: *merge three months of spending and decide where to cut.*',
       columns: [
         {
@@ -579,9 +646,9 @@ export const copy: Record<Locale, PageCopy> = {
           title: 'With a chatbot',
           sub: 'You ask, it answers, and the work is still yours.',
           steps: [
-            { actor: 'You', text: 'You ask it how to compare three months of spending.' },
-            { actor: 'Chatbot', text: 'It explains the method. You paste the numbers yourself.' },
-            { actor: 'You', text: 'You copy and paste the three sheets, column by column.' },
+            { actor: 'You', text: 'You ask it how to compare the three months.' },
+            { actor: 'Chatbot', text: 'It explains the method; you paste the numbers.' },
+            { actor: 'You', text: 'You copy and paste the sheets, column by column.' },
             { actor: 'You', text: 'You check by hand what went up and what went down.' },
             { actor: 'You', text: 'You write the summary and save it.' }
           ],

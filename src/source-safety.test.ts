@@ -114,8 +114,13 @@ describe('anti-slop rules hold in the stylesheet', () => {
   test('has no infinite or decorative loop outside the agent window spinner', () => {
     const loops = [...css().matchAll(/animation:[^;]*infinite[^;]*;/g)].map((match) => match[0]);
 
-    // The one permitted loop is the "step running" spinner inside the window.
-    expect(loops.length).toBeLessThanOrEqual(1);
+    // The only permitted loops are the two "step running" spinners: the one
+    // inside the agent window and the one on the agent column in section two.
+    // Both stop as soon as the step they describe finishes.
+    expect(loops.length).toBeLessThanOrEqual(2);
+    for (const loop of loops) {
+      expect(loop).toMatch(/spin/);
+    }
   });
 
   test('short-circuits motion under prefers-reduced-motion', () => {

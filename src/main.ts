@@ -52,6 +52,8 @@ function render(): void {
   scenePlayer = undefined;
   teardownReveal?.();
   teardownReveal = undefined;
+  lightingPlayers.forEach((player) => player.cancel());
+  lightingPlayers = [];
 
   bindEvents(copy[currentLocale]);
 }
@@ -71,10 +73,48 @@ function motionAllowed(): boolean {
 
 let scenePlayer: ScenePlayer | undefined;
 let sceneModule: Promise<typeof import('./scene')> | undefined;
+let lightingPlayers: { cancel: () => void }[] = [];
+let lightingModule: Promise<typeof import('./lighting')> | undefined;
 
 function loadSceneRunner(): Promise<typeof import('./scene')> {
   sceneModule ??= import('./scene');
   return sceneModule;
+}
+
+/**
+ * The network under the call to action and the agent column in section two.
+ * Both rest in their finished state, so this only ever adds motion: it is
+ * never loaded under reduced motion or saveData, and a failed chunk changes
+ * nothing the visitor can see.
+ */
+function bindLighting(): void {
+  if (!motionAllowed()) {
+    return;
+  }
+
+  const net = root.querySelector<HTMLElement>('[data-network]');
+  const column = root.querySelector<HTMLElement>('[data-shift-run]');
+
+  if (!net && !column) {
+    return;
+  }
+
+  lightingModule ??= import('./lighting');
+
+  void lightingModule
+    .then(({ playNetwork, playShiftColumn }) => {
+      // A locale switch may have replaced these nodes while the chunk loaded.
+      if (net?.isConnected) {
+        lightingPlayers.push(playNetwork(net));
+      }
+
+      if (column?.isConnected) {
+        lightingPlayers.push(playShiftColumn(column));
+      }
+    })
+    .catch(() => {
+      // The finished state is what is already on the page.
+    });
 }
 
 function bindAgent(page: PageCopy): void {
@@ -254,6 +294,7 @@ function bindEvents(page: PageCopy): void {
   });
 
   bindAgent(page);
+  bindLighting();
   teardownReveal = initReveal(root, { animate: motionAllowed() });
 }
 

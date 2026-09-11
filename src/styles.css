@@ -1116,92 +1116,81 @@ button {
 }
 
 /* ---------- de preguntar a delegar ----------
-   Two columns running the same task. Nothing here is decorative: the steps
-   arrive in order as the column enters the viewport, the agent's own steps
-   tick in the done colour, and the count at the foot is the conclusion. */
+   The approved mockup's shape: no cards. Two columns split by a single rule,
+   each step a row of [actor pill · line · tick] with the pills strung on a
+   vertical thread, and the count set in the serif at the foot. The pill tells
+   you who did the work before you read the sentence. */
 
 .shift {
   padding-block: clamp(3rem, 8vw, var(--sp-section));
+  background: var(--c-bg-deep);
   border-top: 1px solid var(--c-border);
-  display: grid;
-  gap: var(--gap-lg);
 }
 
 .shift-title {
   margin-top: 0.7rem;
 }
 
-.shift-intro {
-  display: grid;
-  gap: var(--sp-stack);
+.shift-lead {
   margin-top: 1.1rem;
+  max-width: 66ch;
 }
 
-.shift-body {
+/* The ochre rule is the section's one signal: it points at the task both
+   columns run. */
+.shift-task {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: var(--gap-lg);
   font: var(--t-body);
   color: var(--c-fg-2);
-  max-width: 62ch;
 }
 
-@media (min-width: 861px) {
-  .shift-head {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(2rem, 5vw, 4rem);
-    align-items: end;
-  }
-
-  .shift-head .eyebrow,
-  .shift-title {
-    grid-column: 1;
-  }
-
-  .shift-intro {
-    grid-column: 2;
-    grid-row: 1 / span 2;
-    margin-top: 0;
-  }
-}
-
-.shift-task {
-  font: var(--t-lead);
-  color: var(--c-fg-soft);
-  max-width: 46ch;
-  margin: 0;
+.shift-task::before {
+  content: "";
+  width: 1.75rem;
+  height: 2px;
+  background: var(--c-accent);
+  transform: translateY(-0.3em);
 }
 
 .shift-task em {
-  font-style: italic;
+  font-style: normal;
+  font-weight: 600;
   color: var(--c-fg);
 }
 
-.shift-grid {
+.shift-cmp {
   display: grid;
-  gap: var(--gap-md);
+  margin-top: var(--gap-md);
+  border-top: 1px solid var(--c-border);
 }
 
 @media (min-width: 861px) {
-  .shift-grid {
+  .shift-cmp {
     grid-template-columns: 1fr 1fr;
-    gap: clamp(1.5rem, 3vw, 2.5rem);
   }
 }
 
 .shift-col {
-  background: var(--c-bg-panel);
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-md);
-  padding: clamp(1.25rem, 3vw, 1.75rem);
+  padding-block: var(--gap-lg) 0;
 }
 
-/* The column that pays off carries the signal, once, as an edge. */
-.shift-col--agent {
-  border-color: var(--c-accent);
+@media (min-width: 861px) {
+  .shift-col {
+    padding-inline: 0 clamp(1.5rem, 3vw, 3rem);
+  }
+
+  .shift-col + .shift-col {
+    padding-inline: clamp(1.5rem, 3vw, 3rem) 0;
+    border-left: 1px solid var(--c-border);
+  }
 }
 
 .shift-col-title {
-  font: var(--t-h3);
-  color: var(--c-fg);
+  font: var(--t-h2);
   margin: 0;
 }
 
@@ -1209,78 +1198,273 @@ button {
   font: var(--t-small);
   color: var(--c-fg-2);
   margin: 0.35rem 0 0;
+  max-width: 40ch;
 }
 
-.shift-steps {
+.shift-rows {
   list-style: none;
   margin: var(--gap-md) 0 0;
   padding: 0;
-  display: grid;
-  gap: 0.85rem;
+  position: relative;
+  /* One width for the pill column, the thread and the row grid, so the thread
+     always runs through the middle of the pills. */
+  --pill: 5.2rem;
 }
 
-.shift-step {
+@media (max-width: 860px) {
+  .shift-rows {
+    --pill: 4.4rem;
+  }
+}
+
+/* The thread the pills hang on. Decorative: the pills read on their own. */
+.shift-rows::before {
+  content: "";
+  position: absolute;
+  left: calc(var(--pill) / 2);
+  top: 1.1rem;
+  bottom: 1.1rem;
+  width: 1px;
+  background: var(--c-border);
+}
+
+.shift-row {
+  position: relative;
   display: grid;
-  grid-template-columns: 1.1em 1fr;
-  column-gap: 0.6rem;
-  align-items: baseline;
+  grid-template-columns: var(--pill) 1fr 1.25rem;
+  align-items: center;
+  gap: 0.75rem;
+  padding-block: 0.55rem;
   font: var(--t-body);
   color: var(--c-fg-soft);
 }
 
-/* The visitor's own steps get a hollow marker, the agent's a solid tick, so
-   who did the work is readable without reading the actor. */
-.shift-tick {
-  width: 0.62em;
-  height: 0.62em;
-  margin-top: 0.1em;
-  border: 1px solid var(--c-fg-3);
-  border-radius: var(--r-pill);
-  align-self: center;
-}
-
-.shift-step.is-done .shift-tick {
-  border-color: var(--c-done);
-  background: var(--c-done);
-}
-
-.shift-actor {
+.shift-who {
+  justify-self: center;
+  width: var(--pill);
+  text-align: center;
+  padding-block: 0.3rem;
   font: var(--t-label);
+  font-size: clamp(0.62rem, 0.55rem + 0.2vw, 0.75rem);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--c-fg-2);
-  grid-column: 2;
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-pill);
 }
 
-.shift-step.is-done .shift-actor {
-  color: var(--c-done);
+/* The visitor's own rows carry the bright pill: at a glance, the left column
+   is almost all yours and the right one almost none. */
+.shift-row.is-mine .shift-who {
+  color: var(--c-fg);
+  border-color: var(--c-fg);
 }
 
-.shift-text {
-  grid-column: 2;
-  display: block;
-  margin-top: 0.2rem;
+.shift-tick {
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: var(--r-pill);
+  justify-self: end;
+  display: grid;
+  place-items: center;
+}
+
+.shift-col--agent .shift-run .shift-tick {
+  border: 1.5px solid var(--c-done);
+  background: var(--c-done);
+}
+
+/* Drawn, like the tick inside the agent window: no icon font, no emoji. */
+.shift-col--agent .shift-run .shift-tick::after {
+  content: "";
+  width: 0.42em;
+  height: 0.22em;
+  margin-top: -0.14em;
+  border-left: 1.5px solid var(--c-bg-deep);
+  border-bottom: 1.5px solid var(--c-bg-deep);
+  transform: rotate(-45deg);
+}
+
+.shift-col[data-shift-run].is-running .shift-run:not(.is-done) .shift-tick::after {
+  content: none;
 }
 
 .shift-tally {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.9rem;
   margin: var(--gap-md) 0 0;
   padding-top: var(--gap-sm);
   border-top: 1px solid var(--c-border);
-  font: var(--t-body);
-  color: var(--c-fg-2);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4rem;
-  align-items: baseline;
 }
 
 .shift-count {
-  font: var(--t-h2);
+  font: var(--t-display);
+  letter-spacing: var(--track-display);
+  line-height: 1;
   color: var(--c-fg);
 }
 
 .shift-col--agent .shift-count {
   color: var(--c-accent);
+}
+
+.shift-tally-text {
+  font: var(--t-small);
+  color: var(--c-fg-2);
+  max-width: 26ch;
+}
+
+@media (max-width: 860px) {
+  .shift-col + .shift-col {
+    border-top: 1px solid var(--c-border);
+  }
+}
+
+/* While the runner drives the column, the agent's rows wait their turn: the
+   tick is an empty ring, the row recedes, and the running one spins. */
+.shift-col[data-shift-run].is-running .shift-run:not(.is-done) {
+  color: var(--c-fg-3);
+}
+
+.shift-col[data-shift-run].is-running .shift-run:not(.is-done) .shift-tick {
+  border: 1.5px solid var(--c-fg-3);
+  background: none;
+}
+
+.shift-col[data-shift-run].is-running .shift-run.is-active .shift-tick {
+  border-color: var(--c-fg);
+  border-top-color: transparent;
+  animation: shift-spin 0.9s linear infinite;
+}
+
+.shift-col[data-shift-run].is-running .shift-run.is-active {
+  color: var(--c-fg);
+}
+
+@keyframes shift-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ---------- the network under the call to action ----------
+   Eight cities the program wants to reach, lit one at a time. Nothing here is
+   a confirmed site, so a lit node never announces one. */
+
+.net {
+  margin-top: var(--gap-lg);
+  max-width: 34rem;
+}
+
+.net-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: var(--gap-sm);
+  margin: 0;
+  padding-top: var(--gap-sm);
+  border-top: 1px solid var(--c-border);
+}
+
+.net-label {
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-fg-2);
+}
+
+.net-caption {
+  font: var(--t-small);
+  color: var(--c-fg-soft);
+}
+
+.net-caption .net-lit {
+  color: var(--c-accent);
+}
+
+.net-plot {
+  position: relative;
+  margin-top: var(--gap-sm);
+  /* The labels are placed in percentages of this box, so it has to keep the
+     viewBox's proportions at every width. */
+  aspect-ratio: 480 / 110;
+  margin-bottom: 1.4rem;
+}
+
+.net-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.net-edge {
+  stroke: var(--c-accent);
+  stroke-width: 1.2;
+  opacity: 0.7;
+  transition: opacity var(--duration-step) var(--ease-out);
+}
+
+.net-node circle {
+  fill: var(--c-accent);
+  stroke: var(--c-accent);
+  stroke-width: 1.5;
+  transition:
+    fill var(--duration-step) var(--ease-out),
+    stroke var(--duration-step) var(--ease-out);
+}
+
+.net-halo {
+  fill: none;
+  stroke: var(--c-accent);
+  stroke-width: 1;
+  opacity: 0;
+}
+
+.net-city {
+  position: absolute;
+  transform: translate(-50%, 0);
+  white-space: nowrap;
+  font: var(--t-small);
+  font-size: clamp(0.62rem, 0.42rem + 0.55vw, 0.8rem);
+  color: var(--c-fg-soft);
+  transition: color var(--duration-step) var(--ease-out);
+}
+
+/* The runner adds .is-lighting; until then every node stands lit, which is
+   also what anyone without the runner sees. */
+.net.is-lighting .net-edge:not(.is-lit) {
+  opacity: 0.12;
+}
+
+.net.is-lighting .net-node:not(.is-lit) circle {
+  fill: var(--c-bg);
+  stroke: var(--c-fg-3);
+}
+
+.net.is-lighting .net-city:not(.is-lit) {
+  color: var(--c-fg-3);
+}
+
+.net.is-lighting .net-node.is-now .net-halo {
+  animation: net-halo 1.2s var(--ease-out) 1;
+}
+
+@keyframes net-halo {
+  from {
+    opacity: 0.8;
+    r: 5;
+  }
+
+  to {
+    opacity: 0;
+    r: 14;
+  }
 }
 
 /* ---------- scroll reveal ----------

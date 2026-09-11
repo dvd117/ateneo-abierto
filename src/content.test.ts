@@ -118,16 +118,15 @@ describe('landing page copy', () => {
     expect(copy.es.scenes[3].prompt).toContain('junta');
   });
 
-  test('opens "De preguntar a delegar" on what the country needs, not on the dismantling', () => {
+  test('frames the shift as efficiency, not scarcity', () => {
     for (const locale of locales) {
       const { shift } = copy[locale];
 
-      // Directive 4: the need leads; the dismantled system is context, and it
-      // may only appear later, in the body.
-      expect(shift.lead).not.toMatch(/desarmad|desmantel|taken apart|dismantl/i);
-      expect(shift.body).toMatch(/desarmad|taken apart/i);
-      // The "we didn't wait" energy survives the reframing.
-      expect(shift.body).toMatch(/no esperamos|did not wait/i);
+      // David, 2026-09-11: same goal, without the negative connotation. No
+      // "more with less", nothing about what the country lacks.
+      expect(shift.lead).not.toMatch(/más con menos|lo poco que|do more with less|the little they/i);
+      expect(shift.lead).toMatch(/chatbot/i);
+      expect(shift.lead).toMatch(/gratuitas|free tools/i);
     }
 
     expect(copy.es.shift.titleLines.map((line) => line.text)).toEqual([
@@ -164,6 +163,25 @@ describe('landing page copy', () => {
     // The task continues the window's first sequence rather than inventing one.
     expect(copy.es.shift.task).toContain('gastos');
     expect(copy.en.shift.task).toContain('spending');
+  });
+
+  test('names the network cities under the hero without claiming a confirmed site', () => {
+    for (const locale of locales) {
+      const { network } = copy[locale];
+
+      expect(network.cities).toHaveLength(8);
+      expect(network.cities.map((city) => city.name)).toContain('Caracas');
+      expect(network.edges.length).toBeGreaterThan(0);
+
+      for (const [from, to] of network.edges) {
+        expect(network.cities[from]).toBeDefined();
+        expect(network.cities[to]).toBeDefined();
+      }
+
+      // Nothing on the page may read as an announced venue.
+      expect(network.caption).not.toMatch(/se suma|joins|sede|venue/i);
+      expect(network.alt).toMatch(/no sedes confirmadas|not confirmed sites/i);
+    }
   });
 
   test('never uses the program names another organisation owns', () => {

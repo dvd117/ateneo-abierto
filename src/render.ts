@@ -262,6 +262,51 @@ function renderAgentWindow(page: PageCopy): string {
   `;
 }
 
+/**
+ * The node network under the call to action. Eight cities, lit one at a time
+ * by the lazy runner; without it every node stands lit, which is the honest
+ * resting state. Coordinates live in content.ts so the copy owns the map.
+ */
+function renderNetwork(page: PageCopy): string {
+  const { network } = page;
+  const nodes = network.cities
+    .map(
+      (city, index) =>
+        `<g class="net-node" data-node="${index}"><circle class="net-halo" cx="${city.x}" cy="${city.y}" r="5"/><circle cx="${city.x}" cy="${city.y}" r="4"/></g>`
+    )
+    .join('');
+
+  const edges = network.edges
+    .map(([from, to]) => {
+      const a = network.cities[from];
+      const b = network.cities[to];
+      return `<line class="net-edge" data-node="${to}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+    })
+    .join('');
+
+  const labels = network.cities
+    .map(
+      (city, index) =>
+        `<span class="net-city" data-node="${index}" style="left:${((city.lx / 480) * 100).toFixed(2)}%;top:${((city.ly / 110) * 100).toFixed(2)}%">${inline(city.name)}</span>`
+    )
+    .join('');
+
+  return `
+    <div class="net" data-network>
+      <p class="net-head">
+        <span class="net-label">${inline(network.label)}</span>
+        <span class="net-caption" data-net-caption>${inline(network.caption)}</span>
+      </p>
+      <div class="net-plot">
+        <svg class="net-svg" viewBox="0 0 480 110" role="img" aria-label="${inline(network.alt)}">
+          ${edges}${nodes}
+        </svg>
+        ${labels}
+      </div>
+    </div>
+  `;
+}
+
 function renderHero(page: PageCopy): string {
   const headline = page.hero.titleLines
     .map((line) => (line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)))
@@ -276,6 +321,7 @@ function renderHero(page: PageCopy): string {
         <div class="hero-actions">
           <a class="button button--fill" href="#sumarme">${page.hero.primaryCta}</a>
         </div>
+        ${renderNetwork(page)}
       </div>
       ${renderAgentWindow(page)}
     </section>
@@ -283,35 +329,36 @@ function renderHero(page: PageCopy): string {
 }
 
 /**
- * "De preguntar a delegar": the same task run twice, side by side. The steps
- * reveal in order as the column enters the viewport, so the count at the foot
- * lands as the conclusion of something the visitor watched, not as a claim.
- * `data-reveal` is the page-wide scroll hook; it short-circuits under reduced
- * motion, where every step is simply already there.
+ * "De preguntar a delegar": the same task run twice, side by side, as in the
+ * approved mockup — no cards. Two columns split by one rule, each step a row
+ * of [actor pill · line · tick], the pills strung on a vertical thread. The
+ * agent's rows tick in order as the column enters the viewport, and the count
+ * at the foot is the conclusion of something the visitor watched.
  */
-function renderShiftColumn(column: ShiftColumn, index: number): string {
+function renderShiftColumn(column: ShiftColumn): string {
   const steps = column.steps
-    .map(
-      (step, order) => `
-        <li class="shift-step ${step.done ? 'is-done' : ''}" data-reveal data-reveal-delay="${order * 90}">
-          <span class="shift-tick" aria-hidden="true"></span>
-          <span class="shift-actor">${inline(step.actor)}</span>
+    .map((step, order) => {
+      const mine = !step.done;
+      return `
+        <li class="shift-row ${mine ? 'is-mine' : 'shift-run'}" ${step.done ? `data-run="${order}"` : ''}>
+          <span class="shift-who">${inline(step.actor)}</span>
           <span class="shift-text">${inline(step.text)}</span>
+          <span class="shift-tick" aria-hidden="true"></span>
         </li>
-      `
-    )
+      `;
+    })
     .join('');
 
   return `
-    <article class="shift-col shift-col--${column.kind}" data-reveal data-reveal-delay="${index * 120}">
+    <div class="shift-col shift-col--${column.kind}" ${column.kind === 'agent' ? 'data-shift-run' : ''}>
       <h3 class="shift-col-title">${inline(column.title)}</h3>
       <p class="shift-col-sub">${inline(column.sub)}</p>
-      <ol class="shift-steps">${steps}</ol>
-      <p class="shift-tally" data-reveal data-reveal-delay="${column.steps.length * 90 + 120}">
+      <ol class="shift-rows">${steps}</ol>
+      <p class="shift-tally">
         <span class="shift-count">${inline(column.tallyCount)}</span>
-        <span>${inline(column.tallyText)}</span>
+        <span class="shift-tally-text">${inline(column.tallyText)}</span>
       </p>
-    </article>
+    </div>
   `;
 }
 
@@ -319,21 +366,16 @@ function renderShift(page: PageCopy): string {
   const { shift } = page;
   const title = shift.titleLines
     .map((line) => (line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)))
-    .join('<br />');
+    .join(' ');
 
   return `
     <section class="shift shell" id="cambio" aria-labelledby="cambio-title">
-      <div class="shift-head">
-        <p class="eyebrow">${inline(shift.eyebrow)}</p>
-        <h2 class="section-title shift-title" id="cambio-title">${title}</h2>
-        <div class="shift-intro">
-          <p class="lead">${inline(shift.lead)}</p>
-          <p class="shift-body">${inline(shift.body)}</p>
-        </div>
-      </div>
+      <p class="eyebrow">${inline(shift.eyebrow)}</p>
+      <h2 class="section-title shift-title" id="cambio-title">${title}</h2>
+      <p class="lead shift-lead">${inline(shift.lead)}</p>
       <p class="shift-task">${inline(shift.task)}</p>
-      <div class="shift-grid">
-        ${shift.columns.map((column, index) => renderShiftColumn(column, index)).join('')}
+      <div class="shift-cmp">
+        ${shift.columns.map((column) => renderShiftColumn(column)).join('')}
       </div>
     </section>
   `;
