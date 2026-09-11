@@ -419,13 +419,16 @@ button {
   fill: var(--c-bg-deep);
 }
 
+/* --band-shift is a unitless number in the band's own 1200-wide units, so
+   the two layers can move against each other at different rates. */
 .band-field {
-  opacity: 0.9;
+  opacity: 0.92;
+  transform: translateX(calc(var(--band-shift, 0) * -0.35px));
 }
 
 .band-screen {
-  opacity: 0.88;
-  transform: translateX(var(--band-shift, 0px));
+  opacity: 0.86;
+  transform: translateX(calc(var(--band-shift, 0) * 1px));
 }
 
 /* ---------- grain ----------

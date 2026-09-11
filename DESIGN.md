@@ -326,11 +326,15 @@ still never loops:
 - **Entrances**: the hero headline rises line by line on load; each section header's title and
   lead rise a beat apart as they enter.
 - **Scroll-driven**: *la vibración*, the page's signature, after Carlos Cruz-Diez's
-  additive-colour method: a row of zones, each a stripe recipe of its own pitch, colours and
-  widths (ochre, dark ochre, bone, raised graphite), under a screen of fine dark lines that
-  slides as the band crosses the screen, so tones appear and travel. Three bands mark the
-  chapters (after the hero, before El norte, before Únete), each starting the zone sequence at
-  a different point. **It is his method, never his image**: it must not reproduce the
+  additive-colour method: one continuous field of vertical stripes (pitch 6) in which the
+  widths of ochre, dark ochre and bone drift on slow waves along the band, so the colour mixed
+  in the eye changes gradually — one field, not a row of blocks — under a screen of diagonal
+  dark lines (45°). As the band crosses the screen the screen slides one way and the field the
+  other, eased towards the scroll position so a wheel notch reads as a sweep, not a flicker
+  between two states (David, 2026-09-11). The field is drawn in the browser (`drawBand`), so it
+  costs nothing in the first response; only bands near the viewport repaint (60 fps at 4× CPU
+  throttling). Three bands mark the chapters (after the hero, before El norte, before Únete),
+  each with its own wave phase. **It is his method, never his image**: it must not reproduce the
   Maiquetía floor (*Cromointerferencia de color aditivo*) or its yellow/black/red/blue modules.
   On 2026-09-07 the artist's family publicly objected to unauthorised imitations of that
   pattern, and David chose the method over the image (2026-09-11).

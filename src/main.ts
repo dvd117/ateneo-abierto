@@ -1,6 +1,6 @@
 import { copy, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
-import { initBands, initProgressRail, initReveal } from './reveal';
+import { drawBand, initBands, initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
 import { pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
 import type { ScenePlayer } from './scene';
@@ -513,6 +513,12 @@ let teardownChrome: (() => void) | undefined;
  * motion — the transition is what reduced motion takes away, in CSS.
  */
 function bindChrome(): () => void {
+  // The bands' fields are drawn here for everyone: they are the artwork, not
+  // motion. Only the sliding below waits for motion to be allowed.
+  root.querySelectorAll<SVGGElement>('[data-band-field]').forEach((field) => {
+    drawBand(field, Number(field.dataset.seed ?? 0));
+  });
+
   const stopBands = motionAllowed()
     ? initBands(Array.from(root.querySelectorAll<HTMLElement>('[data-band]')))
     : () => {};

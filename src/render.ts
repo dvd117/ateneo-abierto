@@ -430,60 +430,21 @@ function titleFrom(lines: { text: string; em?: boolean }[]): string {
  * unauthorised imitations of that pattern, and David chose the method over
  * the image (2026-09-11). Hidden from the tree: it says nothing.
  */
-type BandZone = {
-  /** Share of the band's width, in percent. */
-  w: number;
-  pitch: number;
-  /** Colour class and width of each stripe, laid left to right in the pitch. */
-  stripes: ['o' | 'd' | 'b' | 'g', number][];
-};
-
-const BAND_ZONES: BandZone[] = [
-  { w: 12, pitch: 6, stripes: [['b', 1.1]] },
-  { w: 10, pitch: 4, stripes: [['o', 2]] },
-  { w: 16, pitch: 5, stripes: [['o', 3], ['d', 1.2]] },
-  { w: 7, pitch: 3, stripes: [['b', 1], ['o', 1.4]] },
-  { w: 19, pitch: 5, stripes: [['d', 2.4], ['o', 0.9]] },
-  { w: 11, pitch: 4, stripes: [['o', 1.1], ['g', 1.6]] },
-  { w: 25, pitch: 7, stripes: [['b', 1], ['o', 1.2], ['g', 2]] }
-];
-
-function renderBand(name: string, shift: number): string {
-  // Each band starts the same sequence at a different zone, so no two match.
-  const zones = BAND_ZONES.map((_, index) => BAND_ZONES[(index + shift) % BAND_ZONES.length]);
-  let x = 0;
-
-  const patterns = zones
-    .map((zone, index) => {
-      let at = 0;
-      const stripes = zone.stripes
-        .map(([colour, width]) => {
-          const rect = `<rect class="bz-${colour}" x="${at}" width="${width}" height="10"/>`;
-          at += width;
-          return rect;
-        })
-        .join('');
-      return `<pattern id="band-${name}-${index}" width="${zone.pitch}" height="10" patternUnits="userSpaceOnUse">${stripes}</pattern>`;
-    })
-    .join('');
-
-  const field = zones
-    .map((zone, index) => {
-      const rect = `<rect x="${x}%" width="${zone.w}%" height="100%" fill="url(#band-${name}-${index})"/>`;
-      x += zone.w;
-      return rect;
-    })
-    .join('');
-
+function renderBand(name: string, seed: number): string {
+  // The stripes are drawn in the browser (reveal.ts, drawBand): three bands
+  // of ~200 columns each would add tens of kilobytes to the first response.
+  // Until then — and without JavaScript — a plain stripe pattern stands in.
   return `
     <div class="band band--${name}" data-band aria-hidden="true">
-      <svg class="band-svg" preserveAspectRatio="none" focusable="false">
+      <svg class="band-svg" viewBox="0 0 1200 100" preserveAspectRatio="none" focusable="false">
         <defs>
-          ${patterns}
-          <pattern id="band-${name}-screen" width="3.4" height="10" patternUnits="userSpaceOnUse"><rect class="bz-screen" width="1.7" height="10"/></pattern>
+          <pattern id="band-${name}-rest" width="6" height="10" patternUnits="userSpaceOnUse"><rect class="bz-o" width="2.4" height="10"/><rect class="bz-d" x="2.4" width="1" height="10"/></pattern>
+          <pattern id="band-${name}-screen" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="bz-screen" width="2.2" height="9"/></pattern>
         </defs>
-        <g class="band-field">${field}</g>
-        <rect class="band-screen" x="-10%" width="120%" height="100%" fill="url(#band-${name}-screen)"/>
+        <g class="band-field" data-band-field data-seed="${seed}">
+          <rect x="-60" width="1320" height="100" fill="url(#band-${name}-rest)"/>
+        </g>
+        <rect class="band-screen" x="-120" width="1440" height="100" fill="url(#band-${name}-screen)"/>
       </svg>
     </div>
   `;

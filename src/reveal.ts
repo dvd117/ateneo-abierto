@@ -88,44 +88,119 @@ export function initProgressRail(rail: HTMLElement | null): () => void {
   };
 }
 
+const SVG_NS = 'http://www.w3.org/2000/svg';
+
+/** 0..1, one smooth wave: the stripe proportions drift, they never jump. */
+function wave(t: number, frequency: number, phase: number): number {
+  return 0.5 + 0.5 * Math.sin(2 * Math.PI * (t * frequency + phase));
+}
+
 /**
- * Slides the top layer of each kinetic band as it crosses the screen, so its
- * moiré moves with the reader. One scroll listener, one frame per scroll, and
- * only the bands on screen are touched. The caller skips this under reduced
- * motion and saveData; the bands then stand still, which is still a moiré.
+ * Draws a band's field after Cruz-Diez's additive-colour method: columns of
+ * stripes at one pitch, and inside each column the widths of ochre, dark
+ * ochre and bone drift continuously along the band, so the colour mixed in
+ * the eye changes gradually from one end to the other — one field, not a row
+ * of blocks. `seed` shifts the waves so no two bands match. Our composition,
+ * never the Maiquetía floor (see render.ts).
  */
-export function initBands(bands: HTMLElement[], travel = 160): () => void {
+export function drawBand(field: SVGGElement, seed: number): void {
+  const pitch = 6;
+  const room = 5.2;
+  const fragment = document.createDocumentFragment();
+
+  for (let x = -60; x < 1260; x += pitch) {
+    const t = (x + 60) / 1320;
+    let ochre = 0.6 + 2.6 * wave(t, 1.3, seed * 0.17);
+    let dark = 0.3 + 1.9 * wave(t, 0.8, seed * 0.23 + 0.25);
+    let bone = 0.15 + 1.5 * wave(t, 2.1, seed * 0.31 + 0.6) ** 2;
+    const total = ochre + dark + bone;
+    // Never so full the column closes, never so empty the field goes dark.
+    const fit = Math.min(room, Math.max(3.4, total)) / total;
+    ochre *= fit;
+    dark *= fit;
+    bone *= fit;
+
+    let at = x;
+    for (const [colour, width] of [['o', ochre], ['d', dark], ['b', bone]] as const) {
+      const rect = document.createElementNS(SVG_NS, 'rect');
+      rect.setAttribute('class', `bz-${colour}`);
+      rect.setAttribute('x', at.toFixed(2));
+      rect.setAttribute('width', width.toFixed(2));
+      rect.setAttribute('height', '100');
+      fragment.append(rect);
+      at += width;
+    }
+  }
+
+  field.replaceChildren(fragment);
+}
+
+/**
+ * Moves each band's two layers in opposite directions as it crosses the
+ * screen — the diagonal screen one way, the field the other — so the moiré
+ * between them travels. The motion eases towards the scroll position instead
+ * of jumping with it: a wheel notch moves the screen by several of its own
+ * pitches, and without easing the eye reads that as a flicker between two
+ * states (David, 2026-09-11). The caller skips this under reduced motion and
+ * saveData; the bands then stand still, still mixing their colours.
+ */
+export function initBands(bands: HTMLElement[], travel = 90): () => void {
   if (bands.length === 0) {
     return () => {};
   }
 
+  const current = new Map<HTMLElement, number>();
+  const target = new Map<HTMLElement, number>();
+  // Each band is some 660 shapes; only the ones on screen are repainted.
+  const onScreen = new Set<HTMLElement>();
   let frame = 0;
 
-  const update = () => {
-    frame = 0;
+  const measure = () => {
     const height = window.innerHeight;
-
+    onScreen.clear();
     for (const band of bands) {
       const rect = band.getBoundingClientRect();
-      if (rect.bottom < 0 || rect.top > height) {
+      if (rect.bottom < -height * 0.25 || rect.top > height * 1.25) {
         continue;
       }
-
+      onScreen.add(band);
       // -0.5 as the band enters at the bottom, +0.5 as it leaves at the top.
-      const position = 0.5 - (rect.top + rect.height / 2) / height;
-      band.style.setProperty('--band-shift', `${(position * travel).toFixed(1)}px`);
+      const position = Math.max(-0.75, Math.min(0.75, 0.5 - (rect.top + rect.height / 2) / height));
+      target.set(band, position * travel);
+    }
+  };
+
+  const step = () => {
+    frame = 0;
+    let moving = false;
+
+    for (const band of onScreen) {
+      const goal = target.get(band) ?? 0;
+      const now = current.get(band) ?? goal;
+      const next = now + (goal - now) * 0.12;
+      const settled = Math.abs(goal - next) < 0.02;
+      const value = settled ? goal : next;
+
+      current.set(band, value);
+      band.style.setProperty('--band-shift', value.toFixed(2));
+      moving ||= !settled;
+    }
+
+    if (moving) {
+      frame = window.requestAnimationFrame(step);
     }
   };
 
   const onScroll = () => {
+    measure();
     if (frame === 0) {
-      frame = window.requestAnimationFrame(update);
+      frame = window.requestAnimationFrame(step);
     }
   };
 
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
-  update();
+  onScroll();
 
   return () => {
     if (frame !== 0) {
