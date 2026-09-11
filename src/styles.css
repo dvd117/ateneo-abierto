@@ -416,15 +416,16 @@ button {
 }
 
 /* ---------- grain ----------
-   A fixed film of noise over the whole page: depth on a flat dark ground. A
-   static tile from /grain.png, so it costs one small request and no script. */
+   Noise on the ground, never on the things placed on it. The tile is a
+   background layer of the page and of each section's own ground, so text,
+   icons, buttons, the agent window, the video, the form and the bands — all
+   of which paint their own surface or sit above the ground — stay clean
+   (David, 2026-09-11). A static 4.5 KB tile, one request, no script. */
 
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 60;
-  pointer-events: none;
+body,
+.hero,
+.sec,
+.site-footer {
   background-image: url("/grain.png");
   background-size: 128px 128px;
 }
@@ -1415,7 +1416,7 @@ main [id] {
    you who did the work before you read the sentence. */
 
 .shift {
-  background: var(--c-bg-deep);
+  background-color: var(--c-bg-deep);
 }
 
 /* The ochre rule is the section's one signal: it points at the task both
@@ -1788,7 +1789,7 @@ main [id] {
 
 .site-footer {
   border-top: 1px solid var(--c-border);
-  background: var(--c-bg-deep);
+  background-color: var(--c-bg-deep);
   /* Room under the last line for the floating back-to-top button. */
   padding-block: var(--gap-lg) 6rem;
   color: var(--c-fg-2);
@@ -2112,7 +2113,7 @@ main [id] {
    so the page breathes between the doors and the map. */
 
 .principles {
-  background: var(--c-bg-deep);
+  background-color: var(--c-bg-deep);
 }
 
 .pr-grid {
@@ -2360,7 +2361,7 @@ main [id] {
    for the player, so the page reaches YouTube only after a click. */
 
 .talk {
-  background: var(--c-bg-deep);
+  background-color: var(--c-bg-deep);
 }
 
 .talk-figure {

@@ -336,8 +336,9 @@ the interactive layer is not loaded at all under `saveData`.
 
 ## Texture, elevation and depth
 
-A fixed film of grain (`/grain.png`, a 4.5 KB palette tile, alpha 9–14) sits over the whole
-page for depth on the flat dark ground. Surfaces stay flat tonal layers with 1 px borders. The
+Grain (`/grain.png`, a 4.5 KB palette tile, alpha 9–14) is a background layer of the page
+and of each section's ground — never an overlay. Text, icons, buttons, the agent window, the
+video, the form and the bands sit above it and stay clean (David, 2026-09-11). Surfaces stay flat tonal layers with 1 px borders. The
 window shadow (`0 20px 40px -18px rgba(0,0,0,.6)`) is now shared by the four objects the page
 hands you: the agent window, the talk's frame, the form panel and the programme dialogs.
 
