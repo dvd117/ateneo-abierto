@@ -2221,3 +2221,14 @@ button {
   color: var(--c-fg-soft);
   max-width: 68ch;
 }
+
+/* A link inside a sentence needs more than colour to be a link: the underline
+   is what makes it one for anyone who cannot separate the two hues. Links that
+   stand alone — the doors' call to action — carry their own weight instead. */
+p > .link,
+.hz-text .link {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-thickness: 1px;
+  border-bottom: 0;
+}

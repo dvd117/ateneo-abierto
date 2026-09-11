@@ -229,5 +229,21 @@ app.post(
   }
 );
 
+/**
+ * Everything under /assets is content-hashed by the build, and the fonts and
+ * the talk poster change only when their file name does, so a repeat visit on
+ * a metered connection should not pay for them twice. The page itself is not
+ * covered: it revalidates (see the handler above) so it can pick up new assets.
+ */
+app.use('/assets/*', async (c, next) => {
+  await next();
+  c.header('Cache-Control', 'public, max-age=31536000, immutable');
+});
+
+app.use('/fonts/*', async (c, next) => {
+  await next();
+  c.header('Cache-Control', 'public, max-age=31536000, immutable');
+});
+
 // Static file serving — must be last
 app.use('*', serveStatic({ root: './dist' }));

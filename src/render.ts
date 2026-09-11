@@ -83,9 +83,15 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
 
   // Only the inactive button describes a switch. Labelling the active one
   // "switch to Spanish" while it is already Spanish misleads screen readers.
-  const describe = isActive ? '' : ` aria-label="${page.languageSwitchTo[locale]}"`;
+  //
+  // The description is appended to the visible label rather than replacing it:
+  // an accessible name that does not start with the words on the button breaks
+  // voice control, which is how someone says "EN" and expects it to be pressed.
+  const describe = isActive
+    ? ''
+    : `<span class="visually-hidden"> · ${page.languageSwitchTo[locale]}</span>`;
 
-  return `<button class="locale-button ${isActive ? 'is-active' : ''}" type="button" data-locale="${locale}" aria-pressed="${isActive}"${describe}>${label}</button>`;
+  return `<button class="locale-button ${isActive ? 'is-active' : ''}" type="button" data-locale="${locale}" aria-pressed="${isActive}">${label}${describe}</button>`;
 }
 
 function renderHeader(page: PageCopy, locale: Locale): string {

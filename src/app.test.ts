@@ -399,6 +399,23 @@ describe('prerendered home page', () => {
     expect(csp).not.toContain('evil.example');
   });
 
+  test('caches hashed assets and fonts immutably, and the page never', async () => {
+    for (const path of ['/assets/index-abc123.js', '/fonts/dm-sans-latin-variable.woff2']) {
+      const res = await pagesApp.request(path);
+      expect(res.headers.get('cache-control')).toBe('public, max-age=31536000, immutable');
+    }
+
+    const page = await pagesApp.request('/');
+    expect(page.headers.get('cache-control')).toBe('no-cache');
+  });
+
+  test('names the one frame origin the talk may load from', async () => {
+    const res = await pagesApp.request('/');
+    const csp = res.headers.get('content-security-policy') ?? '';
+
+    expect(csp).toContain("frame-src 'self' https://www.youtube-nocookie.com");
+  });
+
   test('reads no hashes when csp.json is missing or malformed', () => {
     expect(loadStyleHashes(join(dir, 'nowhere'))).toEqual([]);
     expect(loadStyleHashes(dir)).toEqual([esHash]);
