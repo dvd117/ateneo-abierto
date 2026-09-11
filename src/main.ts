@@ -1,6 +1,7 @@
 import { copy, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
 import { initReveal } from './reveal';
+import { createSubscribeHandler, mailerliteProvider } from './subscribe';
 import { pageMeta, renderPage, renderThread } from './render';
 import type { ScenePlayer } from './scene';
 import './styles.css';
@@ -391,6 +392,87 @@ function bindTalk(page: PageCopy): void {
   });
 }
 
+/**
+ * The form. It posts to the site's own endpoint, which talks to MailerLite
+ * server-side, so no third party ever sees the page. The button is disabled
+ * while a request is in flight and the outcome is announced in the status
+ * line, which is a live region.
+ */
+function bindForm(page: PageCopy): void {
+  const form = root.querySelector<HTMLFormElement>('[data-join]');
+  const status = root.querySelector<HTMLElement>('[data-join-status]');
+  const submit = root.querySelector<HTMLButtonElement>('[data-join-submit]');
+
+  if (!form || !status || !submit) {
+    return;
+  }
+
+  const subscribe = createSubscribeHandler(mailerliteProvider);
+  let sending = false;
+
+  function say(message: string, state: 'sending' | 'ok' | 'error'): void {
+    if (!status) {
+      return;
+    }
+
+    // Clearing first makes a repeated message announce again.
+    status.textContent = '';
+    status.textContent = message;
+    status.dataset.state = state;
+  }
+
+  form.addEventListener('submit', (event) => {
+    event.preventDefault();
+
+    if (sending) {
+      return;
+    }
+
+    const data = new FormData(form);
+
+    // The honeypot: a filled one means a bot, and the server says ok anyway.
+    // Stopping here saves the round trip.
+    if (String(data.get('website') ?? '') !== '') {
+      say(page.form.states.ok, 'ok');
+      return;
+    }
+
+    const newsletterLocale = data.get('newsletterLocale');
+
+    sending = true;
+    submit.disabled = true;
+    say(page.form.states.sending, 'sending');
+
+    void subscribe({
+      email: String(data.get('email') ?? ''),
+      name: String(data.get('name') ?? '') || undefined,
+      newsletterLocale: newsletterLocale === 'en' ? 'en' : 'es',
+      participate: data.get('participate') === 'yes'
+    })
+      .then((result) => {
+        if (result.ok) {
+          say(page.form.states.ok, 'ok');
+          form.reset();
+          return;
+        }
+
+        say(
+          result.reason === 'invalid-email'
+            ? page.form.states.invalidEmail
+            : page.form.states.error,
+          'error'
+        );
+      })
+      .catch(() => {
+        say(page.form.states.error, 'error');
+      })
+      .finally(() => {
+        sending = false;
+        submit.disabled = false;
+      });
+  });
+}
+
 let teardownReveal: (() => void) | undefined;
 
 function bindEvents(page: PageCopy): void {
@@ -406,6 +488,7 @@ function bindEvents(page: PageCopy): void {
 
   bindAgent(page);
   bindTalk(page);
+  bindForm(page);
   bindLighting();
   teardownReveal = initReveal(root, { animate: motionAllowed() });
 }

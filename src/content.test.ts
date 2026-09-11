@@ -362,6 +362,54 @@ describe('landing page copy', () => {
     expect(JSON.stringify(copy.es.talk)).not.toMatch(/\b20(2[6-9]|3\d)\b/);
   });
 
+
+  test('asks for the four fields the lists are wired to, and nothing else', () => {
+    for (const locale of locales) {
+      const { form } = copy[locale];
+
+      expect(form.nameLabel.length).toBeGreaterThan(0);
+      expect(form.emailLabel.length).toBeGreaterThan(0);
+      expect(form.newsletterLegend.length).toBeGreaterThan(0);
+      expect(form.participateLabel.length).toBeGreaterThan(0);
+      expect(form.submit.length).toBeGreaterThan(0);
+
+      // The brief's extra intake fields were dropped: the MailerLite groups
+      // take these four, and a conversation takes the rest.
+      const all = JSON.stringify(form).toLowerCase();
+      expect(all).not.toContain('ciudad');
+      expect(all).not.toContain('qué haces');
+      expect(all).not.toContain('delegar');
+    }
+
+    // The privacy line under the button is exact, in Spanish.
+    expect(copy.es.form.privacy).toBe('Solo usamos estos datos para escribirte.');
+  });
+
+  test('gives funders and hosts a line rather than a second door', () => {
+    expect(copy.es.form.allies).toBe('¿Financias, enseñas o tienes un espacio? Escríbenos:');
+    expect(copy.en.form.allies).toMatch(/fund, teach/);
+
+    for (const locale of locales) {
+      // One call to action on the page, and the allies line is not a button.
+      expect(JSON.stringify(copy[locale].form.allies)).not.toMatch(/Hablemos|Talk to us/);
+    }
+  });
+
+  test('answers the visitor in words for every outcome of the form', () => {
+    for (const locale of locales) {
+      const { states } = copy[locale].form;
+
+      for (const message of Object.values(states)) {
+        expect(message.length).toBeGreaterThan(4);
+      }
+
+      // No provider name and no error code reaches the visitor.
+      const all = JSON.stringify(states).toLowerCase();
+      expect(all).not.toContain('mailerlite');
+      expect(all).not.toMatch(/\b(400|422|500|502)\b/);
+    }
+  });
+
   test('carries the security line and the contact address in the footer', () => {
     for (const locale of locales) {
       const { footer } = copy[locale];

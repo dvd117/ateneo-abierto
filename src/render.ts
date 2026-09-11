@@ -603,6 +603,79 @@ function renderTalk(page: PageCopy): string {
   `;
 }
 
+
+/**
+ * The form. Four fields, and every one of them is used: name and email go to
+ * MailerLite, the language picks the list, and the checkbox adds the
+ * participation group. Nothing here asks what someone does for a living or
+ * what they would delegate — that is a conversation, not an intake field.
+ *
+ * Funders and hosts get one line under the button rather than a second form:
+ * there is one way in, and it is this one.
+ */
+function renderForm(page: PageCopy, locale: Locale): string {
+  const { form } = page;
+
+  return `
+    <section class="join shell" id="sumarme" aria-labelledby="sumarme-title">
+      <p class="eyebrow">${inline(form.eyebrow)}</p>
+      <h2 class="section-title join-title" id="sumarme-title">${inline(form.title)}</h2>
+      <p class="lead join-lead">${inline(form.lead)}</p>
+
+      <form class="join-form" data-join novalidate>
+        <p class="field">
+          <label class="field-label" for="join-name">${inline(form.nameLabel)}</label>
+          <input class="field-input" id="join-name" name="name" type="text" autocomplete="name"
+                 placeholder="${inline(form.namePlaceholder)}" maxlength="100" />
+        </p>
+        <p class="field">
+          <label class="field-label" for="join-email">${inline(form.emailLabel)}</label>
+          <input class="field-input" id="join-email" name="email" type="email" autocomplete="email"
+                 placeholder="${inline(form.emailPlaceholder)}" maxlength="254" required
+                 aria-describedby="join-note" />
+        </p>
+
+        <fieldset class="field field--choice">
+          <legend class="field-label">${inline(form.newsletterLegend)}</legend>
+          <span class="choice-row">
+            <label class="choice">
+              <input type="radio" name="newsletterLocale" value="es" ${locale === 'es' ? 'checked' : ''} />
+              <span>${inline(form.newsletterOptions.es)}</span>
+            </label>
+            <label class="choice">
+              <input type="radio" name="newsletterLocale" value="en" ${locale === 'en' ? 'checked' : ''} />
+              <span>${inline(form.newsletterOptions.en)}</span>
+            </label>
+          </span>
+        </fieldset>
+
+        <label class="choice choice--check">
+          <input type="checkbox" name="participate" value="yes" />
+          <span>${inline(form.participateLabel)}</span>
+        </label>
+
+        <!-- Not display:none — a bot reads that as a trap. See .field-supplement. -->
+        <label class="field-supplement" aria-hidden="true">
+          ${inline(form.supplement)}
+          <input name="website" type="text" tabindex="-1" autocomplete="off" />
+        </label>
+
+        <div class="join-foot">
+          <button class="button button--fill" type="submit" data-join-submit>${inline(form.submit)}</button>
+          <small class="join-note" id="join-note">${inline(form.privacy)}</small>
+        </div>
+
+        <p class="join-status" role="status" data-join-status></p>
+      </form>
+
+      <p class="join-allies">
+        ${inline(form.allies)}
+        <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
+      </p>
+    </section>
+  `;
+}
+
 function renderFooter(page: PageCopy, locale: Locale): string {
   return `
     <footer class="site-footer shell">
@@ -696,6 +769,7 @@ export function renderPage(locale: Locale): string {
       ${renderPrinciples(page)}
       ${renderNorth(page)}
       ${renderTalk(page)}
+      ${renderForm(page, locale)}
     </main>
     ${renderFooter(page, locale)}
   `;

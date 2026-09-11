@@ -261,6 +261,37 @@ export type TalkCopy = {
   privacy: string;
 };
 
+/**
+ * Section seven: the form. Four fields, the same ones the previous site
+ * collected, because they are already wired to the four MailerLite groups —
+ * and because the least we can ask for is the least we should ask for.
+ */
+export type FormCopy = {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  nameLabel: string;
+  namePlaceholder: string;
+  emailLabel: string;
+  emailPlaceholder: string;
+  newsletterLegend: string;
+  newsletterOptions: { es: string; en: string };
+  participateLabel: string;
+  submit: string;
+  /** Under the button, and it is the whole promise. */
+  privacy: string;
+  /** Funders and hosts get a line, not a second form. */
+  allies: string;
+  /** Label on the honeypot, for the machines that read labels. */
+  supplement: string;
+  states: {
+    sending: string;
+    ok: string;
+    invalidEmail: string;
+    error: string;
+  };
+};
+
 export type PageCopy = {
   languageLabel: string;
   languageSwitchTo: {
@@ -291,6 +322,7 @@ export type PageCopy = {
   principles: PrinciplesCopy;
   north: NorthCopy;
   talk: TalkCopy;
+  form: FormCopy;
   footer: {
     securityLine: string;
     securityBody: string;
@@ -648,6 +680,29 @@ export const copy: Record<Locale, PageCopy> = {
       posterAlt: 'David Aragort en el escenario del Oslo Freedom Forum, durante su Ignite Talk.',
       privacy: 'El video se carga desde YouTube solo cuando le das play.'
     },
+    form: {
+      eyebrow: 'Súmate',
+      title: 'Sumarme',
+      lead:
+        'Déjanos tu correo y te escribimos cuando abra la próxima hackatón o mentoría cerca de ti.',
+      nameLabel: 'Nombre',
+      namePlaceholder: 'Cómo te llamas',
+      emailLabel: 'Correo',
+      emailPlaceholder: 'tucorreo@ejemplo.com',
+      newsletterLegend: 'Idioma del boletín',
+      newsletterOptions: { es: 'Español', en: 'Inglés' },
+      participateLabel: 'Quiero participar en una hackatón o una mentoría',
+      submit: 'Sumarme',
+      privacy: 'Solo usamos estos datos para escribirte.',
+      allies: '¿Financias, enseñas o tienes un espacio? Escríbenos:',
+      supplement: 'No llenes este campo',
+      states: {
+        sending: 'Enviando…',
+        ok: 'Listo. Te escribimos pronto.',
+        invalidEmail: 'Revisa el correo: parece que le falta algo.',
+        error: 'No pudimos guardarlo. Inténtalo otra vez en un rato.'
+      }
+    },
     footer: {
       securityLine: 'La seguridad es parte de cómo trabajamos.',
       securityBody:
@@ -1001,6 +1056,29 @@ export const copy: Record<Locale, PageCopy> = {
       play: 'Play the talk',
       posterAlt: 'David Aragort on stage at the Oslo Freedom Forum, during his Ignite Talk.',
       privacy: 'The video loads from YouTube only when you press play.'
+    },
+    form: {
+      eyebrow: 'Join',
+      title: 'Sign me up',
+      lead:
+        'Leave us your email and we will write when the next hackathon or mentorship opens near you.',
+      nameLabel: 'Name',
+      namePlaceholder: 'What we should call you',
+      emailLabel: 'Email',
+      emailPlaceholder: 'you@example.com',
+      newsletterLegend: 'Newsletter language',
+      newsletterOptions: { es: 'Spanish', en: 'English' },
+      participateLabel: 'I want to take part in a hackathon or a mentorship',
+      submit: 'Join',
+      privacy: 'We only use this to write to you.',
+      allies: 'Do you fund, teach, or have a space? Write to us:',
+      supplement: 'Leave this field empty',
+      states: {
+        sending: 'Sending…',
+        ok: 'Done. We will write to you soon.',
+        invalidEmail: 'Check the address: something looks missing.',
+        error: 'We could not save that. Try again in a little while.'
+      }
     },
     footer: {
       securityLine: 'Security is part of how we work.',

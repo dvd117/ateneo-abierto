@@ -2079,3 +2079,145 @@ button {
 .talk-privacy {
   color: var(--c-fg-3);
 }
+
+/* ---------- sumarme ----------
+   One door, four fields. The form is the page's one place that asks for
+   something, so it stays narrow and quiet: labels in the interface voice,
+   fields on the panel surface, and the promise under the button. */
+
+.join {
+  padding-block: clamp(3rem, 8vw, var(--sp-section));
+  border-top: 1px solid var(--c-border);
+}
+
+.join-title {
+  margin-top: 0.7rem;
+}
+
+.join-lead {
+  margin-top: 1.1rem;
+}
+
+.join-form {
+  display: grid;
+  gap: var(--gap-md);
+  margin-top: var(--gap-lg);
+  max-width: 34rem;
+}
+
+@media (min-width: 561px) {
+  .join-form {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .field--choice,
+  .choice--check,
+  .join-foot,
+  .join-status {
+    grid-column: 1 / -1;
+  }
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+  margin: 0;
+  min-width: 0;
+}
+
+.field--choice {
+  border: 0;
+  padding: 0;
+}
+
+.field-label {
+  font: var(--t-small);
+  font-weight: 600;
+  color: var(--c-fg);
+}
+
+.field-input {
+  width: 100%;
+  min-width: 0;
+  padding: 0.7rem 0.75rem;
+  font: var(--t-body);
+  color: var(--c-fg);
+  background: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+}
+
+.field-input::placeholder {
+  color: var(--c-fg-3);
+}
+
+.field-input:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 1px;
+}
+
+.choice-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-md);
+  margin-top: 0.5rem;
+}
+
+.choice {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-inline);
+  font: var(--t-body);
+  font-size: 0.95rem;
+  color: var(--c-fg-soft);
+  cursor: pointer;
+}
+
+.choice input {
+  accent-color: var(--c-accent);
+  width: 1.05rem;
+  height: 1.05rem;
+}
+
+.choice--check {
+  align-items: flex-start;
+}
+
+.join-foot {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--gap-md);
+}
+
+.join-note {
+  font: var(--t-small);
+  color: var(--c-fg-2);
+}
+
+.join-status:empty {
+  display: none;
+}
+
+.join-status {
+  font: var(--t-small);
+  color: var(--c-fg-soft);
+}
+
+.join-status[data-state="ok"] {
+  color: var(--c-done);
+}
+
+.join-status[data-state="error"] {
+  color: var(--c-accent);
+}
+
+/* Funders and hosts: a line, not a second door. */
+.join-allies {
+  margin-top: var(--gap-lg);
+  padding-top: var(--gap-md);
+  border-top: 1px solid var(--c-border);
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+  max-width: 68ch;
+}
