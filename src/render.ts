@@ -766,7 +766,12 @@ function renderPositions(page: PageCopy): string {
 export type PageMeta = {
   lang: Locale;
   title: string;
+  /** Link previews: the name and the claim, without the tab title's bar. */
+  ogTitle: string;
   description: string;
+  /** The 1200×630 preview, one per locale, so a shared link reads in its language. */
+  ogImage: string;
+  ogImageAlt: string;
   ogLocale: string;
   ogLocaleAlternate: string;
   canonical: string;
@@ -779,7 +784,10 @@ export function pageMeta(locale: Locale): PageMeta {
   return {
     lang: locale,
     title: `Ateneo Abierto | ${claim}`,
+    ogTitle: `Ateneo Abierto — ${claim}`,
     description: page.hero.manifesto.replace(/\*/g, ''),
+    ogImage: locale === 'es' ? 'https://ateneo-abierto.org/og.png' : 'https://ateneo-abierto.org/og-en.png',
+    ogImageAlt: `Ateneo Abierto: ${claim}`,
     ogLocale: locale === 'es' ? 'es_VE' : 'en_US',
     ogLocaleAlternate: locale === 'es' ? 'en_US' : 'es_VE',
     canonical: locale === 'es' ? 'https://ateneo-abierto.org/' : 'https://ateneo-abierto.org/?lang=en'

@@ -76,6 +76,12 @@ export function fillTemplate(template: string, locale: Locale): string {
     meta.ogLocaleAlternate,
     'og:locale:alternate'
   );
+  html = replaceOnce(html, /(<meta property="og:title" content=")[^"]*(")/, escapeAttr(meta.ogTitle), 'og:title');
+  html = replaceOnce(html, /(<meta name="twitter:title" content=")[^"]*(")/, escapeAttr(meta.ogTitle), 'twitter:title');
+  html = replaceOnce(html, /(<meta property="og:image" content=")[^"]*(")/, meta.ogImage, 'og:image');
+  html = replaceOnce(html, /(<meta name="twitter:image" content=")[^"]*(")/, meta.ogImage, 'twitter:image');
+  html = replaceOnce(html, /(<meta property="og:image:alt" content=")[^"]*(")/, escapeAttr(meta.ogImageAlt), 'og:image:alt');
+  html = replaceOnce(html, /(<meta name="twitter:image:alt" content=")[^"]*(")/, escapeAttr(meta.ogImageAlt), 'twitter:image:alt');
   html = replaceOnce(html, /(<link rel="canonical" href=")[^"]*(")/, meta.canonical, 'canonical');
   html = replaceOnce(html, /(<meta property="og:url" content=")[^"]*(")/, meta.canonical, 'og:url');
 

@@ -14,6 +14,12 @@ const template = `<!doctype html>
     <meta property="og:locale" content="es_VE" />
     <meta property="og:locale:alternate" content="en_US" />
     <meta name="twitter:description" content="old" />
+    <meta property="og:title" content="old" />
+    <meta name="twitter:title" content="old" />
+    <meta property="og:image" content="old" />
+    <meta name="twitter:image" content="old" />
+    <meta property="og:image:alt" content="old" />
+    <meta name="twitter:image:alt" content="old" />
     <link rel="canonical" href="https://ateneo-abierto.org/" />
     <title>Ateneo Abierto</title>
     <link rel="stylesheet" crossorigin href="/assets/index-abc123.css">
@@ -45,6 +51,10 @@ describe('build-time prerender', () => {
     expect(html).toContain('property="og:locale:alternate" content="es_VE"');
     expect(html).toContain('href="https://ateneo-abierto.org/?lang=en"');
     expect(html).toMatch(/name="description"\s+content="A chatbot answers you\./);
+    expect(html).toContain('property="og:title" content="Ateneo Abierto — Stop asking it things. Start handing it work."');
+    expect(html).toContain('name="twitter:title" content="Ateneo Abierto — Stop asking it things. Start handing it work."');
+    expect(html).toContain('property="og:image" content="https://ateneo-abierto.org/og-en.png"');
+    expect(html).toContain('name="twitter:image" content="https://ateneo-abierto.org/og-en.png"');
     expect(html).not.toContain('content="old"');
   });
 

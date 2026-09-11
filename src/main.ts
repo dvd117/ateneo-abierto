@@ -43,6 +43,8 @@ function render(): void {
   setMetaContent('meta[property="og:description"]', meta.description);
   setMetaContent('meta[property="og:locale"]', meta.ogLocale);
   setMetaContent('meta[name="twitter:description"]', meta.description);
+  setMetaContent('meta[property="og:title"]', meta.ogTitle);
+  setMetaContent('meta[name="twitter:title"]', meta.ogTitle);
 
   root.innerHTML = renderPage(currentLocale);
   root.dataset.locale = currentLocale;

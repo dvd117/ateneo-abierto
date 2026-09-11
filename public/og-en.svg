@@ -50,13 +50,13 @@
         letter-spacing="3.1">ATENEO ABIERTO</text>
 
   <text class="sans" x="80" y="200" font-size="18" font-weight="600" fill="#e2a638"
-        letter-spacing="2.6">MÁS ALLÁ DEL CHATBOT</text>
+        letter-spacing="2.6">PAST THE CHATBOT</text>
 
-  <text class="serif" x="76" y="302" font-size="96" fill="#f0ece2" letter-spacing="-2.6">Deja de preguntarle.</text>
-  <text class="serif-em" x="76" y="400" font-size="96" fill="#e2a638" letter-spacing="-1">Empieza a delegarle.</text>
+  <text class="serif" x="76" y="302" font-size="96" fill="#f0ece2" letter-spacing="-2.6">Stop asking it things.</text>
+  <text class="serif-em" x="76" y="400" font-size="96" fill="#e2a638" letter-spacing="-1">Start handing it work.</text>
 
-  <text class="sans" x="80" y="474" font-size="28" fill="#cfc9bb">Aprende a delegarle trabajo de oficina a un agente,</text>
-  <text class="sans" x="80" y="512" font-size="28" fill="#cfc9bb">con herramientas abiertas, desde Venezuela.</text>
+  <text class="sans" x="80" y="474" font-size="28" fill="#cfc9bb">Learn to hand office work to an AI agent,</text>
+  <text class="sans" x="80" y="512" font-size="28" fill="#cfc9bb">with open tools, from Venezuela.</text>
 
   <line x1="80" y1="560" x2="1120" y2="560" stroke="#34312a" stroke-width="1"/>
   <text class="mono" x="80" y="592" font-size="16" fill="#a8a293">ateneo-abierto.org</text>

@@ -70,5 +70,6 @@ cat > "$AVATAR_HTML" <<HTML
 HTML
 
 render "$ROOT/public/og.png" 1200 630 "file://$ROOT/public/og.svg"
+render "$ROOT/public/og-en.png" 1200 630 "file://$ROOT/public/og-en.svg"
 render "$ROOT/public/avatar-512.png" 512 512 "file://$AVATAR_HTML"
 render "$ROOT/public/avatar-1024.png" 1024 1024 "file://$AVATAR_HTML"
