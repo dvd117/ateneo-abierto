@@ -380,13 +380,14 @@ button {
 }
 
 /* ---------- la vibración ----------
-   The signature: two fields of fine lines at slightly different pitch, the
-   top one sliding as the band crosses the screen, so the interference between
-   them moves. Venezuelan kinetic art (Soto, Cruz-Diez) in the page's two
-   colours. Static — and still a moiré — under reduced motion. */
+   The signature, after Cruz-Diez's additive-colour method: zones of stripes
+   of varying width and colour, and a screen of fine dark lines that slides
+   over them as the band crosses the screen, so tones appear and travel.
+   Our palette, our composition — never the Maiquetía floor (see render.ts).
+   Static under reduced motion, where the screen still mixes the colours. */
 
 .band {
-  height: clamp(56px, 7vw, 104px);
+  height: clamp(72px, 9vw, 136px);
   background: var(--c-bg);
   border-top: 1px solid var(--c-border);
   overflow: hidden;
@@ -398,20 +399,32 @@ button {
   height: 100%;
 }
 
-.band-line-a {
-  fill: var(--c-fg-3);
-}
-
-.band-line-b {
+.bz-o {
   fill: var(--c-accent);
 }
 
-.band-layer--a {
-  opacity: 0.32;
+.bz-d {
+  fill: var(--c-accent-on-paper);
 }
 
-.band-layer--b {
-  opacity: 0.5;
+.bz-b {
+  fill: var(--c-fg);
+}
+
+.bz-g {
+  fill: var(--c-bg-raise);
+}
+
+.bz-screen {
+  fill: var(--c-bg-deep);
+}
+
+.band-field {
+  opacity: 0.9;
+}
+
+.band-screen {
+  opacity: 0.88;
   transform: translateX(var(--band-shift, 0px));
 }
 

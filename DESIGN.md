@@ -325,11 +325,15 @@ still never loops:
   lighting. `duration-step` paces the agent window; `duration-draw` paces the map edges.
 - **Entrances**: the hero headline rises line by line on load; each section header's title and
   lead rise a beat apart as they enter.
-- **Scroll-driven**: *la vibración*, the page's signature — full-bleed bands of fine vertical
-  lines in two layers at slightly different pitch (7 and 7.6 units). The top layer slides as
-  the band crosses the screen, so the moiré between them moves: the Venezuelan kinetic
-  tradition (Soto's vibrations, Cruz-Diez's inductions) in the page's two colours. Three bands
-  mark the chapters: after the hero, before El norte, before Únete.
+- **Scroll-driven**: *la vibración*, the page's signature, after Carlos Cruz-Diez's
+  additive-colour method: a row of zones, each a stripe recipe of its own pitch, colours and
+  widths (ochre, dark ochre, bone, raised graphite), under a screen of fine dark lines that
+  slides as the band crosses the screen, so tones appear and travel. Three bands mark the
+  chapters (after the hero, before El norte, before Únete), each starting the zone sequence at
+  a different point. **It is his method, never his image**: it must not reproduce the
+  Maiquetía floor (*Cromointerferencia de color aditivo*) or its yellow/black/red/blue modules.
+  On 2026-09-07 the artist's family publicly objected to unauthorised imitations of that
+  pattern, and David chose the method over the image (2026-09-11).
 
 Everything short-circuits under `prefers-reduced-motion` (bands stand still, still a moiré), and
 the interactive layer is not loaded at all under `saveData`.

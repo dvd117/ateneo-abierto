@@ -397,24 +397,73 @@ function titleFrom(lines: { text: string; em?: boolean }[]): string {
 }
 
 /**
- * La vibración: a full-bleed band of fine vertical lines, two layers at
- * slightly different pitch. As the band crosses the screen the top layer
- * slides, and the interference between them moves: the moiré of the
- * Venezuelan kinetic tradition (Soto's vibrations, Cruz-Diez's inductions),
- * drawn in the page's own two colours. It is the page's signature and says
- * nothing, so it is hidden from the tree. Pattern ids carry the band's name
- * because the three bands share one document.
+ * La vibración, after Cruz-Diez's method rather than any one of his works.
+ *
+ * His additive-colour pieces lay stripes of varying width side by side so the
+ * colours mix in the eye, and a screen of fine dark lines moving over them
+ * makes new tones appear and travel. This band does that in the page's own
+ * palette: a row of zones, each a stripe recipe (pitch, colours, widths), and
+ * over them a screen that slides as the band crosses the screen.
+ *
+ * It deliberately does not reproduce the Maiquetía floor or its colour
+ * modules: in September 2026 the artist's family publicly objected to
+ * unauthorised imitations of that pattern, and David chose the method over
+ * the image (2026-09-11). Hidden from the tree: it says nothing.
  */
-function renderBand(name: string): string {
+type BandZone = {
+  /** Share of the band's width, in percent. */
+  w: number;
+  pitch: number;
+  /** Colour class and width of each stripe, laid left to right in the pitch. */
+  stripes: ['o' | 'd' | 'b' | 'g', number][];
+};
+
+const BAND_ZONES: BandZone[] = [
+  { w: 12, pitch: 6, stripes: [['b', 1.1]] },
+  { w: 10, pitch: 4, stripes: [['o', 2]] },
+  { w: 16, pitch: 5, stripes: [['o', 3], ['d', 1.2]] },
+  { w: 7, pitch: 3, stripes: [['b', 1], ['o', 1.4]] },
+  { w: 19, pitch: 5, stripes: [['d', 2.4], ['o', 0.9]] },
+  { w: 11, pitch: 4, stripes: [['o', 1.1], ['g', 1.6]] },
+  { w: 25, pitch: 7, stripes: [['b', 1], ['o', 1.2], ['g', 2]] }
+];
+
+function renderBand(name: string, shift: number): string {
+  // Each band starts the same sequence at a different zone, so no two match.
+  const zones = BAND_ZONES.map((_, index) => BAND_ZONES[(index + shift) % BAND_ZONES.length]);
+  let x = 0;
+
+  const patterns = zones
+    .map((zone, index) => {
+      let at = 0;
+      const stripes = zone.stripes
+        .map(([colour, width]) => {
+          const rect = `<rect class="bz-${colour}" x="${at}" width="${width}" height="10"/>`;
+          at += width;
+          return rect;
+        })
+        .join('');
+      return `<pattern id="band-${name}-${index}" width="${zone.pitch}" height="10" patternUnits="userSpaceOnUse">${stripes}</pattern>`;
+    })
+    .join('');
+
+  const field = zones
+    .map((zone, index) => {
+      const rect = `<rect x="${x}%" width="${zone.w}%" height="100%" fill="url(#band-${name}-${index})"/>`;
+      x += zone.w;
+      return rect;
+    })
+    .join('');
+
   return `
     <div class="band band--${name}" data-band aria-hidden="true">
       <svg class="band-svg" preserveAspectRatio="none" focusable="false">
         <defs>
-          <pattern id="band-${name}-a" width="7" height="10" patternUnits="userSpaceOnUse"><rect class="band-line-a" width="1.4" height="10"/></pattern>
-          <pattern id="band-${name}-b" width="7.6" height="10" patternUnits="userSpaceOnUse"><rect class="band-line-b" width="1.4" height="10"/></pattern>
+          ${patterns}
+          <pattern id="band-${name}-screen" width="3.4" height="10" patternUnits="userSpaceOnUse"><rect class="bz-screen" width="1.7" height="10"/></pattern>
         </defs>
-        <rect class="band-layer band-layer--a" width="100%" height="100%" fill="url(#band-${name}-a)"/>
-        <rect class="band-layer band-layer--b" x="-120" width="calc(100% + 240px)" height="100%" fill="url(#band-${name}-b)"/>
+        <g class="band-field">${field}</g>
+        <rect class="band-screen" x="-10%" width="120%" height="100%" fill="url(#band-${name}-screen)"/>
       </svg>
     </div>
   `;
@@ -893,14 +942,14 @@ export function renderPage(locale: Locale): string {
     ${renderHeader(page, locale)}
     <main id="contenido">
       ${renderHero(page)}
-      ${renderBand('one')}
+      ${renderBand('one', 0)}
       ${renderShift(page)}
       ${renderDoors(page)}
       ${renderPrinciples(page)}
-      ${renderBand('two')}
+      ${renderBand('two', 3)}
       ${renderNorth(page)}
       ${renderTalk(page)}
-      ${renderBand('three')}
+      ${renderBand('three', 5)}
       ${renderForm(page, locale)}
     </main>
     ${renderFooter(page, locale)}
