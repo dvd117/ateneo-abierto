@@ -1,4 +1,4 @@
-import { copy, type Door, type FileKind, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
+import { copy, type Door, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
@@ -198,13 +198,13 @@ export function renderThread(page: PageCopy, scene: Scene): string {
         .join('')}
     </ul>
     <p class="agent-ack" data-beat="ack">${inline(scene.ack)}</p>
-    ${renderPlan(scene.steps, 'plan')}
+    ${renderPlan(page, scene.steps, 'plan', scene.inside.steps, ['rules', page.agent.rulesFile])}
     <div class="agent-doc" data-beat="doc">${renderDoc(scene)}</div>
     ${renderStatus(page, scene.savedAs, 'status')}
 
     <p class="agent-msg" data-beat="followup">${inline(scene.followUp.prompt)}</p>
     <p class="agent-ack" data-beat="ack2">${inline(scene.followUp.ack)}</p>
-    ${renderPlan(scene.followUp.steps, 'plan2')}
+    ${renderPlan(page, scene.followUp.steps, 'plan2', scene.inside.followSteps, ['skill', scene.inside.skill])}
     <div class="agent-deliverable" data-beat="file">
       <div class="file-card">
         ${THUMBS[scene.followUp.file.kind]}
@@ -219,13 +219,30 @@ export function renderThread(page: PageCopy, scene: Scene): string {
   `;
 }
 
-function renderPlan(steps: readonly string[], beat: string): string {
+/**
+ * One line of what the agent does in the background: `$ command` for the
+ * terminal, or a verb and a file name. Hidden until the visitor turns on
+ * "Ver por dentro"; while a sequence plays, a step's lines appear as it runs.
+ */
+function renderInsideLine(page: PageCopy, [kind, text]: InsideLine | ['rules', string]): string {
+  const lead = kind === 'run' ? '<span class="in-prompt">$</span>' : `<span class="in-verb">${inline(page.agent.insideWords[kind])}</span>`;
+  return `<span class="in-line in-line--${kind}">${lead} <code>${inline(text)}</code></span>`;
+}
+
+function renderPlan(
+  page: PageCopy,
+  steps: readonly string[],
+  beat: string,
+  inside: readonly InsideLine[][],
+  opening: ['rules' | 'skill', string]
+): string {
   return `
     <ol class="agent-plan" data-beat="${beat}">
+      <li class="agent-inside agent-inside--opening">${renderInsideLine(page, opening)}</li>
       ${steps
         .map(
-          (step) =>
-            `<li class="agent-step is-done" data-step><span class="agent-tick" aria-hidden="true"></span>${inline(step)}</li>`
+          (step, index) =>
+            `<li class="agent-step is-done" data-step><span class="agent-tick" aria-hidden="true"></span><span class="agent-step-text">${inline(step)}</span><span class="agent-inside">${(inside[index] ?? []).map((line) => renderInsideLine(page, line)).join('')}</span></li>`
         )
         .join('')}
     </ol>
@@ -253,6 +270,9 @@ function renderAgentWindow(page: PageCopy): string {
         <div class="agent-bar">
           <span class="agent-dots" aria-hidden="true"><i></i><i></i><i></i></span>
           <span class="agent-bar-title" data-agent-title>${inline(first.session)}</span>
+          <button class="agent-inside-toggle" type="button" aria-pressed="false" data-inside-toggle>
+            <span class="agent-inside-switch" aria-hidden="true"></span>${inline(page.agent.inside)}
+          </button>
         </div>
         <div class="agent-cols">
           <div class="agent-side">
@@ -514,6 +534,35 @@ function renderShift(page: PageCopy): string {
         <div class="shift-cmp">
           ${shift.columns.map((column) => renderShiftColumn(column)).join('')}
         </div>
+      </div>
+    </section>
+  `;
+}
+
+/**
+ * "Palabras que vas a oír": the words behind the window, each with the thing
+ * itself in the terminal's type, so the definition has something to point at.
+ */
+function renderGlossary(page: PageCopy): string {
+  const { glossary } = page;
+
+  return `
+    <section class="sec glossary" id="glosario" aria-labelledby="glosario-title">
+      <div class="shell">
+        ${renderSecHead({ eyebrow: glossary.eyebrow, title: inline(glossary.title), id: 'glosario-title', lead: glossary.lead })}
+        <dl class="gl-grid">
+          ${glossary.items
+            .map(
+              (item, order) => `
+                <div class="gl" data-reveal data-reveal-delay="${(order % 3) * 80}">
+                  <dt class="gl-term">${inline(item.term)}</dt>
+                  <dd class="gl-sample"><code>${inline(item.sample)}</code></dd>
+                  <dd class="gl-body">${inline(item.body)}</dd>
+                </div>
+              `
+            )
+            .join('')}
+        </dl>
       </div>
     </section>
   `;
@@ -944,6 +993,7 @@ export function renderPage(locale: Locale): string {
       ${renderHero(page)}
       ${renderBand('one', 0)}
       ${renderShift(page)}
+      ${renderGlossary(page)}
       ${renderDoors(page)}
       ${renderPrinciples(page)}
       ${renderBand('two', 3)}

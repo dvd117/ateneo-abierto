@@ -814,12 +814,74 @@ main [id] {
 
 .agent-bar-title {
   flex: 1;
+  min-width: 0;
   text-align: center;
   color: var(--c-fg-2);
-  margin-right: 3.4em;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+/* The switch for "Ver por dentro": a small track and knob, as in the real
+   apps' settings, with the label beside it. aria-pressed carries the state. */
+.agent-inside-toggle {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.3em 0.7em 0.3em 0.45em;
+  font-size: 0.95em;
+  color: var(--c-fg-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-pill);
+  transition: color var(--duration-ui) var(--ease-out), border-color var(--duration-ui) var(--ease-out);
+}
+
+.agent-inside-toggle:hover {
+  color: var(--c-fg);
+  border-color: var(--c-fg-3);
+}
+
+.agent-inside-switch {
+  position: relative;
+  width: 1.9em;
+  height: 1.05em;
+  border-radius: var(--r-pill);
+  background: var(--c-bg-raise);
+  transition: background-color var(--duration-ui) var(--ease-out);
+}
+
+.agent-inside-switch::after {
+  content: "";
+  position: absolute;
+  top: 0.15em;
+  left: 0.15em;
+  width: 0.75em;
+  height: 0.75em;
+  border-radius: var(--r-pill);
+  background: var(--c-fg-2);
+  transition: transform var(--duration-ui) var(--ease-out), background-color var(--duration-ui) var(--ease-out);
+}
+
+.agent-inside-toggle[aria-pressed="true"] {
+  color: var(--c-fg);
+  border-color: var(--c-accent);
+}
+
+.agent-inside-toggle[aria-pressed="true"] .agent-inside-switch {
+  background: var(--c-accent);
+}
+
+.agent-inside-toggle[aria-pressed="true"] .agent-inside-switch::after {
+  transform: translateX(0.85em);
+  background: var(--c-on-accent);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agent-inside-switch,
+  .agent-inside-switch::after {
+    transition: none;
+  }
 }
 
 .agent-cols {
@@ -1007,10 +1069,66 @@ main [id] {
 }
 
 .agent-step {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1.15em minmax(0, 1fr);
   align-items: center;
-  gap: 0.65em;
+  column-gap: 0.65em;
   color: var(--c-fg);
+}
+
+/* ---------- ver por dentro ----------
+   What the agent does in the background, under each step: `$ command` in the
+   terminal, or a verb and a file. Off by default; the switch in the title bar
+   turns it on, and it stays on across tasks. While a sequence plays, a step's
+   lines appear as the step starts running — the way a real agent shows its
+   tool calls. */
+
+.agent-inside {
+  display: none;
+}
+
+.agent.is-inside .agent-inside {
+  display: grid;
+  gap: 0.2em;
+  grid-column: 2;
+  margin: 0.35em 0 0.2em;
+  padding: 0.45em 0.6em;
+  font: var(--t-mono);
+  font-size: 0.86em;
+  line-height: 1.45;
+  color: var(--c-fg-2);
+  background: var(--c-bg-deep);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  overflow-wrap: anywhere;
+}
+
+/* The opening line (instructions read, skill used) sits above the steps. */
+.agent.is-inside .agent-inside--opening {
+  grid-column: auto;
+  margin: 0 0 0.25em;
+}
+
+.agent.is-inside .agent-thread.is-playing .agent-step:not(.is-running):not(.is-done) .agent-inside {
+  display: none;
+}
+
+.in-line code {
+  font: inherit;
+  color: var(--c-fg);
+}
+
+.in-prompt {
+  color: var(--c-accent);
+}
+
+.in-verb {
+  color: var(--c-fg-3);
+}
+
+.in-line--skill code,
+.in-line--rules code {
+  color: var(--c-accent);
 }
 
 .agent-tick {
@@ -2121,11 +2239,70 @@ main [id] {
   color: var(--c-fg);
 }
 
-/* ---------- cómo trabajamos ----------
-   Four rules in one row, each under its own rule line, on the deep ground
-   so the page breathes between the doors and the map. */
+/* ---------- palabras que vas a oír ---------- */
 
-.principles {
+.gl-grid {
+  display: grid;
+  gap: var(--gap-md);
+  margin: 0;
+}
+
+@media (min-width: 561px) {
+  .gl-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1025px) {
+  .gl-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.gl {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: clamp(1.25rem, 2vw, 1.75rem);
+  background: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+}
+
+.gl-term {
+  font: var(--t-h2);
+  font-size: clamp(1.45rem, 1.25rem + 0.5vw, 1.75rem);
+  color: var(--c-fg);
+}
+
+.gl dd {
+  margin: 0;
+}
+
+/* The thing itself, in the terminal's type, before the words about it. */
+.gl-sample code {
+  display: inline-block;
+  padding: 0.3rem 0.55rem;
+  font: var(--t-mono);
+  color: var(--c-accent);
+  background: var(--c-bg-deep);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+}
+
+.gl-body {
+  font: var(--t-body);
+  font-size: 0.98rem;
+  color: var(--c-fg-2);
+}
+
+/* ---------- cómo trabajamos ----------
+   Four rules in one row, each under its own rule line, on the base ground
+   between the doors' deep one and the band before the map. */
+
+/* Grounds alternate down the page: shift deep, glossary base, doors deep,
+   principles base. */
+.doors {
   background-color: var(--c-bg-deep);
 }
 

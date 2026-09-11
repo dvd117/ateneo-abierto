@@ -174,6 +174,15 @@ function bindAgent(page: PageCopy): void {
 
   const tabList = root.querySelector<HTMLElement>('.agent-sessions');
 
+  // "Ver por dentro": one class on the window, so it survives switching task
+  // (only the thread is re-rendered) and needs nothing from the runner.
+  const insideToggle = root.querySelector<HTMLButtonElement>('[data-inside-toggle]');
+  insideToggle?.addEventListener('click', () => {
+    const on = insideToggle.getAttribute('aria-pressed') !== 'true';
+    insideToggle.setAttribute('aria-pressed', String(on));
+    root.querySelector('.agent')?.classList.toggle('is-inside', on);
+  });
+
   /**
    * On a phone the session list is one scrolling row; bring the chosen task
    * fully into it. Horizontal only — scrollIntoView would also move the page.

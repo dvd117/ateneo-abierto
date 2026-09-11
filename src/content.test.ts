@@ -472,4 +472,39 @@ describe('landing page copy', () => {
       expect(asterisks).toHaveLength(2);
     }
   });
+
+  test('shows what the agent runs, step by step, when asked', () => {
+    for (const locale of locales) {
+      const page = copy[locale];
+
+      expect(page.agent.inside.length).toBeGreaterThan(0);
+      expect(page.agent.rulesFile).toBe('AGENTS.md');
+
+      for (const scene of page.scenes) {
+        // One list of background lines per plan step, none empty.
+        expect(scene.inside.steps).toHaveLength(scene.steps.length);
+        expect(scene.inside.followSteps).toHaveLength(scene.followUp.steps.length);
+        for (const lines of [...scene.inside.steps, ...scene.inside.followSteps]) {
+          expect(lines.length).toBeGreaterThan(0);
+        }
+
+        // The conversion uses the skill named after the file it produces.
+        expect(scene.inside.skill).toBe(scene.followUp.file.kind);
+        // And the last step writes the file the card shows.
+        expect(scene.inside.followSteps[1]).toContainEqual(['write', scene.followUp.file.name]);
+      }
+    }
+  });
+
+  test('names the words behind the window in a glossary', () => {
+    for (const locale of locales) {
+      const terms = copy[locale].glossary.items.map((item) => item.term);
+
+      expect(terms).toContain('Terminal');
+      expect(terms).toContain('Markdown');
+      expect(terms).toContain('Skill');
+      expect(copy[locale].glossary.items.some((item) => item.sample.includes('AGENTS.md'))).toBe(true);
+      expect(copy[locale].glossary.items.some((item) => item.sample.includes('CLAUDE.md'))).toBe(true);
+    }
+  });
 });

@@ -67,9 +67,26 @@ export type Scene = {
    * will actually send, and the agent converts it.
    */
   followUp: FollowUp;
+  inside: SceneInside;
 };
 
 export type FileKind = 'xlsx' | 'pptx' | 'pdf' | 'docx';
+
+/**
+ * What the agent does in the background, shown under a plan step when the
+ * visitor turns on "Ver por dentro": reading a file, running a command in the
+ * terminal, writing a file, or using a skill. Illustrative, like the figures.
+ */
+export type InsideLine = ['read' | 'run' | 'write' | 'skill', string];
+
+export type SceneInside = {
+  /** One entry per plan step, in order. */
+  steps: [InsideLine[], InsideLine[], InsideLine[], InsideLine[]];
+  /** The skill the conversion uses, named before the second plan. */
+  skill: string;
+  /** One entry per follow-up step. */
+  followSteps: [InsideLine[], InsideLine[]];
+};
 
 export type FollowUp = {
   /** Typed into "Pídele algo más…", sent, and posted as the visitor's second message. */
@@ -120,6 +137,20 @@ export type AgentChrome = {
   replay: string;
   /** Announced to screen readers when a sequence finishes. */
   finished: string;
+  /** The switch that shows what the agent runs in the background. */
+  inside: string;
+  /** Words before each background line. `run` has none: it shows `$`. */
+  insideWords: { read: string; write: string; skill: string; rules: string };
+  /** The instructions file the agent reads before every task. */
+  rulesFile: string;
+};
+
+/** "Palabras que vas a oír": the concepts behind the window, named. */
+export type GlossaryCopy = {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  items: { term: string; sample: string; body: string }[];
 };
 
 /** One step in the two columns of "De preguntar a delegar". */
@@ -338,6 +369,7 @@ export type PageCopy = {
   network: NetworkCopy;
   scenes: Scene[];
   shift: ShiftCopy;
+  glossary: GlossaryCopy;
   doors: DoorsCopy;
   principles: PrinciplesCopy;
   north: NorthCopy;
@@ -373,7 +405,7 @@ export const copy: Record<Locale, PageCopy> = {
         'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega un documento. Aprende a delegar con herramientas libres, desde Venezuela, sin pagar nada para empezar.',
       primaryCta: 'Únete',
       windowCaption:
-        'Elige otra tarea en la lista para verla. Es una demostración local: no se conecta a nada y las cifras son de ejemplo.'
+        'Elige otra tarea en la lista, o toca «Ver por dentro» para ver lo que el agente hace en tu computadora. Es una demostración local: no se conecta a nada y las cifras son de ejemplo.'
     },
     agent: {
       windowLabel: 'Ejemplo de un agente trabajando',
@@ -385,7 +417,10 @@ export const copy: Record<Locale, PageCopy> = {
       ready: 'Listo en tu carpeta',
       saved: 'guardado',
       replay: 'Repetir',
-      finished: 'El agente terminó la tarea y guardó el documento.'
+      finished: 'El agente terminó la tarea y guardó el documento.',
+      inside: 'Ver por dentro',
+      insideWords: { read: 'Leyó', write: 'Escribió', skill: 'Usó la skill', rules: 'Leyó tus instrucciones' },
+      rulesFile: 'AGENTS.md'
     },
     network: {
       label: 'La red que estamos tejiendo',
@@ -445,6 +480,16 @@ export const copy: Record<Locale, PageCopy> = {
           ack: 'Va, lo paso a Excel:',
           steps: ['Pasar la tabla a una hoja de Excel', 'Guardarla junto al resumen'],
           file: { name: 'resumen-t3.xlsx', kind: 'xlsx', detail: 'Excel · 1 hoja · 14 KB' }
+        },
+        inside: {
+          steps: [
+            [['run', 'head -3 gastos-*.csv']],
+            [['write', 'unificar.py'], ['run', 'python3 unificar.py gastos-*.csv']],
+            [['run', 'python3 comparar.py --contra gastos-t2.csv']],
+            [['write', 'resumen-t3.md']]
+          ],
+          skill: 'xlsx',
+          followSteps: [[['run', 'python3 tabla_a_excel.py resumen-t3.md']], [['write', 'resumen-t3.xlsx']]]
         }
       },
       {
@@ -481,6 +526,16 @@ export const copy: Record<Locale, PageCopy> = {
           ack: 'Listo, la armo en PowerPoint:',
           steps: ['Crear las 6 láminas en PowerPoint', 'Guardarla en tu carpeta'],
           file: { name: 'presentacion-taller.pptx', kind: 'pptx', detail: 'PowerPoint · 6 láminas · 84 KB' }
+        },
+        inside: {
+          steps: [
+            [['run', 'ls notas/'], ['read', 'notas-taller.md']],
+            [['run', 'grep -h "^## " notas/*.md']],
+            [['write', 'presentacion-taller.md']],
+            [['run', 'ls ~/Documentos/Ateneo']]
+          ],
+          skill: 'pptx',
+          followSteps: [[['run', 'python3 crear_laminas.py presentacion-taller.md']], [['write', 'presentacion-taller.pptx']]]
         }
       },
       {
@@ -516,6 +571,16 @@ export const copy: Record<Locale, PageCopy> = {
           ack: 'Va, lo preparo en PDF:',
           steps: ['Maquetar los apuntes para imprimir', 'Exportarlos a PDF en tu carpeta'],
           file: { name: 'apuntes-lectura-3.pdf', kind: 'pdf', detail: 'PDF · 2 páginas · 96 KB' }
+        },
+        inside: {
+          steps: [
+            [['run', 'pdftotext lectura-semana-3.pdf lectura.txt']],
+            [['read', 'lectura.txt']],
+            [['write', 'preguntas.md']],
+            [['write', 'apuntes-lectura-3.md']]
+          ],
+          skill: 'pdf',
+          followSteps: [[['run', 'python3 maquetar.py apuntes-lectura-3.md']], [['write', 'apuntes-lectura-3.pdf']]]
         }
       },
       {
@@ -550,6 +615,16 @@ export const copy: Record<Locale, PageCopy> = {
           ack: 'Listo, lo paso a Word:',
           steps: ['Darle formato de carta', 'Guardarlo como Word en tu carpeta'],
           file: { name: 'correo-junta.docx', kind: 'docx', detail: 'Word · 1 página · 22 KB' }
+        },
+        inside: {
+          steps: [
+            [['read', 'informe-septiembre.md']],
+            [['run', 'grep -n "Total" informe-septiembre.md']],
+            [['write', 'correo-junta.md'], ['run', 'wc -w correo-junta.md']],
+            [['run', 'cp correo-junta.md borradores/']]
+          ],
+          skill: 'docx',
+          followSteps: [[['run', 'python3 crear_carta.py correo-junta.md']], [['write', 'correo-junta.docx']]]
         }
       }
     ],
@@ -587,6 +662,43 @@ export const copy: Record<Locale, PageCopy> = {
           ],
           tallyCount: '2 de 5',
           tallyText: 'pasos son tuyos: pedir y decidir.'
+        }
+      ]
+    },
+    glossary: {
+      eyebrow: 'Glosario',
+      title: 'Palabras que vas a oír',
+      lead: 'No necesitas saberlas para empezar. Te las vas a encontrar desde el primer día, y son así de simples.',
+      items: [
+        {
+          term: 'Agente',
+          sample: '“Júntame estas tres hojas.”',
+          body: 'Un programa que recibe una tarea, arma un plan y lo ejecuta en tu computadora: abre archivos, corre comandos y te entrega el resultado para que lo revises.'
+        },
+        {
+          term: 'Terminal',
+          sample: '$ ls Documentos',
+          body: 'La ventana donde se le dan órdenes a la computadora escribiendo, en vez de hacer clic. El agente la usa para leer, convertir y ordenar tus archivos; tú puedes mirar lo que hace.'
+        },
+        {
+          term: 'Markdown',
+          sample: '# Título  ·  - un punto',
+          body: 'Texto plano con unas pocas marcas: # para un título, - para una lista. Lo lee cualquier programa y cualquier agente, y de ahí sale el Word o el PDF que envías.'
+        },
+        {
+          term: 'Skill',
+          sample: 'skills/xlsx',
+          body: 'Una receta que le enseña al agente a hacer algo bien, como armar un Excel o una presentación. Se instala una vez y la usa cada vez que la necesita.'
+        },
+        {
+          term: 'Instrucciones',
+          sample: 'AGENTS.md  ·  CLAUDE.md',
+          body: 'Un archivo en tu carpeta donde escribes cómo quieres que trabaje: tu tono, tus formatos, lo que no debe tocar. El agente lo lee antes de empezar cada tarea.'
+        },
+        {
+          term: 'Tu carpeta',
+          sample: 'Documentos/Ateneo',
+          body: 'Le das al agente una carpeta para trabajar. Lo que produce queda ahí, en tu computadora, donde lo puedes revisar.'
         }
       ]
     },
@@ -794,7 +906,7 @@ export const copy: Record<Locale, PageCopy> = {
         'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan, and hands you a document. Learn to delegate with free and open tools, from Venezuela, at no cost to start.',
       primaryCta: 'Join',
       windowCaption:
-        'Pick another task from the list to watch it. This is a local demo: it connects to nothing, and the figures are examples.'
+        'Pick another task from the list, or press “Show what it runs” to see what the agent does on your computer. This is a local demo: it connects to nothing, and the figures are examples.'
     },
     agent: {
       windowLabel: 'An example of an agent at work',
@@ -806,7 +918,10 @@ export const copy: Record<Locale, PageCopy> = {
       ready: 'Saved to your folder',
       saved: 'saved',
       replay: 'Replay',
-      finished: 'The agent finished the task and saved the document.'
+      finished: 'The agent finished the task and saved the document.',
+      inside: 'Show what it runs',
+      insideWords: { read: 'Read', write: 'Wrote', skill: 'Used the skill', rules: 'Read your instructions' },
+      rulesFile: 'AGENTS.md'
     },
     network: {
       label: 'The network we are weaving',
@@ -866,6 +981,16 @@ export const copy: Record<Locale, PageCopy> = {
           ack: 'On it, moving it to Excel:',
           steps: ['Put the table in an Excel sheet', 'Save it next to the summary'],
           file: { name: 'summary-q3.xlsx', kind: 'xlsx', detail: 'Excel · 1 sheet · 14 KB' }
+        },
+        inside: {
+          steps: [
+            [['run', 'head -3 spending-*.csv']],
+            [['write', 'reconcile.py'], ['run', 'python3 reconcile.py spending-*.csv']],
+            [['run', 'python3 compare.py --against spending-q2.csv']],
+            [['write', 'summary-q3.md']]
+          ],
+          skill: 'xlsx',
+          followSteps: [[['run', 'python3 table_to_excel.py summary-q3.md']], [['write', 'summary-q3.xlsx']]]
         }
       },
       {
@@ -901,6 +1026,16 @@ export const copy: Record<Locale, PageCopy> = {
           ack: 'Sure, building it in PowerPoint:',
           steps: ['Build the 6 slides in PowerPoint', 'Save it to your folder'],
           file: { name: 'workshop-deck.pptx', kind: 'pptx', detail: 'PowerPoint · 6 slides · 84 KB' }
+        },
+        inside: {
+          steps: [
+            [['run', 'ls notes/'], ['read', 'workshop-notes.md']],
+            [['run', 'grep -h "^## " notes/*.md']],
+            [['write', 'workshop-deck.md']],
+            [['run', 'ls ~/Documents/Ateneo']]
+          ],
+          skill: 'pptx',
+          followSteps: [[['run', 'python3 build_slides.py workshop-deck.md']], [['write', 'workshop-deck.pptx']]]
         }
       },
       {
@@ -935,6 +1070,16 @@ export const copy: Record<Locale, PageCopy> = {
           ack: 'On it, preparing the PDF:',
           steps: ['Lay the notes out for printing', 'Export them to PDF in your folder'],
           file: { name: 'notes-reading-3.pdf', kind: 'pdf', detail: 'PDF · 2 pages · 96 KB' }
+        },
+        inside: {
+          steps: [
+            [['run', 'pdftotext reading-week-3.pdf reading.txt']],
+            [['read', 'reading.txt']],
+            [['write', 'questions.md']],
+            [['write', 'notes-reading-3.md']]
+          ],
+          skill: 'pdf',
+          followSteps: [[['run', 'python3 layout.py notes-reading-3.md']], [['write', 'notes-reading-3.pdf']]]
         }
       },
       {
@@ -969,6 +1114,16 @@ export const copy: Record<Locale, PageCopy> = {
           ack: 'Sure, moving it to Word:',
           steps: ['Format it as a letter', 'Save it as Word in your folder'],
           file: { name: 'board-email.docx', kind: 'docx', detail: 'Word · 1 page · 22 KB' }
+        },
+        inside: {
+          steps: [
+            [['read', 'report-september.md']],
+            [['run', 'grep -n "Total" report-september.md']],
+            [['write', 'board-email.md'], ['run', 'wc -w board-email.md']],
+            [['run', 'cp board-email.md drafts/']]
+          ],
+          skill: 'docx',
+          followSteps: [[['run', 'python3 build_letter.py board-email.md']], [['write', 'board-email.docx']]]
         }
       }
     ],
@@ -1006,6 +1161,43 @@ export const copy: Record<Locale, PageCopy> = {
           ],
           tallyCount: '2 of 5',
           tallyText: 'steps are yours: asking and deciding.'
+        }
+      ]
+    },
+    glossary: {
+      eyebrow: 'Glossary',
+      title: 'Words you will hear',
+      lead: 'You do not need them to start. You will meet them on day one, and they are this simple.',
+      items: [
+        {
+          term: 'Agent',
+          sample: '“Merge these three sheets.”',
+          body: 'A program that takes a task, makes a plan and carries it out on your computer: it opens files, runs commands and hands you the result to check.'
+        },
+        {
+          term: 'Terminal',
+          sample: '$ ls Documents',
+          body: 'The window where you give the computer orders by typing instead of clicking. The agent uses it to read, convert and sort your files; you can watch what it does.'
+        },
+        {
+          term: 'Markdown',
+          sample: '# Title  ·  - a point',
+          body: 'Plain text with a few marks: # for a heading, - for a list. Any program and any agent can read it, and the Word file or PDF you send is made from it.'
+        },
+        {
+          term: 'Skill',
+          sample: 'skills/xlsx',
+          body: 'A recipe that teaches the agent to do one thing well, like building a spreadsheet or a deck. You install it once and it uses it whenever it needs to.'
+        },
+        {
+          term: 'Instructions',
+          sample: 'AGENTS.md  ·  CLAUDE.md',
+          body: 'A file in your folder where you write how you want it to work: your tone, your formats, what it must not touch. The agent reads it before every task.'
+        },
+        {
+          term: 'Your folder',
+          sample: 'Documents/Ateneo',
+          body: 'You give the agent a folder to work in. What it produces stays there, on your computer, where you can check it.'
         }
       ]
     },
