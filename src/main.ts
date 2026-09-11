@@ -592,6 +592,15 @@ function bindEvents(page: PageCopy): void {
   bindLighting();
   teardownReveal = initReveal(root, { animate: motionAllowed() });
   teardownChrome = bindChrome();
+
+  // PROTOTYPE: the tap-to-run terminal, dev server only. The build replaces
+  // import.meta.env.DEV with false and drops the module with the branch.
+  if (import.meta.env.DEV) {
+    const locale = currentLocale;
+    void import('./terminal-demo').then(({ mountTerminalDemo }) => {
+      mountTerminalDemo(root, locale, motionAllowed());
+    });
+  }
 }
 
 // The server already sent this page, rendered, in the locale it chose. Keep that

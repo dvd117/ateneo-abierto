@@ -1,0 +1,154 @@
+/* PROTOTYPE — the tap-to-run terminal under the glossary. Dev server only,
+   loaded with terminal-demo.ts; never in the production build. The cursor
+   stands still: the stylesheet allows no decorative loops. */
+
+.td {
+  display: grid;
+  gap: var(--gap-md);
+  margin-top: clamp(2.5rem, 5vw, 4rem);
+  max-width: 46rem;
+}
+
+.td-badge {
+  margin-left: 0.5em;
+  padding: 0.15em 0.55em;
+  color: var(--c-fg-3);
+  border: 1px dashed var(--c-border);
+  border-radius: var(--r-pill);
+}
+
+.td-title {
+  margin: 0.6rem 0 0;
+  font: var(--t-h2);
+  font-size: clamp(1.45rem, 1.25rem + 0.5vw, 1.75rem);
+  color: var(--c-fg);
+}
+
+.td-lead {
+  margin: 0.5rem 0 0;
+  font: var(--t-body);
+  color: var(--c-fg-2);
+}
+
+.td-window {
+  overflow: hidden;
+  background: var(--c-bg-deep);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-window);
+  box-shadow: var(--shadow-window);
+}
+
+.td-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.9rem;
+  border-bottom: 1px solid var(--c-border);
+  background: var(--c-bg-panel);
+}
+
+/* Three window dots, drawn as one element and two shadows of itself. */
+.td-dots {
+  flex: none;
+  width: 0.55rem;
+  height: 0.55rem;
+  margin-right: 1.3rem;
+  border-radius: 50%;
+  background: var(--c-border);
+  box-shadow: 0.85rem 0 0 var(--c-border), 1.7rem 0 0 var(--c-border);
+}
+
+.td-path {
+  overflow: hidden;
+  font: var(--t-mono);
+  font-size: 0.78rem;
+  color: var(--c-fg-3);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.td-log {
+  height: 14.5rem;
+  overflow-y: auto;
+  padding: 0.9rem 1rem;
+  font: var(--t-mono);
+  line-height: 1.6;
+  color: var(--c-fg);
+  overscroll-behavior: contain;
+}
+
+.td-line {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.td-sigil {
+  margin-right: 0.6ch;
+  color: var(--c-accent);
+}
+
+.td-out {
+  color: var(--c-fg-2);
+}
+
+.td-out.is-fresh {
+  color: var(--c-accent);
+}
+
+.td-cursor {
+  display: inline-block;
+  width: 0.55em;
+  height: 1.05em;
+  vertical-align: -0.15em;
+  background: var(--c-fg-2);
+}
+
+.td-picker {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.td-chip {
+  min-height: 2.75rem;
+  padding: 0.45rem 0.85rem;
+  font: var(--t-mono);
+  font-size: 0.8rem;
+  /* One line each; a screen narrower than the pandoc line gets an ellipsis. */
+  max-width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--c-accent);
+  background: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition: border-color var(--duration-ui) var(--ease-out), background-color var(--duration-ui) var(--ease-out);
+}
+
+.td-chip:hover:not(:disabled),
+.td-chip:focus-visible {
+  border-color: var(--c-accent);
+}
+
+.td-chip.is-used {
+  color: var(--c-fg-2);
+}
+
+.td-chip:disabled {
+  cursor: progress;
+}
+
+.td-explain {
+  min-height: 3.2em;
+  margin: 0;
+  font: var(--t-body);
+  color: var(--c-fg);
+}
+
+.td-note {
+  margin: 0;
+  font: var(--t-small);
+  color: var(--c-fg-3);
+}
