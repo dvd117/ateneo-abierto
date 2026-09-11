@@ -204,13 +204,13 @@ meaning is carried by structure (see Layout).
 
 - **Base.** `graphite` for the page, `graphite-deep` for bands that need to recede,
   `graphite-panel` for the agent window and cards, `graphite-raise` for the one surface that
-  sits *on* the panel (the visitor's message bubble and the active prompt chip),
+  sits *on* the panel (the visitor's message bubble and the selected task in the session list),
   `graphite-line` for every border.
 - **Text.** `bone` for headlines and body; `bone-soft` for the manifesto voice; `bone-muted`
   for UI text; `bone-dim` only for inactive map labels.
 - **Signal.** `guacamaya` is the only accent. It fills the primary button (label in
   `on-guacamaya`, never white), draws the active edges of the map, marks the eyebrow, the
-  focus ring, and the active prompt chip. Flat, never metallic, never a gradient; that is the
+  focus ring, and the edge of the selected task in the agent window. Flat, never metallic, never a gradient; that is the
   line between macaw and crypto.
 - **Done.** `done-green` only for completed steps and the "listo" status line. Never for
   anything else, so a green mark always means the agent finished.
@@ -243,15 +243,16 @@ Page and identity pairs first, then the pairs the agent window adds
 | done-green / graphite-panel (ticked step) | 6.63 | 4.5 |
 | bone-dim vs graphite-panel (pending step ring, UI) | 4.78 | 3 |
 | graphite-panel / done-green (tick glyph, UI) | 6.63 | 3 |
-| bone / graphite-raise (message bubble, active chip) | 11.53 | 4.5 |
-| bone-muted / graphite-raise (chip secondary) | 5.34 | 4.5 |
-| guacamaya vs graphite-panel (active chip border, UI) | 7.82 | 3 |
+| bone / graphite-raise (message bubble, selected task) | 11.53 | 4.5 |
+| bone-muted / graphite-raise (secondary text on raise) | 5.34 | 4.5 |
+| guacamaya vs graphite-panel (selected-task pill, phone) | 7.82 | 3 |
+| guacamaya vs graphite-raise (selected-task edge, desktop) | 6.31 | 3 |
 | ink-muted / paper (document kicker, table head) | 5.28 | 4.5 |
 
 `graphite-line` on `graphite-panel` is 1.30 and is deliberately below 3: it is a decorative
-separator, never the only thing identifying a control. Where a border does carry state — the
-active prompt chip — that border is `guacamaya` at 7.82, and the chip's label changes value
-as well, so the state survives for anyone who cannot see the hue.
+separator, never the only thing identifying a control. Where an edge does carry state — the
+selected task in the session list — it is `guacamaya` (6.31 on raise, 7.82 on panel), and the task's surface and label
+change value as well, so the state survives for anyone who cannot see the hue.
 
 Signal vs done separation (OKLab ΔE×100): normal 16.5, deuteranopia 15.1, protanopia 12.3.
 All above the 10 risk line. Re-run the table whenever a token changes.
@@ -279,8 +280,9 @@ trabajamos → El norte (map) → Ignite Talk slot → Sumarme / Hablemos → fo
 line and ES/EN.
 
 - **Hero.** Two columns on desktop, headline left, agent window right. On mobile the window
-  stacks under the headline, the prompt chips become a swipeable row, and each sequence plays
-  on tap. The three or four scripted prompts are office and study tasks (spreadsheets, decks,
+  stacks under the headline, and the window's session list — its one control, as in the real
+  tools — becomes a swipeable row above the conversation; each sequence plays on tap. One call
+  to action in the hero (Sumarme), and it goes to the form. The three or four scripted prompts are office and study tasks (spreadsheets, decks,
   reports, study notes), never "convocatorias".
 - **The staircase as structure.** The three-horizon pillars sit at ascending offsets; the
   "Cómo trabajamos" principles read as steps. The mark itself is not repeated.

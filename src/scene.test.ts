@@ -161,7 +161,8 @@ describe('scene runner', () => {
     vi.runAllTimers();
 
     expect(thread.scrollTo).toHaveBeenCalled();
-    const lastCall = thread.scrollTo.mock.calls.at(-1)?.[0] as { top: number };
+    const calls = thread.scrollTo.mock.calls;
+    const lastCall = calls[calls.length - 1]?.[0] as { top: number };
     expect(lastCall.top).toBeGreaterThan(0);
   });
 });

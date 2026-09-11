@@ -44,9 +44,10 @@ export type SceneDoc = {
  */
 export type Scene = {
   id: string;
-  /** Prompt chip label, and the session name in the window sidebar. */
-  chip: string;
-  /** Title shown in the window's title bar. */
+  /**
+   * The task's name: the clickable item in the window's session list, and the
+   * title bar while it plays.
+   */
   session: string;
   /** What the visitor "asked" for. */
   prompt: string;
@@ -67,7 +68,7 @@ export type AgentChrome = {
   newTask: string;
   today: string;
   folder: string;
-  chipsLabel: string;
+  /** Accessible name of the session list, the window's one control. */
   sessionsLabel: string;
   inputPlaceholder: string;
   /** Precedes the produced file name, e.g. "Listo en tu carpeta · resumen-t3.md". */
@@ -92,9 +93,12 @@ export type PageCopy = {
     /** Headline lines; `em` sets the italic line. */
     titleLines: { text: string; em?: boolean }[];
     manifesto: string;
+    /** The one call to action: it goes to the form. */
     primaryCta: string;
-    secondaryCta: string;
-    /** Honest label under the window: this is a simulation, figures are examples. */
+    /**
+     * Under the window: how to use it, and the honest label that it is a
+     * simulation with example figures.
+     */
     windowCaption: string;
   };
   agent: AgentChrome;
@@ -104,8 +108,6 @@ export type PageCopy = {
     securityBody: string;
     contact: string;
     contactLabel: string;
-    sourceLabel: string;
-    sourceHref: string;
   };
 };
 
@@ -129,17 +131,15 @@ export const copy: Record<Locale, PageCopy> = {
       manifesto:
         'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega un documento. Aprende a delegar con herramientas libres, desde Venezuela, sin pagar nada para empezar.',
       primaryCta: 'Sumarme',
-      secondaryCta: 'Hablemos',
       windowCaption:
-        'Demostración local: el agente de esta página no se conecta a nada y las cifras son de ejemplo.'
+        'Elige otra tarea en la lista para verla. Es una demostración local: no se conecta a nada y las cifras son de ejemplo.'
     },
     agent: {
       windowLabel: 'Ejemplo de un agente trabajando',
       newTask: 'Nueva tarea',
       today: 'Hoy',
       folder: 'Carpeta: Documentos/Ateneo',
-      chipsLabel: 'Elige una tarea de ejemplo',
-      sessionsLabel: 'Tareas de ejemplo',
+      sessionsLabel: 'Elige una tarea de ejemplo',
       inputPlaceholder: 'Pídele algo más…',
       ready: 'Listo en tu carpeta',
       saved: 'guardado',
@@ -149,7 +149,6 @@ export const copy: Record<Locale, PageCopy> = {
     scenes: [
       {
         id: 'gastos',
-        chip: 'Resumir gastos',
         session: 'Gastos del trimestre',
         prompt:
           'Tengo tres hojas de cálculo con los gastos del trimestre. Júntalas y hazme un resumen de una página.',
@@ -178,7 +177,6 @@ export const copy: Record<Locale, PageCopy> = {
       },
       {
         id: 'presentacion',
-        chip: 'Armar una presentación',
         session: 'Presentación del taller',
         prompt:
           'En esa carpeta están mis notas del taller. Ármame una presentación de 6 láminas con eso.',
@@ -209,7 +207,6 @@ export const copy: Record<Locale, PageCopy> = {
       },
       {
         id: 'apuntes',
-        chip: 'Apuntes de estudio',
         session: 'Lectura de la semana',
         prompt:
           'Este PDF es la lectura de la semana. Hazme apuntes y agrégale preguntas para repasar.',
@@ -239,7 +236,6 @@ export const copy: Record<Locale, PageCopy> = {
       },
       {
         id: 'correo',
-        chip: 'Correo a la junta',
         session: 'Correo a la junta',
         prompt:
           'Con el informe del mes, escríbeme un correo corto para la junta. Directo, sin adornos.',
@@ -272,9 +268,7 @@ export const copy: Record<Locale, PageCopy> = {
       securityBody:
         'Cuidamos los datos de quienes participan y nunca publicamos sus nombres sin permiso.',
       contact: 'ateneo@aragort.com',
-      contactLabel: 'Correo',
-      sourceLabel: 'Código fuente',
-      sourceHref: 'https://github.com/dvd117/ateneo-abierto'
+      contactLabel: 'Escríbenos'
     }
   },
   en: {
@@ -296,17 +290,15 @@ export const copy: Record<Locale, PageCopy> = {
       manifesto:
         'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan, and hands you a document. Learn to delegate with free and open tools, from Venezuela, at no cost to start.',
       primaryCta: 'Join',
-      secondaryCta: "Let's talk",
       windowCaption:
-        'Local demo: the agent on this page connects to nothing, and the figures are examples.'
+        'Pick another task from the list to watch it. This is a local demo: it connects to nothing, and the figures are examples.'
     },
     agent: {
       windowLabel: 'An example of an agent at work',
       newTask: 'New task',
       today: 'Today',
       folder: 'Folder: Documents/Ateneo',
-      chipsLabel: 'Pick an example task',
-      sessionsLabel: 'Example tasks',
+      sessionsLabel: 'Pick an example task',
       inputPlaceholder: 'Ask for something else…',
       ready: 'Saved to your folder',
       saved: 'saved',
@@ -316,7 +308,6 @@ export const copy: Record<Locale, PageCopy> = {
     scenes: [
       {
         id: 'gastos',
-        chip: 'Summarise spending',
         session: 'Quarterly spending',
         prompt:
           'I have three spreadsheets with this quarter’s spending. Merge them and give me a one-page summary.',
@@ -345,7 +336,6 @@ export const copy: Record<Locale, PageCopy> = {
       },
       {
         id: 'presentacion',
-        chip: 'Build a deck',
         session: 'Workshop deck',
         prompt: 'My workshop notes are in that folder. Build me a 6-slide deck from them.',
         files: ['workshop-notes.md', 'examples.md', 'questions.md'],
@@ -375,7 +365,6 @@ export const copy: Record<Locale, PageCopy> = {
       },
       {
         id: 'apuntes',
-        chip: 'Study notes',
         session: 'This week’s reading',
         prompt: 'This PDF is the reading for the week. Make me notes and add questions to revise.',
         files: ['reading-week-3.pdf'],
@@ -404,7 +393,6 @@ export const copy: Record<Locale, PageCopy> = {
       },
       {
         id: 'correo',
-        chip: 'Email to the board',
         session: 'Email to the board',
         prompt:
           'Using the monthly report, write me a short email for the board. Direct, no padding.',
@@ -437,9 +425,7 @@ export const copy: Record<Locale, PageCopy> = {
       securityBody:
         'We look after the data of the people who take part, and we never publish their names without permission.',
       contact: 'ateneo@aragort.com',
-      contactLabel: 'Email',
-      sourceLabel: 'Source code',
-      sourceHref: 'https://github.com/dvd117/ateneo-abierto'
+      contactLabel: 'Write to us'
     }
   }
 };

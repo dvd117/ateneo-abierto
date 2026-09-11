@@ -19,6 +19,12 @@ describe('landing page copy', () => {
     }
   });
 
+  test('offers one call to action, and it goes to the form', () => {
+    expect(copy.es.hero.primaryCta).toBe('Sumarme');
+    expect(copy.en.hero.primaryCta).toBe('Join');
+    expect('secondaryCta' in copy.es.hero).toBe(false);
+  });
+
   test('keeps the hero promise free of dates and prices', () => {
     for (const locale of locales) {
       const hero = JSON.stringify(copy[locale].hero);
@@ -49,7 +55,7 @@ describe('landing page copy', () => {
   test('gives every sequence a prompt, files, four steps and a produced document', () => {
     for (const locale of locales) {
       for (const scene of copy[locale].scenes) {
-        expect(scene.chip.length).toBeGreaterThan(0);
+        expect(scene.session.length).toBeGreaterThan(0);
         expect(scene.prompt.length).toBeGreaterThan(20);
         expect(scene.files.length).toBeGreaterThanOrEqual(1);
         expect(scene.steps).toHaveLength(4);
@@ -102,14 +108,16 @@ describe('landing page copy', () => {
     }
   });
 
-  test('carries the security line and both contact routes in the footer', () => {
+  test('carries the security line and the contact address in the footer', () => {
     for (const locale of locales) {
       const { footer } = copy[locale];
 
       expect(footer.securityLine.length).toBeGreaterThan(0);
       expect(footer.contact).toBe('ateneo@aragort.com');
-      expect(footer.sourceHref).toMatch(/^https:\/\/github\.com\//);
     }
+
+    // The repository is private: nothing on the page points at the source.
+    expect(JSON.stringify(copy)).not.toContain('github.com');
 
     expect(copy.es.footer.securityLine).toBe('La seguridad es parte de cómo trabajamos.');
   });

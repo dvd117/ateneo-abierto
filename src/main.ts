@@ -165,6 +165,9 @@ function renderThread(page: PageCopy, scene: Scene): string {
 function renderAgentWindow(page: PageCopy): string {
   const [first] = page.scenes;
 
+  // The session list is the window's one control, as in the real tools: pick a
+  // task on the left, watch it run on the right. On a phone the same list
+  // becomes one scrollable row above the conversation.
   return `
     <figure class="agent-figure">
       <div class="agent">
@@ -173,33 +176,25 @@ function renderAgentWindow(page: PageCopy): string {
           <span class="agent-bar-title" data-agent-title>${inline(first.session)}</span>
         </div>
         <div class="agent-cols">
-          <aside class="agent-side" aria-hidden="true">
-            <p class="agent-new">+ ${inline(page.agent.newTask)}</p>
-            <p class="agent-sh">${inline(page.agent.today)}</p>
-            <ul class="agent-sessions">
-              ${page.scenes
-                .map(
-                  (scene) =>
-                    `<li class="agent-session ${scene.id === first.id ? 'is-on' : ''}" data-session="${scene.id}">${inline(scene.session)}</li>`
-                )
-                .join('')}
-            </ul>
-            <p class="agent-foot">${inline(page.agent.folder)}</p>
-          </aside>
-          <div class="agent-main">
-            <div class="agent-chips" role="tablist" aria-label="${page.agent.chipsLabel}">
+          <div class="agent-side">
+            <p class="agent-new" aria-hidden="true">+ ${inline(page.agent.newTask)}</p>
+            <p class="agent-sh" aria-hidden="true">${inline(page.agent.today)}</p>
+            <div class="agent-sessions" role="tablist" aria-label="${page.agent.sessionsLabel}">
               ${page.scenes
                 .map((scene, index) => {
                   const selected = index === 0;
-                  return `<button class="chip ${selected ? 'is-on' : ''}" type="button" role="tab"
-                    id="chip-${scene.id}" data-scene="${scene.id}"
+                  return `<button class="agent-session ${selected ? 'is-on' : ''}" type="button" role="tab"
+                    id="task-${scene.id}" data-scene="${scene.id}"
                     aria-controls="agent-thread" aria-selected="${selected}"
-                    tabindex="${selected ? '0' : '-1'}">${inline(scene.chip)}</button>`;
+                    tabindex="${selected ? '0' : '-1'}">${inline(scene.session)}</button>`;
                 })
                 .join('')}
             </div>
+            <p class="agent-foot" aria-hidden="true">${inline(page.agent.folder)}</p>
+          </div>
+          <div class="agent-main">
             <div class="agent-thread" id="agent-thread" role="tabpanel" tabindex="0"
-                 aria-labelledby="chip-${first.id}" data-thread>
+                 aria-labelledby="task-${first.id}" data-thread>
               ${renderThread(page, first)}
             </div>
             <p class="agent-input" aria-hidden="true">
@@ -228,7 +223,6 @@ function renderHero(page: PageCopy): string {
         <p class="lead hero-manifesto">${inline(page.hero.manifesto)}</p>
         <div class="hero-actions">
           <a class="button button--fill" href="#sumarme">${page.hero.primaryCta}</a>
-          <a class="button button--line" href="#hablemos">${page.hero.secondaryCta}</a>
         </div>
       </div>
       ${renderAgentWindow(page)}
@@ -252,9 +246,8 @@ function renderFooter(page: PageCopy): string {
           ${renderLocaleButton(page, 'en', 'EN')}
         </div>
         <p>
-          <a class="link" href="mailto:${page.footer.contact}">${page.footer.contactLabel}</a>
-          <span aria-hidden="true"> · </span>
-          <a class="link" href="${page.footer.sourceHref}" rel="noreferrer">${page.footer.sourceLabel}</a>
+          ${page.footer.contactLabel}:
+          <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
         </p>
       </div>
     </footer>
@@ -320,35 +313,35 @@ function loadSceneRunner(): Promise<typeof import('./scene')> {
 
 function bindAgent(page: PageCopy): void {
   const thread = root.querySelector<HTMLElement>('[data-thread]');
-  const chips = Array.from(root.querySelectorAll<HTMLButtonElement>('.chip[data-scene]'));
+  const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('.agent-session[data-scene]'));
   const barTitle = root.querySelector<HTMLElement>('[data-agent-title]');
   const liveStatus = root.querySelector<HTMLElement>('[data-agent-status]');
-  const sessions = Array.from(root.querySelectorAll<HTMLElement>('[data-session]'));
 
-  if (!thread || chips.length === 0) {
+  if (!thread || tabs.length === 0) {
     return;
   }
 
-  const chipRow = root.querySelector<HTMLElement>('.agent-chips');
+  const tabList = root.querySelector<HTMLElement>('.agent-sessions');
 
   /**
-   * On a phone the chips are one scrolling row; bring the chosen one fully
-   * into it. Horizontal only — scrollIntoView would also move the page.
+   * On a phone the session list is one scrolling row; bring the chosen task
+   * fully into it. Horizontal only — scrollIntoView would also move the page.
+   * On desktop the list does not scroll and this returns at once.
    */
-  function revealChip(chip: HTMLElement): void {
-    if (!chipRow || chipRow.scrollWidth <= chipRow.clientWidth) {
+  function revealTab(tab: HTMLElement): void {
+    if (!tabList || tabList.scrollWidth <= tabList.clientWidth) {
       return;
     }
 
-    const inset = Number.parseFloat(getComputedStyle(chipRow).scrollPaddingInlineStart) || 0;
-    // .agent-chips is positioned, so offsetLeft is measured inside the row.
-    const left = chip.offsetLeft - inset;
-    const right = left + chip.offsetWidth + inset * 2;
-    const visibleLeft = chipRow.scrollLeft;
-    const visibleRight = visibleLeft + chipRow.clientWidth;
+    const inset = Number.parseFloat(getComputedStyle(tabList).scrollPaddingInlineStart) || 0;
+    // .agent-sessions is positioned, so offsetLeft is measured inside the row.
+    const left = tab.offsetLeft - inset;
+    const right = left + tab.offsetWidth + inset * 2;
+    const visibleLeft = tabList.scrollLeft;
+    const visibleRight = visibleLeft + tabList.clientWidth;
 
     if (left < visibleLeft || right > visibleRight) {
-      chipRow.scrollTo({ left: Math.max(0, left), behavior: motionAllowed() ? 'smooth' : 'auto' });
+      tabList.scrollTo({ left: Math.max(0, left), behavior: motionAllowed() ? 'smooth' : 'auto' });
     }
   }
 
@@ -364,26 +357,22 @@ function bindAgent(page: PageCopy): void {
 
     thread.innerHTML = renderThread(page, scene);
     thread.scrollTop = 0;
-    thread.setAttribute('aria-labelledby', `chip-${scene.id}`);
+    thread.setAttribute('aria-labelledby', `task-${scene.id}`);
 
     if (barTitle) {
       barTitle.textContent = scene.session;
     }
 
-    for (const session of sessions) {
-      session.classList.toggle('is-on', session.dataset.session === scene.id);
-    }
-
-    for (const chip of chips) {
-      const isActive = chip.dataset.scene === scene.id;
-      chip.classList.toggle('is-on', isActive);
-      chip.setAttribute('aria-selected', String(isActive));
-      chip.tabIndex = isActive ? 0 : -1;
+    for (const tab of tabs) {
+      const isActive = tab.dataset.scene === scene.id;
+      tab.classList.toggle('is-on', isActive);
+      tab.setAttribute('aria-selected', String(isActive));
+      tab.tabIndex = isActive ? 0 : -1;
 
       if (isActive) {
-        revealChip(chip);
+        revealTab(tab);
         if (focus) {
-          chip.focus({ preventScroll: true });
+          tab.focus({ preventScroll: true });
         }
       }
     }
@@ -394,7 +383,7 @@ function bindAgent(page: PageCopy): void {
 
     void loadSceneRunner().then(({ playScene }) => {
       // A later selection may have landed while the module was loading.
-      if (thread.getAttribute('aria-labelledby') !== `chip-${scene.id}`) {
+      if (thread.getAttribute('aria-labelledby') !== `task-${scene.id}`) {
         return;
       }
 
@@ -409,35 +398,36 @@ function bindAgent(page: PageCopy): void {
     });
   }
 
-  for (const chip of chips) {
-    chip.addEventListener('click', () => {
-      const id = chip.dataset.scene;
+  for (const tab of tabs) {
+    tab.addEventListener('click', () => {
+      const id = tab.dataset.scene;
       if (id) {
         select(id, { play: true });
       }
     });
   }
 
-  // Tablist keyboard model: arrows move and select, Home/End jump to the ends.
-  chipRow?.addEventListener('keydown', (event) => {
-    const keys = ['ArrowRight', 'ArrowLeft', 'Home', 'End'];
-    if (!keys.includes(event.key)) {
+  // Tablist keyboard model. The list is vertical on desktop and a row on a
+  // phone, so both arrow pairs move; Home/End jump to the ends.
+  tabList?.addEventListener('keydown', (event) => {
+    const forward = ['ArrowDown', 'ArrowRight'];
+    const back = ['ArrowUp', 'ArrowLeft'];
+    if (![...forward, ...back, 'Home', 'End'].includes(event.key)) {
       return;
     }
 
-    const current = chips.findIndex((chip) => chip.getAttribute('aria-selected') === 'true');
-    const last = chips.length - 1;
+    const current = tabs.findIndex((tab) => tab.getAttribute('aria-selected') === 'true');
     const next =
       event.key === 'Home'
         ? 0
         : event.key === 'End'
-          ? last
-          : event.key === 'ArrowRight'
-            ? (current + 1) % chips.length
-            : (current - 1 + chips.length) % chips.length;
+          ? tabs.length - 1
+          : forward.includes(event.key)
+            ? (current + 1) % tabs.length
+            : (current - 1 + tabs.length) % tabs.length;
 
     event.preventDefault();
-    const id = chips[next]?.dataset.scene;
+    const id = tabs[next]?.dataset.scene;
     if (id) {
       select(id, { play: true, focus: true });
     }

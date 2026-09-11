@@ -524,11 +524,12 @@ button {
   min-height: 0;
 }
 
-/* Chrome, not a control: the sidebar mirrors which sequence is playing. The
-   prompt chips are the one place the visitor actually clicks. */
+/* The session list is the window's one control, as in the real tools: pick a
+   task on the left, watch it run on the right. "Nueva tarea", "Hoy" and the
+   folder line are chrome around it, hidden from assistive tech. */
 .agent-side {
   flex: none;
-  width: 11.5em;
+  width: 13em;
   display: flex;
   flex-direction: column;
   gap: 0.15em;
@@ -556,22 +557,38 @@ button {
 }
 
 .agent-sessions {
+  position: relative;
   display: grid;
-  gap: 0.1em;
+  gap: 0.15em;
 }
 
 .agent-session {
-  padding: 0.45em 0.65em;
+  font: inherit;
+  text-align: left;
+  line-height: 1.3;
+  padding: 0.5em 0.65em;
   border-radius: var(--r-sm);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  transition: color var(--duration-ui) var(--ease-out);
+  color: var(--c-fg-2);
+  transition: color var(--duration-ui) var(--ease-out),
+    background-color var(--duration-ui) var(--ease-out);
 }
 
+/* A colour change, not movement: the one hover the page allows, because a
+   list in a real app answers the pointer this way. */
+@media (hover: hover) {
+  .agent-session:hover {
+    color: var(--c-fg);
+    background: var(--c-bg-panel);
+  }
+}
+
+/* The selected task: lifted surface, full-strength label, and an ochre edge,
+   so the state survives for anyone who cannot see one of the three. */
 .agent-session.is-on {
   color: var(--c-fg);
-  background: var(--c-bg-panel);
+  background: var(--c-bg-raise);
+  box-shadow: inset 2px 0 0 var(--c-accent);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
 }
 
 .agent-foot {
@@ -583,37 +600,13 @@ button {
 .agent-main {
   flex: 1;
   min-width: 0;
+  /* Lets the thread, not the window, be the thing that scrolls — needed
+     when the columns stack on a phone. */
+  min-height: 0;
   display: flex;
   flex-direction: column;
   padding: 0.9em 1.1em 0.9em;
   gap: 0.7em;
-}
-
-/* ---------- prompt chips ---------- */
-
-.agent-chips {
-  position: relative;
-  flex: none;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.4em;
-}
-
-.chip {
-  font: inherit;
-  padding: 0.4em 0.85em;
-  border: 1px solid var(--c-border);
-  border-radius: var(--r-pill);
-  color: var(--c-fg-2);
-  white-space: nowrap;
-  transition: border-color var(--duration-ui) var(--ease-out),
-    color var(--duration-ui) var(--ease-out);
-}
-
-.chip.is-on {
-  border-color: var(--c-accent);
-  background: var(--c-bg-raise);
-  color: var(--c-fg);
 }
 
 /* ---------- the thread ---------- */
@@ -912,9 +905,9 @@ button {
 }
 
 /* ---------- the window on a phone ----------
-   Same window, same tokens, same timing: it stacks under the headline, the
-   chips become one scrollable row, and the sidebar (chrome, not a control)
-   steps aside so the work has the full width. */
+   Same window, same tokens, same timing. It stacks under the headline, and
+   the session list — the same element, the same tabs — turns into one
+   scrollable row above the conversation, because a sidebar does not fit. */
 
 @media (max-width: 860px) {
   .agent {
@@ -922,32 +915,54 @@ button {
     height: min(78vh, 560px);
   }
 
+  .agent-cols {
+    flex-direction: column;
+  }
+
   .agent-side {
+    width: auto;
+    padding: 0.75em 0 0.1em;
+    background: none;
+    border-right: 0;
+  }
+
+  .agent-new,
+  .agent-sh,
+  .agent-foot {
     display: none;
   }
 
-  .agent-chips {
-    flex-wrap: nowrap;
+  .agent-sessions {
+    display: flex;
+    gap: 0.4em;
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x proximity;
     scroll-padding-inline: 1.1em;
-    /* The clipped last chip is the scroll cue; a scrollbar would be noise. */
-    scrollbar-width: none;
-    /* The row scrolls past the padding so the last chip can reach the edge. */
-    margin-inline: -1.1em;
     padding-inline: 1.1em;
+    /* The clipped last task is the scroll cue; a scrollbar would be noise. */
+    scrollbar-width: none;
   }
 
-  /* Thumb-sized: taller than the desktop chip, same shape and tokens. */
-  .agent-chips::-webkit-scrollbar {
+  .agent-sessions::-webkit-scrollbar {
     width: 0;
     height: 0;
   }
 
-  .chip {
+  /* Thumb-sized tabs. The selected one keeps the ochre edge, drawn all round. */
+  .agent-session {
+    flex: none;
+    white-space: nowrap;
     scroll-snap-align: start;
     padding: 0.62em 1em;
+    border: 1px solid var(--c-border);
+    border-radius: var(--r-pill);
+  }
+
+  .agent-session.is-on {
+    border-color: var(--c-accent);
+    border-radius: var(--r-pill);
+    box-shadow: none;
   }
 
   .agent-msg {
