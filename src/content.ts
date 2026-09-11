@@ -149,7 +149,7 @@ export const copy: Record<Locale, PageCopy> = {
     scenes: [
       {
         id: 'gastos',
-        chip: 'Resumir los gastos del trimestre',
+        chip: 'Resumir gastos',
         session: 'Gastos del trimestre',
         prompt:
           'Tengo tres hojas de cálculo con los gastos del trimestre. Júntalas y hazme un resumen de una página.',
@@ -316,7 +316,7 @@ export const copy: Record<Locale, PageCopy> = {
     scenes: [
       {
         id: 'gastos',
-        chip: 'Summarise the quarter’s spending',
+        chip: 'Summarise spending',
         session: 'Quarterly spending',
         prompt:
           'I have three spreadsheets with this quarter’s spending. Merge them and give me a one-page summary.',

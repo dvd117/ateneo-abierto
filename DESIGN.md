@@ -7,6 +7,7 @@ colors:
   graphite: "#16150f"
   graphite-deep: "#100f0b"
   graphite-panel: "#1f1d16"
+  graphite-raise: "#302e26"
   graphite-line: "#34312a"
   bone: "#f0ece2"
   bone-soft: "#cfc9bb"
@@ -24,6 +25,7 @@ color-aliases:
   c-bg: graphite
   c-bg-deep: graphite-deep
   c-bg-panel: graphite-panel
+  c-bg-raise: graphite-raise
   c-fg: bone
   c-fg-2: bone-muted
   c-fg-3: bone-dim
@@ -201,7 +203,9 @@ meaning is carried by structure (see Layout).
 ## Colours
 
 - **Base.** `graphite` for the page, `graphite-deep` for bands that need to recede,
-  `graphite-panel` for the agent window and cards, `graphite-line` for every border.
+  `graphite-panel` for the agent window and cards, `graphite-raise` for the one surface that
+  sits *on* the panel (the visitor's message bubble and the active prompt chip),
+  `graphite-line` for every border.
 - **Text.** `bone` for headlines and body; `bone-soft` for the manifesto voice; `bone-muted`
   for UI text; `bone-dim` only for inactive map labels.
 - **Signal.** `guacamaya` is the only accent. It fills the primary button (label in
@@ -215,6 +219,9 @@ meaning is carried by structure (see Layout).
   paper, the accent is `guacamaya-on-paper`, never `guacamaya`.
 
 ### Contrast table (WCAG 2.2, computed 2026-09-11)
+
+Page and identity pairs first, then the pairs the agent window adds
+(computed 2026-09-11 during the hero build).
 
 | Pair | Ratio | Need |
 |---|---|---|
@@ -232,6 +239,19 @@ meaning is carried by structure (see Layout).
 | ink / paper | 15.29 | 4.5 |
 | ink-muted / paper | 5.28 | 4.5 |
 | guacamaya-on-paper / paper | 4.65 | 4.5 |
+| bone / graphite-deep (title bar, sidebar) | 16.25 | 4.5 |
+| done-green / graphite-panel (ticked step) | 6.63 | 4.5 |
+| bone-dim vs graphite-panel (pending step ring, UI) | 4.78 | 3 |
+| graphite-panel / done-green (tick glyph, UI) | 6.63 | 3 |
+| bone / graphite-raise (message bubble, active chip) | 11.53 | 4.5 |
+| bone-muted / graphite-raise (chip secondary) | 5.34 | 4.5 |
+| guacamaya vs graphite-panel (active chip border, UI) | 7.82 | 3 |
+| ink-muted / paper (document kicker, table head) | 5.28 | 4.5 |
+
+`graphite-line` on `graphite-panel` is 1.30 and is deliberately below 3: it is a decorative
+separator, never the only thing identifying a control. Where a border does carry state — the
+active prompt chip — that border is `guacamaya` at 7.82, and the chip's label changes value
+as well, so the state survives for anyone who cannot see the hue.
 
 Signal vs done separation (OKLab ΔE×100): normal 16.5, deuteranopia 15.1, protanopia 12.3.
 All above the 10 risk line. Re-run the table whenever a token changes.

@@ -7,6 +7,7 @@
   --graphite: #16150f;
   --graphite-deep: #100f0b;
   --graphite-panel: #1f1d16;
+  --graphite-raise: #302e26;
   --graphite-line: #34312a;
   --bone: #f0ece2;
   --bone-soft: #cfc9bb;
@@ -25,6 +26,7 @@
   --c-bg: var(--graphite);
   --c-bg-deep: var(--graphite-deep);
   --c-bg-panel: var(--graphite-panel);
+  --c-bg-raise: var(--graphite-raise);
   --c-fg: var(--bone);
   --c-fg-2: var(--bone-muted);
   --c-fg-3: var(--bone-dim);
@@ -141,6 +143,8 @@
 }
 
 html {
+  /* Single dark theme: native scrollbars and form controls follow it. */
+  color-scheme: dark;
   -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
 }
@@ -437,7 +441,7 @@ button {
 
 @media (min-width: 861px) {
   .hero {
-    grid-template-columns: 1.02fr 1fr;
+    grid-template-columns: 1fr 1.08fr;
     gap: clamp(2rem, 4vw, 3.5rem);
   }
 }
@@ -455,6 +459,500 @@ button {
   flex-wrap: wrap;
   gap: var(--gap-sm);
   margin-top: var(--gap-lg);
+}
+
+/* ---------- the agent window ----------
+   The one object on the page, and the only element allowed a shadow. Sizes
+   inside it are in `em` so a single font-size on `.agent` scales the whole
+   window between breakpoints, the way a real application scales. */
+
+.agent-figure {
+  margin: 0;
+  display: grid;
+  gap: var(--gap-sm);
+  min-width: 0;
+}
+
+.agent {
+  font-size: 0.78rem;
+  display: flex;
+  flex-direction: column;
+  height: clamp(460px, 72vh, 600px);
+  background: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-window);
+  box-shadow: var(--shadow-window);
+  overflow: hidden;
+}
+
+.agent-bar {
+  flex: none;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  height: 2.6em;
+  padding-inline: 1em;
+  background: var(--c-bg-deep);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.agent-dots {
+  display: inline-flex;
+  gap: 0.45em;
+}
+
+.agent-dots i {
+  width: 0.65em;
+  height: 0.65em;
+  border-radius: var(--r-pill);
+  background: var(--c-border);
+}
+
+.agent-bar-title {
+  flex: 1;
+  text-align: center;
+  color: var(--c-fg-2);
+  margin-right: 3.4em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.agent-cols {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* Chrome, not a control: the sidebar mirrors which sequence is playing. The
+   prompt chips are the one place the visitor actually clicks. */
+.agent-side {
+  flex: none;
+  width: 11.5em;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15em;
+  padding: 0.9em 0.75em;
+  background: var(--c-bg-deep);
+  border-right: 1px solid var(--c-border);
+  color: var(--c-fg-2);
+}
+
+.agent-new {
+  padding: 0.5em 0.65em;
+  margin-bottom: 0.8em;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  color: var(--c-fg);
+}
+
+.agent-sh {
+  font-weight: 600;
+  font-size: 0.82em;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-fg-2);
+  margin: 0.4em 0 0.35em 0.35em;
+}
+
+.agent-sessions {
+  display: grid;
+  gap: 0.1em;
+}
+
+.agent-session {
+  padding: 0.45em 0.65em;
+  border-radius: var(--r-sm);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color var(--duration-ui) var(--ease-out);
+}
+
+.agent-session.is-on {
+  color: var(--c-fg);
+  background: var(--c-bg-panel);
+}
+
+.agent-foot {
+  margin-top: auto;
+  padding-inline: 0.35em;
+  font-size: 0.88em;
+}
+
+.agent-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 0.9em 1.1em 0.9em;
+  gap: 0.7em;
+}
+
+/* ---------- prompt chips ---------- */
+
+.agent-chips {
+  position: relative;
+  flex: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4em;
+}
+
+.chip {
+  font: inherit;
+  padding: 0.4em 0.85em;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-pill);
+  color: var(--c-fg-2);
+  white-space: nowrap;
+  transition: border-color var(--duration-ui) var(--ease-out),
+    color var(--duration-ui) var(--ease-out);
+}
+
+.chip.is-on {
+  border-color: var(--c-accent);
+  background: var(--c-bg-raise);
+  color: var(--c-fg);
+}
+
+/* ---------- the thread ---------- */
+
+.agent-thread {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: var(--c-border) transparent;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55em;
+}
+
+/* Only while a sequence is running is anything held back. The finished state
+   is what the markup already says, so no-JS and reduced-motion land on it.
+   Beats not yet reached take no space: the window's height is fixed, so the
+   thread can grow like a real conversation without moving the page. */
+.agent-thread.is-playing [data-beat]:not(.is-in) {
+  display: none;
+}
+
+.agent-thread.is-playing [data-beat].is-in {
+  animation: beat-in var(--duration-overlay) var(--ease-out) both;
+}
+
+@keyframes beat-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+.agent-msg {
+  align-self: flex-end;
+  max-width: 92%;
+  background: var(--c-bg-raise);
+  border-radius: 1.1em 1.1em 0.3em 1.1em;
+  padding: 0.7em 0.95em;
+  line-height: 1.45;
+}
+
+.agent-files {
+  align-self: flex-end;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.35em;
+}
+
+.agent-file {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  font-size: 0.88em;
+  color: var(--c-fg-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 0.25em 0.55em;
+}
+
+.agent-file-icon {
+  width: 0.62em;
+  height: 0.8em;
+  border: 1px solid currentColor;
+  border-radius: 1px;
+}
+
+.agent-ack {
+  color: var(--c-fg-2);
+  margin-top: 0.2em;
+}
+
+.agent-plan {
+  display: grid;
+  gap: 0.4em;
+}
+
+.agent-step {
+  display: flex;
+  align-items: center;
+  gap: 0.65em;
+  color: var(--c-fg);
+}
+
+.agent-tick {
+  flex: none;
+  width: 1.15em;
+  height: 1.15em;
+  border: 1.5px solid var(--c-fg-3);
+  border-radius: var(--r-pill);
+  display: grid;
+  place-items: center;
+}
+
+.agent-step.is-done .agent-tick {
+  background: var(--c-done);
+  border-color: var(--c-done);
+}
+
+/* The tick is drawn, not a glyph: no icon font, no emoji. */
+.agent-step.is-done .agent-tick::after {
+  content: "";
+  width: 0.42em;
+  height: 0.22em;
+  margin-top: -0.14em;
+  border-left: 1.5px solid var(--c-bg-panel);
+  border-bottom: 1.5px solid var(--c-bg-panel);
+  transform: rotate(-45deg);
+}
+
+.agent-thread.is-playing .agent-step:not(.is-done) {
+  color: var(--c-fg-2);
+}
+
+.agent-thread.is-playing .agent-step.is-running {
+  color: var(--c-fg);
+}
+
+.agent-thread.is-playing .agent-step.is-running .agent-tick {
+  border-color: var(--c-fg);
+  border-top-color: transparent;
+  animation: agent-spin 900ms linear infinite;
+}
+
+@keyframes agent-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The runner is never loaded under reduced motion, so `is-playing` never
+   lands. Belt and braces for anyone who toggles the setting mid-sequence. */
+@media (prefers-reduced-motion: reduce) {
+  .agent-thread.is-playing .agent-step.is-running .agent-tick {
+    animation: none;
+  }
+
+  .agent-thread.is-playing [data-beat].is-in {
+    animation: none;
+  }
+}
+
+.agent-status {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  color: var(--c-fg-2);
+  display: flex;
+  align-items: center;
+  gap: 0.45em;
+  flex-wrap: wrap;
+}
+
+.agent-status-dot {
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: var(--r-pill);
+  background: var(--c-done);
+}
+
+.agent-status-file {
+  color: var(--c-fg);
+}
+
+.agent-input {
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6em;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 0.7em 0.7em 0.7em 0.9em;
+  color: var(--c-fg-2);
+}
+
+.agent-send {
+  color: var(--c-fg-2);
+}
+
+/* ---------- the produced document, on paper ---------- */
+
+.doc {
+  background: var(--c-paper);
+  color: var(--c-ink);
+  border-radius: var(--r-md);
+  padding: 0.9em 1.05em 1em;
+}
+
+.doc-kicker {
+  font-weight: 600;
+  font-size: 0.72em;
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-ink-2);
+}
+
+.doc-title {
+  font-family: var(--font-serif);
+  font-size: 1.25em;
+  line-height: 1.18;
+  margin: 0.15em 0 0.6em;
+}
+
+.doc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.94em;
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-table th {
+  text-align: left;
+  font-weight: 400;
+}
+
+.doc-table thead th {
+  font-weight: 600;
+  font-size: 0.88em;
+  color: var(--c-ink-2);
+  border-bottom: 1px solid var(--c-paper-border);
+  padding-bottom: 0.28em;
+}
+
+.doc-table tbody th,
+.doc-table td {
+  padding: 0.3em 0;
+  border-bottom: 1px solid var(--c-paper-border);
+}
+
+.doc-table td,
+.doc-table thead th:not(:first-child) {
+  text-align: right;
+}
+
+.doc-table .is-accent {
+  color: var(--c-accent-on-paper);
+  font-weight: 600;
+}
+
+/* The recommendation carries a dot, so it is not colour alone that marks it. */
+.doc-table tr.is-rec th::before {
+  content: "";
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  border-radius: var(--r-pill);
+  background: var(--c-accent-on-paper);
+  margin-right: 0.45em;
+  vertical-align: 0.1em;
+}
+
+.doc-table tr:not(.is-rec) th {
+  padding-left: 0.9em;
+}
+
+.doc-lead {
+  margin-bottom: 0.35em;
+}
+
+.doc-list {
+  display: grid;
+  gap: 0.25em;
+  counter-reset: doc-item;
+}
+
+.doc-list li {
+  counter-increment: doc-item;
+  position: relative;
+  padding-left: 1.5em;
+  line-height: 1.4;
+}
+
+.doc-list li::before {
+  content: counter(doc-item) ".";
+  position: absolute;
+  left: 0;
+  color: var(--c-ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.doc-note {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05em;
+  line-height: 1.35;
+  margin-top: 0.7em;
+}
+
+.agent-caption {
+  max-width: 52ch;
+}
+
+/* ---------- the window on a phone ----------
+   Same window, same tokens, same timing: it stacks under the headline, the
+   chips become one scrollable row, and the sidebar (chrome, not a control)
+   steps aside so the work has the full width. */
+
+@media (max-width: 860px) {
+  .agent {
+    font-size: 0.84rem;
+    height: min(78vh, 560px);
+  }
+
+  .agent-side {
+    display: none;
+  }
+
+  .agent-chips {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x proximity;
+    scroll-padding-inline: 1.1em;
+    /* The clipped last chip is the scroll cue; a scrollbar would be noise. */
+    scrollbar-width: none;
+    /* The row scrolls past the padding so the last chip can reach the edge. */
+    margin-inline: -1.1em;
+    padding-inline: 1.1em;
+  }
+
+  /* Thumb-sized: taller than the desktop chip, same shape and tokens. */
+  .agent-chips::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+  }
+
+  .chip {
+    scroll-snap-align: start;
+    padding: 0.62em 1em;
+  }
+
+  .agent-msg {
+    max-width: 88%;
+  }
 }
 
 /* ---------- footer ---------- */
