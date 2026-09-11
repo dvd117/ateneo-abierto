@@ -97,15 +97,16 @@ function bindLighting(): void {
 
   const net = root.querySelector<HTMLElement>('[data-network]');
   const column = root.querySelector<HTMLElement>('[data-shift-run]');
+  const map = root.querySelector<HTMLElement>('[data-map]');
 
-  if (!net && !column) {
+  if (!net && !column && !map) {
     return;
   }
 
   lightingModule ??= import('./lighting');
 
   void lightingModule
-    .then(({ playNetwork, playShiftColumn }) => {
+    .then(({ playMap, playNetwork, playShiftColumn }) => {
       // A locale switch may have replaced these nodes while the chunk loaded.
       if (net?.isConnected) {
         lightingPlayers.push(playNetwork(net));
@@ -113,6 +114,10 @@ function bindLighting(): void {
 
       if (column?.isConnected) {
         lightingPlayers.push(playShiftColumn(column));
+      }
+
+      if (map?.isConnected) {
+        lightingPlayers.push(playMap(map));
       }
     })
     .catch(() => {

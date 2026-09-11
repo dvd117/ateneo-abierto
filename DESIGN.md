@@ -250,6 +250,14 @@ Page and identity pairs first, then the pairs the agent window adds
 | guacamaya vs graphite-panel (selected-task pill, phone) | 7.82 | 3 |
 | guacamaya vs graphite-raise (selected-task edge, desktop) | 6.31 | 3 |
 | ink-muted / paper (document kicker, table head) | 5.28 | 4.5 |
+| paper / graphite (lit library node on the map) | 15.67 | 3 |
+| bone-soft / graphite (map city label) | 11.08 | 4.5 |
+| bone-dim / graphite (planned city, map caption) | 5.18 | 4.5 |
+
+The map's landmass (`graphite-panel` on `graphite`, 1.08) and the hatching of the Zona en
+Reclamación (`graphite-line` on `graphite`, 1.41) are deliberately below 3: they are the quiet
+ground the nodes sit on, and every piece of information the map carries — which cities, which
+are lit, which are only planned — is also in the labels and in the figure's alt text.
 
 `graphite-line` on `graphite-panel` is 1.30 and is deliberately below 3: it is a decorative
 separator, never the only thing identifying a control. Where an edge does carry state — the
@@ -296,7 +304,11 @@ line and ES/EN.
   "Cómo trabajamos" principles read as steps. The mark itself is not repeated.
 - **El norte.** Venezuela from GeoJSON, the Zona en Reclamación hatched as on Venezuelan maps.
   Library nodes are paper-lit with a soft paper halo; active edges are ochre and draw on
-  scroll; planned nodes are outlined in `bone-dim`.
+  scroll; planned nodes are outlined in `bone-dim`. The boundary is Natural Earth (public
+  domain, 10 m admin-0, simplified), vendored into the repo at `src/data/venezuela.geo.json`
+  and projected at build time into `src/map-shape.ts`: the page makes no request for it, and
+  the outline is never drawn by hand. The claim is carried as its own feature so it can be
+  hatched and named; leaving it off is not an option on a page read in Venezuela.
 - Generous measure: manifesto copy at most 46ch; body at most 68ch.
 
 ## Motion

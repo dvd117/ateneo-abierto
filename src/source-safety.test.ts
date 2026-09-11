@@ -169,3 +169,54 @@ describe('identity', () => {
     expect(marks.length).toBe(2); // the definition and the single nav call site
   });
 });
+
+describe('the map is vendored, not fetched', () => {
+  test('ships the boundary as GeoJSON in the repo, with the claim as its own feature', () => {
+    const raw = readFileSync('src/data/venezuela.geo.json', 'utf8');
+    const geo = JSON.parse(raw) as {
+      features: { properties: { id: string }; geometry: { coordinates: unknown[] } }[];
+    };
+
+    const ids = geo.features.map((feature) => feature.properties.id);
+    expect(ids).toEqual(['mainland', 'claim']);
+
+    // Natural Earth, public domain — the provenance travels with the file.
+    expect(raw).toContain('Natural Earth');
+
+    for (const feature of geo.features) {
+      expect(feature.geometry.coordinates.length).toBeGreaterThan(0);
+    }
+  });
+
+  test('draws the map from generated paths, with no request at runtime', () => {
+    const shape = readFileSync('src/map-shape.ts', 'utf8');
+    const render = readFileSync('src/render.ts', 'utf8');
+
+    expect(shape).toContain('export const MAP_MAINLAND');
+    expect(shape).toContain('export const MAP_CLAIM');
+    expect(shape).not.toMatch(/fetch\(|XMLHttpRequest|import\(/);
+
+    // Nothing anywhere near the map reads the GeoJSON at runtime.
+    expect(render).not.toContain('venezuela.geo.json');
+
+    // Only the site's own canonical URLs and the SVG namespace appear in the
+    // render layer, and none of them is ever requested.
+    const urls = [...`${shape}\n${render}`.matchAll(/https?:\/\/[^"'\s)]+/g)]
+      .map((match) => match[0])
+      .filter((url) => !url.startsWith('https://ateneo-abierto.org'))
+      .filter((url) => url !== 'http://www.w3.org/2000/svg');
+
+    expect(urls).toEqual([]);
+  });
+
+  test('never positions anything with a style attribute', () => {
+    // The server allows inline CSS by sha256 hash and never by 'unsafe-inline'.
+    // A hash does not cover a style attribute, so an inline position is simply
+    // dropped and every map label lands on top of the first one. Positions go
+    // in the one generated <style> block instead.
+    const render = readFileSync('src/render.ts', 'utf8');
+
+    expect(render).not.toMatch(/style="/);
+    expect(render).toContain('<style>');
+  });
+});

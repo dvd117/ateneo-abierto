@@ -204,6 +204,44 @@ export type PrinciplesCopy = {
   items: [Principle, Principle, Principle, Principle];
 };
 
+/** One of the three time horizons, on the staircase. */
+export type Horizon = {
+  label: string;
+  text: string;
+};
+
+/**
+ * A node on the map. Position is real: `lon`/`lat` go through the same
+ * projection that drew the boundary, so a Venezuelan reader recognises the
+ * place. `dx`/`dy` nudge the label off the node, in viewBox units.
+ * `planned` nodes stay outlined and never light: none of these is a site.
+ */
+export type MapNode = {
+  name: string;
+  lon: number;
+  lat: number;
+  dx?: number;
+  dy?: number;
+  planned?: boolean;
+};
+
+/** Section five: where this is going, and the map it is going across. */
+export type NorthCopy = {
+  eyebrow: string;
+  titleLines: { text: string; em?: boolean }[];
+  lead: string;
+  horizons: [Horizon, Horizon, Horizon];
+  map: {
+    alt: string;
+    caption: string;
+    /** Named on the map itself, hatched, as on maps published in Venezuela. */
+    claimLabel: string;
+    nodes: MapNode[];
+    /** Index pairs into `nodes`, drawn in order as the nodes light. */
+    edges: [number, number][];
+  };
+};
+
 export type PageCopy = {
   languageLabel: string;
   languageSwitchTo: {
@@ -232,6 +270,7 @@ export type PageCopy = {
   shift: ShiftCopy;
   doors: DoorsCopy;
   principles: PrinciplesCopy;
+  north: NorthCopy;
   footer: {
     securityLine: string;
     securityBody: string;
@@ -541,6 +580,43 @@ export const copy: Record<Locale, PageCopy> = {
         }
       ]
     },
+    north: {
+      eyebrow: 'El norte',
+      titleLines: [
+        { text: 'Una red de bibliotecas públicas' },
+        { text: 'del siglo XXI.', em: true }
+      ],
+      lead:
+        'Empezamos con hackatones y mentorías. Lo que sigue son alianzas con universidades, para que esto viva al lado de la educación formal. Y el norte: bibliotecas públicas donde cualquiera pueda sentarse, delegarle su primer trabajo a un agente y salir con algo propio.',
+      horizons: [
+        { label: 'Hoy', text: 'Hackatones, mentorías y Demo Nights.' },
+        { label: 'Después', text: 'Alianzas con universidades, al lado de la educación formal.' },
+        { label: 'Norte', text: 'Una red de bibliotecas públicas del siglo XXI, en todo el país.' }
+      ],
+      map: {
+        alt: 'Mapa de Venezuela con nodos de bibliotecas en Caracas, Barquisimeto, Maracaibo, Mérida, Cumaná y Ciudad Guayana, y dos previstos en San Cristóbal y Puerto Ayacucho. La Zona en Reclamación aparece rayada. Son nodos ilustrativos, no sedes confirmadas.',
+        caption: 'Nodos ilustrativos, no sedes confirmadas.',
+        claimLabel: 'Zona en Reclamación',
+      nodes: [
+        { name: 'Caracas', lon: -66.9, lat: 10.49, dy: 16 },
+        { name: 'Barquisimeto', lon: -69.35, lat: 10.07, dy: 18 },
+        { name: 'Maracaibo', lon: -71.64, lat: 10.65, dy: -12 },
+        { name: 'Mérida', lon: -71.14, lat: 8.6, dx: -6, dy: 20 },
+        { name: 'Cumaná', lon: -64.18, lat: 10.45, dy: -12 },
+        { name: 'Ciudad Guayana', lon: -62.65, lat: 8.35, dy: 18 },
+        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 4, dy: 18, planned: true },
+        { name: 'Puerto Ayacucho', lon: -67.62, lat: 5.66, dy: 18, planned: true }
+      ],
+      edges: [
+        [0, 1],
+        [1, 2],
+        [1, 3],
+        [0, 4],
+        [4, 5],
+        [0, 5]
+      ]
+      }
+    },
     footer: {
       securityLine: 'La seguridad es parte de cómo trabajamos.',
       securityBody:
@@ -846,6 +922,43 @@ export const copy: Record<Locale, PageCopy> = {
           body: 'Everything works on a modest laptop over an unstable connection. A phone is enough to read and follow along; building needs a keyboard.'
         }
       ]
+    },
+    north: {
+      eyebrow: 'Where this goes',
+      titleLines: [
+        { text: 'A network of public libraries' },
+        { text: 'for this century.', em: true }
+      ],
+      lead:
+        'We start with hackathons and mentorships. Next come partnerships with universities, so this lives alongside formal education. And the horizon: public libraries where anyone can sit down, hand an agent their first piece of work, and walk out with something of their own.',
+      horizons: [
+        { label: 'Today', text: 'Hackathons, mentorships and Demo Nights.' },
+        { label: 'Next', text: 'Partnerships with universities, alongside formal education.' },
+        { label: 'Horizon', text: 'A network of twenty-first-century public libraries, across the country.' }
+      ],
+      map: {
+        alt: 'A map of Venezuela with library nodes in Caracas, Barquisimeto, Maracaibo, Mérida, Cumaná and Ciudad Guayana, and two planned in San Cristóbal and Puerto Ayacucho. The Zona en Reclamación is drawn hatched. These are illustrative nodes, not confirmed sites.',
+        caption: 'Illustrative nodes, not confirmed sites.',
+        claimLabel: 'Zona en Reclamación',
+      nodes: [
+        { name: 'Caracas', lon: -66.9, lat: 10.49, dy: 16 },
+        { name: 'Barquisimeto', lon: -69.35, lat: 10.07, dy: 18 },
+        { name: 'Maracaibo', lon: -71.64, lat: 10.65, dy: -12 },
+        { name: 'Mérida', lon: -71.14, lat: 8.6, dx: -6, dy: 20 },
+        { name: 'Cumaná', lon: -64.18, lat: 10.45, dy: -12 },
+        { name: 'Ciudad Guayana', lon: -62.65, lat: 8.35, dy: 18 },
+        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 4, dy: 18, planned: true },
+        { name: 'Puerto Ayacucho', lon: -67.62, lat: 5.66, dy: 18, planned: true }
+      ],
+      edges: [
+        [0, 1],
+        [1, 2],
+        [1, 3],
+        [0, 4],
+        [4, 5],
+        [0, 5]
+      ]
+      }
     },
     footer: {
       securityLine: 'Security is part of how we work.',

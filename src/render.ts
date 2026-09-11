@@ -1,5 +1,6 @@
 import { copy, type Door, type FileKind, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
+import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
 /**
  * Pure rendering: content in, HTML string out. No DOM, no window, no state.
@@ -287,7 +288,7 @@ function renderNetwork(page: PageCopy): string {
   const labels = network.cities
     .map(
       (city, index) =>
-        `<span class="net-city" data-node="${index}" style="left:${((city.lx / 480) * 100).toFixed(2)}%;top:${((city.ly / 110) * 100).toFixed(2)}%">${inline(city.name)}</span>`
+        `<span class="net-city" data-node="${index}">${inline(city.name)}</span>`
     )
     .join('');
 
@@ -468,6 +469,102 @@ function renderPrinciples(page: PageCopy): string {
   `;
 }
 
+
+/**
+ * "El norte": the three horizons on the left, the country on the right.
+ *
+ * The boundary is Natural Earth, vendored into the repo and projected at build
+ * time (src/map-shape.ts) — no request, and no hand-drawn coastline. The Zona
+ * en Reclamación is its own path, hatched and named, the way maps published in
+ * Venezuela draw it; leaving it off would be the first thing a reader here
+ * noticed. The nodes are placed from real coordinates, and the caption says
+ * plainly that none of them is a site.
+ */
+function renderMap(page: PageCopy): string {
+  const { map } = page.north;
+  const { width, height } = MAP_VIEWBOX;
+  const points = map.nodes.map((node) => project(node.lon, node.lat));
+  void height;
+
+  const edges = map.edges
+    .map(([from, to]) => {
+      const a = points[from];
+      const b = points[to];
+      // pathLength normalises every edge to 1, so one dash rule draws them all.
+      return `<line class="map-edge" data-node="${to}" pathLength="1" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
+    })
+    .join('');
+
+  const nodes = map.nodes
+    .map((node, index) => {
+      const { x, y } = points[index];
+      const planned = node.planned ? ' is-planned' : '';
+      return `<g class="map-node${planned}" data-node="${index}">
+        <circle class="map-halo" cx="${x}" cy="${y}" r="7"/>
+        <circle class="map-dot" cx="${x}" cy="${y}" r="5"/>
+      </g>`;
+    })
+    .join('');
+
+  const labels = map.nodes
+    .map((node, index) => {
+      const { x, y } = points[index];
+      const planned = node.planned ? ' is-planned' : '';
+      return `<span class="map-city${planned}" data-node="${index}">${inline(node.name)}</span>`;
+    })
+    .join('');
+
+  return `
+    <figure class="map" data-map>
+      <div class="map-plot">
+        <svg class="map-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${inline(map.alt)}">
+          <defs>
+            <pattern id="claim-hatch" width="7" height="7" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+              <line class="map-hatch-line" x1="0" y1="0" x2="0" y2="7"/>
+            </pattern>
+          </defs>
+          <path class="map-claim" d="${MAP_CLAIM}"/>
+          <path class="map-land" d="${MAP_MAINLAND}"/>
+          ${edges}${nodes}
+        </svg>
+        ${labels}
+        <span class="map-claim-label">${inline(map.claimLabel)}</span>
+      </div>
+      <figcaption class="map-caption small">${inline(map.caption)}</figcaption>
+    </figure>
+  `;
+}
+
+function renderNorth(page: PageCopy): string {
+  const { north } = page;
+  const title = north.titleLines
+    .map((line) => (line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)))
+    .join(' ');
+
+  return `
+    <section class="north shell" id="norte" aria-labelledby="norte-title">
+      <div class="north-copy">
+        <p class="eyebrow">${inline(north.eyebrow)}</p>
+        <h2 class="section-title north-title" id="norte-title">${title}</h2>
+        <p class="lead north-lead">${inline(north.lead)}</p>
+        <ul class="hz">
+          ${north.horizons
+            .map(
+              (horizon) => `
+                <li class="hz-row">
+                  <span class="hz-label">${inline(horizon.label)}</span>
+                  <span class="hz-text">${inline(horizon.text)}</span>
+                </li>
+              `
+            )
+            .join('')}
+        </ul>
+      </div>
+      ${renderMap(page)}
+    </section>
+  `;
+}
+
 function renderFooter(page: PageCopy, locale: Locale): string {
   return `
     <footer class="site-footer shell">
@@ -490,6 +587,37 @@ function renderFooter(page: PageCopy, locale: Locale): string {
       </div>
     </footer>
   `;
+}
+
+
+/**
+ * The one generated stylesheet on the page: where the two sets of map labels
+ * sit, as percentages of their plot.
+ *
+ * These cannot be `style` attributes. The server's CSP allows inline CSS by
+ * sha256 hash and never by 'unsafe-inline', and a hash does not cover a style
+ * attribute — so an inline position is simply dropped and every label lands on
+ * top of the first one. A <style> block is hashed by the build (see
+ * scripts/vite-prerender.ts) and is byte-identical in both locales, because
+ * coordinates are not translated, so one hash covers the page either way.
+ */
+function renderPositions(page: PageCopy): string {
+  const rules: string[] = [`.map-plot{aspect-ratio:${MAP_VIEWBOX.width}/${MAP_VIEWBOX.height}}`];
+
+  page.network.cities.forEach((city, index) => {
+    const left = ((city.lx / 480) * 100).toFixed(2);
+    const top = ((city.ly / 110) * 100).toFixed(2);
+    rules.push(`.net-city[data-node="${index}"]{left:${left}%;top:${top}%}`);
+  });
+
+  page.north.map.nodes.forEach((node, index) => {
+    const { x, y } = project(node.lon, node.lat);
+    const left = (((x + (node.dx ?? 0)) / MAP_VIEWBOX.width) * 100).toFixed(2);
+    const top = (((y + (node.dy ?? 0)) / MAP_VIEWBOX.height) * 100).toFixed(2);
+    rules.push(`.map-city[data-node="${index}"]{left:${left}%;top:${top}%}`);
+  });
+
+  return `<style>${rules.join('')}</style>`;
 }
 
 export type PageMeta = {
@@ -521,12 +649,14 @@ export function renderPage(locale: Locale): string {
 
   return `
     <a class="skip-link" href="#contenido">${page.skipToContent}</a>
+    ${renderPositions(page)}
     ${renderHeader(page, locale)}
     <main id="contenido">
       ${renderHero(page)}
       ${renderShift(page)}
       ${renderDoors(page)}
       ${renderPrinciples(page)}
+      ${renderNorth(page)}
     </main>
     ${renderFooter(page, locale)}
   `;

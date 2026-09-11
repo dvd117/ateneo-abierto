@@ -1757,3 +1757,197 @@ button {
   color: var(--c-fg-2);
   max-width: 34ch;
 }
+
+/* ---------- el norte ----------
+   The three horizons read as the staircase; the map beside them is the real
+   country, projected from the vendored Natural Earth boundary. The Zona en
+   Reclamación is hatched and named, as on maps published in Venezuela. Lit
+   nodes are paper — the same paper as the document the agent produces, which
+   is the point of the whole page — and planned nodes stay outlined. */
+
+.north {
+  padding-block: clamp(3rem, 8vw, var(--sp-section));
+  border-top: 1px solid var(--c-border);
+  display: grid;
+  gap: var(--gap-lg);
+}
+
+@media (min-width: 861px) {
+  .north {
+    grid-template-columns: 1fr minmax(20rem, 32.5rem);
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+}
+
+.north-title {
+  margin-top: 0.7rem;
+  max-width: 20ch;
+}
+
+.north-lead {
+  margin-top: 1.1rem;
+  max-width: 52ch;
+}
+
+.hz {
+  list-style: none;
+  margin: var(--gap-lg) 0 0;
+  padding: 0;
+  border-top: 1px solid var(--c-border);
+}
+
+.hz-row {
+  display: grid;
+  grid-template-columns: 6rem 1fr;
+  gap: var(--gap-sm);
+  padding-block: 0.85rem;
+  border-bottom: 1px solid var(--c-border);
+  font: var(--t-body);
+  font-size: 0.95rem;
+  color: var(--c-fg-soft);
+}
+
+.hz-label {
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-fg-2);
+  padding-top: 0.25rem;
+}
+
+/* The last horizon is the one the section is named after, so it is the only
+   row that carries the signal. */
+.hz-row:last-child {
+  color: var(--c-fg);
+}
+
+.hz-row:last-child .hz-label {
+  color: var(--c-accent);
+}
+
+.map {
+  margin: 0;
+}
+
+.map-plot {
+  position: relative;
+  width: 100%;
+}
+
+.map-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.map-land {
+  fill: var(--c-bg-panel);
+  stroke: var(--c-border);
+  stroke-width: 1.2;
+  stroke-linejoin: round;
+}
+
+/* Hatched, not filled: the claim is drawn, not asserted. */
+.map-claim {
+  fill: url(#claim-hatch);
+  stroke: var(--c-border);
+  stroke-width: 1;
+  stroke-dasharray: 4 3;
+}
+
+.map-hatch-line {
+  stroke: var(--c-border);
+  stroke-width: 1.1;
+}
+
+.map-claim-label {
+  position: absolute;
+  left: 88%;
+  top: 56%;
+  transform: translate(-50%, 0);
+  max-width: 6rem;
+  text-align: center;
+  font: var(--t-small);
+  font-size: clamp(0.56rem, 0.4rem + 0.45vw, 0.7rem);
+  line-height: 1.25;
+  color: var(--c-fg-3);
+}
+
+.map-edge {
+  stroke: var(--c-accent);
+  stroke-width: 1.4;
+  opacity: 0.75;
+  fill: none;
+}
+
+.map-dot {
+  fill: var(--c-paper);
+  stroke: var(--c-paper);
+  stroke-width: 1.5;
+  transition:
+    fill var(--duration-step) var(--ease-out),
+    stroke var(--duration-step) var(--ease-out);
+}
+
+/* The paper halo: a library is lit from inside. */
+.map-halo {
+  fill: var(--c-paper);
+  opacity: 0.16;
+  transition: opacity var(--duration-step) var(--ease-out);
+}
+
+.map-node.is-planned .map-dot {
+  fill: none;
+  stroke: var(--c-fg-3);
+}
+
+.map-node.is-planned .map-halo {
+  opacity: 0;
+}
+
+.map-city {
+  position: absolute;
+  transform: translate(-50%, -0.5em);
+  white-space: nowrap;
+  font: var(--t-small);
+  font-size: clamp(0.6rem, 0.44rem + 0.45vw, 0.78rem);
+  color: var(--c-fg-soft);
+  transition: color var(--duration-step) var(--ease-out);
+}
+
+.map-city.is-planned {
+  color: var(--c-fg-3);
+}
+
+.map-caption {
+  margin-top: var(--gap-sm);
+  color: var(--c-fg-3);
+}
+
+/* The runner adds .is-lighting; until then the whole network stands lit, and
+   that is also what anyone without the runner sees. */
+.map.is-lighting .map-edge {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  transition: stroke-dashoffset var(--duration-draw) var(--ease-out);
+}
+
+.map.is-lighting .map-edge.is-lit {
+  stroke-dashoffset: 0;
+}
+
+.map.is-lighting .map-node:not(.is-planned):not(.is-lit) .map-dot {
+  fill: var(--c-bg-panel);
+  stroke: var(--c-fg-3);
+}
+
+.map.is-lighting .map-node:not(.is-planned):not(.is-lit) .map-halo {
+  opacity: 0;
+}
+
+.map.is-lighting .map-city:not(.is-planned):not(.is-lit) {
+  color: var(--c-fg-3);
+}

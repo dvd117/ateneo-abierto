@@ -150,3 +150,30 @@ export function playShiftColumn(column: HTMLElement): Player {
     { threshold: 0.6 }
   );
 }
+
+/**
+ * Lights the map one library at a time and draws the edge that reaches it.
+ * Planned nodes are not in the sequence: they stay outlined, because nothing
+ * on this map is a confirmed site and the two kinds of node have to stay
+ * visibly different. The caption never changes — it says so in words.
+ */
+export function playMap(map: HTMLElement): Player {
+  const lit = Array.from(map.querySelectorAll<SVGElement>('.map-node:not(.is-planned)'));
+  const edges = Array.from(map.querySelectorAll<SVGElement>('.map-edge'));
+  const cities = Array.from(map.querySelectorAll<HTMLElement>('.map-city:not(.is-planned)'));
+
+  map.classList.add('is-lighting');
+
+  return onScreen(
+    map,
+    lit.length,
+    (k) => {
+      for (const group of [...lit, ...edges, ...cities]) {
+        const index = Number(group.dataset.node);
+        group.classList.toggle('is-lit', k >= 0 && index <= k - 1);
+        group.classList.toggle('is-now', k >= 1 && index === k - 1);
+      }
+    },
+    { period: 700 }
+  );
+}

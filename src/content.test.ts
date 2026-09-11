@@ -281,6 +281,65 @@ describe('landing page copy', () => {
     expect(copy.en.principles.items[3].body).toMatch(/phone/i);
   });
 
+
+  test('names three horizons and ends on the libraries', () => {
+    for (const locale of locales) {
+      const { north } = copy[locale];
+
+      expect(north.horizons).toHaveLength(3);
+      for (const horizon of north.horizons) {
+        expect(horizon.label.length).toBeGreaterThan(0);
+        expect(horizon.text.length).toBeGreaterThan(10);
+      }
+
+      expect(north.titleLines.some((line) => line.em)).toBe(true);
+      expect(north.lead.length).toBeGreaterThan(120);
+    }
+
+    expect(copy.es.north.horizons.map((horizon) => horizon.label)).toEqual([
+      'Hoy',
+      'Después',
+      'Norte'
+    ]);
+    expect(copy.es.north.horizons[2].text).toMatch(/bibliotecas/);
+    expect(copy.en.north.horizons[2].text).toMatch(/libraries/);
+  });
+
+  test('places the map nodes at real coordinates and claims no site', () => {
+    for (const locale of locales) {
+      const { map } = copy[locale].north;
+
+      expect(map.nodes.length).toBeGreaterThanOrEqual(6);
+
+      for (const node of map.nodes) {
+        // Inside the country's bounding box, so a node can never land at sea.
+        expect(node.lon).toBeGreaterThan(-73.4);
+        expect(node.lon).toBeLessThan(-59.8);
+        expect(node.lat).toBeGreaterThan(0.6);
+        expect(node.lat).toBeLessThan(12.3);
+      }
+
+      for (const [from, to] of map.edges) {
+        expect(map.nodes[from]).toBeDefined();
+        expect(map.nodes[to]).toBeDefined();
+        // Edges only ever join nodes that light: a planned node is not joined.
+        expect(map.nodes[from].planned).toBeUndefined();
+        expect(map.nodes[to].planned).toBeUndefined();
+      }
+
+      // Some nodes are outlined rather than lit, and the caption says in words
+      // that none of them is a venue.
+      expect(map.nodes.some((node) => node.planned)).toBe(true);
+      expect(map.caption).toMatch(/no sedes confirmadas|not confirmed sites/i);
+      expect(map.alt).toMatch(/no sedes confirmadas|not confirmed sites/i);
+    }
+
+    // The Esequibo is on the map and named, in both locales: a Venezuelan
+    // reader notices its absence immediately.
+    expect(copy.es.north.map.claimLabel).toBe('Zona en Reclamación');
+    expect(copy.en.north.map.claimLabel).toBe('Zona en Reclamación');
+  });
+
   test('carries the security line and the contact address in the footer', () => {
     for (const locale of locales) {
       const { footer } = copy[locale];
