@@ -258,3 +258,13 @@ describe('the one embed on the page', () => {
     expect(server).toMatch(/defaultSrc: \["'self'"\]/);
   });
 });
+
+describe('back to top', () => {
+  test('targets the document top, not the sticky header', () => {
+    const render = readFileSync('src/render.ts', 'utf8');
+
+    // A sticky element is always in view, so a link to it scrolls nowhere.
+    expect(render).toContain('class="to-top" href="#top"');
+    expect(render).not.toMatch(/id="top"/);
+  });
+});

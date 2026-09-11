@@ -104,7 +104,7 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
  */
 function renderHeader(page: PageCopy, locale: Locale): string {
   return `
-    <header class="site-header" id="arriba">
+    <header class="site-header">
       <div class="shell header-inner">
         <a class="nav-wordmark" href="/?lang=${locale}">
           ${renderMark()}
@@ -123,10 +123,15 @@ function renderHeader(page: PageCopy, locale: Locale): string {
   `;
 }
 
-/** A plain link, so it works before and without the script that shows it. */
+/**
+ * A plain link, so it works before and without the script that shows it.
+ * `#top` with no element of that id is the top of the document, by the HTML
+ * spec. It must not name the header: sticky, it is always in view, so the
+ * browser has nowhere to scroll to.
+ */
 function renderToTop(page: PageCopy): string {
   return `
-    <a class="to-top" href="#arriba" data-to-top aria-label="${page.toTop}">
+    <a class="to-top" href="#top" data-to-top aria-label="${page.toTop}">
       <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M10 15V5M5 10l5-5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
     </a>
   `;
