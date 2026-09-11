@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest';
-import { BEAT_ORDER, playScene } from './scene';
+import { BEAT_ORDER, playScene, toMs } from './scene';
 
 /**
  * Node environment, no jsdom: the thread is faked down to exactly the surface
@@ -93,6 +93,24 @@ const states = (steps: FakeEl[]) =>
     .join('');
 
 const asEl = (el: unknown) => el as HTMLElement;
+
+describe('toMs', () => {
+  // The build minifies `420ms` to `.42s`; read as bare ms, that ran the whole
+  // sequence in about 12 ms in production (2026-09-11).
+  test.each([
+    ['420ms', 420],
+    ['.42s', 420],
+    ['0.42s', 420],
+    [' 420ms ', 420],
+    ['420', 420]
+  ])('reads %j as %d ms', (raw, ms) => {
+    expect(toMs(raw)).toBe(ms);
+  });
+
+  test.each(['', 'auto', '0ms', '-1s'])('rejects %j', (raw) => {
+    expect(toMs(raw)).toBeUndefined();
+  });
+});
 
 describe('scene runner', () => {
   beforeEach(() => {

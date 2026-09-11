@@ -80,10 +80,23 @@ export type PlayOptions = {
   revealed?: readonly string[];
 };
 
+/**
+ * A CSS time in ms. The unit has to be read: the build minifies `420ms` to
+ * `.42s`, and taking that number as ms ran the whole sequence in about 12 ms.
+ */
+export function toMs(raw: string): number | undefined {
+  const value = raw.trim();
+  const parsed = Number.parseFloat(value);
+
+  if (!Number.isFinite(parsed) || parsed <= 0) {
+    return undefined;
+  }
+
+  return value.endsWith('ms') ? parsed : value.endsWith('s') ? parsed * 1000 : parsed;
+}
+
 function stepDuration(thread: HTMLElement): number {
-  const raw = getComputedStyle(thread).getPropertyValue('--duration-step').trim();
-  const parsed = Number.parseFloat(raw);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 420;
+  return toMs(getComputedStyle(thread).getPropertyValue('--duration-step')) ?? 420;
 }
 
 /**
