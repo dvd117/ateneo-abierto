@@ -439,9 +439,11 @@ function renderBand(name: string, seed: number): string {
   // The stripes are drawn in the browser (reveal.ts, drawBand): three bands
   // of ~200 columns each would add tens of kilobytes to the first response.
   // Until then — and without JavaScript — a plain stripe pattern stands in.
+  // `slice` scales the field evenly and crops the ends: squeezed to fit a
+  // phone, the stripes fell under a pixel and the 45° screen went near-vertical.
   return `
     <div class="band band--${name}" data-band aria-hidden="true">
-      <svg class="band-svg" viewBox="0 0 1200 100" preserveAspectRatio="none" focusable="false">
+      <svg class="band-svg" viewBox="0 0 1200 100" preserveAspectRatio="xMidYMid slice" focusable="false">
         <defs>
           <pattern id="band-${name}-rest" width="6" height="10" patternUnits="userSpaceOnUse"><rect class="bz-o" width="2.4" height="10"/><rect class="bz-d" x="2.4" width="1" height="10"/></pattern>
           <pattern id="band-${name}-screen" width="9" height="9" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect class="bz-screen" width="2.2" height="9"/></pattern>
