@@ -55,12 +55,16 @@ describe('CSP-safe source markup', () => {
     expect(styles).toContain('url("/fonts/source-serif-4-latin-italic.woff2")');
 
     // The OFL text ships with the subset, as the licence requires.
-    expect(existsSync('public/fonts/source-serif-4-OFL.md')).toBe(true);
+    expect(existsSync('public/fonts/source-serif-4-OFL.txt')).toBe(true);
 
     const og = readFileSync('public/og.svg', 'utf8');
     expect(og).toContain('url("fonts/dm-sans-latin-variable.woff2")');
     expect(og).toContain('url("fonts/source-serif-4-latin.woff2")');
     expect(og).not.toContain('fonts.googleapis.com');
+  });
+
+  test('keeps a noscript fallback that shows the finished agent window', () => {
+    expect(html()).toMatch(/<noscript>\s*<style>[\s\S]*\.agent-thread\[data-autoplay\][\s\S]*display: revert;/);
   });
 
   test('preloads the two faces the first paint needs', () => {
@@ -121,10 +125,10 @@ describe('anti-slop rules hold in the stylesheet', () => {
 
 describe('form and honeypot handling', () => {
   test('does not hide the subscribe honeypot with inline styles', () => {
-    const main = readFileSync('src/main.ts', 'utf8');
+    const markup = readFileSync('src/render.ts', 'utf8') + readFileSync('src/main.ts', 'utf8');
     const styles = css();
 
-    expect(main).not.toContain('style="display:none');
+    expect(markup).not.toContain('style="display:none');
     expect(styles).toContain('.field-supplement');
 
     // The honeypot is clipped, not display:none — bots read display:none as a trap.
@@ -137,11 +141,11 @@ describe('identity', () => {
   test('draws the staircase mark from the DESIGN.md path, in the DESIGN.md colours', () => {
     const markPath = 'M14 68 L14 52 L32 52 L32 36 L50 36 L50 20 L66 20';
     const favicon = readFileSync('public/favicon.svg', 'utf8');
-    const main = readFileSync('src/main.ts', 'utf8');
+    const render = readFileSync('src/render.ts', 'utf8');
 
     expect(design()).toContain(markPath);
     expect(favicon).toContain(markPath);
-    expect(main).toContain(markPath);
+    expect(render).toContain(markPath);
 
     // Favicon on dark: ochre steps, bone dot, graphite-panel ground.
     expect(favicon).toContain('#1f1d16');
@@ -151,12 +155,12 @@ describe('identity', () => {
 
   test('keeps the wordmark in DM Sans and the mark out of the body copy', () => {
     const styles = css();
-    const main = readFileSync('src/main.ts', 'utf8');
+    const render = readFileSync('src/render.ts', 'utf8');
 
     expect(styles).toMatch(/\.nav-wordmark \.wordmark\s*\{[^}]*text-transform:\s*uppercase;/s);
 
     // The mark appears once in the nav. Anywhere else would be decoration.
-    const marks = [...main.matchAll(/renderMark\(\)/g)];
+    const marks = [...render.matchAll(/renderMark\(\)/g)];
     expect(marks.length).toBe(2); // the definition and the single nav call site
   });
 });

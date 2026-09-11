@@ -112,7 +112,7 @@
     U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-/* Source Serif 4, SIL OFL 1.1 (see fonts/source-serif-4-OFL.md). Instanced at
+/* Source Serif 4, SIL OFL 1.1 (see fonts/source-serif-4-OFL.txt). Instanced at
    weight 400 and subset to Latin: the serif is never bold in this system. */
 @font-face {
   font-family: "Source Serif 4";
@@ -625,6 +625,15 @@ button {
   gap: 0.55em;
 }
 
+/* Before the runner arrives. The server sends the finished thread so no-JS
+   readers get it whole (index.html un-holds it in a <noscript> style); with
+   motion allowed it waits here, empty, until the first sequence starts. */
+@media (prefers-reduced-motion: no-preference) {
+  .agent-thread[data-autoplay] [data-beat] {
+    display: none;
+  }
+}
+
 /* Only while a sequence is running is anything held back. The finished state
    is what the markup already says, so no-JS and reduced-motion land on it.
    Beats not yet reached take no space: the window's height is fixed, so the
@@ -673,10 +682,9 @@ button {
 }
 
 .agent-file-icon {
-  width: 0.62em;
-  height: 0.8em;
-  border: 1px solid currentColor;
-  border-radius: 1px;
+  flex: none;
+  width: 0.72em;
+  height: 0.86em;
 }
 
 .agent-ack {

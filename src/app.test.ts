@@ -1,5 +1,8 @@
-import { describe, test, expect, vi, afterEach } from 'vitest';
-import { app } from './app';
+import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { describe, test, expect, vi, afterEach, beforeAll, afterAll } from 'vitest';
+import { app, loadStyleHashes, pickLocale } from './app';
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -313,3 +316,92 @@ describe('POST /api/subscribe', () => {
     expect(res.status).toBe(502);
   });
 });
+
+describe('language of the home page', () => {
+  test('an explicit ?lang= wins over the browser', () => {
+    expect(pickLocale('en', 'es-VE,es;q=0.9')).toBe('en');
+    expect(pickLocale('es', 'en-US,en;q=0.9')).toBe('es');
+  });
+
+  test('follows the browser preference order, then defaults to Spanish', () => {
+    expect(pickLocale(undefined, 'en-US,en;q=0.9')).toBe('en');
+    expect(pickLocale(undefined, 'es-VE,es;q=0.9,en;q=0.8')).toBe('es');
+    expect(pickLocale(undefined, 'fr-FR, en;q=0.5')).toBe('en');
+    expect(pickLocale(undefined, 'en;q=0.4, es;q=0.7')).toBe('es');
+    expect(pickLocale(undefined, 'de-DE')).toBe('es');
+    expect(pickLocale(undefined, undefined)).toBe('es');
+    expect(pickLocale('fr', undefined)).toBe('es');
+  });
+
+  test('ignores languages the visitor refused with q=0', () => {
+    expect(pickLocale(undefined, 'en;q=0, es;q=0.1')).toBe('es');
+  });
+});
+
+describe('prerendered home page', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'ateneo-dist-'));
+  const esHash = "'sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA='";
+  let pagesApp: typeof app;
+
+  beforeAll(async () => {
+    // Over the 1 KB compression threshold, like the real page.
+    writeFileSync(
+      join(dir, 'index.html'),
+      `<html lang="es"><body>Deja de preguntarle.${'<p>relleno</p>'.repeat(200)}</body></html>`
+    );
+    writeFileSync(join(dir, 'index.en.html'), '<html lang="en"><body>Stop asking it things.</body></html>');
+    writeFileSync(
+      join(dir, 'csp.json'),
+      JSON.stringify({ styleSrc: [esHash, "'unsafe-inline'", 'https://evil.example'] })
+    );
+
+    vi.resetModules();
+    process.env.DIST_DIR = dir;
+    ({ app: pagesApp } = await import('./app'));
+  });
+
+  afterAll(() => {
+    delete process.env.DIST_DIR;
+    rmSync(dir, { recursive: true, force: true });
+  });
+
+  test('serves Spanish by default, with the headers a cache needs', async () => {
+    const res = await pagesApp.request('/');
+
+    expect(res.status).toBe(200);
+    expect(await res.text()).toContain('Deja de preguntarle.');
+    expect(res.headers.get('content-language')).toBe('es');
+    expect(res.headers.get('vary')).toContain('Accept-Language');
+    expect(res.headers.get('cache-control')).toBe('no-cache');
+  });
+
+  test('gzips the page for clients that accept it', async () => {
+    const res = await pagesApp.request('/', { headers: { 'Accept-Encoding': 'gzip' } });
+
+    expect(res.headers.get('content-encoding')).toBe('gzip');
+  });
+
+  test('serves English for ?lang=en and for an English browser', async () => {
+    const byQuery = await pagesApp.request('/?lang=en');
+    expect(await byQuery.text()).toContain('Stop asking it things.');
+
+    const byBrowser = await pagesApp.request('/', { headers: { 'Accept-Language': 'en-GB,en;q=0.9' } });
+    expect(await byBrowser.text()).toContain('Stop asking it things.');
+    expect(byBrowser.headers.get('content-language')).toBe('en');
+  });
+
+  test('allows inline CSS by exact hash only, never by unsafe-inline', async () => {
+    const res = await pagesApp.request('/');
+    const csp = res.headers.get('content-security-policy') ?? '';
+
+    expect(csp).toContain(`style-src 'self' ${esHash}`);
+    expect(csp).not.toContain('unsafe-inline');
+    expect(csp).not.toContain('evil.example');
+  });
+
+  test('reads no hashes when csp.json is missing or malformed', () => {
+    expect(loadStyleHashes(join(dir, 'nowhere'))).toEqual([]);
+    expect(loadStyleHashes(dir)).toEqual([esHash]);
+  });
+});
+

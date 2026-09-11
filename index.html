@@ -81,7 +81,14 @@
     </script>
   </head>
   <body>
-    <div id="app"></div>
+    <div id="app" data-locale="es"><!--prerender--></div>
+    <noscript>
+      <style>
+        .agent-thread[data-autoplay] [data-beat] {
+          display: revert;
+        }
+      </style>
+    </noscript>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
