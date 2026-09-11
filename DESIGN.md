@@ -245,6 +245,8 @@ Page and identity pairs first, then the pairs the agent window adds
 | graphite-panel / done-green (tick glyph, UI) | 6.63 | 3 |
 | bone / graphite-raise (message bubble, selected task) | 11.53 | 4.5 |
 | bone-muted / graphite-raise (secondary text on raise) | 5.34 | 4.5 |
+| graphite-panel / bone (send arrow once the box has text) | 14.29 | 4.5 |
+| bone-dim vs graphite-panel (input border while typing, UI) | 4.78 | 3 |
 | guacamaya vs graphite-panel (selected-task pill, phone) | 7.82 | 3 |
 | guacamaya vs graphite-raise (selected-task edge, desktop) | 6.31 | 3 |
 | ink-muted / paper (document kicker, table head) | 5.28 | 4.5 |
@@ -282,7 +284,13 @@ line and ES/EN.
 - **Hero.** Two columns on desktop, headline left, agent window right. On mobile the window
   stacks under the headline, and the window's session list — its one control, as in the real
   tools — becomes a swipeable row above the conversation; each sequence plays on tap. One call
-  to action in the hero (Sumarme), and it goes to the form. The three or four scripted prompts are office and study tasks (spreadsheets, decks,
+  to action in the hero (Sumarme), and it goes to the form.
+- **Two rounds per sequence.** Each task settles in Markdown, rendered on paper, and then the
+  visitor's follow-up is typed into the input, sent, and answered with the file they would
+  actually send: Excel, PowerPoint, PDF or Word. The converted file arrives as a card with a
+  drawn thumbnail in the paper tokens — the second and last place paper appears inside the
+  window. Markdown is where the work is still moving; the proprietary format is what gets sent,
+  and neither Windows nor macOS previews Markdown on its own. The three or four scripted prompts are office and study tasks (spreadsheets, decks,
   reports, study notes), never "convocatorias".
 - **The staircase as structure.** The three-horizon pillars sit at ascending offsets; the
   "Cómo trabajamos" principles read as steps. The mark itself is not repeated.

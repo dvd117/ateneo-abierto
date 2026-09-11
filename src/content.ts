@@ -58,8 +58,30 @@ export type Scene = {
   /** Exactly four plan steps, ticked one at a time. */
   steps: [string, string, string, string];
   doc: SceneDoc;
-  /** File name in the status line. */
+  /** The Markdown draft's file name, in the first status line. */
   savedAs: string;
+  /**
+   * The second round. Markdown is where the work settles, but visitors open
+   * Office files and PDFs, and neither Windows nor macOS previews Markdown on
+   * its own — so once the draft is right, the visitor asks for the file they
+   * will actually send, and the agent converts it.
+   */
+  followUp: FollowUp;
+};
+
+export type FileKind = 'xlsx' | 'pptx' | 'pdf' | 'docx';
+
+export type FollowUp = {
+  /** Typed into "Pídele algo más…", sent, and posted as the visitor's second message. */
+  prompt: string;
+  ack: string;
+  steps: [string, string];
+  file: {
+    name: string;
+    kind: FileKind;
+    /** Format, extent and size, e.g. "Excel · 1 hoja · 14 KB". Illustrative. */
+    detail: string;
+  };
 };
 
 export type AgentChrome = {
@@ -173,7 +195,13 @@ export const copy: Record<Locale, PageCopy> = {
           },
           note: 'Transporte es lo único que se movió de verdad: por ahí conviene empezar a revisar.'
         },
-        savedAs: 'resumen-t3.md'
+        savedAs: 'resumen-t3.md',
+        followUp: {
+          prompt: 'Se ve bien. Pásalo a Excel para la reunión.',
+          ack: 'Va, lo paso a Excel:',
+          steps: ['Pasar la tabla a una hoja de Excel', 'Guardarla junto al resumen'],
+          file: { name: 'resumen-t3.xlsx', kind: 'xlsx', detail: 'Excel · 1 hoja · 14 KB' }
+        }
       },
       {
         id: 'presentacion',
@@ -203,7 +231,13 @@ export const copy: Record<Locale, PageCopy> = {
           },
           note: 'Cada lámina lleva tres puntos y un ejemplo tuyo, no uno inventado.'
         },
-        savedAs: 'presentacion-taller.md'
+        savedAs: 'presentacion-taller.md',
+        followUp: {
+          prompt: 'Me gusta el orden. Hazla en PowerPoint.',
+          ack: 'Listo, la armo en PowerPoint:',
+          steps: ['Crear las 6 láminas en PowerPoint', 'Guardarla en tu carpeta'],
+          file: { name: 'presentacion-taller.pptx', kind: 'pptx', detail: 'PowerPoint · 6 láminas · 84 KB' }
+        }
       },
       {
         id: 'apuntes',
@@ -232,7 +266,13 @@ export const copy: Record<Locale, PageCopy> = {
           },
           note: 'Tapa las respuestas y contéstalas en voz alta: es lo que mejor fija.'
         },
-        savedAs: 'apuntes-lectura-3.md'
+        savedAs: 'apuntes-lectura-3.md',
+        followUp: {
+          prompt: 'Perfecto. Expórtalo a PDF para imprimirlo.',
+          ack: 'Va, lo preparo en PDF:',
+          steps: ['Maquetar los apuntes para imprimir', 'Exportarlos a PDF en tu carpeta'],
+          file: { name: 'apuntes-lectura-3.pdf', kind: 'pdf', detail: 'PDF · 2 páginas · 96 KB' }
+        }
       },
       {
         id: 'correo',
@@ -260,7 +300,13 @@ export const copy: Record<Locale, PageCopy> = {
           },
           note: 'Si quieren el detalle, el informe completo va adjunto.'
         },
-        savedAs: 'correo-junta.md'
+        savedAs: 'correo-junta.md',
+        followUp: {
+          prompt: 'Así está bien. Pásalo a Word para firmarlo.',
+          ack: 'Listo, lo paso a Word:',
+          steps: ['Darle formato de carta', 'Guardarlo como Word en tu carpeta'],
+          file: { name: 'correo-junta.docx', kind: 'docx', detail: 'Word · 1 página · 22 KB' }
+        }
       }
     ],
     footer: {
@@ -332,7 +378,13 @@ export const copy: Record<Locale, PageCopy> = {
           },
           note: 'Transport is the only line that really moved: start there.'
         },
-        savedAs: 'summary-q3.md'
+        savedAs: 'summary-q3.md',
+        followUp: {
+          prompt: 'Looks good. Put it in Excel for the meeting.',
+          ack: 'On it, moving it to Excel:',
+          steps: ['Put the table in an Excel sheet', 'Save it next to the summary'],
+          file: { name: 'summary-q3.xlsx', kind: 'xlsx', detail: 'Excel · 1 sheet · 14 KB' }
+        }
       },
       {
         id: 'presentacion',
@@ -361,7 +413,13 @@ export const copy: Record<Locale, PageCopy> = {
           },
           note: 'Each slide carries three points and one example of your own, not an invented one.'
         },
-        savedAs: 'workshop-deck.md'
+        savedAs: 'workshop-deck.md',
+        followUp: {
+          prompt: 'I like the order. Make it in PowerPoint.',
+          ack: 'Sure, building it in PowerPoint:',
+          steps: ['Build the 6 slides in PowerPoint', 'Save it to your folder'],
+          file: { name: 'workshop-deck.pptx', kind: 'pptx', detail: 'PowerPoint · 6 slides · 84 KB' }
+        }
       },
       {
         id: 'apuntes',
@@ -389,7 +447,13 @@ export const copy: Record<Locale, PageCopy> = {
           },
           note: 'Cover the answers and say them out loud: that is what makes them stick.'
         },
-        savedAs: 'notes-reading-3.md'
+        savedAs: 'notes-reading-3.md',
+        followUp: {
+          prompt: 'Perfect. Export it to PDF so I can print it.',
+          ack: 'On it, preparing the PDF:',
+          steps: ['Lay the notes out for printing', 'Export them to PDF in your folder'],
+          file: { name: 'notes-reading-3.pdf', kind: 'pdf', detail: 'PDF · 2 pages · 96 KB' }
+        }
       },
       {
         id: 'correo',
@@ -417,7 +481,13 @@ export const copy: Record<Locale, PageCopy> = {
           },
           note: 'The full report is attached if anyone wants the detail.'
         },
-        savedAs: 'board-email.md'
+        savedAs: 'board-email.md',
+        followUp: {
+          prompt: 'That works. Put it in Word so I can sign it.',
+          ack: 'Sure, moving it to Word:',
+          steps: ['Format it as a letter', 'Save it as Word in your folder'],
+          file: { name: 'board-email.docx', kind: 'docx', detail: 'Word · 1 page · 22 KB' }
+        }
       }
     ],
     footer: {

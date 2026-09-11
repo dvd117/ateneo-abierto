@@ -674,7 +674,9 @@ button {
   display: inline-flex;
   align-items: center;
   gap: 0.4em;
-  font-size: 0.88em;
+  /* File names are one of the two places mono is allowed. */
+  font-family: var(--font-mono);
+  font-size: 0.8em;
   color: var(--c-fg-2);
   border: 1px solid var(--c-border);
   border-radius: var(--r-sm);
@@ -791,12 +793,147 @@ button {
   gap: 0.6em;
   border: 1px solid var(--c-border);
   border-radius: var(--r-md);
-  padding: 0.7em 0.7em 0.7em 0.9em;
+  padding: 0.5em 0.5em 0.5em 0.9em;
   color: var(--c-fg-2);
+  transition: border-color var(--duration-ui) var(--ease-out);
+}
+
+.agent-input-text {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* The visitor's follow-up being typed: full-strength text and a caret. The
+   caret is static — a blinking one would be a loop. */
+.agent-input.is-typing {
+  border-color: var(--c-fg-3);
+  color: var(--c-fg);
+}
+
+.agent-input.is-typing .agent-input-text::after {
+  content: "";
+  display: inline-block;
+  width: 1px;
+  height: 1.1em;
+  margin-left: 1px;
+  vertical-align: -0.2em;
+  background: currentColor;
 }
 
 .agent-send {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 2em;
+  height: 2em;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-pill);
   color: var(--c-fg-2);
+  transition: background-color var(--duration-ui) var(--ease-out),
+    color var(--duration-ui) var(--ease-out), transform var(--duration-ui) var(--ease-out);
+}
+
+/* With text in the box the send button lights, as in the real tools. Bone,
+   not ochre: the hero already spends its one ochre fill on Sumarme. */
+.agent-input.is-typing .agent-send {
+  background: var(--c-fg);
+  border-color: var(--c-fg);
+  color: var(--c-bg-panel);
+}
+
+/* A pressed state — the one kind of movement the page allows on a control. */
+.agent-send.is-pressed {
+  transform: scale(0.88);
+}
+
+/* ---------- the delivered file ----------
+   The second round ends in the file the visitor will actually send. A card,
+   like an attachment in the real tools, with a drawn thumbnail of its format;
+   the full preview already happened on paper in the first round. */
+
+.file-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85em;
+  max-width: 22em;
+  padding: 0.65em 0.8em;
+  background: var(--c-bg-raise);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+}
+
+.file-thumb {
+  flex: none;
+  width: 2.3em;
+  height: 2.9em;
+}
+
+.file-thumb--wide {
+  width: 3.2em;
+  height: 2.3em;
+}
+
+.file-thumb .t-paper {
+  fill: var(--c-paper);
+}
+
+.file-thumb .t-ink {
+  fill: var(--c-ink-2);
+}
+
+.file-thumb .t-soft {
+  fill: var(--c-paper-border);
+}
+
+.file-thumb .t-accent {
+  fill: var(--c-accent-on-paper);
+}
+
+.file-thumb .t-rule {
+  fill: none;
+  stroke: var(--c-paper-border);
+  stroke-width: 0.8;
+}
+
+.file-thumb .t-sign {
+  fill: none;
+  stroke: var(--c-ink);
+  stroke-width: 0.9;
+  stroke-linecap: round;
+}
+
+.file-body {
+  display: grid;
+  gap: 0.2em;
+  min-width: 0;
+}
+
+.file-name {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--c-fg);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-meta {
+  font-size: 0.88em;
+  color: var(--c-fg-2);
+}
+
+.file-kind {
+  margin-left: auto;
+  flex: none;
+  font-weight: 600;
+  font-size: 0.7em;
+  letter-spacing: var(--track-label);
+  color: var(--c-fg-2);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-sm);
+  padding: 0.25em 0.5em;
 }
 
 /* ---------- the produced document, on paper ---------- */

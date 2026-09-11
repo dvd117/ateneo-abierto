@@ -78,10 +78,30 @@ describe('landing page copy', () => {
           }
         }
 
-        // The last step saves the file the status line then names.
-        expect(scene.savedAs).toMatch(/\.[a-z]{2,4}$/);
+        // Round one settles the work in Markdown.
+        expect(scene.savedAs).toMatch(/\.md$/);
+
+        // Round two converts it into the file the visitor will actually send.
+        const { followUp } = scene;
+        expect(followUp.prompt.length).toBeGreaterThan(10);
+        expect(followUp.ack.length).toBeGreaterThan(0);
+        expect(followUp.steps).toHaveLength(2);
+        expect(['xlsx', 'pptx', 'pdf', 'docx']).toContain(followUp.file.kind);
+        expect(followUp.file.name.endsWith(`.${followUp.file.kind}`)).toBe(true);
+        // Same document, new format: the base name carries over from the draft.
+        expect(followUp.file.name.replace(/\.\w+$/, '')).toBe(scene.savedAs.replace(/\.md$/, ''));
       }
     }
+  });
+
+  test('covers each proprietary format once, in both locales', () => {
+    for (const locale of locales) {
+      const kinds = copy[locale].scenes.map((scene) => scene.followUp.file.kind).sort();
+      expect(kinds).toEqual(['docx', 'pdf', 'pptx', 'xlsx']);
+    }
+
+    // The follow-up names the format in plain words a visitor would use.
+    expect(copy.es.scenes.map((scene) => scene.followUp.prompt).join(' ')).toMatch(/Excel.*PowerPoint.*PDF.*Word/);
   });
 
   test('drops the convocatorias framing for work anyone recognises', () => {

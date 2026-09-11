@@ -1,4 +1,4 @@
-import { copy, type PageCopy, type Scene } from './content';
+import { copy, type FileKind, type PageCopy, type Scene } from './content';
 import type { Locale } from './locale';
 
 /**
@@ -10,6 +10,45 @@ import type { Locale } from './locale';
  * only when it has to: a locale switch, or a saved locale that differs from the
  * one the server sent.
  */
+
+/**
+ * Thumbnails for the delivered file, drawn in the paper tokens: the file card
+ * is the produced document in its final format, so paper is allowed here. One
+ * shape per format, recognisable at 40 px — a sheet, a slide, a printed page,
+ * a letter — without repeating the full preview from the first round.
+ */
+const THUMBS: Record<FileKind, string> = {
+  xlsx: `<svg class="file-thumb" viewBox="0 0 26 33" aria-hidden="true" focusable="false">
+    <rect class="t-paper" x="0.5" y="0.5" width="25" height="32" rx="2"/>
+    <rect class="t-ink" x="4" y="6" width="18" height="3" rx="0.5"/>
+    <path class="t-rule" d="M4 12h18M4 17h18M4 22h18M4 27h18M10.5 12v15M16.5 12v15"/>
+    <rect class="t-accent" x="17" y="12.5" width="5" height="4"/>
+  </svg>`,
+  pptx: `<svg class="file-thumb file-thumb--wide" viewBox="0 0 36 26" aria-hidden="true" focusable="false">
+    <rect class="t-paper" x="0.5" y="0.5" width="35" height="25" rx="2"/>
+    <rect class="t-ink" x="4" y="5" width="17" height="3" rx="0.5"/>
+    <circle class="t-accent" cx="5.5" cy="13" r="1.2"/><rect class="t-soft" x="8.5" y="12" width="20" height="2" rx="0.5"/>
+    <circle class="t-accent" cx="5.5" cy="17" r="1.2"/><rect class="t-soft" x="8.5" y="16" width="16" height="2" rx="0.5"/>
+    <circle class="t-accent" cx="5.5" cy="21" r="1.2"/><rect class="t-soft" x="8.5" y="20" width="18" height="2" rx="0.5"/>
+  </svg>`,
+  pdf: `<svg class="file-thumb" viewBox="0 0 26 33" aria-hidden="true" focusable="false">
+    <path class="t-paper" d="M2.5 0.5h15l8 8v22a2 2 0 0 1-2 2h-21a2 2 0 0 1-2-2v-28a2 2 0 0 1 2-2z"/>
+    <path class="t-soft" d="M17.5 0.5v8h8z"/>
+    <rect class="t-ink" x="4" y="6" width="11" height="3" rx="0.5"/>
+    <rect class="t-soft" x="4" y="13" width="18" height="1.6" rx="0.5"/>
+    <rect class="t-soft" x="4" y="17" width="16" height="1.6" rx="0.5"/>
+    <rect class="t-soft" x="4" y="21" width="18" height="1.6" rx="0.5"/>
+    <rect class="t-soft" x="4" y="25" width="11" height="1.6" rx="0.5"/>
+  </svg>`,
+  docx: `<svg class="file-thumb" viewBox="0 0 26 33" aria-hidden="true" focusable="false">
+    <rect class="t-paper" x="0.5" y="0.5" width="25" height="32" rx="2"/>
+    <rect class="t-ink" x="4" y="5" width="9" height="2.4" rx="0.5"/>
+    <rect class="t-soft" x="4" y="11" width="18" height="1.6" rx="0.5"/>
+    <rect class="t-soft" x="4" y="15" width="18" height="1.6" rx="0.5"/>
+    <rect class="t-soft" x="4" y="19" width="13" height="1.6" rx="0.5"/>
+    <path class="t-sign" d="M14 27.5c1.5-2 2.5-2 3 0s1.5 2 3-0.5 2-1 2.5 0.5"/>
+  </svg>`
+};
 
 /** A page with a folded corner, drawn — an empty box reads as a missing glyph. */
 const FILE_ICON = `<svg class="agent-file-icon" viewBox="0 0 10 12" aria-hidden="true" focusable="false"><path d="M1.5 0.75h4.5l2.5 2.5v8h-7z M6 0.75v2.5h2.5" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>`;
@@ -132,18 +171,45 @@ export function renderThread(page: PageCopy, scene: Scene): string {
         .join('')}
     </ul>
     <p class="agent-ack" data-beat="ack">${inline(scene.ack)}</p>
-    <ol class="agent-plan" data-beat="plan">
-      ${scene.steps
+    ${renderPlan(scene.steps, 'plan')}
+    <div class="agent-doc" data-beat="doc">${renderDoc(scene)}</div>
+    ${renderStatus(page, scene.savedAs, 'status')}
+
+    <p class="agent-msg" data-beat="followup">${inline(scene.followUp.prompt)}</p>
+    <p class="agent-ack" data-beat="ack2">${inline(scene.followUp.ack)}</p>
+    ${renderPlan(scene.followUp.steps, 'plan2')}
+    <div class="agent-deliverable" data-beat="file">
+      <div class="file-card">
+        ${THUMBS[scene.followUp.file.kind]}
+        <span class="file-body">
+          <span class="file-name">${inline(scene.followUp.file.name)}</span>
+          <span class="file-meta">${inline(scene.followUp.file.detail)}</span>
+        </span>
+        <span class="file-kind" aria-hidden="true">${scene.followUp.file.kind.toUpperCase()}</span>
+      </div>
+    </div>
+    ${renderStatus(page, scene.followUp.file.name, 'status2')}
+  `;
+}
+
+function renderPlan(steps: readonly string[], beat: string): string {
+  return `
+    <ol class="agent-plan" data-beat="${beat}">
+      ${steps
         .map(
           (step) =>
             `<li class="agent-step is-done" data-step><span class="agent-tick" aria-hidden="true"></span>${inline(step)}</li>`
         )
         .join('')}
     </ol>
-    <div class="agent-doc" data-beat="doc">${renderDoc(scene)}</div>
-    <p class="agent-status" data-beat="status">
+  `;
+}
+
+function renderStatus(page: PageCopy, fileName: string, beat: string): string {
+  return `
+    <p class="agent-status" data-beat="${beat}">
       <span class="agent-status-dot" aria-hidden="true"></span>${inline(page.agent.ready)} ·
-      <span class="agent-status-file">${inline(scene.savedAs)}</span>
+      <span class="agent-status-file">${inline(fileName)}</span>
     </p>
   `;
 }
@@ -183,9 +249,9 @@ function renderAgentWindow(page: PageCopy): string {
                  aria-labelledby="task-${first.id}" data-thread data-autoplay>
               ${renderThread(page, first)}
             </div>
-            <p class="agent-input" aria-hidden="true">
-              <span>${inline(page.agent.inputPlaceholder)}</span>
-              <span class="agent-send">↑</span>
+            <p class="agent-input" aria-hidden="true" data-input>
+              <span class="agent-input-text" data-input-text>${inline(page.agent.inputPlaceholder)}</span>
+              <span class="agent-send" data-send>↑</span>
             </p>
           </div>
         </div>

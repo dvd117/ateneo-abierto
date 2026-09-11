@@ -157,6 +157,7 @@ function bindAgent(page: PageCopy): void {
       }
 
       scenePlayer = playScene(thread, {
+        input: root.querySelector<HTMLElement>('[data-input]'),
         onFinish: () => {
           if (liveStatus) {
             liveStatus.textContent = '';

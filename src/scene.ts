@@ -1,15 +1,21 @@
 /**
  * The scene runner for the agent window.
  *
- * It does not build markup and it does not fetch anything. `main.ts` renders a
- * sequence's *finished* state into the DOM, and this module reveals it in
- * order: the message, the files, the plan, each step ticking, the produced
- * document, the status line.
+ * It does not build markup and it does not fetch anything. `render.ts` renders
+ * a sequence's *finished* state, and this module reveals it in order. Each
+ * sequence has two rounds, because that is how the work goes:
+ *
+ *   1. the visitor's request, the files, a plan that ticks, and a Markdown
+ *      draft on paper — where the work gets settled;
+ *   2. once it reads right, the visitor types a follow-up into "Pídele algo
+ *      más…", sends it, and the agent converts the draft into the file they
+ *      will actually send (Excel, PowerPoint, PDF, Word).
  *
  * Rendering the end state up front is deliberate:
  *  - with no JS, reduced motion or saveData, the finished window simply stands;
  *  - a cancelled sequence leaves a coherent window, not half a conversation;
- *  - the runner only toggles classes, so it stays tiny and cannot inject text.
+ *  - the runner only toggles classes and the input's text, so it stays tiny
+ *    and cannot inject anything.
  * The window's height is fixed in CSS, so the thread growing never moves the
  * page around it.
  *
@@ -18,23 +24,41 @@
  * and never loads this file.
  */
 
-/** Beats of the sequence, in reveal order, matching `data-beat` in the markup. */
-const BEATS = ['prompt', 'files', 'ack', 'plan', 'doc', 'status'] as const;
-
-type Beat = (typeof BEATS)[number];
-
-/** Delay before each beat, in multiples of --duration-step (420 ms). */
-const BEAT_DELAY: Record<Beat, number> = {
-  prompt: 0.2,
-  files: 0.9,
-  ack: 1,
-  plan: 0.8,
-  doc: 0.7,
-  status: 0.5
+type Cue = {
+  /** `data-beat` of the element this cue reveals. */
+  beat: string;
+  /** Wait before it, in multiples of --duration-step (420 ms). */
+  delay: number;
+  /** Type the element's text into the input and send it before revealing it. */
+  typed?: boolean;
 };
+
+const TIMELINE: readonly Cue[] = [
+  { beat: 'prompt', delay: 0.2 },
+  { beat: 'files', delay: 0.9 },
+  { beat: 'ack', delay: 1 },
+  { beat: 'plan', delay: 0.8 },
+  { beat: 'doc', delay: 0.7 },
+  { beat: 'status', delay: 0.5 },
+  // Long enough to read the draft before the visitor "asks" for the real file.
+  { beat: 'followup', delay: 3.5, typed: true },
+  { beat: 'ack2', delay: 0.9 },
+  { beat: 'plan2', delay: 0.7 },
+  { beat: 'file', delay: 0.7 },
+  { beat: 'status2', delay: 0.5 }
+];
+
+export const BEAT_ORDER = TIMELINE.map((cue) => cue.beat);
 
 /** How long a step spends in the "running" state before it ticks. */
 const STEP_RUN = 1.5;
+/** Gap before a step starts running. */
+const STEP_GAP = 0.35;
+/** One typed character: about 30 ms, a quick but human pace. */
+const TYPE_CHAR = 0.07;
+/** Beat between the last character and the send press, and the press itself. */
+const SEND_WAIT = 0.5;
+const SEND_PRESS = 0.35;
 
 export type ScenePlayer = {
   /** Stops the sequence and leaves every beat revealed. */
@@ -44,6 +68,8 @@ export type ScenePlayer = {
 export type PlayOptions = {
   /** One step of the timeline, in ms. Defaults to the --duration-step token. */
   stepMs?: number;
+  /** The "Pídele algo más…" box, where the follow-up is typed and sent. */
+  input?: HTMLElement | null;
   /** Called once the last beat lands, for the screen-reader status line. */
   onFinish?: () => void;
 };
@@ -56,9 +82,7 @@ function stepDuration(thread: HTMLElement): number {
 
 /**
  * Keeps the newest beat in view. The thread is the scrolling element, so this
- * never moves the page itself. It follows the beat that just landed rather
- * than the bottom of the thread: the finished state is already in the DOM, so
- * "the bottom" is where the work *will* be, not where it is.
+ * never moves the page itself.
  */
 function follow(thread: HTMLElement, beat: HTMLElement): void {
   const beatBottom = beat.offsetTop + beat.offsetHeight;
@@ -73,22 +97,35 @@ function follow(thread: HTMLElement, beat: HTMLElement): void {
 
 /**
  * Reveals one sequence. Returns immediately; the caller cancels by calling
- * `cancel()` (which is what switching prompt chips does).
+ * `cancel()` (which is what picking another task does).
  */
 export function playScene(thread: HTMLElement, options: PlayOptions = {}): ScenePlayer {
   const unit = options.stepMs ?? stepDuration(thread);
   const timers: number[] = [];
   let cancelled = false;
 
-  const beats = new Map<Beat, HTMLElement>();
-  for (const beat of BEATS) {
+  const beats = new Map<string, HTMLElement>();
+  for (const { beat } of TIMELINE) {
     const el = thread.querySelector<HTMLElement>(`[data-beat="${beat}"]`);
     if (el) {
       beats.set(beat, el);
     }
   }
 
-  const steps = Array.from(thread.querySelectorAll<HTMLElement>('[data-step]'));
+  const allSteps = Array.from(thread.querySelectorAll<HTMLElement>('[data-step]'));
+
+  const input = options.input ?? null;
+  const inputText = input?.querySelector<HTMLElement>('[data-input-text]') ?? null;
+  const send = input?.querySelector<HTMLElement>('[data-send]') ?? null;
+  const placeholder = inputText?.textContent ?? '';
+
+  const resetInput = () => {
+    input?.classList.remove('is-typing');
+    send?.classList.remove('is-pressed');
+    if (inputText) {
+      inputText.textContent = placeholder;
+    }
+  };
 
   // Start from nothing revealed and every step pending, at the top.
   thread.classList.add('is-playing');
@@ -96,9 +133,10 @@ export function playScene(thread: HTMLElement, options: PlayOptions = {}): Scene
   for (const el of beats.values()) {
     el.classList.remove('is-in');
   }
-  for (const step of steps) {
+  for (const step of allSteps) {
     step.classList.remove('is-running', 'is-done');
   }
+  resetInput();
 
   const at = (delay: number, run: () => void) => {
     timers.push(window.setTimeout(run, delay));
@@ -106,13 +144,36 @@ export function playScene(thread: HTMLElement, options: PlayOptions = {}): Scene
 
   let elapsed = 0;
 
-  for (const beat of BEATS) {
-    const el = beats.get(beat);
+  for (const cue of TIMELINE) {
+    const el = beats.get(cue.beat);
     if (!el) {
       continue;
     }
 
-    elapsed += BEAT_DELAY[beat] * unit;
+    elapsed += cue.delay * unit;
+
+    // The follow-up is typed into the input, character by character, and sent
+    // with the button on the right — then it appears in the conversation.
+    if (cue.typed && input && inputText) {
+      const text = (el.textContent ?? '').trim().replace(/\s+/g, ' ');
+
+      at(elapsed, () => {
+        input.classList.add('is-typing');
+        inputText.textContent = '';
+      });
+
+      for (let length = 1; length <= text.length; length += 1) {
+        elapsed += TYPE_CHAR * unit;
+        at(elapsed, () => {
+          inputText.textContent = text.slice(0, length);
+        });
+      }
+
+      elapsed += SEND_WAIT * unit;
+      at(elapsed, () => send?.classList.add('is-pressed'));
+      elapsed += SEND_PRESS * unit;
+      at(elapsed, resetInput);
+    }
 
     const target = el;
     at(elapsed, () => {
@@ -120,18 +181,17 @@ export function playScene(thread: HTMLElement, options: PlayOptions = {}): Scene
       follow(thread, target);
     });
 
-    // The plan is revealed, then its steps tick one at a time before the
-    // produced file can appear.
-    if (beat === 'plan') {
-      for (const step of steps) {
-        elapsed += 0.35 * unit;
-        at(elapsed, () => step.classList.add('is-running'));
-        elapsed += STEP_RUN * unit;
-        at(elapsed, () => {
-          step.classList.remove('is-running');
-          step.classList.add('is-done');
-        });
-      }
+    // A plan is revealed, then its own steps tick one at a time; nothing after
+    // it can land until the last one has.
+    const steps = Array.from(el.querySelectorAll<HTMLElement>('[data-step]'));
+    for (const step of steps) {
+      elapsed += STEP_GAP * unit;
+      at(elapsed, () => step.classList.add('is-running'));
+      elapsed += STEP_RUN * unit;
+      at(elapsed, () => {
+        step.classList.remove('is-running');
+        step.classList.add('is-done');
+      });
     }
   }
 
@@ -157,10 +217,11 @@ export function playScene(thread: HTMLElement, options: PlayOptions = {}): Scene
       for (const el of beats.values()) {
         el.classList.add('is-in');
       }
-      for (const step of steps) {
+      for (const step of allSteps) {
         step.classList.remove('is-running');
         step.classList.add('is-done');
       }
+      resetInput();
     }
   };
 }
