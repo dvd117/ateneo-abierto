@@ -1,4 +1,4 @@
-import { copy, type FileKind, type PageCopy, type Scene, type ShiftColumn } from './content';
+import { copy, type Door, type FileKind, type PageCopy, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 
 /**
@@ -381,6 +381,47 @@ function renderShift(page: PageCopy): string {
   `;
 }
 
+
+/**
+ * "Tres puertas": the three ways in, as in the approved mockup — a numbered
+ * rail, the promise in the serif, and the line that lets someone recognise
+ * themselves before they read the title. Every door leads to the same form,
+ * so nobody has to decide which address to write to.
+ */
+function renderDoor(door: Door, order: number): string {
+  return `
+    <article class="door" data-reveal data-reveal-delay="${order * 90}">
+      <p class="door-n">${inline(door.n)}</p>
+      <h3 class="door-title">${inline(door.title)}</h3>
+      <p class="door-body">${inline(door.body)}</p>
+      <p class="door-who">
+        <span class="door-who-label">${inline(door.whoLabel)}</span>
+        ${inline(door.who)}
+      </p>
+      <a class="door-cta link" href="#sumarme">${inline(door.cta)} <span aria-hidden="true">&rarr;</span></a>
+    </article>
+  `;
+}
+
+function renderDoors(page: PageCopy): string {
+  const { doors } = page;
+
+  return `
+    <section class="doors shell" id="programa" aria-labelledby="programa-title">
+      <p class="eyebrow">${inline(doors.eyebrow)}</p>
+      <h2 class="section-title doors-title" id="programa-title">${inline(doors.title)}</h2>
+      <p class="lead doors-lead">${inline(doors.lead)}</p>
+      <div class="door-grid">
+        ${doors.doors.map((door, order) => renderDoor(door, order)).join('')}
+      </div>
+      <p class="doors-extra">
+        <b>${inline(doors.workshops.label)}</b> ${inline(doors.workshops.text)}
+        <a class="link" href="#sumarme">${inline(doors.workshops.cta)} <span aria-hidden="true">&rarr;</span></a>
+      </p>
+    </section>
+  `;
+}
+
 function renderFooter(page: PageCopy, locale: Locale): string {
   return `
     <footer class="site-footer shell">
@@ -438,6 +479,7 @@ export function renderPage(locale: Locale): string {
     <main id="contenido">
       ${renderHero(page)}
       ${renderShift(page)}
+      ${renderDoors(page)}
     </main>
     ${renderFooter(page, locale)}
   `;

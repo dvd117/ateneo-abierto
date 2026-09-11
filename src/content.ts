@@ -156,6 +156,36 @@ export type ShiftCopy = {
   columns: [ShiftColumn, ShiftColumn];
 };
 
+/**
+ * One of the three ways in. The number is the mockup's rail: it reads as a
+ * step, not as a price. `who` is kept because people pick the door by
+ * recognising themselves in it, not by the title.
+ */
+export type Door = {
+  n: string;
+  title: string;
+  body: string;
+  whoLabel: string;
+  who: string;
+  cta: string;
+};
+
+/**
+ * Section three. Three doors plus the one thing organisations ask for, which
+ * goes through the same form rather than a second address.
+ */
+export type DoorsCopy = {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  doors: [Door, Door, Door];
+  workshops: {
+    label: string;
+    text: string;
+    cta: string;
+  };
+};
+
 export type PageCopy = {
   languageLabel: string;
   languageSwitchTo: {
@@ -182,6 +212,7 @@ export type PageCopy = {
   network: NetworkCopy;
   scenes: Scene[];
   shift: ShiftCopy;
+  doors: DoorsCopy;
   footer: {
     securityLine: string;
     securityBody: string;
@@ -428,6 +459,42 @@ export const copy: Record<Locale, PageCopy> = {
         }
       ]
     },
+    doors: {
+      eyebrow: 'Qué hacemos',
+      title: 'Tres puertas',
+      lead: 'Entra por la que te quede más cerca. Ninguna te pide saber programar.',
+      doors: [
+        {
+          n: '01',
+          title: 'Hackatón para no técnicos',
+          body: 'En un fin de semana armas tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código.',
+          whoLabel: 'Para quién',
+          who: 'Gente de oficina, docentes, comerciantes, equipos de organizaciones.',
+          cta: 'Sumarme'
+        },
+        {
+          n: '02',
+          title: 'Mentorías',
+          body: 'Alguien que ya lo hizo acompaña a tu equipo hasta que el agente trabaje de verdad, no solo en la demo.',
+          whoLabel: 'Para quién',
+          who: 'Los equipos que salieron de la hackatón y quieren terminar lo que empezaron.',
+          cta: 'Sumarme'
+        },
+        {
+          n: '03',
+          title: 'Demo Nights',
+          body: 'Entre 2 y 5 minutos: muestras la herramienta que te resolvió un dolor real y cuentas cómo llegaste ahí.',
+          whoLabel: 'Para quién',
+          who: 'Quien ya armó algo y quiere enseñarlo, o aprender del intento de otro.',
+          cta: 'Sumarme'
+        }
+      ],
+      workshops: {
+        label: 'Talleres',
+        text: 'para equipos y organizaciones: una sesión práctica a la medida de lo que ya hacen.',
+        cta: 'Escríbenos'
+      }
+    },
     footer: {
       securityLine: 'La seguridad es parte de cómo trabajamos.',
       securityBody:
@@ -670,6 +737,42 @@ export const copy: Record<Locale, PageCopy> = {
           tallyText: 'steps are yours: asking and deciding.'
         }
       ]
+    },
+    doors: {
+      eyebrow: 'What we do',
+      title: 'Three doors',
+      lead: 'Come in through whichever one is closest to you. None of them asks you to know how to code.',
+      doors: [
+        {
+          n: '01',
+          title: 'Hackathon for non-technical people',
+          body: 'In one weekend you build your first agent and walk out with it working, even if you have never written a line of code.',
+          whoLabel: 'Who it is for',
+          who: 'Office workers, teachers, shopkeepers, teams inside organisations.',
+          cta: 'Join'
+        },
+        {
+          n: '02',
+          title: 'Mentorships',
+          body: 'Someone who has already done it works alongside your team until the agent really works, not just in the demo.',
+          whoLabel: 'Who it is for',
+          who: 'The teams that came out of the hackathon and want to finish what they started.',
+          cta: 'Join'
+        },
+        {
+          n: '03',
+          title: 'Demo Nights',
+          body: 'Two to five minutes: you show the tool that solved a real problem for you, and how you got there.',
+          whoLabel: 'Who it is for',
+          who: 'Anyone who has built something and wants to show it, or to learn from someone else\u2019s attempt.',
+          cta: 'Join'
+        }
+      ],
+      workshops: {
+        label: 'Workshops',
+        text: 'for teams and organisations: a practical session shaped around the work they already do.',
+        cta: 'Write to us'
+      }
     },
     footer: {
       securityLine: 'Security is part of how we work.',

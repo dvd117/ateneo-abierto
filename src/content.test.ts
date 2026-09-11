@@ -194,6 +194,56 @@ describe('landing page copy', () => {
     }
   });
 
+
+  test('opens three doors, all leading to the same form', () => {
+    for (const locale of locales) {
+      const { doors } = copy[locale];
+
+      expect(doors.doors).toHaveLength(3);
+      expect(doors.doors.map((door) => door.n)).toEqual(['01', '02', '03']);
+
+      for (const door of doors.doors) {
+        expect(door.title.length).toBeGreaterThan(0);
+        expect(door.body.length).toBeGreaterThan(30);
+        expect(door.who.length).toBeGreaterThan(10);
+        expect(door.whoLabel.length).toBeGreaterThan(0);
+        expect(door.cta.length).toBeGreaterThan(0);
+      }
+
+      // Talleres is the fourth thing we do, not a fourth door: one line, and
+      // it goes through the same form rather than a second address.
+      expect(doors.workshops.label.length).toBeGreaterThan(0);
+      expect(doors.workshops.text.length).toBeGreaterThan(20);
+      expect(doors.workshops.cta.length).toBeGreaterThan(0);
+    }
+
+    // Demo Nights is the settled name, in both locales.
+    expect(copy.es.doors.doors[2].title).toBe('Demo Nights');
+    expect(copy.en.doors.doors[2].title).toBe('Demo Nights');
+  });
+
+  test('says who each door is for, and ties mentorships to the hackathon', () => {
+    // Nobody should have to guess which door is theirs.
+    expect(copy.es.doors.doors[0].who).toMatch(/docentes|oficina/);
+    expect(copy.es.doors.doors[1].who).toMatch(/hackatón/i);
+    expect(copy.en.doors.doors[1].who).toMatch(/hackathon/i);
+
+    // Neither door may ask for code as a precondition.
+    expect(copy.es.doors.lead).toMatch(/programar/);
+    expect(copy.es.doors.doors[0].body).toMatch(/línea de código/);
+    expect(copy.en.doors.doors[0].body).toMatch(/line of code/);
+  });
+
+  test('keeps prices and dates out of the program section', () => {
+    for (const locale of locales) {
+      const doors = JSON.stringify(copy[locale].doors);
+
+      expect(doors).not.toMatch(/\$\s?\d/);
+      expect(doors).not.toMatch(/\b20(2[6-9]|3\d)\b/);
+      expect(doors).not.toMatch(/\b\d{1,2} de (enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre|noviembre|diciembre)\b/i);
+    }
+  });
+
   test('carries the security line and the contact address in the footer', () => {
     for (const locale of locales) {
       const { footer } = copy[locale];
