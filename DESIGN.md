@@ -54,53 +54,54 @@ surfaces:
     accent: c-accent-on-paper
 typography:
   display:
-    fontFamily: Source Serif 4, Iowan Old Style, Palatino, Georgia, serif
-    fontSize: 3.4
-    fluidMin: 2.1
-    fontWeight: 400
-    lineHeight: 1.06
-    letterSpacing: "-0.012em"
+    fontFamily: Fraunces, Iowan Old Style, Georgia, serif
+    fontSize: 4.6
+    fluidMin: 2.5
+    fontWeight: 560
+    lineHeight: 0.98
+    letterSpacing: "-0.028em"
+    variation: "opsz 144, SOFT 50, WONK 1"
   h1:
-    fontFamily: Source Serif 4, Iowan Old Style, Palatino, Georgia, serif
-    fontSize: 2.4
-    fluidMin: 1.75
-    fontWeight: 400
-    lineHeight: 1.1
-    letterSpacing: "-0.01em"
+    fontFamily: Fraunces, Iowan Old Style, Georgia, serif
+    fontSize: 3.3
+    fluidMin: 2.1
+    fontWeight: 560
+    lineHeight: 1.02
+    letterSpacing: "-0.022em"
   h2:
-    fontFamily: Source Serif 4, Iowan Old Style, Palatino, Georgia, serif
-    fontSize: 1.65
-    fontWeight: 400
-    lineHeight: 1.2
+    fontFamily: Fraunces, Iowan Old Style, Georgia, serif
+    fontSize: 1.6
+    fontWeight: 560
+    lineHeight: 1.15
   h3:
-    fontFamily: DM Sans, Avenir Next, Segoe UI, system-ui, sans-serif
+    fontFamily: Figtree, Avenir Next, Segoe UI, system-ui, sans-serif
     fontSize: 1.15
     fontWeight: 600
     lineHeight: 1.3
   lead:
-    fontFamily: Source Serif 4, Iowan Old Style, Palatino, Georgia, serif
-    fontSize: 1.2
+    fontFamily: Figtree, Avenir Next, Segoe UI, system-ui, sans-serif
+    fontSize: 1.18
     fontWeight: 400
-    lineHeight: 1.5
+    lineHeight: 1.55
   body:
-    fontFamily: DM Sans, Avenir Next, Segoe UI, system-ui, sans-serif
+    fontFamily: Figtree, Avenir Next, Segoe UI, system-ui, sans-serif
     fontSize: 1
     fontWeight: 400
     lineHeight: 1.6
   small:
-    fontFamily: DM Sans, Avenir Next, Segoe UI, system-ui, sans-serif
+    fontFamily: Figtree, Avenir Next, Segoe UI, system-ui, sans-serif
     fontSize: 0.8
     fontWeight: 400
     lineHeight: 1.5
   label:
-    fontFamily: DM Sans, Avenir Next, Segoe UI, system-ui, sans-serif
+    fontFamily: Figtree, Avenir Next, Segoe UI, system-ui, sans-serif
     fontSize: 0.75
     fontWeight: 600
     lineHeight: 1
     letterSpacing: "0.14em"
     textTransform: uppercase
   wordmark:
-    fontFamily: DM Sans, Avenir Next, Segoe UI, system-ui, sans-serif
+    fontFamily: Figtree, Avenir Next, Segoe UI, system-ui, sans-serif
     fontSize: 0.95
     fontWeight: 600
     lineHeight: 1
@@ -172,7 +173,7 @@ offer a theme toggle.
 
 ## Identity architecture
 
-One identity. The **wordmark is DM Sans**, semibold, uppercase, tracked (the `wordmark` role),
+One identity. The **wordmark is Figtree**, semibold, uppercase, tracked (the `wordmark` role),
 in text colour. The **staircase mark** (kept 2026-09-11) sits beside it at 22 px in the nav
 and carries the favicon on its own. Three ascending steps: access, progression, the three time
 horizons of the program.
@@ -191,7 +192,7 @@ Colouring (two-colour, decided 2026-09-11):
 
 | Context | Staircase | Dot | Background |
 |---|---|---|---|
-| Nav, dark page | `guacamaya` | `bone` | none |
+| Nav, dark page (variant B, 2026-09-11) | `bone` | `guacamaya` | none |
 | Favicon / avatar, dark | `guacamaya` | `bone` | `graphite-panel`, `rx 14` |
 | Avatar on ochre | `on-guacamaya` | `bone` | `guacamaya`, `rx 14` |
 | On paper (documents, print) | `guacamaya-on-paper` | `ink` | `paper` |
@@ -269,19 +270,23 @@ All above the 10 risk line. Re-run the table whenever a token changes.
 
 ## Typography
 
-Two voices, deliberately split:
+Two voices, deliberately split (pairing B, chosen by David 2026-09-11 over Bricolage
+Grotesque and Figtree alone; comparison in `.superpowers/brainstorm/…/fonts.html`):
 
-- **Serif** (`display`, `h1`, `h2`, `lead`) is the manifesto voice: the headline, section
-  titles, the pull quotes, the title of the produced document. Regular weight, never bold.
-  Italic is allowed inside the headline and manifesto for the emphasised phrase.
-- **Sans** (DM Sans, self-hosted, already in `public/fonts/`) is the interface voice: body,
-  buttons, labels, the agent window, the wordmark, the form.
+- **Fraunces** (`display`, `h1`, `h2`) is the manifesto voice: the headline, section titles,
+  the title of the produced document. A soft, slightly irregular serif at weight 560, optical
+  size 144 for display and section titles. Warm and bold, closer to a cultural institution than
+  to a magazine. The emphasised phrase is italic at 400, never bold; in the hero headline it
+  also takes the signal colour.
+- **Figtree** is the interface voice and the reading voice: leads, body, buttons, labels, the
+  agent window, the form and the wordmark. It is the open face closest to the Avenir Next the
+  mark study was drawn in.
 - **Mono** only inside the agent window status line and for file names.
 
-The serif face is **Source Serif 4** (open licence, self-host the variable Latin subset next to
-DM Sans; do not load it from a third party). Until the file is added, the system fallback
-stack renders Iowan Old Style or Palatino, which is what the mockups used. Confirm the face
-against a rendered hero before the build locks it.
+Both are SIL OFL, self-hosted from `public/fonts/`, subset to Latin (which covers Spanish).
+Fraunces ships instanced at SOFT 50 and WONK 1 (roman 400–700, italic 400 only), so
+`font-synthesis: none` keeps the browser from inventing a bold italic. Total font weight on
+the page: about 123 KB.
 
 ## Layout
 

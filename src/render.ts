@@ -69,7 +69,7 @@ export function inline(text: string): string {
 }
 
 /**
- * The staircase mark: three ascending steps and a dot. Ochre steps, bone dot,
+ * The staircase mark: three ascending steps and a dot. Bone steps, ochre dot,
  * 22 px, beside the wordmark. It appears here and as the favicon, nowhere else.
  */
 function renderMark(): string {

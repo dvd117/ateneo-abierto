@@ -35,13 +35,12 @@ describe('CSP-safe source markup', () => {
     expect(externalUrls).toEqual([]);
   });
 
-  test('self-hosts DM Sans and Source Serif 4', () => {
+  test('self-hosts Figtree and Fraunces', () => {
     const styles = css();
     const fonts = [
-      'public/fonts/dm-sans-latin-variable.woff2',
-      'public/fonts/dm-sans-latin-ext-variable.woff2',
-      'public/fonts/source-serif-4-latin.woff2',
-      'public/fonts/source-serif-4-latin-italic.woff2'
+      'public/fonts/figtree-latin.woff2',
+      'public/fonts/fraunces-latin.woff2',
+      'public/fonts/fraunces-latin-italic.woff2'
     ];
 
     for (const font of fonts) {
@@ -49,17 +48,19 @@ describe('CSP-safe source markup', () => {
       expect(statSync(font).size).toBeGreaterThan(10_000);
     }
 
-    expect(styles).toContain('font-family: "DM Sans"');
-    expect(styles).toContain('font-family: "Source Serif 4"');
-    expect(styles).toContain('url("/fonts/source-serif-4-latin.woff2")');
-    expect(styles).toContain('url("/fonts/source-serif-4-latin-italic.woff2")');
+    expect(styles).toContain('font-family: "Figtree"');
+    expect(styles).toContain('font-family: "Fraunces"');
+    expect(styles).toContain('url("/fonts/fraunces-latin.woff2")');
+    expect(styles).toContain('url("/fonts/fraunces-latin-italic.woff2")');
+    expect(styles).not.toMatch(/DM Sans|Source Serif/);
 
-    // The OFL text ships with the subset, as the licence requires.
-    expect(existsSync('public/fonts/source-serif-4-OFL.txt')).toBe(true);
+    // The OFL text ships with the subsets, as the licence requires.
+    expect(existsSync('public/fonts/figtree-OFL.txt')).toBe(true);
+    expect(existsSync('public/fonts/fraunces-OFL.txt')).toBe(true);
 
     const og = readFileSync('public/og.svg', 'utf8');
-    expect(og).toContain('url("fonts/dm-sans-latin-variable.woff2")');
-    expect(og).toContain('url("fonts/source-serif-4-latin.woff2")');
+    expect(og).toContain('url("fonts/figtree-latin.woff2")');
+    expect(og).toContain('url("fonts/fraunces-latin.woff2")');
     expect(og).not.toContain('fonts.googleapis.com');
   });
 
@@ -70,8 +71,8 @@ describe('CSP-safe source markup', () => {
   test('preloads the two faces the first paint needs', () => {
     const shell = html();
 
-    expect(shell).toContain('href="/fonts/dm-sans-latin-variable.woff2"');
-    expect(shell).toContain('href="/fonts/source-serif-4-latin.woff2"');
+    expect(shell).toContain('href="/fonts/figtree-latin.woff2"');
+    expect(shell).toContain('href="/fonts/fraunces-latin.woff2"');
   });
 });
 
@@ -158,7 +159,7 @@ describe('identity', () => {
     expect(favicon).toContain('#f0ece2');
   });
 
-  test('keeps the wordmark in DM Sans and the mark out of the body copy', () => {
+  test('keeps the wordmark in the interface sans and the mark out of the body copy', () => {
     const styles = css();
     const render = readFileSync('src/render.ts', 'utf8');
 

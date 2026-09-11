@@ -400,7 +400,7 @@ describe('prerendered home page', () => {
   });
 
   test('caches hashed assets and fonts immutably, and the page never', async () => {
-    for (const path of ['/assets/index-abc123.js', '/fonts/dm-sans-latin-variable.woff2']) {
+    for (const path of ['/assets/index-abc123.js', '/fonts/figtree-latin.woff2']) {
       const res = await pagesApp.request(path);
       expect(res.headers.get('cache-control')).toBe('public, max-age=31536000, immutable');
     }
