@@ -358,6 +358,18 @@ describe('landing page copy', () => {
       expect(map.alt).toMatch(/no sedes confirmadas|not confirmed sites/i);
     }
 
+    // The hero network and the map tell one story: every city in the network
+    // is lit on the map, and the map adds only planned ones beyond it.
+    for (const locale of locales) {
+      const { nodes, edges } = copy[locale].north.map;
+      const lit = nodes.filter((node) => !node.planned).map((node) => node.name);
+      expect(lit).toEqual(copy[locale].network.cities.map((city) => city.name));
+      expect(edges).toEqual(copy[locale].network.edges);
+      // The lighting walks nodes by index and stops at the lit count, so a
+      // planned node before a lit one would leave that one dark.
+      expect(nodes.slice(0, lit.length).every((node) => !node.planned)).toBe(true);
+    }
+
     // The Esequibo is on the map and named, in both locales: a Venezuelan
     // reader notices its absence immediately.
     expect(copy.es.north.map.claimLabel).toBe('Zona en Reclamación');

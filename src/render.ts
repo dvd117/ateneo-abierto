@@ -380,6 +380,7 @@ function renderHero(page: PageCopy): string {
           <p class="lead hero-manifesto">${inline(page.hero.manifesto)}</p>
           <div class="hero-actions">
             <a class="button button--fill" href="#unete">${page.hero.primaryCta}</a>
+            <p class="hero-byline">${inline(page.hero.byline)} · <a class="link" href="#charla">${inline(page.hero.bylineLink)} <span aria-hidden="true">&darr;</span></a></p>
           </div>
         </div>
         ${renderAgentWindow(page)}
@@ -971,8 +972,8 @@ export function renderPage(locale: Locale): string {
       ${renderHero(page)}
       ${renderBand('one', 0)}
       ${renderShift(page)}
-      ${renderGlossary(page)}
       ${renderDoors(page)}
+      ${renderGlossary(page)}
       ${renderPrinciples(page)}
       ${renderBand('two', 3)}
       ${renderNorth(page)}

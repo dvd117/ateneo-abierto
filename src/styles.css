@@ -759,8 +759,17 @@ main [id] {
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: var(--gap-sm);
+  align-items: center;
+  gap: var(--gap-sm) var(--gap-md);
   margin-top: var(--gap-lg);
+}
+
+/* Who is behind it, quietly: a first visitor otherwise meets the founder
+   only at the talk, near the end of the page. */
+.hero-byline {
+  margin: 0;
+  font: var(--t-small);
+  color: var(--c-fg-2);
 }
 
 .hero .button--fill {

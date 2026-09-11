@@ -359,6 +359,9 @@ export type PageCopy = {
     manifesto: string;
     /** The one call to action: it goes to the form. */
     primaryCta: string;
+    /** Who is behind it, beside the CTA, with a link down to the talk. */
+    byline: string;
+    bylineLink: string;
     /**
      * Under the window: how to use it, and the honest label that it is a
      * simulation with example figures.
@@ -402,8 +405,10 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'Más allá del chatbot',
       titleLines: [{ text: 'Deja de preguntarle.' }, { text: 'Empieza a delegarle.', em: true }],
       manifesto:
-        'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega un documento. Aprende a delegar con herramientas libres, desde Venezuela, sin pagar nada para empezar.',
+        'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega un documento. Aprende a delegar en hackatones y Demo Nights en Venezuela, con herramientas libres y sin pagar nada para empezar.',
       primaryCta: 'Únete',
+      byline: 'Una iniciativa de David Aragort',
+      bylineLink: 'Mira la charla',
       windowCaption:
         'Elige otra tarea en la lista, o toca «Ver por dentro» para ver lo que el agente hace en tu computadora. Es una demostración local: no se conecta a nada y las cifras son de ejemplo.'
     },
@@ -668,7 +673,7 @@ export const copy: Record<Locale, PageCopy> = {
     glossary: {
       eyebrow: 'Glosario',
       title: 'Palabras que vas a oír',
-      lead: 'No necesitas saberlas para empezar. Te las vas a encontrar desde el primer día, y son así de simples.',
+      lead: 'No necesitas saberlas para inscribirte. Te las vas a encontrar desde el primer día de la hackatón, y son así de simples.',
       items: [
         {
           term: 'Agente',
@@ -790,8 +795,8 @@ export const copy: Record<Locale, PageCopy> = {
         },
         {
           icon: 'agency',
-          title: 'Agencia directa',
-          body: 'Tú das las instrucciones y tú decides. El agente trabaja para ti, no al revés.'
+          title: 'Tú decides',
+          body: 'Tú das las instrucciones y revisas el resultado. El agente trabaja para ti, no al revés.'
         },
         {
           icon: 'plain',
@@ -819,26 +824,33 @@ export const copy: Record<Locale, PageCopy> = {
         { label: 'Norte', text: 'Un espacio abierto en cada ciudad, donde no importa quién eres o de dónde vienes, sino a dónde quieres llegar.' }
       ],
       map: {
-        alt: 'Mapa de Venezuela con nodos de bibliotecas en Caracas, Barquisimeto, Maracaibo, Mérida, Cumaná y Ciudad Guayana, y dos previstos en San Cristóbal y Puerto Ayacucho. La Zona en Reclamación aparece rayada. Son nodos ilustrativos, no sedes confirmadas.',
-        caption: 'Nodos ilustrativos, no sedes confirmadas.',
+        alt: 'Mapa de Venezuela con la misma red de ocho ciudades: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná y Ciudad Guayana, y una más prevista en Puerto Ayacucho. La Zona en Reclamación aparece rayada. Son ciudades que queremos alcanzar, no sedes confirmadas.',
+        caption: 'Ciudades que queremos alcanzar, no sedes confirmadas.',
         claimLabel: 'Zona en Reclamación',
+      // The hero network's eight cities, lit, and one further out that is only
+      // planned: the horizon reaches past today's network, never around it.
+      // Same order and links as the hero network, so the lighting grows the
+      // same way; the planned node goes last, where the sequence never reaches.
       nodes: [
         { name: 'Caracas', lon: -66.9, lat: 10.49, dy: 16 },
+        { name: 'Valencia', lon: -68.0, lat: 10.16, dy: -12 },
         { name: 'Barquisimeto', lon: -69.35, lat: 10.07, dy: 18 },
         { name: 'Maracaibo', lon: -71.64, lat: 10.65, dy: -12 },
         { name: 'Mérida', lon: -71.14, lat: 8.6, dx: -6, dy: 20 },
+        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 4, dy: 18 },
         { name: 'Cumaná', lon: -64.18, lat: 10.45, dy: -12 },
         { name: 'Ciudad Guayana', lon: -62.65, lat: 8.35, dy: 18 },
-        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 4, dy: 18, planned: true },
         { name: 'Puerto Ayacucho', lon: -67.62, lat: 5.66, dy: 18, planned: true }
       ],
       edges: [
         [0, 1],
         [1, 2],
-        [1, 3],
-        [0, 4],
+        [2, 3],
+        [2, 4],
         [4, 5],
-        [0, 5]
+        [0, 6],
+        [6, 7],
+        [0, 7]
       ]
       }
     },
@@ -903,8 +915,10 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'Past the chatbot',
       titleLines: [{ text: 'Stop asking it things.' }, { text: 'Start handing it work.', em: true }],
       manifesto:
-        'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan, and hands you a document. Learn to delegate with free and open tools, from Venezuela, at no cost to start.',
+        'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan, and hands you a document. Learn to delegate at hackathons and Demo Nights in Venezuela, with free and open tools and at no cost to start.',
       primaryCta: 'Join',
+      byline: 'An initiative by David Aragort',
+      bylineLink: 'Watch the talk',
       windowCaption:
         'Pick another task from the list, or press “Show what it runs” to see what the agent does on your computer. This is a local demo: it connects to nothing, and the figures are examples.'
     },
@@ -924,7 +938,7 @@ export const copy: Record<Locale, PageCopy> = {
       rulesFile: 'AGENTS.md'
     },
     network: {
-      label: 'The network we are weaving',
+      label: 'The network we’re weaving',
       caption: 'Libraries, mentors and cities',
       alt: 'Eight Venezuelan cities joined in a network: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná and Ciudad Guayana. These are cities we want to reach, not confirmed sites.',
       cities: [
@@ -955,7 +969,7 @@ export const copy: Record<Locale, PageCopy> = {
         prompt:
           'I have three spreadsheets with this quarter’s spending. Merge them and give me a one-page summary.',
         files: ['spending-july.csv', 'spending-august.csv', 'spending-september.csv'],
-        ack: 'On it. Here is my plan:',
+        ack: 'On it. Here’s my plan:',
         steps: [
           'Read the 3 spreadsheets',
           'Reconcile the categories',
@@ -998,7 +1012,7 @@ export const copy: Record<Locale, PageCopy> = {
         session: 'Workshop deck',
         prompt: 'My workshop notes are in that folder. Build me a 6-slide deck from them.',
         files: ['workshop-notes.md', 'examples.md', 'questions.md'],
-        ack: 'Sure. Here is my plan:',
+        ack: 'Sure. Here’s my plan:',
         steps: [
           'Read the notes in the folder',
           'Group the ideas into 6 blocks',
@@ -1015,7 +1029,7 @@ export const copy: Record<Locale, PageCopy> = {
               'Your first task, step by step',
               'How to check what it hands back',
               'The three beginner mistakes',
-              'What you will delegate on Monday'
+              'What you’ll delegate on Monday'
             ]
           },
           note: 'Each slide carries three points and one example of your own, not an invented one.'
@@ -1043,7 +1057,7 @@ export const copy: Record<Locale, PageCopy> = {
         session: 'This week’s reading',
         prompt: 'This PDF is the reading for the week. Make me notes and add questions to revise.',
         files: ['reading-week-3.pdf'],
-        ack: 'On it. Here is my plan:',
+        ack: 'On it. Here’s my plan:',
         steps: [
           'Read the full PDF',
           'Pull out the main ideas',
@@ -1057,12 +1071,12 @@ export const copy: Record<Locale, PageCopy> = {
             lead: 'Three ideas hold the text together:',
             items: [
               'Access counts for more than talent',
-              'A tool alone does not teach; company does',
+              'A tool alone doesn’t teach; company does',
               'What you learn stays with you, not on the platform',
               '8 revision questions, answers at the end'
             ]
           },
-          note: 'Cover the answers and say them out loud: that is what makes them stick.'
+          note: 'Cover the answers and say them out loud: that’s what makes them stick.'
         },
         savedAs: 'notes-reading-3.md',
         followUp: {
@@ -1088,7 +1102,7 @@ export const copy: Record<Locale, PageCopy> = {
         prompt:
           'Using the monthly report, write me a short email for the board. Direct, no padding.',
         files: ['report-september.md'],
-        ack: 'Sure. Here is my plan:',
+        ack: 'Sure. Here’s my plan:',
         steps: [
           'Read the monthly report',
           'Pull the three points that matter',
@@ -1131,7 +1145,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'The shift',
       titleLines: [{ text: 'From asking' }, { text: 'to delegating', em: true }],
       lead:
-        'Chatbots already read your documents and hand files back. The difference is how much of the work is still yours. An agent works in your folder, follows a plan and checks its own work: what used to take far too much of your time gets done while you do something else, and the judgement stays yours.',
+        'Chatbots already read your documents and hand files back. The difference is how much of the work is still yours. An agent works in your folder, follows a plan and checks its own work: what used to take far too much of your time gets done while you do something else, and the judgment stays yours.',
       task: 'The same task: *merge three months of spending and decide where to cut.*',
       columns: [
         {
@@ -1166,8 +1180,8 @@ export const copy: Record<Locale, PageCopy> = {
     },
     glossary: {
       eyebrow: 'Glossary',
-      title: 'Words you will hear',
-      lead: 'You do not need them to start. You will meet them on day one, and they are this simple.',
+      title: 'Words you’ll hear',
+      lead: 'You don’t need them to sign up. You’ll meet them on day one of the hackathon, and they’re this simple.',
       items: [
         {
           term: 'Agent',
@@ -1210,9 +1224,9 @@ export const copy: Record<Locale, PageCopy> = {
           id: 'hackaton',
           n: '01',
           title: 'Hackathon for non-technical people',
-          body: 'In one weekend you learn to use your first agent and walk out with it working, even if you have never written a line of code.',
-          whoLabel: 'Who it is for',
-          who: 'Office workers, teachers, shopkeepers, teams inside organisations.',
+          body: 'In one weekend you learn to use your first agent and walk out with it working, even if you’ve never written a line of code.',
+          whoLabel: 'Who it’s for',
+          who: 'Office workers, teachers, shopkeepers, teams inside organizations.',
           // Approved in David's copy review, 2026-09-11. Format, venue, places
           // and cost are still to confirm before launch.
           details: {
@@ -1223,7 +1237,7 @@ export const copy: Record<Locale, PageCopy> = {
               'Mentors help you install the agent and give it its first instructions, using sample files.',
               'At the close, each team shows what it got done.'
             ],
-            expect: 'One weekend, in person. You do not need to know how to code. Bring your laptop; a modest one will do.'
+            expect: 'One weekend, in person. You don’t need to know how to code. Bring your laptop; a modest one will do.'
           }
         },
         {
@@ -1231,7 +1245,7 @@ export const copy: Record<Locale, PageCopy> = {
           n: '02',
           title: 'Mentorships',
           body: 'At every hackathon, people who already use agents in their work stay with the teams so they leave with something that really works, not just in the demo.',
-          whoLabel: 'Who it is for',
+          whoLabel: 'Who it’s for',
           who: 'The teams at each hackathon, from choosing their task to presenting it.',
           details: {
             goal: 'That no team gets stuck: each one leaves the hackathon with its agent working.',
@@ -1240,7 +1254,7 @@ export const copy: Record<Locale, PageCopy> = {
               'They help pick a task that can be solved in a weekend.',
               'They review what the agent hands back with the team and adjust the instructions until it works.'
             ],
-            expect: 'Included in the hackathon: there is nothing extra to sign up for.'
+            expect: 'Included in the hackathon: there’s nothing extra to sign up for.'
           }
         },
         {
@@ -1248,7 +1262,7 @@ export const copy: Record<Locale, PageCopy> = {
           n: '03',
           title: 'Demo Nights',
           body: 'Two to five minutes: you show the tool that has been useful in your work, and how you got there.',
-          whoLabel: 'Who it is for',
+          whoLabel: 'Who it’s for',
           who: 'Anyone who has built something and wants to show it, or to learn from someone else\u2019s attempt.',
           details: {
             goal: 'Learn from what others are already doing, and show your own.',
@@ -1257,7 +1271,7 @@ export const copy: Record<Locale, PageCopy> = {
               'Questions after each demo.',
               'Open conversation to meet people solving similar problems.'
             ],
-            expect: 'One evening, open to anyone. You do not need to sign up to watch; you do to present.'
+            expect: 'One evening, open to anyone. You don’t need to sign up to watch; you do to present.'
           }
         }
       ],
@@ -1271,7 +1285,7 @@ export const copy: Record<Locale, PageCopy> = {
       },
       workshops: {
         label: 'Workshops',
-        text: 'for teams and organisations: a practical session shaped around the work they already do.',
+        text: 'for teams and organizations: a practical session shaped around the work they already do.',
         cta: 'Write to us'
       }
     },
@@ -1287,18 +1301,18 @@ export const copy: Record<Locale, PageCopy> = {
         },
         {
           icon: 'agency',
-          title: 'Direct agency',
-          body: 'You give the instructions and you decide. The agent works for you, not the other way round.'
+          title: 'You decide',
+          body: 'You give the instructions and you check the result. The agent works for you, not the other way around.'
         },
         {
           icon: 'plain',
           title: 'Your files are yours',
-          body: 'Your work lives in your folder, in open formats any program can open today and in ten years. When you need Word, Excel or PowerPoint, the agent produces them from there, so the final file does not tie you to any platform.'
+          body: 'Your work lives in your folder, in open formats any program can open today and in ten years. When you need Word, Excel or PowerPoint, the agent produces them from there, so the final file doesn’t tie you to any platform.'
         },
         {
           icon: 'resilient',
           title: 'Resilience',
-          body: 'Everything we teach runs on a modest laptop, and there is always a free way to start.'
+          body: 'Everything we teach runs on a modest laptop, and there’s always a free way to start.'
         }
       ]
     },
@@ -1306,36 +1320,43 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'Where this goes',
       titleLines: [
         { text: 'Same room, same resources,' },
-        { text: 'same shot.', em: true }
+        { text: 'same chance.', em: true }
       ],
       lead:
-        'There are public libraries where it does not matter who you are: they lend computers, teach people who have never touched a keyboard, and sit you next to people working on the same problems as you. Knowledge, networks, infrastructure and a culture of technology, open to anyone. That is what we want for Venezuela. We are starting small; the horizon is a space like that in every city.',
+        'There are public libraries where it doesn’t matter who you are: they lend computers, teach people who have never touched a keyboard, and sit you next to people working on the same problems as you. Knowledge, networks, infrastructure and a culture of technology, open to anyone. That’s what we want for Venezuela. We’re starting small; the horizon is a space like that in every city.',
       horizons: [
         { label: 'Today', text: 'Hackathons, mentorships and Demo Nights, in small groups.' },
-        { label: 'Next', text: 'Partnerships with universities and organisations, alongside formal education.' },
-        { label: 'Horizon', text: 'An open space in every city, where what matters is not who you are or where you come from, but where you want to go.' }
+        { label: 'Next', text: 'Partnerships with universities and organizations, alongside formal education.' },
+        { label: 'Horizon', text: 'An open space in every city, where what matters isn’t who you are or where you come from, but where you want to go.' }
       ],
       map: {
-        alt: 'A map of Venezuela with library nodes in Caracas, Barquisimeto, Maracaibo, Mérida, Cumaná and Ciudad Guayana, and two planned in San Cristóbal and Puerto Ayacucho. The Zona en Reclamación is drawn hatched. These are illustrative nodes, not confirmed sites.',
-        caption: 'Illustrative nodes, not confirmed sites.',
+        alt: 'A map of Venezuela with the same network of eight cities: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná and Ciudad Guayana, and one more planned in Puerto Ayacucho. The Zona en Reclamación is drawn hatched. These are cities we want to reach, not confirmed sites.',
+        caption: 'Cities we want to reach, not confirmed sites.',
         claimLabel: 'Zona en Reclamación',
+      // The hero network's eight cities, lit, and one further out that is only
+      // planned: the horizon reaches past today's network, never around it.
+      // Same order and links as the hero network, so the lighting grows the
+      // same way; the planned node goes last, where the sequence never reaches.
       nodes: [
         { name: 'Caracas', lon: -66.9, lat: 10.49, dy: 16 },
+        { name: 'Valencia', lon: -68.0, lat: 10.16, dy: -12 },
         { name: 'Barquisimeto', lon: -69.35, lat: 10.07, dy: 18 },
         { name: 'Maracaibo', lon: -71.64, lat: 10.65, dy: -12 },
         { name: 'Mérida', lon: -71.14, lat: 8.6, dx: -6, dy: 20 },
+        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 4, dy: 18 },
         { name: 'Cumaná', lon: -64.18, lat: 10.45, dy: -12 },
         { name: 'Ciudad Guayana', lon: -62.65, lat: 8.35, dy: 18 },
-        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 4, dy: 18, planned: true },
         { name: 'Puerto Ayacucho', lon: -67.62, lat: 5.66, dy: 18, planned: true }
       ],
       edges: [
         [0, 1],
         [1, 2],
-        [1, 3],
-        [0, 4],
+        [2, 3],
+        [2, 4],
         [4, 5],
-        [0, 5]
+        [0, 6],
+        [6, 7],
+        [0, 7]
       ]
       }
     },
@@ -1355,7 +1376,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'Stay in the loop',
       title: 'Join',
       lead:
-        'Leave us your email and we will keep you posted on upcoming opportunities and activities.',
+        'Leave us your email and we’ll keep you posted on upcoming opportunities and activities.',
       nameLabel: 'Name',
       namePlaceholder: 'What we should call you',
       emailLabel: 'Email',
@@ -1369,9 +1390,9 @@ export const copy: Record<Locale, PageCopy> = {
       supplement: 'Leave this field empty',
       states: {
         sending: 'Sending…',
-        ok: 'Done. We will write to you soon.',
+        ok: 'Done. We’ll write to you soon.',
         invalidEmail: 'Check the address: something looks missing.',
-        error: 'We could not save that. Try again in a little while.'
+        error: 'We couldn’t save that. Try again in a little while.'
       }
     },
     footer: {
