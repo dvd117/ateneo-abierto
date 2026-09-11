@@ -340,6 +340,28 @@ describe('landing page copy', () => {
     expect(copy.en.north.map.claimLabel).toBe('Zona en Reclamación');
   });
 
+
+  test('frames the talk as the whole idea, and says what pressing play costs', () => {
+    for (const locale of locales) {
+      const { talk } = copy[locale];
+
+      expect(talk.title.length).toBeGreaterThan(10);
+      expect(talk.body.length).toBeGreaterThan(40);
+      expect(talk.play.length).toBeGreaterThan(0);
+      expect(talk.posterAlt.length).toBeGreaterThan(20);
+
+      // The visitor is told the embed is not loaded until they ask for it.
+      expect(talk.privacy).toMatch(/YouTube/);
+    }
+
+    expect(copy.es.talk.privacy).toMatch(/solo cuando/);
+    expect(copy.en.talk.privacy).toMatch(/only when/);
+
+    // The venue is named; the year is not, like everything else on the page.
+    expect(copy.es.talk.label).toContain('Oslo Freedom Forum');
+    expect(JSON.stringify(copy.es.talk)).not.toMatch(/\b20(2[6-9]|3\d)\b/);
+  });
+
   test('carries the security line and the contact address in the footer', () => {
     for (const locale of locales) {
       const { footer } = copy[locale];

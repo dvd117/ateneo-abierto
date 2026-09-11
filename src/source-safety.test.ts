@@ -220,3 +220,36 @@ describe('the map is vendored, not fetched', () => {
     expect(render).toContain('<style>');
   });
 });
+
+describe('the one embed on the page', () => {
+  test('vendors the poster and never names YouTube in the shell or the markup', () => {
+    expect(existsSync('public/ignite-poster.webp')).toBe(true);
+    expect(existsSync('public/ignite-poster.jpg')).toBe(true);
+
+    const render = readFileSync('src/render.ts', 'utf8');
+    expect(render).toContain('/ignite-poster.webp');
+    expect(render).not.toContain('youtube');
+    expect(html()).not.toContain('youtube');
+  });
+
+  test('creates the player only on a click, from the no-cookie origin', () => {
+    const main = readFileSync('src/main.ts', 'utf8');
+
+    expect(main).toContain('https://www.youtube-nocookie.com/embed/');
+    expect(main).not.toContain('https://www.youtube.com');
+
+    // The iframe is built inside the click handler, never at render time.
+    const handler = main.slice(main.indexOf("play.addEventListener('click'"));
+    expect(handler).toContain("createElement('iframe')");
+  });
+
+  test('names the one frame origin in the CSP and loosens nothing else', () => {
+    const server = readFileSync('src/app.ts', 'utf8');
+
+    expect(server).toContain("frameSrc: [\"'self'\", 'https://www.youtube-nocookie.com']");
+    // As CSP source expressions, not as the words in the comment above them.
+    expect(server).not.toContain('"\'unsafe-inline\'"');
+    expect(server).not.toContain('"\'unsafe-eval\'"');
+    expect(server).toMatch(/defaultSrc: \["'self'"\]/);
+  });
+});

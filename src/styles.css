@@ -1951,3 +1951,131 @@ button {
 .map.is-lighting .map-city:not(.is-planned):not(.is-lit) {
   color: var(--c-fg-3);
 }
+
+/* ---------- the ignite talk ----------
+   The mockup's shape: the reason to watch on the left, the frame on the right.
+   The frame holds a vendored poster and a drawn play mark until someone asks
+   for the player, so the page reaches YouTube only after a click. */
+
+.talk {
+  padding-block: clamp(3rem, 8vw, var(--sp-section));
+  background: var(--c-bg-deep);
+  border-top: 1px solid var(--c-border);
+  display: grid;
+  gap: var(--gap-lg);
+}
+
+@media (min-width: 861px) {
+  .talk {
+    grid-template-columns: 20rem 1fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: center;
+  }
+}
+
+.talk-title {
+  font: var(--t-h2);
+  margin-top: 0.7rem;
+}
+
+.talk-body {
+  margin-top: 0.8rem;
+  font-size: 1rem;
+  max-width: 40ch;
+}
+
+.talk-figure {
+  margin: 0;
+}
+
+.talk-frame {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  overflow: hidden;
+  background: var(--c-bg-panel);
+}
+
+.talk-play {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+}
+
+.talk-poster {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Drawn, not an icon font: a circle and a triangle, in the interface colour. */
+.talk-play-mark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 4.5rem;
+  height: 4.5rem;
+  border: 1.5px solid var(--c-fg);
+  border-radius: var(--r-pill);
+  background: var(--c-bg-deep);
+  transition: background-color var(--duration-ui) var(--ease-out);
+}
+
+.talk-play-mark::after {
+  content: "";
+  position: absolute;
+  left: 54%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  border-style: solid;
+  border-width: 0.8rem 0 0.8rem 1.3rem;
+  border-color: transparent transparent transparent var(--c-fg);
+}
+
+.talk-play:hover .talk-play-mark,
+.talk-play:focus-visible .talk-play-mark {
+  background: var(--c-accent);
+  border-color: var(--c-accent);
+}
+
+.talk-play:hover .talk-play-mark::after,
+.talk-play:focus-visible .talk-play-mark::after {
+  border-left-color: var(--c-on-accent);
+}
+
+.talk-player {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.talk-meta {
+  display: grid;
+  gap: 0.15rem;
+  margin-top: var(--gap-sm);
+  font: var(--t-small);
+  color: var(--c-fg-2);
+}
+
+.talk-label {
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-fg-3);
+}
+
+.talk-name {
+  color: var(--c-fg);
+}
+
+.talk-privacy {
+  color: var(--c-fg-3);
+}

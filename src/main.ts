@@ -5,6 +5,9 @@ import { pageMeta, renderPage, renderThread } from './render';
 import type { ScenePlayer } from './scene';
 import './styles.css';
 
+/** David's Ignite Talk. The id lives here, not in the copy: nobody reads it. */
+const TALK_VIDEO_ID = 'oS2N8cz7p4w';
+
 const app = document.querySelector<HTMLDivElement>('#app');
 
 if (!app) {
@@ -361,6 +364,33 @@ function bindAgent(page: PageCopy): void {
   agentObserver = observer;
 }
 
+/**
+ * The one embed on the page. Nothing reaches YouTube until the visitor presses
+ * play; then the poster is replaced by the privacy-preserving player, which is
+ * the only origin the CSP's frame-src allows.
+ */
+function bindTalk(page: PageCopy): void {
+  const frame = root.querySelector<HTMLElement>('[data-talk]');
+  const play = root.querySelector<HTMLButtonElement>('[data-talk-play]');
+
+  if (!frame || !play) {
+    return;
+  }
+
+  play.addEventListener('click', () => {
+    const iframe = document.createElement('iframe');
+    iframe.className = 'talk-player';
+    iframe.src = `https://www.youtube-nocookie.com/embed/${TALK_VIDEO_ID}?autoplay=1&rel=0`;
+    iframe.title = page.talk.talkTitle;
+    iframe.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen';
+    iframe.allowFullscreen = true;
+    iframe.referrerPolicy = 'strict-origin-when-cross-origin';
+
+    frame.replaceChildren(iframe);
+    iframe.focus();
+  });
+}
+
 let teardownReveal: (() => void) | undefined;
 
 function bindEvents(page: PageCopy): void {
@@ -375,6 +405,7 @@ function bindEvents(page: PageCopy): void {
   });
 
   bindAgent(page);
+  bindTalk(page);
   bindLighting();
   teardownReveal = initReveal(root, { animate: motionAllowed() });
 }

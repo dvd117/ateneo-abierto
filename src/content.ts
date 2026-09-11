@@ -242,6 +242,25 @@ export type NorthCopy = {
   };
 };
 
+/**
+ * Section six: David's Ignite Talk. The poster is vendored and the player is
+ * not loaded until someone asks for it, so the page still reaches YouTube
+ * exactly never unless the visitor clicks.
+ */
+export type TalkCopy = {
+  eyebrow: string;
+  title: string;
+  body: string;
+  /** Under the frame: what the talk is and where it was given. */
+  label: string;
+  talkTitle: string;
+  /** Accessible name of the play control. */
+  play: string;
+  posterAlt: string;
+  /** The honest line about what clicking play costs. */
+  privacy: string;
+};
+
 export type PageCopy = {
   languageLabel: string;
   languageSwitchTo: {
@@ -271,6 +290,7 @@ export type PageCopy = {
   doors: DoorsCopy;
   principles: PrinciplesCopy;
   north: NorthCopy;
+  talk: TalkCopy;
   footer: {
     securityLine: string;
     securityBody: string;
@@ -617,6 +637,17 @@ export const copy: Record<Locale, PageCopy> = {
       ]
       }
     },
+    talk: {
+      eyebrow: 'Escúchalo',
+      title: 'La idea completa, en cinco minutos',
+      body:
+        'Por qué el salto del chatbot al agente ya está al alcance de cualquiera en Venezuela, y qué estamos haciendo con eso.',
+      label: 'Ignite Talk · Oslo Freedom Forum',
+      talkTitle: '“What They Can’t Take” · David Aragort',
+      play: 'Ver la charla',
+      posterAlt: 'David Aragort en el escenario del Oslo Freedom Forum, durante su Ignite Talk.',
+      privacy: 'El video se carga desde YouTube solo cuando le das play.'
+    },
     footer: {
       securityLine: 'La seguridad es parte de cómo trabajamos.',
       securityBody:
@@ -959,6 +990,17 @@ export const copy: Record<Locale, PageCopy> = {
         [0, 5]
       ]
       }
+    },
+    talk: {
+      eyebrow: 'Hear it',
+      title: 'The whole idea, in five minutes',
+      body:
+        'Why the jump from chatbot to agent is already within reach for anyone in Venezuela, and what we are doing with it.',
+      label: 'Ignite Talk · Oslo Freedom Forum',
+      talkTitle: '“What They Can’t Take” · David Aragort',
+      play: 'Play the talk',
+      posterAlt: 'David Aragort on stage at the Oslo Freedom Forum, during his Ignite Talk.',
+      privacy: 'The video loads from YouTube only when you press play.'
     },
     footer: {
       securityLine: 'Security is part of how we work.',

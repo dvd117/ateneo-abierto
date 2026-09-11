@@ -565,6 +565,44 @@ function renderNorth(page: PageCopy): string {
   `;
 }
 
+
+/**
+ * The Ignite Talk. The poster is vendored next to the fonts and the player is
+ * not there at all until someone presses play: this is the one embed on the
+ * page, and it stays a promise until the visitor accepts it. main.ts owns the
+ * iframe, and the CSP in src/app.ts names the one frame origin it may use.
+ */
+function renderTalk(page: PageCopy): string {
+  const { talk } = page;
+
+  return `
+    <section class="talk shell" id="charla" aria-labelledby="charla-title">
+      <div class="talk-copy">
+        <p class="eyebrow">${inline(talk.eyebrow)}</p>
+        <h2 class="section-title talk-title" id="charla-title">${inline(talk.title)}</h2>
+        <p class="lead talk-body">${inline(talk.body)}</p>
+      </div>
+      <figure class="talk-figure">
+        <div class="talk-frame" data-talk>
+          <button class="talk-play" type="button" data-talk-play aria-label="${inline(talk.play)}">
+            <picture>
+              <source srcset="/ignite-poster.webp" type="image/webp" />
+              <img class="talk-poster" src="/ignite-poster.jpg" alt="${inline(talk.posterAlt)}"
+                   width="960" height="540" loading="lazy" decoding="async" />
+            </picture>
+            <span class="talk-play-mark" aria-hidden="true"></span>
+          </button>
+        </div>
+        <figcaption class="talk-meta">
+          <span class="talk-label">${inline(talk.label)}</span>
+          <span class="talk-name">${inline(talk.talkTitle)}</span>
+          <span class="talk-privacy">${inline(talk.privacy)}</span>
+        </figcaption>
+      </figure>
+    </section>
+  `;
+}
+
 function renderFooter(page: PageCopy, locale: Locale): string {
   return `
     <footer class="site-footer shell">
@@ -657,6 +695,7 @@ export function renderPage(locale: Locale): string {
       ${renderDoors(page)}
       ${renderPrinciples(page)}
       ${renderNorth(page)}
+      ${renderTalk(page)}
     </main>
     ${renderFooter(page, locale)}
   `;
