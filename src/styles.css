@@ -2609,13 +2609,14 @@ main [id] {
 }
 
 /* Drawn, not an icon font: a circle and a triangle, in the interface colour. */
+/* Under the poster's own title, on its left edge: centred, the mark covered
+   the name. Percentages of the frame, so it tracks the poster at any size. */
 .talk-play-mark {
   position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: clamp(4.5rem, 3rem + 4vw, 7rem);
-  height: clamp(4.5rem, 3rem + 4vw, 7rem);
+  left: 3.8%;
+  top: 63%;
+  width: clamp(3.5rem, 2.5rem + 2.5vw, 5rem);
+  height: clamp(3.5rem, 2.5rem + 2.5vw, 5rem);
   border: 1.5px solid var(--c-fg);
   border-radius: var(--r-pill);
   background: var(--c-bg-deep);
