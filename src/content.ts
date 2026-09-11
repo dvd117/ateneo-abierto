@@ -259,6 +259,8 @@ export type TalkCopy = {
   posterAlt: string;
   /** The honest line about what clicking play costs. */
   privacy: string;
+  /** The way out when YouTube puts a sign-in wall in front of the embed. */
+  watch: string;
 };
 
 /**
@@ -678,7 +680,8 @@ export const copy: Record<Locale, PageCopy> = {
       talkTitle: '“What They Can’t Take” · David Aragort',
       play: 'Ver la charla',
       posterAlt: 'David Aragort en el escenario del Oslo Freedom Forum, durante su Ignite Talk.',
-      privacy: 'El video se carga desde YouTube solo cuando le das play.'
+      privacy: 'El video se carga desde YouTube solo cuando le das play.',
+      watch: '¿No carga? Míralo en YouTube'
     },
     form: {
       eyebrow: 'Mantente al tanto',
@@ -1055,7 +1058,8 @@ export const copy: Record<Locale, PageCopy> = {
       talkTitle: '“What They Can’t Take” · David Aragort',
       play: 'Play the talk',
       posterAlt: 'David Aragort on stage at the Oslo Freedom Forum, during his Ignite Talk.',
-      privacy: 'The video loads from YouTube only when you press play.'
+      privacy: 'The video loads from YouTube only when you press play.',
+      watch: 'Not loading? Watch it on YouTube'
     },
     form: {
       eyebrow: 'Stay in the loop',

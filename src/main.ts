@@ -2,12 +2,9 @@ import { copy, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
 import { initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
-import { pageMeta, renderPage, renderThread } from './render';
+import { pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
 import type { ScenePlayer } from './scene';
 import './styles.css';
-
-/** David's Ignite Talk. The id lives here, not in the copy: nobody reads it. */
-const TALK_VIDEO_ID = 'oS2N8cz7p4w';
 
 const app = document.querySelector<HTMLDivElement>('#app');
 
@@ -367,8 +364,14 @@ function bindAgent(page: PageCopy): void {
 
 /**
  * The one embed on the page. Nothing reaches YouTube until the visitor presses
- * play; then the poster is replaced by the privacy-preserving player, which is
- * the only origin the CSP's frame-src allows.
+ * play; then the poster is replaced by the player, the only origin the CSP's
+ * frame-src allows.
+ *
+ * youtube.com, not youtube-nocookie.com: YouTube puts a "confirm you're not a
+ * bot" wall in front of embeds from networks it distrusts (reproduced from
+ * Caracas, 2026-09-11), and the no-cookie origin never sees the visitor's
+ * sign-in, so signing in could not get them past it. The caption carries a
+ * plain link to the video for anyone the wall still stops.
  */
 function bindTalk(page: PageCopy): void {
   const frame = root.querySelector<HTMLElement>('[data-talk]');
@@ -381,7 +384,7 @@ function bindTalk(page: PageCopy): void {
   play.addEventListener('click', () => {
     const iframe = document.createElement('iframe');
     iframe.className = 'talk-player';
-    iframe.src = `https://www.youtube-nocookie.com/embed/${TALK_VIDEO_ID}?autoplay=1&rel=0`;
+    iframe.src = `https://www.youtube.com/embed/${TALK_VIDEO_ID}?autoplay=1&rel=0`;
     iframe.title = page.talk.talkTitle;
     iframe.allow = 'accelerometer; autoplay; encrypted-media; picture-in-picture; fullscreen';
     iframe.allowFullscreen = true;

@@ -204,7 +204,9 @@ describe('the map is vendored, not fetched', () => {
     const urls = [...`${shape}\n${render}`.matchAll(/https?:\/\/[^"'\s)]+/g)]
       .map((match) => match[0])
       .filter((url) => !url.startsWith('https://ateneo-abierto.org'))
-      .filter((url) => url !== 'http://www.w3.org/2000/svg');
+      .filter((url) => url !== 'http://www.w3.org/2000/svg')
+      // A link the visitor follows, not a request the page makes.
+      .filter((url) => !url.startsWith('https://www.youtube.com/watch'));
 
     expect(urls).toEqual([]);
   });
@@ -222,21 +224,23 @@ describe('the map is vendored, not fetched', () => {
 });
 
 describe('the one embed on the page', () => {
-  test('vendors the poster and never names YouTube in the shell or the markup', () => {
+  test('vendors the poster and loads nothing from YouTube in the shell or the markup', () => {
     expect(existsSync('public/ignite-poster.webp')).toBe(true);
     expect(existsSync('public/ignite-poster.jpg')).toBe(true);
 
     const render = readFileSync('src/render.ts', 'utf8');
     expect(render).toContain('/ignite-poster.webp');
-    expect(render).not.toContain('youtube');
+    // The only mention is the plain watch link: an href, which fetches nothing.
+    expect(render.match(/youtube/g)).toHaveLength(1);
+    expect(render).toContain('href="https://www.youtube.com/watch?v=${TALK_VIDEO_ID}"');
+    expect(render).not.toMatch(/ytimg|youtube\.com\/embed|<iframe/);
     expect(html()).not.toContain('youtube');
   });
 
-  test('creates the player only on a click, from the no-cookie origin', () => {
+  test('creates the player only on a click, from the one allowed origin', () => {
     const main = readFileSync('src/main.ts', 'utf8');
 
-    expect(main).toContain('https://www.youtube-nocookie.com/embed/');
-    expect(main).not.toContain('https://www.youtube.com');
+    expect(main).toContain('https://www.youtube.com/embed/');
 
     // The iframe is built inside the click handler, never at render time.
     const handler = main.slice(main.indexOf("play.addEventListener('click'"));
@@ -246,7 +250,7 @@ describe('the one embed on the page', () => {
   test('names the one frame origin in the CSP and loosens nothing else', () => {
     const server = readFileSync('src/app.ts', 'utf8');
 
-    expect(server).toContain("frameSrc: [\"'self'\", 'https://www.youtube-nocookie.com']");
+    expect(server).toContain("frameSrc: [\"'self'\", 'https://www.youtube.com']");
     // As CSP source expressions, not as the words in the comment above them.
     expect(server).not.toContain('"\'unsafe-inline\'"');
     expect(server).not.toContain('"\'unsafe-eval\'"');

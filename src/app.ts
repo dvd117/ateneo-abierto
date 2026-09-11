@@ -102,7 +102,8 @@ app.use(
       styleSrc: ["'self'", ...loadStyleHashes(distDir)],
       // The Ignite Talk is the only embed on the page, and it is only ever
       // created after the visitor presses play. Nothing else may be framed.
-      frameSrc: ["'self'", 'https://www.youtube-nocookie.com'],
+      // youtube.com rather than the no-cookie origin: see bindTalk in main.ts.
+      frameSrc: ["'self'", 'https://www.youtube.com'],
     },
     permissionsPolicy: {
       camera: [],

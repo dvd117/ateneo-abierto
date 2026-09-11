@@ -413,7 +413,7 @@ describe('prerendered home page', () => {
     const res = await pagesApp.request('/');
     const csp = res.headers.get('content-security-policy') ?? '';
 
-    expect(csp).toContain("frame-src 'self' https://www.youtube-nocookie.com");
+    expect(csp).toContain("frame-src 'self' https://www.youtube.com");
   });
 
   test('reads no hashes when csp.json is missing or malformed', () => {

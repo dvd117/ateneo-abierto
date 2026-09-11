@@ -2080,6 +2080,11 @@ button {
   color: var(--c-fg-3);
 }
 
+.talk-watch {
+  justify-self: start;
+  margin-top: 0.2rem;
+}
+
 /* ---------- únete ----------
    One door, four fields. The form is the page's one place that asks for
    something, so it stays narrow and quiet: labels in the interface voice,

@@ -51,6 +51,9 @@ const THUMBS: Record<FileKind, string> = {
   </svg>`
 };
 
+/** David's Ignite Talk. The id lives here, not in the copy: nobody reads it. */
+export const TALK_VIDEO_ID = 'oS2N8cz7p4w';
+
 /** A page with a folded corner, drawn — an empty box reads as a missing glyph. */
 const FILE_ICON = `<svg class="agent-file-icon" viewBox="0 0 10 12" aria-hidden="true" focusable="false"><path d="M1.5 0.75h4.5l2.5 2.5v8h-7z M6 0.75v2.5h2.5" fill="none" stroke="currentColor" stroke-width="1" stroke-linejoin="round"/></svg>`;
 
@@ -603,6 +606,7 @@ function renderTalk(page: PageCopy): string {
           <span class="talk-label">${inline(talk.label)}</span>
           <span class="talk-name">${inline(talk.talkTitle)}</span>
           <span class="talk-privacy">${inline(talk.privacy)}</span>
+          <a class="talk-watch link" href="https://www.youtube.com/watch?v=${TALK_VIDEO_ID}" target="_blank" rel="noopener">${inline(talk.watch)} <span aria-hidden="true">&nearr;</span></a>
         </figcaption>
       </figure>
     </section>
