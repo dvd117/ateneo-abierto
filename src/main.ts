@@ -1,6 +1,6 @@
 import { copy, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
-import { initProgressRail, initReveal } from './reveal';
+import { initBands, initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
 import { pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
 import type { ScenePlayer } from './scene';
@@ -490,13 +490,19 @@ let teardownChrome: (() => void) | undefined;
  * motion — the transition is what reduced motion takes away, in CSS.
  */
 function bindChrome(): () => void {
+  const stopBands = motionAllowed()
+    ? initBands(Array.from(root.querySelectorAll<HTMLElement>('[data-band]')))
+    : () => {};
   const stopRail = initProgressRail(root.querySelector<HTMLElement>('[data-progress]'));
   const toTop = root.querySelector<HTMLElement>('[data-to-top]');
   const hero = root.querySelector<HTMLElement>('.hero');
 
   if (!toTop || !hero || typeof IntersectionObserver === 'undefined') {
     toTop?.classList.add('is-shown');
-    return stopRail;
+    return () => {
+      stopRail();
+      stopBands();
+    };
   }
 
   const observer = new IntersectionObserver(([entry]) => {
@@ -506,8 +512,37 @@ function bindChrome(): () => void {
 
   return () => {
     stopRail();
+    stopBands();
     observer.disconnect();
   };
+}
+
+/**
+ * The three doors' dialogs. Native <dialog>: showModal() traps focus, Escape
+ * closes it, and focus returns to the button that opened it. This adds the
+ * close button, a click on the backdrop, and the Únete link, which closes the
+ * dialog before the page scrolls to the form.
+ */
+function bindDialogs(): void {
+  root.querySelectorAll<HTMLButtonElement>('[data-dialog-open]').forEach((button) => {
+    const dialog = root.querySelector<HTMLDialogElement>(`#${button.dataset.dialogOpen}`);
+
+    if (!dialog || typeof dialog.showModal !== 'function') {
+      return;
+    }
+
+    button.addEventListener('click', () => dialog.showModal());
+
+    dialog.querySelector('[data-dialog-close]')?.addEventListener('click', () => dialog.close());
+    dialog.querySelector('[data-dialog-join]')?.addEventListener('click', () => dialog.close());
+
+    // A click that lands on the dialog element itself, outside .dlg, is the backdrop.
+    dialog.addEventListener('click', (event) => {
+      if (event.target === dialog) {
+        dialog.close();
+      }
+    });
+  });
 }
 
 function bindEvents(page: PageCopy): void {
@@ -522,6 +557,7 @@ function bindEvents(page: PageCopy): void {
   });
 
   bindAgent(page);
+  bindDialogs();
   bindTalk(page);
   bindForm(page);
   bindLighting();

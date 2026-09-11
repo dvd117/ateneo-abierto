@@ -237,10 +237,11 @@ button {
   text-wrap: balance;
 }
 
+/* No text-wrap: pretty here: it shortens lines to avoid orphans, which is
+   the early break David flagged. Leads fill their column. */
 .lead {
   font: var(--t-lead);
   color: var(--c-fg-soft);
-  max-width: 46ch;
 }
 
 .label {
@@ -279,7 +280,7 @@ button {
 
 .shell {
   width: 100%;
-  max-width: 1180px;
+  max-width: 1240px;
   margin-inline: auto;
   padding-inline: var(--sp-page);
 }
@@ -292,6 +293,140 @@ button {
 
 .prose {
   max-width: 68ch;
+}
+
+/* ---------- sections ----------
+   Every section is full bleed: its ground and its top rule run edge to edge,
+   and its content sits in the one .shell measure. Every section opens with the
+   same header — eyebrow and title on the left, lead on the right — so nothing
+   is narrower than anything else and no lead breaks early for want of room. */
+
+.sec {
+  position: relative;
+  padding-block: clamp(4rem, 9vw, 7.5rem);
+  border-top: 1px solid var(--c-border);
+}
+
+.sec-head {
+  display: grid;
+  gap: 1.25rem;
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+/* Title across the top, lead stepping in under it from the middle of the
+   measure: one editorial offset for every section, whatever the lead's length. */
+@media (min-width: 861px) {
+  .sec-head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap-md);
+    row-gap: 1.75rem;
+  }
+
+  .sec-head-main {
+    grid-column: 1 / span 10;
+  }
+
+  .sec-head-lead {
+    grid-column: 6 / -1;
+  }
+
+  .sec-head--inline {
+    align-items: end;
+  }
+
+  .sec-head--inline .sec-head-main {
+    grid-column: 1 / span 7;
+  }
+
+  .sec-head--inline .sec-head-lead {
+    grid-column: 8 / -1;
+    padding-bottom: 0.35rem;
+  }
+}
+
+.sec-head .section-title {
+  margin-top: 0.9rem;
+}
+
+/* The title rises a beat after its eyebrow, the lead a beat after that. */
+.sec-head[data-reveal] {
+  opacity: 1;
+  transform: none;
+}
+
+.sec-head[data-reveal] > * {
+  opacity: 0;
+  transform: translateY(1.25rem);
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 900ms var(--ease-out);
+}
+
+.sec-head[data-reveal] > :nth-child(2) {
+  transition-delay: 140ms;
+}
+
+.sec-head[data-reveal].is-revealed > * {
+  opacity: 1;
+  transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sec-head[data-reveal] > * {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* ---------- la vibración ----------
+   The signature: two fields of fine lines at slightly different pitch, the
+   top one sliding as the band crosses the screen, so the interference between
+   them moves. Venezuelan kinetic art (Soto, Cruz-Diez) in the page's two
+   colours. Static — and still a moiré — under reduced motion. */
+
+.band {
+  height: clamp(56px, 7vw, 104px);
+  background: var(--c-bg);
+  border-top: 1px solid var(--c-border);
+  overflow: hidden;
+}
+
+.band-svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.band-line-a {
+  fill: var(--c-fg-3);
+}
+
+.band-line-b {
+  fill: var(--c-accent);
+}
+
+.band-layer--a {
+  opacity: 0.32;
+}
+
+.band-layer--b {
+  opacity: 0.5;
+  transform: translateX(var(--band-shift, 0px));
+}
+
+/* ---------- grain ----------
+   A fixed film of noise over the whole page: depth on a flat dark ground. A
+   static tile from /grain.png, so it costs one small request and no script. */
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  background-image: url("/grain.png");
+  background-size: 128px 128px;
 }
 
 /* ---------- header ---------- */
@@ -506,26 +641,38 @@ main [id] {
   border-bottom-color: var(--c-accent);
 }
 
-/* ---------- hero ---------- */
+/* ---------- hero ----------
+   The headline takes the whole measure, one line per sentence at desktop
+   sizes; under it the manifesto and the window share the row. On a phone the
+   window comes straight after the call to action and the network follows it —
+   otherwise the network sits on screen at load and has finished lighting
+   before anyone looks at it. */
 
 .hero {
-  display: grid;
-  align-items: center;
-  gap: var(--gap-lg);
-  padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 8vw, var(--sp-section));
+  position: relative;
+  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3.5rem, 8vw, 6.5rem);
 }
 
-/* On a phone the window is the thing you came for, so it comes first and the
-   network follows it — otherwise the network sits on screen at load and has
-   finished lighting before anyone looks at it. */
+.hero-grid {
+  display: grid;
+  gap: var(--gap-lg);
+}
+
 @media (min-width: 861px) {
-  .hero {
-    grid-template-columns: 1fr 1.08fr;
+  .hero-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     grid-template-areas:
+      "head   head"
       "copy   window"
       "net    window";
+    grid-template-rows: auto auto 1fr;
+    column-gap: clamp(2rem, 4.5vw, 4.5rem);
+    row-gap: clamp(1.75rem, 3vw, 2.75rem);
     align-items: start;
-    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .hero-head {
+    grid-area: head;
   }
 
   .hero-copy {
@@ -534,21 +681,62 @@ main [id] {
 
   .hero .net {
     grid-area: net;
-    align-self: start;
   }
 
   .hero .agent-figure {
     grid-area: window;
-    align-self: center;
   }
 }
 
 .hero-title {
-  margin-top: 0.85rem;
+  margin-top: 1rem;
+  font-size: clamp(2.6rem, 0.8rem + 6.3vw, 6.4rem);
+  line-height: 0.96;
+}
+
+/* Each sentence is a line that rises out of its own slot on load. The slot's
+   padding keeps descenders and the italic's overhang from being clipped. */
+.hero-line {
+  display: block;
+  overflow: clip;
+  padding: 0.04em 0.12em 0.1em 0;
+  margin-bottom: -0.1em;
+}
+
+.hero-line-in {
+  display: inline-block;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero-line-in {
+    animation: line-rise 1100ms var(--ease-out) both;
+  }
+
+  .hero-line:nth-child(2) .hero-line-in {
+    animation-delay: 140ms;
+  }
+
+  .hero-copy,
+  .hero .agent-figure {
+    animation: fade-rise 900ms var(--ease-out) 360ms both;
+  }
+}
+
+@keyframes line-rise {
+  from {
+    transform: translateY(105%);
+  }
+}
+
+@keyframes fade-rise {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
 }
 
 .hero-manifesto {
-  margin-top: 1.1rem;
+  font-size: clamp(1.1rem, 1rem + 0.35vw, 1.3rem);
 }
 
 .hero-actions {
@@ -556,6 +744,11 @@ main [id] {
   flex-wrap: wrap;
   gap: var(--gap-sm);
   margin-top: var(--gap-lg);
+}
+
+.hero .button--fill {
+  font-size: 1.05rem;
+  padding: 1rem 2rem;
 }
 
 /* ---------- the agent window ----------
@@ -1222,18 +1415,7 @@ main [id] {
    you who did the work before you read the sentence. */
 
 .shift {
-  padding-block: clamp(3rem, 8vw, var(--sp-section));
   background: var(--c-bg-deep);
-  border-top: 1px solid var(--c-border);
-}
-
-.shift-title {
-  margin-top: 0.7rem;
-}
-
-.shift-lead {
-  margin-top: 1.1rem;
-  max-width: 66ch;
 }
 
 /* The ochre rule is the section's one signal: it points at the task both
@@ -1243,8 +1425,8 @@ main [id] {
   align-items: baseline;
   flex-wrap: wrap;
   gap: 0.75rem;
-  margin-top: var(--gap-lg);
   font: var(--t-body);
+  font-size: 1.05rem;
   color: var(--c-fg-2);
 }
 
@@ -1291,14 +1473,15 @@ main [id] {
 
 .shift-col-title {
   font: var(--t-h2);
+  font-size: clamp(1.6rem, 1.3rem + 0.8vw, 2.1rem);
   margin: 0;
 }
 
 .shift-col-sub {
-  font: var(--t-small);
+  font: var(--t-body);
+  font-size: 0.95rem;
   color: var(--c-fg-2);
-  margin: 0.35rem 0 0;
-  max-width: 40ch;
+  margin: 0.5rem 0 0;
 }
 
 .shift-rows {
@@ -1402,8 +1585,10 @@ main [id] {
 
 .shift-count {
   font: var(--t-display);
+  font-size: clamp(3rem, 2rem + 3.4vw, 5.4rem);
   letter-spacing: var(--track-display);
-  line-height: 1;
+  font-variation-settings: "opsz" 144;
+  line-height: 0.9;
   color: var(--c-fg);
 }
 
@@ -1603,11 +1788,16 @@ main [id] {
 
 .site-footer {
   border-top: 1px solid var(--c-border);
-  padding-block: var(--gap-lg);
-  display: grid;
-  gap: var(--gap-md);
+  background: var(--c-bg-deep);
+  /* Room under the last line for the floating back-to-top button. */
+  padding-block: var(--gap-lg) 6rem;
   color: var(--c-fg-2);
   font: var(--t-small);
+}
+
+.footer-grid {
+  display: grid;
+  gap: var(--gap-md);
 }
 
 .site-footer .security-line {
@@ -1635,7 +1825,7 @@ main [id] {
 }
 
 @media (min-width: 861px) {
-  .site-footer {
+  .footer-grid {
     grid-template-columns: 1fr 1.4fr 1fr;
     align-items: start;
   }
@@ -1659,59 +1849,74 @@ main [id] {
    is in the serif, the "para quién" line in the interface voice, and every
    door ends on the same link — there is one way in. */
 
-.doors {
-  padding-block: clamp(3rem, 8vw, var(--sp-section));
-  border-top: 1px solid var(--c-border);
-}
-
-.doors-title {
-  margin-top: 0.7rem;
-}
-
-.doors-lead {
-  margin-top: 1.1rem;
-  max-width: 56ch;
-}
-
 .door-grid {
   display: grid;
   gap: var(--gap-md);
-  margin-top: var(--gap-lg);
 }
 
+/* The staircase as structure: on a wide screen the three doors climb, left
+   to right, the way the program does — hackathon, then mentorship, then
+   showing what you built. */
 @media (min-width: 861px) {
   .door-grid {
     grid-template-columns: repeat(3, 1fr);
+    align-items: stretch;
+    padding-top: 3.5rem;
+  }
+
+  .door:nth-child(2) {
+    margin-top: -1.75rem;
+    margin-bottom: 1.75rem;
+  }
+
+  .door:nth-child(3) {
+    margin-top: -3.5rem;
+    margin-bottom: 3.5rem;
   }
 }
 
 .door {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
-  padding: var(--gap-md);
+  gap: 0.75rem;
+  padding: clamp(1.5rem, 2.4vw, 2.25rem);
   background: var(--c-bg-panel);
   border: 1px solid var(--c-border);
-  border-radius: var(--r-md);
+  border-radius: var(--r-window);
+  transition:
+    opacity var(--duration-step) var(--ease-out),
+    transform var(--duration-step) var(--ease-out),
+    border-color var(--duration-ui) var(--ease-out),
+    translate var(--duration-overlay) var(--ease-out);
 }
 
-/* The number is the one ochre mark in the card: it counts the doors, it does
-   not rank them. */
+@media (hover: hover) {
+  .door:hover {
+    translate: 0 -4px;
+    border-color: var(--c-fg-3);
+  }
+}
+
+/* The number, set large in the display italic: it counts the steps. */
 .door-n {
-  font: var(--t-label);
-  letter-spacing: var(--track-label);
+  font: italic 400 clamp(3.2rem, 2.2rem + 3vw, 5rem) / 0.85 var(--font-display);
+  font-variation-settings: "opsz" 144;
+  letter-spacing: -0.04em;
   color: var(--c-accent);
+  margin-bottom: 0.5rem;
 }
 
 .door-title {
   font: var(--t-h2);
+  font-size: clamp(1.45rem, 1.25rem + 0.5vw, 1.8rem);
   color: var(--c-fg);
   text-wrap: balance;
 }
 
 .door-body {
-  font: var(--t-lead);
-  font-size: 1.05rem;
+  font: var(--t-body);
+  font-size: 1.02rem;
   color: var(--c-fg-soft);
 }
 
@@ -1733,21 +1938,168 @@ main [id] {
 
 .door-cta {
   align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   margin-top: var(--gap-sm);
+  padding: 0.7rem 1.1rem;
   font-family: var(--font-sans);
   font-size: 0.95rem;
   font-weight: 600;
+  color: var(--c-fg);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-pill);
+  transition: border-color var(--duration-ui) var(--ease-out), color var(--duration-ui) var(--ease-out);
+}
+
+.door-cta-arrow {
+  color: var(--c-accent);
+  transition: translate var(--duration-ui) var(--ease-out);
+}
+
+.door-cta:hover {
+  border-color: var(--c-accent);
+}
+
+.door-cta:hover .door-cta-arrow {
+  translate: 3px 0;
+}
+
+/* ---------- the door, opened ---------- */
+
+.door-dialog {
+  width: min(42rem, calc(100% - 2rem));
+  max-height: calc(100dvh - 2rem);
+  padding: 0;
+  color: var(--c-fg);
+  background: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-window);
+  box-shadow: var(--shadow-window);
+  overscroll-behavior: contain;
+}
+
+.door-dialog::backdrop {
+  background: color-mix(in srgb, var(--c-bg-deep) 82%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .door-dialog[open] {
+    animation: fade-rise var(--duration-overlay) var(--ease-out);
+  }
+
+  .door-dialog[open]::backdrop {
+    animation: backdrop-in var(--duration-overlay) var(--ease-out);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.dlg {
+  position: relative;
+  display: grid;
+  gap: 1.35rem;
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+}
+
+.dlg-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  place-items: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-pill);
+  color: var(--c-fg-2);
+}
+
+.dlg-close svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.dlg-close:hover {
+  color: var(--c-fg);
+  border-color: var(--c-fg-3);
+}
+
+.dlg-n {
+  font: italic 400 3rem / 0.85 var(--font-display);
+  font-variation-settings: "opsz" 144;
+  color: var(--c-accent);
+}
+
+.dlg-title {
+  font: var(--t-h1);
+  font-size: clamp(1.9rem, 1.5rem + 1.4vw, 2.6rem);
+  letter-spacing: var(--track-h1);
+  font-variation-settings: "opsz" 144;
+  margin-top: -0.5rem;
+  padding-right: 2.5rem;
+  text-wrap: balance;
+}
+
+.dlg-label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-fg-3);
+}
+
+.dlg-goal {
+  font: 400 clamp(1.2rem, 1.1rem + 0.4vw, 1.45rem) / 1.35 var(--font-display);
+  color: var(--c-fg);
+  text-wrap: pretty;
+}
+
+.dlg-list {
+  counter-reset: dlg;
+  display: grid;
+  gap: 0.7rem;
+}
+
+.dlg-list li {
+  counter-increment: dlg;
+  display: grid;
+  grid-template-columns: 1.75rem 1fr;
+  gap: 0.5rem;
+  color: var(--c-fg-soft);
+}
+
+.dlg-list li::before {
+  content: counter(dlg);
+  font: italic 400 1.15rem / 1.4 var(--font-display);
+  color: var(--c-accent);
+}
+
+.dlg-expect {
+  padding: 1rem 1.15rem;
+  background: var(--c-bg-deep);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  color: var(--c-fg-soft);
+}
+
+.dlg-join {
+  justify-self: start;
 }
 
 /* Talleres: not a fourth door, so it sits under the rule as one line rather
    than as a card. */
 .doors-extra {
-  margin-top: var(--gap-md);
+  margin-top: var(--gap-lg);
   padding-top: var(--gap-md);
   border-top: 1px solid var(--c-border);
   font: var(--t-body);
   color: var(--c-fg-soft);
-  max-width: 68ch;
 }
 
 .doors-extra b {
@@ -1756,56 +2108,40 @@ main [id] {
 }
 
 /* ---------- cómo trabajamos ----------
-   The mockup's row: the intro takes one column and the four principles sit
-   beside it as a band, tighter than the sections around them, so the page
-   breathes between the doors and the map. */
+   Four rules in one row, each under its own rule line, on the deep ground
+   so the page breathes between the doors and the map. */
 
 .principles {
   background: var(--c-bg-deep);
-  border-top: 1px solid var(--c-border);
-  padding-block: clamp(2.5rem, 6vw, 4.5rem);
 }
 
-.principles-grid {
+.pr-grid {
   display: grid;
-  gap: var(--gap-lg);
+  gap: var(--gap-lg) var(--gap-md);
 }
 
-@media (min-width: 861px) {
-  .principles-grid {
-    grid-template-columns: 16rem repeat(4, 1fr);
-    gap: var(--gap-md);
-    align-items: start;
+@media (min-width: 561px) {
+  .pr-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
-@media (min-width: 561px) and (max-width: 860px) {
-  .principles-grid {
-    grid-template-columns: 1fr 1fr;
-  }
-
-  .principles-intro {
-    grid-column: 1 / -1;
+@media (min-width: 1025px) {
+  .pr-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 
-.principles-title {
-  font: var(--t-h2);
-  margin-top: 0.7rem;
-}
-
-.principles-lead {
-  margin-top: 0.5rem;
-  font: var(--t-small);
-  color: var(--c-fg-2);
-  max-width: 34ch;
+.pr {
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--c-border);
 }
 
 .pr-icon {
   display: block;
-  width: 30px;
-  height: 30px;
-  margin-bottom: 0.85rem;
+  width: 36px;
+  height: 36px;
+  margin-bottom: 1.25rem;
 }
 
 .pr-icon * {
@@ -1823,15 +2159,17 @@ main [id] {
 }
 
 .pr-title {
-  font: var(--t-h3);
+  font: var(--t-h2);
+  font-size: clamp(1.35rem, 1.2rem + 0.4vw, 1.6rem);
   color: var(--c-fg);
 }
 
 .pr-body {
-  margin-top: 0.4rem;
-  font: var(--t-small);
+  margin-top: 0.6rem;
+  font: var(--t-body);
+  font-size: 0.98rem;
   color: var(--c-fg-2);
-  max-width: 34ch;
+  text-wrap: pretty;
 }
 
 /* ---------- el norte ----------
@@ -1841,46 +2179,34 @@ main [id] {
    nodes are paper — the same paper as the document the agent produces, which
    is the point of the whole page — and planned nodes stay outlined. */
 
-.north {
-  padding-block: clamp(3rem, 8vw, var(--sp-section));
-  border-top: 1px solid var(--c-border);
+.north-body {
   display: grid;
   gap: var(--gap-lg);
 }
 
 @media (min-width: 861px) {
-  .north {
-    grid-template-columns: 1fr minmax(20rem, 32.5rem);
-    gap: clamp(2rem, 4vw, 3.5rem);
+  .north-body {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: clamp(2rem, 5vw, 5rem);
     align-items: center;
   }
 }
 
-.north-title {
-  margin-top: 0.7rem;
-  max-width: 20ch;
-}
-
-.north-lead {
-  margin-top: 1.1rem;
-  max-width: 52ch;
-}
-
 .hz {
   list-style: none;
-  margin: var(--gap-lg) 0 0;
+  margin: 0;
   padding: 0;
   border-top: 1px solid var(--c-border);
 }
 
 .hz-row {
   display: grid;
-  grid-template-columns: 6rem 1fr;
+  grid-template-columns: 6.5rem 1fr;
   gap: var(--gap-sm);
-  padding-block: 0.85rem;
+  padding-block: 1.15rem;
   border-bottom: 1px solid var(--c-border);
   font: var(--t-body);
-  font-size: 0.95rem;
+  font-size: 1.02rem;
   color: var(--c-fg-soft);
 }
 
@@ -2034,30 +2360,7 @@ main [id] {
    for the player, so the page reaches YouTube only after a click. */
 
 .talk {
-  padding-block: clamp(3rem, 8vw, var(--sp-section));
   background: var(--c-bg-deep);
-  border-top: 1px solid var(--c-border);
-  display: grid;
-  gap: var(--gap-lg);
-}
-
-@media (min-width: 861px) {
-  .talk {
-    grid-template-columns: 20rem 1fr;
-    gap: clamp(2rem, 4vw, 3.5rem);
-    align-items: center;
-  }
-}
-
-.talk-title {
-  font: var(--t-h2);
-  margin-top: 0.7rem;
-}
-
-.talk-body {
-  margin-top: 0.8rem;
-  font-size: 1rem;
-  max-width: 40ch;
 }
 
 .talk-figure {
@@ -2068,7 +2371,8 @@ main [id] {
   position: relative;
   aspect-ratio: 16 / 9;
   border: 1px solid var(--c-border);
-  border-radius: var(--r-md);
+  border-radius: var(--r-window);
+  box-shadow: var(--shadow-window);
   overflow: hidden;
   background: var(--c-bg-panel);
 }
@@ -2096,8 +2400,8 @@ main [id] {
   left: 50%;
   top: 50%;
   transform: translate(-50%, -50%);
-  width: 4.5rem;
-  height: 4.5rem;
+  width: clamp(4.5rem, 3rem + 4vw, 7rem);
+  height: clamp(4.5rem, 3rem + 4vw, 7rem);
   border: 1.5px solid var(--c-fg);
   border-radius: var(--r-pill);
   background: var(--c-bg-deep);
@@ -2111,7 +2415,8 @@ main [id] {
   top: 50%;
   transform: translate(-50%, -50%);
   border-style: solid;
-  border-width: 0.8rem 0 0.8rem 1.3rem;
+  border-width: 1em 0 1em 1.6em;
+  font-size: clamp(0.8rem, 0.6rem + 0.6vw, 1.25rem);
   border-color: transparent transparent transparent var(--c-fg);
 }
 
@@ -2136,7 +2441,7 @@ main [id] {
 .talk-meta {
   display: grid;
   gap: 0.15rem;
-  margin-top: var(--gap-sm);
+  margin-top: var(--gap-md);
   font: var(--t-small);
   color: var(--c-fg-2);
 }
@@ -2166,24 +2471,38 @@ main [id] {
    something, so it stays narrow and quiet: labels in the interface voice,
    fields on the panel surface, and the promise under the button. */
 
-.join {
-  padding-block: clamp(3rem, 8vw, var(--sp-section));
-  border-top: 1px solid var(--c-border);
+.join-grid {
+  display: grid;
+  gap: var(--gap-lg);
 }
 
+@media (min-width: 861px) {
+  .join-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    column-gap: clamp(2rem, 6vw, 6rem);
+    align-items: center;
+  }
+}
+
+/* The closing word, set as large as the page's headline. */
 .join-title {
-  margin-top: 0.7rem;
+  margin-top: 0.9rem;
+  font-size: clamp(3.4rem, 1.4rem + 7vw, 7.5rem);
+  line-height: 0.9;
 }
 
 .join-lead {
-  margin-top: 1.1rem;
+  margin-top: 1.4rem;
 }
 
 .join-form {
   display: grid;
   gap: var(--gap-md);
-  margin-top: var(--gap-lg);
-  max-width: 34rem;
+  padding: clamp(1.25rem, 3vw, 2.5rem);
+  background: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-window);
+  box-shadow: var(--shadow-window);
 }
 
 @media (min-width: 561px) {
@@ -2223,7 +2542,7 @@ main [id] {
   padding: 0.7rem 0.75rem;
   font: var(--t-body);
   color: var(--c-fg);
-  background: var(--c-bg-panel);
+  background: var(--c-bg-deep);
   border: 1px solid var(--c-border);
   border-radius: var(--r-sm);
 }
@@ -2300,7 +2619,6 @@ main [id] {
   border-top: 1px solid var(--c-border);
   font: var(--t-body);
   color: var(--c-fg-soft);
-  max-width: 68ch;
 }
 
 /* A link inside a sentence needs more than colour to be a link: the underline
@@ -2333,4 +2651,10 @@ p > .link,
 
 .footer-nav a:hover {
   color: var(--c-fg);
+}
+
+@media (max-width: 560px) {
+  .hz-row {
+    grid-template-columns: 5.25rem 1fr;
+  }
 }

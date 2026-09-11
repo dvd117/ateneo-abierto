@@ -318,15 +318,35 @@ line and ES/EN.
 
 ## Motion
 
-Functional only; every animation tells the story (a step ticking, a file appearing, an edge
-drawing, a node lighting). Nothing loops, nothing floats. `duration-step` paces the agent
-window; `duration-draw` paces the map edges. Everything short-circuits under
-`prefers-reduced-motion`, and the interactive layer is not loaded at all under `saveData`.
+David loosened the quiet rules on 2026-09-11 ("go bold"). Motion now does three things, and
+still never loops:
 
-## Elevation and depth
+- **Functional**, as before: a step ticking, a file appearing, a map edge drawing, a node
+  lighting. `duration-step` paces the agent window; `duration-draw` paces the map edges.
+- **Entrances**: the hero headline rises line by line on load; each section header's title and
+  lead rise a beat apart as they enter.
+- **Scroll-driven**: *la vibración*, the page's signature — full-bleed bands of fine vertical
+  lines in two layers at slightly different pitch (7 and 7.6 units). The top layer slides as
+  the band crosses the screen, so the moiré between them moves: the Venezuelan kinetic
+  tradition (Soto's vibrations, Cruz-Diez's inductions) in the page's two colours. Three bands
+  mark the chapters: after the hero, before El norte, before Únete.
 
-Flat tonal layers and 1 px borders. The agent window is the one element allowed a shadow
-(`0 20px 40px -18px rgba(0,0,0,.6)`), because it is the one object on the page.
+Everything short-circuits under `prefers-reduced-motion` (bands stand still, still a moiré), and
+the interactive layer is not loaded at all under `saveData`.
+
+## Texture, elevation and depth
+
+A fixed film of grain (`/grain.png`, a 4.5 KB palette tile, alpha 9–14) sits over the whole
+page for depth on the flat dark ground. Surfaces stay flat tonal layers with 1 px borders. The
+window shadow (`0 20px 40px -18px rgba(0,0,0,.6)`) is now shared by the four objects the page
+hands you: the agent window, the talk's frame, the form panel and the programme dialogs.
+
+## Layout system
+
+Every section is full bleed (its ground and top rule run edge to edge) with content in one
+1240 px measure. Every section opens with the same header: eyebrow and title across the top,
+the lead stepping in under it from column 6 of 12; a one-sentence lead (≤ 120 characters) sits
+beside the title instead. Leads never carry `text-wrap: pretty`, which breaks lines early.
 
 ## Shapes
 
@@ -334,12 +354,14 @@ Flat tonal layers and 1 px borders. The agent window is the one element allowed 
 
 ## Do's and don'ts
 
-- Do keep the whole page quiet so the agent window can be loud.
+- Do keep one loud thing per viewport: the agent window, a headline, a band.
 - Do use ochre once per viewport at most as a fill; as text and lines it may repeat.
 - Don't use gradient text, blobs, glassmorphism, purple, orbits, sparkle icons, radial glow,
-  3D shapes, or decorative motion (the anti-slop rules, decision 5).
+  3D shapes, or looping motion (the anti-slop rules, decision 5; enforced in
+  `source-safety.test.ts`).
 - Don't let ochre go metallic or gradient; don't let the base drift to brown.
 - Don't put prices, dates, or participant names on the page.
 - Don't make it look like a state program, a party campaign, an AI startup, or a crypto
   product.
 - Don't add a second mark. The staircase is the icon; the sans wordmark is the name.
+- Don't make the bands louder than the headline: the ochre layer stays at half strength.

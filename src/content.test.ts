@@ -126,7 +126,12 @@ describe('landing page copy', () => {
       // "more with less", nothing about what the country lacks.
       expect(shift.lead).not.toMatch(/más con menos|lo poco que|do more with less|the little they/i);
       expect(shift.lead).toMatch(/chatbot/i);
-      expect(shift.lead).toMatch(/gratuitas|free tools/i);
+      // David, 2026-09-11: be fair to chatbots — they read documents and hand
+      // files back now. And no flat "free tools" claim: the commercial agents
+      // we may also teach are paid.
+      expect(shift.lead).toMatch(/documentos|documents/i);
+      expect(shift.lead).not.toMatch(/gratuitas|free tools/i);
+      expect(shift.lead).not.toMatch(/vueltas/i);
     }
 
     expect(copy.es.shift.titleLines.map((line) => line.text)).toEqual([
@@ -195,7 +200,7 @@ describe('landing page copy', () => {
   });
 
 
-  test('opens three doors, all leading to the same form', () => {
+  test('opens three doors, each with a dialog that says what it is', () => {
     for (const locale of locales) {
       const { doors } = copy[locale];
 
@@ -207,8 +212,17 @@ describe('landing page copy', () => {
         expect(door.body.length).toBeGreaterThan(30);
         expect(door.who.length).toBeGreaterThan(10);
         expect(door.whoLabel.length).toBeGreaterThan(0);
-        expect(door.cta.length).toBeGreaterThan(0);
+        // David, 2026-09-11: three identical links to the form told nobody
+        // anything. Each door opens a dialog with its goal, activities and
+        // what to expect, and the dialog ends on the form.
+        expect(door.id).toMatch(/^[a-z-]+$/);
+        expect(door.details.goal.length).toBeGreaterThan(20);
+        expect(door.details.activities.length).toBeGreaterThanOrEqual(3);
+        expect(door.details.expect.length).toBeGreaterThan(20);
       }
+
+      expect(new Set(doors.doors.map((door) => door.id)).size).toBe(3);
+      expect(Object.values(doors.dialog).every((label) => label.length > 0)).toBe(true);
 
       // Talleres is the fourth thing we do, not a fourth door: one line, and
       // it goes through the same form rather than a second address.
@@ -282,7 +296,7 @@ describe('landing page copy', () => {
   });
 
 
-  test('names three horizons and ends on the libraries', () => {
+  test('names three horizons and ends on access, not on agents', () => {
     for (const locale of locales) {
       const { north } = copy[locale];
 
@@ -301,8 +315,14 @@ describe('landing page copy', () => {
       'Después',
       'Norte'
     ]);
-    expect(copy.es.north.horizons[2].text).toMatch(/bibliotecas/);
-    expect(copy.en.north.horizons[2].text).toMatch(/libraries/);
+    // The Oslo talk's framing: the library is about access to opportunity —
+    // same room, same resources — not about where you meet an agent.
+    expect(copy.es.north.lead).toMatch(/bibliotecas públicas/);
+    expect(copy.en.north.lead).toMatch(/public libraries/);
+    expect(copy.es.north.lead).not.toMatch(/agente/);
+    expect(copy.en.north.lead).not.toMatch(/agent/);
+    expect(copy.es.north.horizons[2].text).toMatch(/cada ciudad/);
+    expect(copy.en.north.horizons[2].text).toMatch(/every city/);
   });
 
   test('places the map nodes at real coordinates and claims no site', () => {

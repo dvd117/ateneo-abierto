@@ -162,12 +162,19 @@ export type ShiftCopy = {
  * recognising themselves in it, not by the title.
  */
 export type Door = {
+  /** Also the dialog's id suffix, so it stays ASCII. */
+  id: string;
   n: string;
   title: string;
   body: string;
   whoLabel: string;
   who: string;
-  cta: string;
+  /** What the dialog behind "Ver detalles" says: the door, opened. */
+  details: {
+    goal: string;
+    activities: string[];
+    expect: string;
+  };
 };
 
 /**
@@ -179,6 +186,15 @@ export type DoorsCopy = {
   title: string;
   lead: string;
   doors: [Door, Door, Door];
+  /** Shared labels for the three dialogs. */
+  dialog: {
+    open: string;
+    goalLabel: string;
+    activitiesLabel: string;
+    expectLabel: string;
+    join: string;
+    close: string;
+  };
   workshops: {
     label: string;
     text: string;
@@ -541,33 +557,33 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'El cambio',
       titleLines: [{ text: 'De preguntar' }, { text: 'a delegar', em: true }],
       lead:
-        'La frontera ya no está en hacerle mejores preguntas a un chatbot. Está en delegarle el trabajo a un agente y revisar lo que te entrega: lo que antes te consumía demasiado tiempo se resuelve mientras haces otra cosa, y el criterio sigue siendo tuyo. Ya está al alcance de cualquiera en Venezuela, con herramientas gratuitas.',
+        'Los chatbots ya leen tus documentos y te devuelven archivos. La diferencia está en cuánto del trabajo sigue siendo tuyo. Un agente trabaja en tu carpeta, sigue un plan y revisa su propio trabajo: lo que antes te consumía demasiado tiempo se resuelve mientras haces otra cosa, y el criterio sigue siendo tuyo.',
       task: 'La misma tarea: *juntar los gastos de tres meses y decidir dónde recortar.*',
       columns: [
         {
           kind: 'chatbot',
           title: 'Con un chatbot',
-          sub: 'Tú preguntas, él responde, y el trabajo sigue siendo tuyo.',
+          sub: 'Hoy también lee tus archivos y te devuelve documentos. Pero cada corrección y cada archivo pasan por ti.',
           steps: [
-            { actor: 'Tú', text: 'Le preguntas cómo comparar los tres meses.' },
-            { actor: 'Chatbot', text: 'Te explica el método; los números los pegas tú.' },
-            { actor: 'Tú', text: 'Copias y pegas las hojas, columna por columna.' },
-            { actor: 'Tú', text: 'Revisas a mano qué subió y qué bajó.' },
-            { actor: 'Tú', text: 'Escribes el resumen y lo guardas.' }
+            { actor: 'Tú', text: 'Subes las tres hojas y le pides el resumen.' },
+            { actor: 'Chatbot', text: 'Te devuelve un resumen y un archivo para descargar.' },
+            { actor: 'Tú', text: 'Lo revisas y ves que mezcló dos categorías.' },
+            { actor: 'Tú', text: 'Se lo explicas, vuelves a subir, vuelves a descargar.' },
+            { actor: 'Tú', text: 'Lo guardas en tu carpeta. El mes que viene, empiezas de cero.' }
           ],
           tallyCount: '4 de 5',
-          tallyText: 'pasos los hiciste tú.'
+          tallyText: 'pasos pasan por ti.'
         },
         {
           kind: 'agent',
           title: 'Con un agente',
-          sub: 'Tú delegas, él planifica y ejecuta, tú decides.',
+          sub: 'Trabaja en tu carpeta, sigue un plan y revisa lo que hace. Tú decides.',
           steps: [
-            { actor: 'Tú', text: 'Le pasas la carpeta y le dices qué necesitas.' },
-            { actor: 'Agente', text: 'Arma un plan y te lo muestra.', done: true },
-            { actor: 'Agente', text: 'Lee las tres hojas y unifica las categorías.', done: true },
-            { actor: 'Agente', text: 'Escribe el resumen y lo guarda en tu carpeta.', done: true },
-            { actor: 'Tú', text: 'Lo revisas y decides dónde recortar.' }
+            { actor: 'Tú', text: 'Le señalas la carpeta y le dices qué necesitas.' },
+            { actor: 'Agente', text: 'Arma un plan y te lo muestra antes de empezar.', done: true },
+            { actor: 'Agente', text: 'Abre las tres hojas, unifica las categorías y comprueba las sumas.', done: true },
+            { actor: 'Agente', text: 'Guarda el resumen y el Excel en tu carpeta, junto a los originales.', done: true },
+            { actor: 'Tú', text: 'Lo revisas y decides dónde recortar. El mes que viene, se lo pides en una línea.' }
           ],
           tallyCount: '2 de 5',
           tallyText: 'pasos son tuyos: pedir y decidir.'
@@ -580,30 +596,68 @@ export const copy: Record<Locale, PageCopy> = {
       lead: 'Entra por la que te quede más cerca. Ninguna te pide saber programar.',
       doors: [
         {
+          id: 'hackaton',
           n: '01',
           title: 'Hackatón para no técnicos',
           body: 'En un fin de semana aprendes a usar tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código.',
           whoLabel: 'Para quién',
           who: 'Gente de oficina, docentes, comerciantes, equipos de organizaciones.',
-          cta: 'Únete'
+          // Approved in David's copy review, 2026-09-11. Format, venue, places
+          // and cost are still to confirm before launch.
+          details: {
+            goal: 'Que salgas usando un agente en una tarea real de tu trabajo o tus estudios.',
+            activities: [
+              'Arrancamos con una demostración en vivo: la misma tarea, con chatbot y con agente.',
+              'Eliges una tarea que hoy te quita tiempo y la trabajas en un equipo pequeño.',
+              'Mentores te acompañan a instalar el agente y a darle tus primeras instrucciones, con archivos de ejemplo.',
+              'Al cierre, cada equipo muestra lo que logró.'
+            ],
+            expect: 'Un fin de semana, presencial. No necesitas saber programar. Trae tu laptop; una modesta sirve.'
+          }
         },
         {
+          id: 'mentorias',
           n: '02',
           title: 'Mentorías',
           body: 'Alguien que ya lo hizo acompaña a tu equipo hasta que el agente trabaje de verdad, no solo en la demo.',
           whoLabel: 'Para quién',
           who: 'Los equipos que salieron de la hackatón y quieren terminar lo que empezaron.',
-          cta: 'Únete'
+          details: {
+            goal: 'Que lo que empezaste en la hackatón se vuelva parte de tu trabajo diario.',
+            activities: [
+              'Sesiones con un mentor que ya lo hizo, para ti o para tu equipo.',
+              'Revisan juntos lo que entrega el agente y ajustan las instrucciones hasta que funcione de verdad.',
+              'Dejan documentado el proceso para que otros en tu organización lo repitan.'
+            ],
+            expect: 'Varias semanas, a tu ritmo. Para quienes ya pasaron por una hackatón.'
+          }
         },
         {
+          id: 'demo-nights',
           n: '03',
           title: 'Demo Nights',
           body: 'Entre 2 y 5 minutos: muestras la herramienta que te ha sido útil en tu trabajo y cuentas cómo llegaste ahí.',
           whoLabel: 'Para quién',
           who: 'Quien ya armó algo y quiere enseñarlo, o aprender del intento de otro.',
-          cta: 'Únete'
+          details: {
+            goal: 'Aprender de lo que otros ya están haciendo, y mostrar lo tuyo.',
+            activities: [
+              'Demostraciones de 2 a 5 minutos: qué tarea, con qué herramienta, qué salió mal y cómo lo resolviste.',
+              'Preguntas al final de cada demo.',
+              'Conversación abierta para conocer a gente que resuelve problemas parecidos.'
+            ],
+            expect: 'Una noche, abierta a cualquiera. Para mirar no hace falta inscribirse; para presentar, sí.'
+          }
         }
       ],
+      dialog: {
+        open: 'Ver detalles',
+        goalLabel: 'El objetivo',
+        activitiesLabel: 'Qué hacemos',
+        expectLabel: 'Qué esperar',
+        join: 'Únete',
+        close: 'Cerrar'
+      },
       workshops: {
         label: 'Talleres',
         text: 'para equipos y organizaciones: una sesión práctica a la medida de lo que ya hacen.',
@@ -617,8 +671,8 @@ export const copy: Record<Locale, PageCopy> = {
       items: [
         {
           icon: 'open',
-          title: 'Código abierto',
-          body: 'Usamos y enseñamos herramientas que puedes revisar, copiar y mejorar.'
+          title: 'Abierto primero',
+          body: 'Empezamos por herramientas de código abierto, que puedes revisar, adaptar y usar sin pagar. Si ya tienes una suscripción a ChatGPT o Claude, también te enseñamos a sacarles provecho y te decimos con claridad qué ganas y qué cedes con cada una.'
         },
         {
           icon: 'agency',
@@ -627,28 +681,28 @@ export const copy: Record<Locale, PageCopy> = {
         },
         {
           icon: 'plain',
-          title: 'Texto plano',
-          body: 'Tus documentos quedan en archivos que abres con cualquier cosa, hoy y en diez años.'
+          title: 'Tus archivos son tuyos',
+          body: 'Tu trabajo vive en tu carpeta, en formatos abiertos que abres con cualquier programa hoy y en diez años. Cuando necesitas Word, Excel o PowerPoint, el agente los genera desde ahí, así que el archivo final no te ata a ninguna plataforma.'
         },
         {
           icon: 'resilient',
           title: 'Resiliencia',
-          body: 'Todo funciona en una laptop modesta.'
+          body: 'Todo lo que enseñamos funciona en una laptop modesta, y siempre hay una opción gratuita para empezar.'
         }
       ]
     },
     north: {
       eyebrow: 'El norte',
       titleLines: [
-        { text: 'Una red de bibliotecas públicas' },
-        { text: 'del siglo XXI.', em: true }
+        { text: 'Mismo salón, mismos recursos,' },
+        { text: 'la misma oportunidad.', em: true }
       ],
       lead:
-        'Empezamos con hackatones y mentorías. Lo que sigue son alianzas con universidades, para que esto viva al lado de la educación formal. Y el norte: bibliotecas públicas donde cualquiera pueda sentarse, delegarle su primer trabajo a un agente y salir con algo propio.',
+        'Hay bibliotecas públicas donde no importa quién seas: prestan computadoras, enseñan a quien nunca ha tocado un teclado y te sientan al lado de gente que resuelve lo mismo que tú. Conocimiento, redes, infraestructura y cultura tecnológica, abiertos a cualquiera. Eso queremos para Venezuela. Empezamos pequeño; el norte es un espacio así en cada ciudad.',
       horizons: [
-        { label: 'Hoy', text: 'Hackatones, mentorías y Demo Nights.' },
-        { label: 'Después', text: 'Alianzas con universidades, al lado de la educación formal.' },
-        { label: 'Norte', text: 'Una red de bibliotecas públicas del siglo XXI, en todo el país.' }
+        { label: 'Hoy', text: 'Hackatones, mentorías y Demo Nights, en grupos pequeños.' },
+        { label: 'Después', text: 'Alianzas con universidades y organizaciones, al lado de la educación formal.' },
+        { label: 'Norte', text: 'Un espacio abierto en cada ciudad, donde no importa quién eres o de dónde vienes, sino a dónde quieres llegar.' }
       ],
       map: {
         alt: 'Mapa de Venezuela con nodos de bibliotecas en Caracas, Barquisimeto, Maracaibo, Mérida, Cumaná y Ciudad Guayana, y dos previstos en San Cristóbal y Puerto Ayacucho. La Zona en Reclamación aparece rayada. Son nodos ilustrativos, no sedes confirmadas.',
@@ -676,9 +730,9 @@ export const copy: Record<Locale, PageCopy> = {
     },
     talk: {
       eyebrow: 'Escúchalo',
-      title: 'La idea completa, en cinco minutos',
+      title: 'Lo que no nos pueden quitar',
       body:
-        'Por qué el salto del chatbot al agente ya está al alcance de cualquiera en Venezuela, y qué estamos haciendo con eso.',
+        'De dónde viene esto: una generación que salió a estudiar y volvió a enseñar, un país que perdió ese camino, y la pregunta de qué podemos hacer mientras tanto. Habilidades que nadie te puede quitar y oportunidades al alcance de cualquiera.',
       label: 'Ignite Talk · Oslo Freedom Forum',
       talkTitle: '“What They Can’t Take” · David Aragort',
       play: 'Ver la charla',
@@ -920,33 +974,33 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'The shift',
       titleLines: [{ text: 'From asking' }, { text: 'to delegating', em: true }],
       lead:
-        'The frontier is no longer about asking a chatbot better questions. It is about handing an agent the work and checking what comes back: what used to take far too much of your time gets done while you do something else, and the judgement stays yours. It is already within reach for anyone in Venezuela, with free tools.',
+        'Chatbots already read your documents and hand files back. The difference is how much of the work is still yours. An agent works in your folder, follows a plan and checks its own work: what used to take far too much of your time gets done while you do something else, and the judgement stays yours.',
       task: 'The same task: *merge three months of spending and decide where to cut.*',
       columns: [
         {
           kind: 'chatbot',
           title: 'With a chatbot',
-          sub: 'You ask, it answers, and the work is still yours.',
+          sub: 'It reads your files and hands documents back now too. But every fix and every file still goes through you.',
           steps: [
-            { actor: 'You', text: 'You ask it how to compare the three months.' },
-            { actor: 'Chatbot', text: 'It explains the method; you paste the numbers.' },
-            { actor: 'You', text: 'You copy and paste the sheets, column by column.' },
-            { actor: 'You', text: 'You check by hand what went up and what went down.' },
-            { actor: 'You', text: 'You write the summary and save it.' }
+            { actor: 'You', text: 'You upload the three sheets and ask for the summary.' },
+            { actor: 'Chatbot', text: 'It hands back a summary and a file to download.' },
+            { actor: 'You', text: 'You check it and see it mixed up two categories.' },
+            { actor: 'You', text: 'You explain, upload again, download again.' },
+            { actor: 'You', text: 'You save it in your folder. Next month, you start from scratch.' }
           ],
           tallyCount: '4 of 5',
-          tallyText: 'steps you did yourself.'
+          tallyText: 'steps go through you.'
         },
         {
           kind: 'agent',
           title: 'With an agent',
-          sub: 'You delegate, it plans and executes, you decide.',
+          sub: 'It works in your folder, follows a plan and checks what it does. You decide.',
           steps: [
-            { actor: 'You', text: 'You hand it the folder and say what you need.' },
-            { actor: 'Agent', text: 'It builds a plan and shows it to you.', done: true },
-            { actor: 'Agent', text: 'It reads the three sheets and reconciles the categories.', done: true },
-            { actor: 'Agent', text: 'It writes the summary and saves it to your folder.', done: true },
-            { actor: 'You', text: 'You check it and decide where to cut.' }
+            { actor: 'You', text: 'You point it at the folder and say what you need.' },
+            { actor: 'Agent', text: 'It builds a plan and shows it to you before starting.', done: true },
+            { actor: 'Agent', text: 'It opens the three sheets, reconciles the categories and checks the totals.', done: true },
+            { actor: 'Agent', text: 'It saves the summary and the Excel file in your folder, next to the originals.', done: true },
+            { actor: 'You', text: 'You check it and decide where to cut. Next month, you ask in one line.' }
           ],
           tallyCount: '2 of 5',
           tallyText: 'steps are yours: asking and deciding.'
@@ -959,30 +1013,68 @@ export const copy: Record<Locale, PageCopy> = {
       lead: 'Come in through whichever one is closest to you. None of them asks you to know how to code.',
       doors: [
         {
+          id: 'hackaton',
           n: '01',
           title: 'Hackathon for non-technical people',
           body: 'In one weekend you learn to use your first agent and walk out with it working, even if you have never written a line of code.',
           whoLabel: 'Who it is for',
           who: 'Office workers, teachers, shopkeepers, teams inside organisations.',
-          cta: 'Join'
+          // Approved in David's copy review, 2026-09-11. Format, venue, places
+          // and cost are still to confirm before launch.
+          details: {
+            goal: 'That you leave using an agent on a real task from your work or your studies.',
+            activities: [
+              'We open with a live demo: the same task, with a chatbot and with an agent.',
+              'You pick a task that eats your time today and work on it in a small team.',
+              'Mentors help you install the agent and give it its first instructions, using sample files.',
+              'At the close, each team shows what it got done.'
+            ],
+            expect: 'One weekend, in person. You do not need to know how to code. Bring your laptop; a modest one will do.'
+          }
         },
         {
+          id: 'mentorias',
           n: '02',
           title: 'Mentorships',
           body: 'Someone who has already done it works alongside your team until the agent really works, not just in the demo.',
           whoLabel: 'Who it is for',
           who: 'The teams that came out of the hackathon and want to finish what they started.',
-          cta: 'Join'
+          details: {
+            goal: 'That what you started at the hackathon becomes part of your everyday work.',
+            activities: [
+              'Sessions with a mentor who has done it before, for you or your team.',
+              'Together you review what the agent hands back and adjust the instructions until it really works.',
+              'You write the process down so others in your organisation can repeat it.'
+            ],
+            expect: 'Several weeks, at your pace. For people who have already been through a hackathon.'
+          }
         },
         {
+          id: 'demo-nights',
           n: '03',
           title: 'Demo Nights',
           body: 'Two to five minutes: you show the tool that has been useful in your work, and how you got there.',
           whoLabel: 'Who it is for',
           who: 'Anyone who has built something and wants to show it, or to learn from someone else\u2019s attempt.',
-          cta: 'Join'
+          details: {
+            goal: 'Learn from what others are already doing, and show your own.',
+            activities: [
+              'Two-to-five-minute demos: which task, which tool, what went wrong and how you fixed it.',
+              'Questions after each demo.',
+              'Open conversation to meet people solving similar problems.'
+            ],
+            expect: 'One evening, open to anyone. You do not need to sign up to watch; you do to present.'
+          }
         }
       ],
+      dialog: {
+        open: 'See details',
+        goalLabel: 'The goal',
+        activitiesLabel: 'What we do',
+        expectLabel: 'What to expect',
+        join: 'Join',
+        close: 'Close'
+      },
       workshops: {
         label: 'Workshops',
         text: 'for teams and organisations: a practical session shaped around the work they already do.',
@@ -996,8 +1088,8 @@ export const copy: Record<Locale, PageCopy> = {
       items: [
         {
           icon: 'open',
-          title: 'Open source',
-          body: 'We use and teach tools you can read, copy and improve.'
+          title: 'Open first',
+          body: 'We start with open-source tools you can inspect, adapt and use without paying. If you already pay for ChatGPT or Claude, we also teach you to get the most out of them, and tell you plainly what you gain and what you give up with each.'
         },
         {
           icon: 'agency',
@@ -1006,28 +1098,28 @@ export const copy: Record<Locale, PageCopy> = {
         },
         {
           icon: 'plain',
-          title: 'Plain text',
-          body: 'Your documents stay in files you can open with anything, today and in ten years.'
+          title: 'Your files are yours',
+          body: 'Your work lives in your folder, in open formats any program can open today and in ten years. When you need Word, Excel or PowerPoint, the agent produces them from there, so the final file does not tie you to any platform.'
         },
         {
           icon: 'resilient',
           title: 'Resilience',
-          body: 'Everything works on a modest laptop.'
+          body: 'Everything we teach runs on a modest laptop, and there is always a free way to start.'
         }
       ]
     },
     north: {
       eyebrow: 'Where this goes',
       titleLines: [
-        { text: 'A network of public libraries' },
-        { text: 'for this century.', em: true }
+        { text: 'Same room, same resources,' },
+        { text: 'same shot.', em: true }
       ],
       lead:
-        'We start with hackathons and mentorships. Next come partnerships with universities, so this lives alongside formal education. And the horizon: public libraries where anyone can sit down, hand an agent their first piece of work, and walk out with something of their own.',
+        'There are public libraries where it does not matter who you are: they lend computers, teach people who have never touched a keyboard, and sit you next to people working on the same problems as you. Knowledge, networks, infrastructure and a culture of technology, open to anyone. That is what we want for Venezuela. We are starting small; the horizon is a space like that in every city.',
       horizons: [
-        { label: 'Today', text: 'Hackathons, mentorships and Demo Nights.' },
-        { label: 'Next', text: 'Partnerships with universities, alongside formal education.' },
-        { label: 'Horizon', text: 'A network of twenty-first-century public libraries, across the country.' }
+        { label: 'Today', text: 'Hackathons, mentorships and Demo Nights, in small groups.' },
+        { label: 'Next', text: 'Partnerships with universities and organisations, alongside formal education.' },
+        { label: 'Horizon', text: 'An open space in every city, where what matters is not who you are or where you come from, but where you want to go.' }
       ],
       map: {
         alt: 'A map of Venezuela with library nodes in Caracas, Barquisimeto, Maracaibo, Mérida, Cumaná and Ciudad Guayana, and two planned in San Cristóbal and Puerto Ayacucho. The Zona en Reclamación is drawn hatched. These are illustrative nodes, not confirmed sites.',
@@ -1055,9 +1147,9 @@ export const copy: Record<Locale, PageCopy> = {
     },
     talk: {
       eyebrow: 'Hear it',
-      title: 'The whole idea, in five minutes',
+      title: 'What they can’t take',
       body:
-        'Why the jump from chatbot to agent is already within reach for anyone in Venezuela, and what we are doing with it.',
+        'Where this comes from: a generation that went abroad to study and came back to teach, a country that lost that path, and the question of what we can do in the meantime. Skills nobody can take from you, and opportunities within anyone’s reach.',
       label: 'Ignite Talk · Oslo Freedom Forum',
       talkTitle: '“What They Can’t Take” · David Aragort',
       play: 'Play the talk',

@@ -335,23 +335,88 @@ function renderNetwork(page: PageCopy): string {
 }
 
 function renderHero(page: PageCopy): string {
+  // Each line of the headline is its own block, so each sits on one line at
+  // desktop sizes and rises on its own when the page opens.
   const headline = page.hero.titleLines
-    .map((line) => (line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)))
-    .join('<br />');
+    .map(
+      (line) =>
+        `<span class="hero-line"><span class="hero-line-in">${line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)}</span></span>`
+    )
+    .join(' ');
 
   return `
-    <section class="hero shell">
-      <div class="hero-copy">
-        <p class="eyebrow">${page.hero.eyebrow}</p>
-        <h1 class="display hero-title">${headline}</h1>
-        <p class="lead hero-manifesto">${inline(page.hero.manifesto)}</p>
-        <div class="hero-actions">
-          <a class="button button--fill" href="#unete">${page.hero.primaryCta}</a>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="shell hero-grid">
+        <div class="hero-head">
+          <p class="eyebrow">${page.hero.eyebrow}</p>
+          <h1 class="display hero-title" id="hero-title">${headline}</h1>
         </div>
+        <div class="hero-copy">
+          <p class="lead hero-manifesto">${inline(page.hero.manifesto)}</p>
+          <div class="hero-actions">
+            <a class="button button--fill" href="#unete">${page.hero.primaryCta}</a>
+          </div>
+        </div>
+        ${renderAgentWindow(page)}
+        ${renderNetwork(page)}
       </div>
-      ${renderAgentWindow(page)}
-      ${renderNetwork(page)}
     </section>
+  `;
+}
+
+/**
+ * Every section opens the same way: eyebrow and title on the left, the lead
+ * on the right, together spanning the whole measure. One pattern means every
+ * section is as wide as every other, and a lead never breaks early for want
+ * of a column (David's review, 2026-09-11).
+ */
+function renderSecHead(options: {
+  eyebrow: string;
+  title: string;
+  id: string;
+  lead?: string;
+}): string {
+  // A one-sentence lead sits beside its title instead of under it: offset
+  // below a title, a single line reads as stranded.
+  const short = options.lead !== undefined && options.lead.length <= 120;
+
+  return `
+    <header class="sec-head${short ? ' sec-head--inline' : ''}" data-reveal>
+      <div class="sec-head-main">
+        <p class="eyebrow">${inline(options.eyebrow)}</p>
+        <h2 class="section-title" id="${options.id}">${options.title}</h2>
+      </div>
+      ${options.lead ? `<p class="lead sec-head-lead">${inline(options.lead)}</p>` : ''}
+    </header>
+  `;
+}
+
+/** Title lines joined, the `em` line set in the italic. */
+function titleFrom(lines: { text: string; em?: boolean }[]): string {
+  return lines.map((line) => (line.em ? `<em>${inline(line.text)}</em>` : inline(line.text))).join(' ');
+}
+
+/**
+ * La vibración: a full-bleed band of fine vertical lines, two layers at
+ * slightly different pitch. As the band crosses the screen the top layer
+ * slides, and the interference between them moves: the moiré of the
+ * Venezuelan kinetic tradition (Soto's vibrations, Cruz-Diez's inductions),
+ * drawn in the page's own two colours. It is the page's signature and says
+ * nothing, so it is hidden from the tree. Pattern ids carry the band's name
+ * because the three bands share one document.
+ */
+function renderBand(name: string): string {
+  return `
+    <div class="band band--${name}" data-band aria-hidden="true">
+      <svg class="band-svg" preserveAspectRatio="none" focusable="false">
+        <defs>
+          <pattern id="band-${name}-a" width="7" height="10" patternUnits="userSpaceOnUse"><rect class="band-line-a" width="1.4" height="10"/></pattern>
+          <pattern id="band-${name}-b" width="7.6" height="10" patternUnits="userSpaceOnUse"><rect class="band-line-b" width="1.4" height="10"/></pattern>
+        </defs>
+        <rect class="band-layer band-layer--a" width="100%" height="100%" fill="url(#band-${name}-a)"/>
+        <rect class="band-layer band-layer--b" x="-120" width="calc(100% + 240px)" height="100%" fill="url(#band-${name}-b)"/>
+      </svg>
+    </div>
   `;
 }
 
@@ -391,23 +456,19 @@ function renderShiftColumn(column: ShiftColumn): string {
 
 function renderShift(page: PageCopy): string {
   const { shift } = page;
-  const title = shift.titleLines
-    .map((line) => (line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)))
-    .join(' ');
 
   return `
-    <section class="shift shell" id="cambio" aria-labelledby="cambio-title">
-      <p class="eyebrow">${inline(shift.eyebrow)}</p>
-      <h2 class="section-title shift-title" id="cambio-title">${title}</h2>
-      <p class="lead shift-lead">${inline(shift.lead)}</p>
-      <p class="shift-task">${inline(shift.task)}</p>
-      <div class="shift-cmp">
-        ${shift.columns.map((column) => renderShiftColumn(column)).join('')}
+    <section class="sec shift" id="cambio" aria-labelledby="cambio-title">
+      <div class="shell">
+        ${renderSecHead({ eyebrow: shift.eyebrow, title: titleFrom(shift.titleLines), id: 'cambio-title', lead: shift.lead })}
+        <p class="shift-task">${inline(shift.task)}</p>
+        <div class="shift-cmp">
+          ${shift.columns.map((column) => renderShiftColumn(column)).join('')}
+        </div>
       </div>
     </section>
   `;
 }
-
 
 /**
  * "Tres puertas": the three ways in, as in the approved mockup — a numbered
@@ -415,18 +476,49 @@ function renderShift(page: PageCopy): string {
  * themselves before they read the title. Every door leads to the same form,
  * so nobody has to decide which address to write to.
  */
-function renderDoor(door: Door, order: number): string {
+function renderDoor(page: PageCopy, door: Door, order: number): string {
   return `
     <article class="door" data-reveal data-reveal-delay="${order * 90}">
-      <p class="door-n">${inline(door.n)}</p>
+      <p class="door-n" aria-hidden="true">${inline(door.n)}</p>
       <h3 class="door-title">${inline(door.title)}</h3>
       <p class="door-body">${inline(door.body)}</p>
       <p class="door-who">
         <span class="door-who-label">${inline(door.whoLabel)}</span>
         ${inline(door.who)}
       </p>
-      <a class="door-cta link" href="#unete">${inline(door.cta)} <span aria-hidden="true">&rarr;</span></a>
+      <button class="door-cta" type="button" data-dialog-open="door-${door.id}"
+              aria-haspopup="dialog">${inline(page.doors.dialog.open)} <span class="visually-hidden">· ${inline(door.title)}</span><span class="door-cta-arrow" aria-hidden="true">&rarr;</span></button>
     </article>
+  `;
+}
+
+/**
+ * The door, opened: goal, activities, what to expect, and the way in. A
+ * native <dialog>, so focus is trapped and Escape closes it without a line of
+ * our own; main.ts only calls showModal() and closes it on the backdrop.
+ */
+function renderDoorDialog(page: PageCopy, door: Door): string {
+  const { dialog } = page.doors;
+
+  return `
+    <dialog class="door-dialog" id="door-${door.id}" aria-labelledby="door-${door.id}-title">
+      <div class="dlg">
+        <button class="dlg-close" type="button" data-dialog-close aria-label="${inline(dialog.close)}">
+          <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+        </button>
+        <p class="dlg-n" aria-hidden="true">${inline(door.n)}</p>
+        <h3 class="dlg-title" id="door-${door.id}-title">${inline(door.title)}</h3>
+        <p class="dlg-goal"><span class="dlg-label">${inline(dialog.goalLabel)}</span>${inline(door.details.goal)}</p>
+        <div class="dlg-block">
+          <p class="dlg-label">${inline(dialog.activitiesLabel)}</p>
+          <ol class="dlg-list">
+            ${door.details.activities.map((item) => `<li>${inline(item)}</li>`).join('')}
+          </ol>
+        </div>
+        <p class="dlg-expect"><span class="dlg-label">${inline(dialog.expectLabel)}</span>${inline(door.details.expect)}</p>
+        <a class="button button--fill dlg-join" href="#unete" data-dialog-join>${inline(dialog.join)}</a>
+      </div>
+    </dialog>
   `;
 }
 
@@ -434,17 +526,18 @@ function renderDoors(page: PageCopy): string {
   const { doors } = page;
 
   return `
-    <section class="doors shell" id="programa" aria-labelledby="programa-title">
-      <p class="eyebrow">${inline(doors.eyebrow)}</p>
-      <h2 class="section-title doors-title" id="programa-title">${inline(doors.title)}</h2>
-      <p class="lead doors-lead">${inline(doors.lead)}</p>
-      <div class="door-grid">
-        ${doors.doors.map((door, order) => renderDoor(door, order)).join('')}
+    <section class="sec doors" id="programa" aria-labelledby="programa-title">
+      <div class="shell">
+        ${renderSecHead({ eyebrow: doors.eyebrow, title: inline(doors.title), id: 'programa-title', lead: doors.lead })}
+        <div class="door-grid">
+          ${doors.doors.map((door, order) => renderDoor(page, door, order)).join('')}
+        </div>
+        <p class="doors-extra">
+          <b>${inline(doors.workshops.label)}</b> ${inline(doors.workshops.text)}
+          <a class="link" href="mailto:${page.footer.contact}">${inline(doors.workshops.cta)} <span aria-hidden="true">&rarr;</span></a>
+        </p>
       </div>
-      <p class="doors-extra">
-        <b>${inline(doors.workshops.label)}</b> ${inline(doors.workshops.text)}
-        <a class="link" href="#unete">${inline(doors.workshops.cta)} <span aria-hidden="true">&rarr;</span></a>
-      </p>
+      ${doors.doors.map((door) => renderDoorDialog(page, door)).join('')}
     </section>
   `;
 }
@@ -458,7 +551,7 @@ function renderDoors(page: PageCopy): string {
 const PRINCIPLE_ICONS: Record<Principle['icon'], string> = {
   open: `<path d="M23 9.5A10 10 0 1 0 25 15"/><circle class="pr-fill" cx="25" cy="15" r="2.2"/>`,
   agency: `<path d="M3 15h15M13 10l5 5-5 5"/><rect x="21" y="7" width="7" height="16" rx="1"/>`,
-  plain: `<path d="M4 8h22M4 15h16M4 22h19"/>`,
+  plain: `<path d="M3.5 8.5A1.5 1.5 0 0 1 5 7h6l3 3h11a1.5 1.5 0 0 1 1.5 1.5V23a1.5 1.5 0 0 1-1.5 1.5H5A1.5 1.5 0 0 1 3.5 23z"/><rect class="pr-fill" x="11" y="15.5" width="8" height="2.2" rx=".6"/>`,
   resilient: `<rect class="pr-fill" x="3" y="19" width="4" height="7" rx=".5"/><rect class="pr-fill" x="10" y="14" width="4" height="12" rx=".5"/><rect x="17" y="9" width="4" height="17" rx=".5"/><rect x="24" y="4" width="4" height="22" rx=".5"/>`
 };
 
@@ -482,14 +575,10 @@ function renderPrinciples(page: PageCopy): string {
     .join('');
 
   return `
-    <section class="principles" id="principios" aria-labelledby="principios-title">
-      <div class="shell principles-grid">
-        <div class="principles-intro">
-          <p class="eyebrow">${inline(principles.eyebrow)}</p>
-          <h2 class="principles-title" id="principios-title">${inline(principles.title)}</h2>
-          <p class="principles-lead">${inline(principles.lead)}</p>
-        </div>
-        ${items}
+    <section class="sec principles" id="principios" aria-labelledby="principios-title">
+      <div class="shell">
+        ${renderSecHead({ eyebrow: principles.eyebrow, title: inline(principles.title), id: 'principios-title', lead: principles.lead })}
+        <div class="pr-grid">${items}</div>
       </div>
     </section>
   `;
@@ -563,30 +652,27 @@ function renderMap(page: PageCopy): string {
 
 function renderNorth(page: PageCopy): string {
   const { north } = page;
-  const title = north.titleLines
-    .map((line) => (line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)))
-    .join(' ');
 
   return `
-    <section class="north shell" id="norte" aria-labelledby="norte-title">
-      <div class="north-copy">
-        <p class="eyebrow">${inline(north.eyebrow)}</p>
-        <h2 class="section-title north-title" id="norte-title">${title}</h2>
-        <p class="lead north-lead">${inline(north.lead)}</p>
-        <ul class="hz">
-          ${north.horizons
-            .map(
-              (horizon) => `
-                <li class="hz-row">
-                  <span class="hz-label">${inline(horizon.label)}</span>
-                  <span class="hz-text">${inline(horizon.text)}</span>
-                </li>
-              `
-            )
-            .join('')}
-        </ul>
+    <section class="sec north" id="norte" aria-labelledby="norte-title">
+      <div class="shell">
+        ${renderSecHead({ eyebrow: north.eyebrow, title: titleFrom(north.titleLines), id: 'norte-title', lead: north.lead })}
+        <div class="north-body">
+          <ol class="hz">
+            ${north.horizons
+              .map(
+                (horizon, order) => `
+                  <li class="hz-row" data-reveal data-reveal-delay="${order * 120}">
+                    <span class="hz-label">${inline(horizon.label)}</span>
+                    <span class="hz-text">${inline(horizon.text)}</span>
+                  </li>
+                `
+              )
+              .join('')}
+          </ol>
+          ${renderMap(page)}
+        </div>
       </div>
-      ${renderMap(page)}
     </section>
   `;
 }
@@ -602,30 +688,28 @@ function renderTalk(page: PageCopy): string {
   const { talk } = page;
 
   return `
-    <section class="talk shell" id="charla" aria-labelledby="charla-title">
-      <div class="talk-copy">
-        <p class="eyebrow">${inline(talk.eyebrow)}</p>
-        <h2 class="section-title talk-title" id="charla-title">${inline(talk.title)}</h2>
-        <p class="lead talk-body">${inline(talk.body)}</p>
+    <section class="sec talk" id="charla" aria-labelledby="charla-title">
+      <div class="shell">
+        ${renderSecHead({ eyebrow: talk.eyebrow, title: inline(talk.title), id: 'charla-title', lead: talk.body })}
+        <figure class="talk-figure" data-reveal>
+          <div class="talk-frame" data-talk>
+            <button class="talk-play" type="button" data-talk-play aria-label="${inline(talk.play)}">
+              <picture>
+                <source srcset="/ignite-poster.webp" type="image/webp" />
+                <img class="talk-poster" src="/ignite-poster.jpg" alt="${inline(talk.posterAlt)}"
+                     width="960" height="540" loading="lazy" decoding="async" />
+              </picture>
+              <span class="talk-play-mark" aria-hidden="true"></span>
+            </button>
+          </div>
+          <figcaption class="talk-meta">
+            <span class="talk-label">${inline(talk.label)}</span>
+            <span class="talk-name">${inline(talk.talkTitle)}</span>
+            <span class="talk-privacy">${inline(talk.privacy)}</span>
+            <a class="talk-watch link" href="https://www.youtube.com/watch?v=${TALK_VIDEO_ID}" target="_blank" rel="noopener">${inline(talk.watch)} <span aria-hidden="true">&nearr;</span></a>
+          </figcaption>
+        </figure>
       </div>
-      <figure class="talk-figure">
-        <div class="talk-frame" data-talk>
-          <button class="talk-play" type="button" data-talk-play aria-label="${inline(talk.play)}">
-            <picture>
-              <source srcset="/ignite-poster.webp" type="image/webp" />
-              <img class="talk-poster" src="/ignite-poster.jpg" alt="${inline(talk.posterAlt)}"
-                   width="960" height="540" loading="lazy" decoding="async" />
-            </picture>
-            <span class="talk-play-mark" aria-hidden="true"></span>
-          </button>
-        </div>
-        <figcaption class="talk-meta">
-          <span class="talk-label">${inline(talk.label)}</span>
-          <span class="talk-name">${inline(talk.talkTitle)}</span>
-          <span class="talk-privacy">${inline(talk.privacy)}</span>
-          <a class="talk-watch link" href="https://www.youtube.com/watch?v=${TALK_VIDEO_ID}" target="_blank" rel="noopener">${inline(talk.watch)} <span aria-hidden="true">&nearr;</span></a>
-        </figcaption>
-      </figure>
     </section>
   `;
 }
@@ -644,10 +728,17 @@ function renderForm(page: PageCopy, locale: Locale): string {
   const { form } = page;
 
   return `
-    <section class="join shell" id="unete" aria-labelledby="unete-title">
-      <p class="eyebrow">${inline(form.eyebrow)}</p>
-      <h2 class="section-title join-title" id="unete-title">${inline(form.title)}</h2>
-      <p class="lead join-lead">${inline(form.lead)}</p>
+    <section class="sec join" id="unete" aria-labelledby="unete-title">
+      <div class="shell join-grid">
+      <div class="join-copy" data-reveal>
+        <p class="eyebrow">${inline(form.eyebrow)}</p>
+        <h2 class="display join-title" id="unete-title">${inline(form.title)}</h2>
+        <p class="lead join-lead">${inline(form.lead)}</p>
+        <p class="join-allies">
+          ${inline(form.allies)}
+          <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
+        </p>
+      </div>
 
       <form class="join-form" data-join novalidate>
         <p class="field">
@@ -694,18 +785,15 @@ function renderForm(page: PageCopy, locale: Locale): string {
 
         <p class="join-status" role="status" data-join-status></p>
       </form>
-
-      <p class="join-allies">
-        ${inline(form.allies)}
-        <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
-      </p>
+      </div>
     </section>
   `;
 }
 
 function renderFooter(page: PageCopy, locale: Locale): string {
   return `
-    <footer class="site-footer shell">
+    <footer class="site-footer">
+      <div class="shell footer-grid">
       <div class="footer-brand">
         <span class="wordmark">Ateneo Abierto</span>
         <!-- The header's section links are hidden on a phone, where it keeps
@@ -727,6 +815,7 @@ function renderFooter(page: PageCopy, locale: Locale): string {
           ${page.footer.contactLabel}:
           <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
         </p>
+      </div>
       </div>
     </footer>
   `;
@@ -804,11 +893,14 @@ export function renderPage(locale: Locale): string {
     ${renderHeader(page, locale)}
     <main id="contenido">
       ${renderHero(page)}
+      ${renderBand('one')}
       ${renderShift(page)}
       ${renderDoors(page)}
       ${renderPrinciples(page)}
+      ${renderBand('two')}
       ${renderNorth(page)}
       ${renderTalk(page)}
+      ${renderBand('three')}
       ${renderForm(page, locale)}
     </main>
     ${renderFooter(page, locale)}

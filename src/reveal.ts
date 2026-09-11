@@ -87,3 +87,51 @@ export function initProgressRail(rail: HTMLElement | null): () => void {
     window.removeEventListener('resize', onScroll);
   };
 }
+
+/**
+ * Slides the top layer of each kinetic band as it crosses the screen, so its
+ * moiré moves with the reader. One scroll listener, one frame per scroll, and
+ * only the bands on screen are touched. The caller skips this under reduced
+ * motion and saveData; the bands then stand still, which is still a moiré.
+ */
+export function initBands(bands: HTMLElement[], travel = 160): () => void {
+  if (bands.length === 0) {
+    return () => {};
+  }
+
+  let frame = 0;
+
+  const update = () => {
+    frame = 0;
+    const height = window.innerHeight;
+
+    for (const band of bands) {
+      const rect = band.getBoundingClientRect();
+      if (rect.bottom < 0 || rect.top > height) {
+        continue;
+      }
+
+      // -0.5 as the band enters at the bottom, +0.5 as it leaves at the top.
+      const position = 0.5 - (rect.top + rect.height / 2) / height;
+      band.style.setProperty('--band-shift', `${(position * travel).toFixed(1)}px`);
+    }
+  };
+
+  const onScroll = () => {
+    if (frame === 0) {
+      frame = window.requestAnimationFrame(update);
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+
+  return () => {
+    if (frame !== 0) {
+      window.cancelAnimationFrame(frame);
+    }
+    window.removeEventListener('scroll', onScroll);
+    window.removeEventListener('resize', onScroll);
+  };
+}
