@@ -407,7 +407,7 @@ export const copy: Record<Locale, PageCopy> = {
       manifesto:
         'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega un documento. Aprende a delegar en hackatones y Demo Nights en Venezuela, con herramientas libres y sin pagar nada para empezar.',
       primaryCta: 'Únete',
-      byline: 'Una iniciativa de David Aragort',
+      byline: 'La idea, en 5 minutos',
       bylineLink: 'Mira la charla',
       windowCaption:
         'Elige otra tarea en la lista, o toca «Ver por dentro» para ver lo que el agente hace en tu computadora. Es una demostración local: no se conecta a nada y las cifras son de ejemplo.'
@@ -917,7 +917,7 @@ export const copy: Record<Locale, PageCopy> = {
       manifesto:
         'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan, and hands you a document. Learn to delegate at hackathons and Demo Nights in Venezuela, with free and open tools and at no cost to start.',
       primaryCta: 'Join',
-      byline: 'An initiative by David Aragort',
+      byline: 'The idea, in 5 minutes',
       bylineLink: 'Watch the talk',
       windowCaption:
         'Pick another task from the list, or press “Show what it runs” to see what the agent does on your computer. This is a local demo: it connects to nothing, and the figures are examples.'
