@@ -619,17 +619,19 @@ export const copy: Record<Locale, PageCopy> = {
           id: 'mentorias',
           n: '02',
           title: 'Mentorías',
-          body: 'Alguien que ya lo hizo acompaña a tu equipo hasta que el agente trabaje de verdad, no solo en la demo.',
+          // Mentorships happen inside each hackathon, not as a sustained
+          // programme after it (David, 2026-09-11).
+          body: 'En cada hackatón, gente que ya usa agentes en su trabajo acompaña a los equipos para que salgan con algo que funciona de verdad, no solo en la demo.',
           whoLabel: 'Para quién',
-          who: 'Los equipos que salieron de la hackatón y quieren terminar lo que empezaron.',
+          who: 'Los equipos de cada hackatón, desde que eligen su tarea hasta que la presentan.',
           details: {
-            goal: 'Que lo que empezaste en la hackatón se vuelva parte de tu trabajo diario.',
+            goal: 'Que ningún equipo se quede trabado: cada uno sale de la hackatón con su agente funcionando.',
             activities: [
-              'Sesiones con un mentor que ya lo hizo, para ti o para tu equipo.',
-              'Revisan juntos lo que entrega el agente y ajustan las instrucciones hasta que funcione de verdad.',
-              'Dejan documentado el proceso para que otros en tu organización lo repitan.'
+              'Un mentor acompaña a cada equipo durante la hackatón.',
+              'Ayuda a elegir una tarea que se pueda resolver en un fin de semana.',
+              'Revisa con el equipo lo que entrega el agente y ajustan las instrucciones hasta que funcione.'
             ],
-            expect: 'Varias semanas, a tu ritmo. Para quienes ya pasaron por una hackatón.'
+            expect: 'Vienen incluidas en la hackatón: no hay que inscribirse aparte.'
           }
         },
         {
@@ -672,7 +674,7 @@ export const copy: Record<Locale, PageCopy> = {
         {
           icon: 'open',
           title: 'Abierto primero',
-          body: 'Empezamos por herramientas de código abierto, que puedes revisar, adaptar y usar sin pagar. Si ya tienes una suscripción a ChatGPT o Claude, también te enseñamos a sacarles provecho y te decimos con claridad qué ganas y qué cedes con cada una.'
+          body: 'Empezamos por herramientas de código abierto, que puedes usar sin pagar. Si ya tienes una suscripción a ChatGPT o Claude, también te enseñamos a sacarles provecho.'
         },
         {
           icon: 'agency',
@@ -751,7 +753,7 @@ export const copy: Record<Locale, PageCopy> = {
       emailPlaceholder: 'tucorreo@ejemplo.com',
       newsletterLegend: 'Idioma del boletín',
       newsletterOptions: { es: 'Español', en: 'Inglés' },
-      participateLabel: 'Quiero participar en una hackatón o una mentoría',
+      participateLabel: 'Quiero participar en una hackatón',
       submit: 'Únete',
       privacy: 'Solo usamos estos datos para escribirte.',
       allies: '¿Financias, enseñas o tienes un espacio? Escríbenos:',
@@ -1036,17 +1038,17 @@ export const copy: Record<Locale, PageCopy> = {
           id: 'mentorias',
           n: '02',
           title: 'Mentorships',
-          body: 'Someone who has already done it works alongside your team until the agent really works, not just in the demo.',
+          body: 'At every hackathon, people who already use agents in their work stay with the teams so they leave with something that really works, not just in the demo.',
           whoLabel: 'Who it is for',
-          who: 'The teams that came out of the hackathon and want to finish what they started.',
+          who: 'The teams at each hackathon, from choosing their task to presenting it.',
           details: {
-            goal: 'That what you started at the hackathon becomes part of your everyday work.',
+            goal: 'That no team gets stuck: each one leaves the hackathon with its agent working.',
             activities: [
-              'Sessions with a mentor who has done it before, for you or your team.',
-              'Together you review what the agent hands back and adjust the instructions until it really works.',
-              'You write the process down so others in your organisation can repeat it.'
+              'A mentor stays with each team through the hackathon.',
+              'They help pick a task that can be solved in a weekend.',
+              'They review what the agent hands back with the team and adjust the instructions until it works.'
             ],
-            expect: 'Several weeks, at your pace. For people who have already been through a hackathon.'
+            expect: 'Included in the hackathon: there is nothing extra to sign up for.'
           }
         },
         {
@@ -1089,7 +1091,7 @@ export const copy: Record<Locale, PageCopy> = {
         {
           icon: 'open',
           title: 'Open first',
-          body: 'We start with open-source tools you can inspect, adapt and use without paying. If you already pay for ChatGPT or Claude, we also teach you to get the most out of them, and tell you plainly what you gain and what you give up with each.'
+          body: 'We start with open-source tools you can use without paying. If you already pay for ChatGPT or Claude, we also teach you to get the most out of them.'
         },
         {
           icon: 'agency',
@@ -1168,7 +1170,7 @@ export const copy: Record<Locale, PageCopy> = {
       emailPlaceholder: 'you@example.com',
       newsletterLegend: 'Newsletter language',
       newsletterOptions: { es: 'Spanish', en: 'English' },
-      participateLabel: 'I want to take part in a hackathon or a mentorship',
+      participateLabel: 'I want to take part in a hackathon',
       submit: 'Join',
       privacy: 'We only use this to write to you.',
       allies: 'Do you fund, teach, or have a space? Write to us:',

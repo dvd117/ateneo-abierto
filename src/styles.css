@@ -1856,8 +1856,8 @@ main [id] {
 }
 
 /* The staircase as structure: on a wide screen the three doors climb, left
-   to right, the way the program does — hackathon, then mentorship, then
-   showing what you built. */
+   to right, the way the program does — the hackathon, the mentors inside
+   it, then showing what you built. */
 @media (min-width: 861px) {
   .door-grid {
     grid-template-columns: repeat(3, 1fr);
