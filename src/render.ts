@@ -1,4 +1,4 @@
-import { copy, type Door, type FileKind, type PageCopy, type Scene, type ShiftColumn } from './content';
+import { copy, type Door, type FileKind, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 
 /**
@@ -422,6 +422,52 @@ function renderDoors(page: PageCopy): string {
   `;
 }
 
+
+/**
+ * The principle icons: one line drawing each, in the same 1.6 px stroke as the
+ * mockup. Only the accent-filled parts carry `t-fill`, so ochre stays a signal
+ * rather than a decoration.
+ */
+const PRINCIPLE_ICONS: Record<Principle['icon'], string> = {
+  open: `<path d="M23 9.5A10 10 0 1 0 25 15"/><circle class="pr-fill" cx="25" cy="15" r="2.2"/>`,
+  agency: `<path d="M3 15h15M13 10l5 5-5 5"/><rect x="21" y="7" width="7" height="16" rx="1"/>`,
+  plain: `<path d="M4 8h22M4 15h16M4 22h19"/>`,
+  resilient: `<rect class="pr-fill" x="3" y="19" width="4" height="7" rx=".5"/><rect class="pr-fill" x="10" y="14" width="4" height="12" rx=".5"/><rect x="17" y="9" width="4" height="17" rx=".5"/><rect x="24" y="4" width="4" height="22" rx=".5"/>`
+};
+
+/**
+ * "Cómo trabajamos": the intro holds one column and the four principles run
+ * beside it, so the set reads as one row of steps rather than four more cards.
+ */
+function renderPrinciples(page: PageCopy): string {
+  const { principles } = page;
+
+  const items = principles.items
+    .map(
+      (item, order) => `
+        <div class="pr" data-reveal data-reveal-delay="${order * 80}">
+          <svg class="pr-icon" viewBox="0 0 30 30" aria-hidden="true" focusable="false">${PRINCIPLE_ICONS[item.icon]}</svg>
+          <h3 class="pr-title">${inline(item.title)}</h3>
+          <p class="pr-body">${inline(item.body)}</p>
+        </div>
+      `
+    )
+    .join('');
+
+  return `
+    <section class="principles" id="principios" aria-labelledby="principios-title">
+      <div class="shell principles-grid">
+        <div class="principles-intro">
+          <p class="eyebrow">${inline(principles.eyebrow)}</p>
+          <h2 class="principles-title" id="principios-title">${inline(principles.title)}</h2>
+          <p class="principles-lead">${inline(principles.lead)}</p>
+        </div>
+        ${items}
+      </div>
+    </section>
+  `;
+}
+
 function renderFooter(page: PageCopy, locale: Locale): string {
   return `
     <footer class="site-footer shell">
@@ -480,6 +526,7 @@ export function renderPage(locale: Locale): string {
       ${renderHero(page)}
       ${renderShift(page)}
       ${renderDoors(page)}
+      ${renderPrinciples(page)}
     </main>
     ${renderFooter(page, locale)}
   `;

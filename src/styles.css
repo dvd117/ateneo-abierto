@@ -1678,3 +1678,82 @@ button {
   font-weight: 600;
   color: var(--c-fg);
 }
+
+/* ---------- cómo trabajamos ----------
+   The mockup's row: the intro takes one column and the four principles sit
+   beside it as a band, tighter than the sections around them, so the page
+   breathes between the doors and the map. */
+
+.principles {
+  background: var(--c-bg-deep);
+  border-top: 1px solid var(--c-border);
+  padding-block: clamp(2.5rem, 6vw, 4.5rem);
+}
+
+.principles-grid {
+  display: grid;
+  gap: var(--gap-lg);
+}
+
+@media (min-width: 861px) {
+  .principles-grid {
+    grid-template-columns: 16rem repeat(4, 1fr);
+    gap: var(--gap-md);
+    align-items: start;
+  }
+}
+
+@media (min-width: 561px) and (max-width: 860px) {
+  .principles-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .principles-intro {
+    grid-column: 1 / -1;
+  }
+}
+
+.principles-title {
+  font: var(--t-h2);
+  margin-top: 0.7rem;
+}
+
+.principles-lead {
+  margin-top: 0.5rem;
+  font: var(--t-small);
+  color: var(--c-fg-2);
+  max-width: 34ch;
+}
+
+.pr-icon {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 0.85rem;
+}
+
+.pr-icon * {
+  fill: none;
+  stroke: var(--c-fg);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* The filled parts are the one ochre mark per icon. */
+.pr-icon .pr-fill {
+  fill: var(--c-accent);
+  stroke: var(--c-accent);
+}
+
+.pr-title {
+  font: var(--t-h3);
+  color: var(--c-fg);
+}
+
+.pr-body {
+  margin-top: 0.4rem;
+  font: var(--t-small);
+  color: var(--c-fg-2);
+  max-width: 34ch;
+}

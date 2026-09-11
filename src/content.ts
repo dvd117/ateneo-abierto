@@ -186,6 +186,24 @@ export type DoorsCopy = {
   };
 };
 
+/**
+ * One of the four principles. `icon` names a drawing in render.ts rather than
+ * carrying markup, so the copy file stays text.
+ */
+export type Principle = {
+  icon: 'open' | 'agency' | 'plain' | 'resilient';
+  title: string;
+  body: string;
+};
+
+/** Section four: what the program does differently, in four lines. */
+export type PrinciplesCopy = {
+  eyebrow: string;
+  title: string;
+  lead: string;
+  items: [Principle, Principle, Principle, Principle];
+};
+
 export type PageCopy = {
   languageLabel: string;
   languageSwitchTo: {
@@ -213,6 +231,7 @@ export type PageCopy = {
   scenes: Scene[];
   shift: ShiftCopy;
   doors: DoorsCopy;
+  principles: PrinciplesCopy;
   footer: {
     securityLine: string;
     securityBody: string;
@@ -495,6 +514,33 @@ export const copy: Record<Locale, PageCopy> = {
         cta: 'Escríbenos'
       }
     },
+    principles: {
+      eyebrow: 'Principios',
+      title: 'Cómo trabajamos',
+      lead: 'Cuatro reglas que se notan en cada cosa que hacemos.',
+      items: [
+        {
+          icon: 'open',
+          title: 'Código abierto',
+          body: 'Usamos y enseñamos herramientas que puedes revisar, copiar y mejorar.'
+        },
+        {
+          icon: 'agency',
+          title: 'Agencia directa',
+          body: 'Tú das las instrucciones y tú decides. El agente trabaja para ti, no al revés.'
+        },
+        {
+          icon: 'plain',
+          title: 'Texto plano',
+          body: 'Tus documentos quedan en archivos que abres con cualquier cosa, hoy y en diez años.'
+        },
+        {
+          icon: 'resilient',
+          title: 'Resiliencia',
+          body: 'Todo funciona en una laptop modesta y con una conexión inestable. El teléfono alcanza para leer y seguir el hilo; para construir hace falta el teclado.'
+        }
+      ]
+    },
     footer: {
       securityLine: 'La seguridad es parte de cómo trabajamos.',
       securityBody:
@@ -773,6 +819,33 @@ export const copy: Record<Locale, PageCopy> = {
         text: 'for teams and organisations: a practical session shaped around the work they already do.',
         cta: 'Write to us'
       }
+    },
+    principles: {
+      eyebrow: 'Principles',
+      title: 'How we work',
+      lead: 'Four rules you can see in everything we do.',
+      items: [
+        {
+          icon: 'open',
+          title: 'Open source',
+          body: 'We use and teach tools you can read, copy and improve.'
+        },
+        {
+          icon: 'agency',
+          title: 'Direct agency',
+          body: 'You give the instructions and you decide. The agent works for you, not the other way round.'
+        },
+        {
+          icon: 'plain',
+          title: 'Plain text',
+          body: 'Your documents stay in files you can open with anything, today and in ten years.'
+        },
+        {
+          icon: 'resilient',
+          title: 'Resilience',
+          body: 'Everything works on a modest laptop over an unstable connection. A phone is enough to read and follow along; building needs a keyboard.'
+        }
+      ]
     },
     footer: {
       securityLine: 'Security is part of how we work.',

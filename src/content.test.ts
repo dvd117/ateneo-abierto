@@ -244,6 +244,43 @@ describe('landing page copy', () => {
     }
   });
 
+
+  test('states the four principles, resilience included, in both locales', () => {
+    for (const locale of locales) {
+      const { principles } = copy[locale];
+
+      expect(principles.items).toHaveLength(4);
+      expect(principles.items.map((item) => item.icon)).toEqual([
+        'open',
+        'agency',
+        'plain',
+        'resilient'
+      ]);
+
+      for (const item of principles.items) {
+        expect(item.title.length).toBeGreaterThan(0);
+        expect(item.body.length).toBeGreaterThan(30);
+      }
+    }
+  });
+
+  test('describes resilience as the real device story, not a mid-range Android', () => {
+    for (const locale of locales) {
+      const resilience = copy[locale].principles.items[3].body;
+
+      // The mockup said "Android de gama media con 3G". That is not the
+      // constraint: you read on the phone and build on a laptop.
+      expect(resilience).not.toMatch(/android|gama media|3G/i);
+    }
+
+    expect(copy.es.principles.items[3].body).toMatch(/laptop modesta/);
+    expect(copy.es.principles.items[3].body).toMatch(/conexión inestable/);
+    expect(copy.es.principles.items[3].body).toMatch(/teléfono/);
+    expect(copy.en.principles.items[3].body).toMatch(/modest laptop/);
+    expect(copy.en.principles.items[3].body).toMatch(/unstable connection/);
+    expect(copy.en.principles.items[3].body).toMatch(/phone/i);
+  });
+
   test('carries the security line and the contact address in the footer', () => {
     for (const locale of locales) {
       const { footer } = copy[locale];
