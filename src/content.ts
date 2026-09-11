@@ -1,14 +1,81 @@
 import type { Locale } from './locale';
 
-export type Pillar = {
-  horizon: string;
-  title: string;
-  body: string;
+/**
+ * Typed content source for the page. Everything the visitor reads lives here,
+ * in both locales, so the render layer never holds a string.
+ *
+ * Inline emphasis convention: `*emphasised*` becomes `<em>` at render time.
+ * Nothing else in a content string is markup; the renderer escapes the rest.
+ */
+
+export type NavLink = {
+  label: string;
+  href: string;
 };
 
-export type OriginBeat = {
-  heading: string;
-  body: string;
+/** A row of the produced document's table. */
+export type SceneRow = {
+  cells: string[];
+  /** The recommended row: gets the paper-side signal dot. */
+  rec?: boolean;
+  /** Index of the cell to render in the paper-side signal colour. */
+  accentCell?: number;
+};
+
+/** The document the agent produces: either a small table or a short outline. */
+export type SceneDoc = {
+  kicker: string;
+  title: string;
+  table?: {
+    head: string[];
+    rows: SceneRow[];
+  };
+  list?: {
+    lead?: string;
+    items: string[];
+  };
+  /** The one serif-italic line the document closes on. */
+  note: string;
+};
+
+/**
+ * One scripted sequence in the agent window. Fully local: the runner replays
+ * these strings, it never calls anything.
+ */
+export type Scene = {
+  id: string;
+  /** Prompt chip label, and the session name in the window sidebar. */
+  chip: string;
+  /** Title shown in the window's title bar. */
+  session: string;
+  /** What the visitor "asked" for. */
+  prompt: string;
+  /** File chips that attach to the prompt. */
+  files: string[];
+  /** The agent's one line before the plan. */
+  ack: string;
+  /** Exactly four plan steps, ticked one at a time. */
+  steps: [string, string, string, string];
+  doc: SceneDoc;
+  /** File name in the status line. */
+  savedAs: string;
+};
+
+export type AgentChrome = {
+  /** Accessible name for the whole window. */
+  windowLabel: string;
+  newTask: string;
+  today: string;
+  folder: string;
+  chipsLabel: string;
+  sessionsLabel: string;
+  inputPlaceholder: string;
+  /** Precedes the produced file name, e.g. "Listo en tu carpeta · resumen-t3.md". */
+  ready: string;
+  saved: string;
+  replay: string;
+  /** Announced to screen readers when a sequence finishes. */
+  finished: string;
 };
 
 export type PageCopy = {
@@ -17,63 +84,28 @@ export type PageCopy = {
     es: string;
     en: string;
   };
+  skipToContent: string;
+  sectionsLabel: string;
+  nav: NavLink[];
   hero: {
     eyebrow: string;
-    title: string;
-    promise: string;
-    body: string;
+    /** Headline lines; `em` sets the italic line. */
+    titleLines: { text: string; em?: boolean }[];
+    manifesto: string;
     primaryCta: string;
+    secondaryCta: string;
+    /** Honest label under the window: this is a simulation, figures are examples. */
+    windowCaption: string;
   };
-  labels: {
-    origin: string;
-    audience: string;
-    name: string;
-    structure: string;
-    boundaries: string;
-    updates: string;
-    backToTop: string;
-  };
-  origin: {
-    title: string;
-    beats: OriginBeat[];
-    closing: string;
-  };
-  audience: {
-    title: string;
-    body: string;
-    who: string[];
-  };
-  name: {
-    title: string;
-    body: string;
-  };
-  pillars: {
-    title: string;
-    items: Pillar[];
-  };
-  not: {
-    title: string;
-    points: string[];
-    body: string;
-  };
-  subscribe: {
-    title: string;
-    body: string;
-    emailLabel: string;
-    emailPlaceholder: string;
-    nameLabel: string;
-    namePlaceholder: string;
-    newsletterLanguageLabel: string;
-    participateLabel: string;
-    button: string;
-    privacy: string;
-    success: string;
-    invalidEmail: string;
-    providerError: string;
-  };
+  agent: AgentChrome;
+  scenes: Scene[];
   footer: {
+    securityLine: string;
+    securityBody: string;
     contact: string;
-    disclaimer: string;
+    contactLabel: string;
+    sourceLabel: string;
+    sourceHref: string;
   };
 };
 
@@ -84,112 +116,165 @@ export const copy: Record<Locale, PageCopy> = {
       es: 'Cambiar a español',
       en: 'Cambiar a inglés'
     },
+    skipToContent: 'Saltar al contenido',
+    sectionsLabel: 'Secciones',
+    nav: [
+      { label: 'Programa', href: '#programa' },
+      { label: 'El norte', href: '#norte' },
+      { label: 'Sumarme', href: '#sumarme' }
+    ],
     hero: {
-      eyebrow: 'Espacio abierto de aprendizaje cívico',
-      title: 'Ateneo Abierto',
-      promise: 'Habilidades y herramientas que nadie te puede quitar.',
-      body: 'Una iniciativa venezolana de aprendizaje cívico para recuperar capacidad de acción a través de talleres, herramientas y comunidad.',
-      primaryCta: 'Recibir actualizaciones'
+      eyebrow: 'Más allá del chatbot',
+      titleLines: [{ text: 'Deja de preguntarle.' }, { text: 'Empieza a delegarle.', em: true }],
+      manifesto:
+        'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega un documento. Aprende a delegar con herramientas libres, desde Venezuela, sin pagar nada para empezar.',
+      primaryCta: 'Sumarme',
+      secondaryCta: 'Hablemos',
+      windowCaption:
+        'Demostración local: el agente de esta página no se conecta a nada y las cifras son de ejemplo.'
     },
-    labels: {
-      origin: 'Punto de partida',
-      audience: 'Para quién',
-      name: 'El nombre',
-      structure: 'Estructura',
-      boundaries: 'Límites',
-      updates: 'Actualizaciones',
-      backToTop: 'Volver arriba'
+    agent: {
+      windowLabel: 'Ejemplo de un agente trabajando',
+      newTask: 'Nueva tarea',
+      today: 'Hoy',
+      folder: 'Carpeta: Documentos/Ateneo',
+      chipsLabel: 'Elige una tarea de ejemplo',
+      sessionsLabel: 'Tareas de ejemplo',
+      inputPlaceholder: 'Pídele algo más…',
+      ready: 'Listo en tu carpeta',
+      saved: 'guardado',
+      replay: 'Repetir',
+      finished: 'El agente terminó la tarea y guardó el documento.'
     },
-    origin: {
-      title: 'El sistema educativo fue desmantelado. La respuesta se construye desde afuera.',
-      beats: [
-        {
-          heading: 'La apuesta',
-          body:
-            'Hubo un tiempo en que Venezuela entendió que su recurso más valioso no era el petróleo, sino su gente. Fundayacucho envió a miles de estudiantes a las mejores universidades del mundo, con un compromiso: volver y enseñar lo aprendido. Muchos volvieron, y fueron profesores.'
+    scenes: [
+      {
+        id: 'gastos',
+        chip: 'Resumir los gastos del trimestre',
+        session: 'Gastos del trimestre',
+        prompt:
+          'Tengo tres hojas de cálculo con los gastos del trimestre. Júntalas y hazme un resumen de una página.',
+        files: ['gastos-julio.csv', 'gastos-agosto.csv', 'gastos-septiembre.csv'],
+        ack: 'Va. Este es mi plan:',
+        steps: [
+          'Leer las 3 hojas',
+          'Unificar las categorías',
+          'Comparar con el trimestre anterior',
+          'Guardar el resumen en tu carpeta'
+        ],
+        doc: {
+          kicker: 'Resumen · Tercer trimestre',
+          title: 'Gastos por categoría',
+          table: {
+            head: ['Categoría', 'Total', 'vs. T2'],
+            rows: [
+              { cells: ['Transporte', '412', '+18 %'], rec: true, accentCell: 2 },
+              { cells: ['Materiales', '268', '−4 %'] },
+              { cells: ['Conectividad', '150', '0 %'] }
+            ]
+          },
+          note: 'Transporte es lo único que se movió de verdad: por ahí conviene empezar a revisar.'
         },
-        {
-          heading: 'El desmantelamiento',
-          body:
-            'Esa apuesta fue desmontada deliberadamente. Cambió lo que se enseñaba. Llegaron los recortes presupuestarios. Los profesores se fueron, las escuelas se vaciaron y el aprendizaje se volvió un lujo.'
+        savedAs: 'resumen-t3.md'
+      },
+      {
+        id: 'presentacion',
+        chip: 'Armar una presentación',
+        session: 'Presentación del taller',
+        prompt:
+          'En esa carpeta están mis notas del taller. Ármame una presentación de 6 láminas con eso.',
+        files: ['notas-taller.md', 'ejemplos.md', 'preguntas.md'],
+        ack: 'Listo. Este es mi plan:',
+        steps: [
+          'Leer las notas de la carpeta',
+          'Agrupar las ideas en 6 bloques',
+          'Escribir el título y los puntos de cada lámina',
+          'Guardar el esquema en tu carpeta'
+        ],
+        doc: {
+          kicker: 'Esquema · 6 láminas',
+          title: 'Delegar tu primera tarea',
+          list: {
+            items: [
+              'Qué cambia cuando delegas en vez de preguntar',
+              'El agente vive en tu computadora, no en una pestaña',
+              'Tu primera tarea, paso a paso',
+              'Cómo revisar lo que te entrega',
+              'Los tres errores del principio',
+              'Qué vas a delegar el lunes'
+            ]
+          },
+          note: 'Cada lámina lleva tres puntos y un ejemplo tuyo, no uno inventado.'
         },
-        {
-          heading: 'La brecha',
-          body:
-            'Una generación entera se quedó con menos opciones. No por falta de capacidad. Por falta de acceso. Y mientras tanto, el mundo siguió avanzando.'
+        savedAs: 'presentacion-taller.md'
+      },
+      {
+        id: 'apuntes',
+        chip: 'Apuntes de estudio',
+        session: 'Lectura de la semana',
+        prompt:
+          'Este PDF es la lectura de la semana. Hazme apuntes y agrégale preguntas para repasar.',
+        files: ['lectura-semana-3.pdf'],
+        ack: 'Va. Este es mi plan:',
+        steps: [
+          'Leer el PDF completo',
+          'Sacar las ideas principales',
+          'Escribir 8 preguntas de repaso',
+          'Guardar los apuntes en tu carpeta'
+        ],
+        doc: {
+          kicker: 'Apuntes · Lectura 3',
+          title: 'Ideas principales y repaso',
+          list: {
+            lead: 'Tres ideas sostienen el texto:',
+            items: [
+              'El acceso pesa más que el talento',
+              'Una herramienta sola no enseña; el acompañamiento sí',
+              'Lo que aprendes se queda contigo, no en la plataforma',
+              '8 preguntas de repaso, con las respuestas al final'
+            ]
+          },
+          note: 'Tapa las respuestas y contéstalas en voz alta: es lo que mejor fija.'
         },
-        {
-          heading: 'El puente',
-          body:
-            'Las herramientas y el conocimiento existen. Lo que falta es el puente: talleres prácticos, grupos pequeños y acceso compartido a herramientas que la gente se puede llevar y usar fuera del taller.'
-        }
-      ],
-      closing: 'Lo que se nos arrebató se reconstruye desde afuera del sistema que lo destruyó.'
-    },
-    audience: {
-      title: 'Para venezolanos que saben que el momento exige herramientas nuevas.',
-      body:
-        'Para venezolanos que entienden que la educación que recibieron no los preparó para los retos y oportunidades de hoy, y que están listos para empezar. No hace falta perfil técnico. Sólo curiosidad y ganas de empezar.',
-      who: ['Profesores', 'Profesionales', 'Estudiantes', 'Emprendedores', 'Gente que tiene dos trabajos']
-    },
-    name: {
-      title: 'Por qué Ateneo Abierto',
-      body:
-        'Ateneo — el templo griego dedicado a Atenea, diosa del conocimiento — nombra una forma: un lugar donde la gente se reúne a aprender, sin supervisión ni afiliación estatal.\n\nAbierto porque la condición de entrada no es tu situación económica, ni tu estatus social, ni tu afiliación política. Es la disposición a empezar.'
-    },
-    pillars: {
-      title: 'Tres pilares',
-      items: [
-        {
-          horizon: 'Para empezar ya',
-          title: 'Talleres prácticos de IA y herramientas digitales',
-          body:
-            'Grupos pequeños, ejercicios prácticos. Aprende a usar inteligencia artificial y otras tecnologías que están cambiando las formas en que ejercemos nuestra libertad.'
+        savedAs: 'apuntes-lectura-3.md'
+      },
+      {
+        id: 'correo',
+        chip: 'Correo a la junta',
+        session: 'Correo a la junta',
+        prompt:
+          'Con el informe del mes, escríbeme un correo corto para la junta. Directo, sin adornos.',
+        files: ['informe-septiembre.md'],
+        ack: 'Listo. Este es mi plan:',
+        steps: [
+          'Leer el informe del mes',
+          'Sacar los tres puntos que importan',
+          'Redactarlo en menos de 150 palabras',
+          'Guardar el borrador en tu carpeta'
+        ],
+        doc: {
+          kicker: 'Borrador · Correo',
+          title: 'Septiembre, en tres puntos',
+          list: {
+            lead: 'Equipo: el mes en corto, para que no lean seis páginas.',
+            items: [
+              'Cerramos el mes con las tres actividades que estaban previstas',
+              'El gasto de transporte subió 18 % y hay que decidir qué hacer',
+              'Pedimos luz verde para la próxima ronda antes del 30'
+            ]
+          },
+          note: 'Si quieren el detalle, el informe completo va adjunto.'
         },
-        {
-          horizon: 'Mediano plazo',
-          title: 'Junto a la educación formal',
-          body:
-            'Creemos que la educación formal sigue siendo fundamental. Donde las universidades y docentes siguen funcionando, queremos trabajar junto a ellos, no en su lugar. Las herramientas prácticas y los fundamentos del aula se complementan.'
-        },
-        {
-          horizon: 'Post-transición',
-          title: 'El norte estratégico',
-          body:
-            'El norte es una red de espacios de aprendizaje cívico: siguiendo el ejemplo de las bibliotecas públicas del siglo XXI donde el acceso a internet, herramientas y aprendizaje sea un derecho público, no un privilegio individual.'
-        }
-      ]
-    },
-    not: {
-      title: 'Lo que no somos',
-      points: [
-        'No somos parte del Estado venezolano, ni de ninguno de sus ministerios, planes o programas.',
-        'No somos una estructura partidista ni una campaña electoral.',
-        'No reclutamos a nadie para actividad pública confrontativa dentro de Venezuela.'
-      ],
-      body:
-        'Ateneo Abierto es un proyecto independiente, civil y educativo. Las habilidades que la gente aprende aquí son suyas.'
-    },
-    subscribe: {
-      title: 'Recibe actualizaciones',
-      body:
-        'Estamos preparando los primeros pilotos, materiales y alianzas. Déjanos tu correo para recibir avances del proyecto y saber cuándo se abran nuevas formas de participar o apoyar.',
-      emailLabel: 'Correo electrónico',
-      emailPlaceholder: 'tu@correo.com',
-      nameLabel: 'Nombre',
-      namePlaceholder: 'Tu nombre',
-      newsletterLanguageLabel: 'Idioma del boletín',
-      participateLabel: 'También quiero enterarme de oportunidades para participar.',
-      button: 'Suscribirme',
-      privacy: 'Si quieres apoyar o colaborar de alguna forma, escríbenos.',
-      success: 'Listo. Te avisaremos cuando haya novedades.',
-      invalidEmail: 'Escribe un correo válido para suscribirte.',
-      providerError: 'No pudimos registrar tu correo. Intenta de nuevo en unos minutos.'
-    },
+        savedAs: 'correo-junta.md'
+      }
+    ],
     footer: {
+      securityLine: 'La seguridad es parte de cómo trabajamos.',
+      securityBody:
+        'Cuidamos los datos de quienes participan y nunca publicamos sus nombres sin permiso.',
       contact: 'ateneo@aragort.com',
-      disclaimer:
-        'La seguridad es parte de cómo trabajamos. No compartimos información que pueda poner en riesgo a quienes participan en este proyecto — incluyendo detalles operativos.'
+      contactLabel: 'Correo',
+      sourceLabel: 'Código fuente',
+      sourceHref: 'https://github.com/dvd117/ateneo-abierto'
     }
   },
   en: {
@@ -198,112 +283,163 @@ export const copy: Record<Locale, PageCopy> = {
       es: 'Switch to Spanish',
       en: 'Switch to English'
     },
+    skipToContent: 'Skip to content',
+    sectionsLabel: 'Sections',
+    nav: [
+      { label: 'Program', href: '#programa' },
+      { label: 'Where this goes', href: '#norte' },
+      { label: 'Join', href: '#sumarme' }
+    ],
     hero: {
-      eyebrow: 'Open civic learning space',
-      title: 'Ateneo Abierto',
-      promise: 'Skills and tools no one can take from you.',
-      body: 'A Venezuelan civic learning initiative helping people rebuild practical agency through workshops, tools, and community.',
-      primaryCta: 'Get updates'
+      eyebrow: 'Past the chatbot',
+      titleLines: [{ text: 'Stop asking it things.' }, { text: 'Start handing it work.', em: true }],
+      manifesto:
+        'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan, and hands you a document. Learn to delegate with free and open tools, from Venezuela, at no cost to start.',
+      primaryCta: 'Join',
+      secondaryCta: "Let's talk",
+      windowCaption:
+        'Local demo: the agent on this page connects to nothing, and the figures are examples.'
     },
-    labels: {
-      origin: 'Starting point',
-      audience: "Who it's for",
-      name: 'The name',
-      structure: 'Structure',
-      boundaries: 'Boundaries',
-      updates: 'Updates',
-      backToTop: 'Back to top'
+    agent: {
+      windowLabel: 'An example of an agent at work',
+      newTask: 'New task',
+      today: 'Today',
+      folder: 'Folder: Documents/Ateneo',
+      chipsLabel: 'Pick an example task',
+      sessionsLabel: 'Example tasks',
+      inputPlaceholder: 'Ask for something else…',
+      ready: 'Saved to your folder',
+      saved: 'saved',
+      replay: 'Replay',
+      finished: 'The agent finished the task and saved the document.'
     },
-    origin: {
-      title: 'The education system was dismantled. The response is being built outside it.',
-      beats: [
-        {
-          heading: 'The bet',
-          body:
-            "There was a time when Venezuela understood that its most valuable resource wasn't oil — it was its people. Fundayacucho sent thousands of students to some of the best universities in the world, with one commitment: come back and teach what they learned. Many did, and became professors themselves."
+    scenes: [
+      {
+        id: 'gastos',
+        chip: 'Summarise the quarter’s spending',
+        session: 'Quarterly spending',
+        prompt:
+          'I have three spreadsheets with this quarter’s spending. Merge them and give me a one-page summary.',
+        files: ['spending-july.csv', 'spending-august.csv', 'spending-september.csv'],
+        ack: 'On it. Here is my plan:',
+        steps: [
+          'Read the 3 spreadsheets',
+          'Reconcile the categories',
+          'Compare against the previous quarter',
+          'Save the summary to your folder'
+        ],
+        doc: {
+          kicker: 'Summary · Third quarter',
+          title: 'Spending by category',
+          table: {
+            head: ['Category', 'Total', 'vs. Q2'],
+            rows: [
+              { cells: ['Transport', '412', '+18%'], rec: true, accentCell: 2 },
+              { cells: ['Materials', '268', '−4%'] },
+              { cells: ['Connectivity', '150', '0%'] }
+            ]
+          },
+          note: 'Transport is the only line that really moved: start there.'
         },
-        {
-          heading: 'The dismantling',
-          body:
-            'That bet was deliberately taken apart. What was taught changed. Budget cuts followed. Teachers left, schools emptied out, and learning became a luxury.'
+        savedAs: 'summary-q3.md'
+      },
+      {
+        id: 'presentacion',
+        chip: 'Build a deck',
+        session: 'Workshop deck',
+        prompt: 'My workshop notes are in that folder. Build me a 6-slide deck from them.',
+        files: ['workshop-notes.md', 'examples.md', 'questions.md'],
+        ack: 'Sure. Here is my plan:',
+        steps: [
+          'Read the notes in the folder',
+          'Group the ideas into 6 blocks',
+          'Write a title and bullets for each slide',
+          'Save the outline to your folder'
+        ],
+        doc: {
+          kicker: 'Outline · 6 slides',
+          title: 'Delegating your first task',
+          list: {
+            items: [
+              'What changes when you delegate instead of asking',
+              'The agent lives on your computer, not in a tab',
+              'Your first task, step by step',
+              'How to check what it hands back',
+              'The three beginner mistakes',
+              'What you will delegate on Monday'
+            ]
+          },
+          note: 'Each slide carries three points and one example of your own, not an invented one.'
         },
-        {
-          heading: 'The gap',
-          body:
-            'A whole generation was left with fewer options. Not for lack of capacity. For lack of access. And meanwhile, the world kept moving.'
+        savedAs: 'workshop-deck.md'
+      },
+      {
+        id: 'apuntes',
+        chip: 'Study notes',
+        session: 'This week’s reading',
+        prompt: 'This PDF is the reading for the week. Make me notes and add questions to revise.',
+        files: ['reading-week-3.pdf'],
+        ack: 'On it. Here is my plan:',
+        steps: [
+          'Read the full PDF',
+          'Pull out the main ideas',
+          'Write 8 revision questions',
+          'Save the notes to your folder'
+        ],
+        doc: {
+          kicker: 'Notes · Reading 3',
+          title: 'Main ideas and revision',
+          list: {
+            lead: 'Three ideas hold the text together:',
+            items: [
+              'Access counts for more than talent',
+              'A tool alone does not teach; company does',
+              'What you learn stays with you, not on the platform',
+              '8 revision questions, answers at the end'
+            ]
+          },
+          note: 'Cover the answers and say them out loud: that is what makes them stick.'
         },
-        {
-          heading: 'The bridge',
-          body:
-            'The tools and the knowledge exist. What is missing is the bridge: practical workshops, small groups, and shared access to tools people can take with them and use beyond the workshop.'
-        }
-      ],
-      closing: 'What was taken is being rebuilt outside the system that destroyed it.'
-    },
-    audience: {
-      title: 'For Venezuelans who know the moment calls for new tools.',
-      body:
-        "For Venezuelans who understand that the education they received didn't fully prepare them for today's challenges and opportunities, and who are ready to begin. No technical background required. Just curiosity and a reason to start.",
-      who: ['Teachers', 'Professionals', 'Students', 'Entrepreneurs', 'People working two jobs']
-    },
-    name: {
-      title: 'Why "Ateneo Abierto"',
-      body:
-        'Ateneo — the Greek temple dedicated to Athena, goddess of wisdom — names a form: a place where people gather to learn, without state oversight or affiliation.\n\nAbierto — open, because the entry condition is willingness, not credentials or connections.'
-    },
-    pillars: {
-      title: 'Three pillars',
-      items: [
-        {
-          horizon: 'Ready to start now',
-          title: 'Hands-on workshops in AI and digital tools',
-          body:
-            'Small groups, practical. Learning to use AI and other technologies quietly changing what freedom looks like in practice.'
+        savedAs: 'notes-reading-3.md'
+      },
+      {
+        id: 'correo',
+        chip: 'Email to the board',
+        session: 'Email to the board',
+        prompt:
+          'Using the monthly report, write me a short email for the board. Direct, no padding.',
+        files: ['report-september.md'],
+        ack: 'Sure. Here is my plan:',
+        steps: [
+          'Read the monthly report',
+          'Pull the three points that matter',
+          'Draft it in under 150 words',
+          'Save the draft to your folder'
+        ],
+        doc: {
+          kicker: 'Draft · Email',
+          title: 'September, in three points',
+          list: {
+            lead: 'Team: the month in short, so nobody reads six pages.',
+            items: [
+              'We closed the month with all three planned activities',
+              'Transport spending rose 18% and we need a decision',
+              'We need a green light for the next round before the 30th'
+            ]
+          },
+          note: 'The full report is attached if anyone wants the detail.'
         },
-        {
-          horizon: 'Mid-term',
-          title: 'Alongside formal education',
-          body:
-            'We believe formal education still matters. Where universities and educators are still functioning, we want to work alongside them, not replace them. Practical tools and classroom foundations strengthen each other.'
-        },
-        {
-          horizon: 'Post-transition',
-          title: 'Where this is heading',
-          body:
-            'The goal is a network of civic learning spaces: inspired by the 21st-century public libraries where access to internet, tools, and learning is a public right, not an individual privilege.'
-        }
-      ]
-    },
-    not: {
-      title: 'What we are not',
-      points: [
-        'Not a Venezuelan state program, and not tied to any of its ministries or plans.',
-        'Not a party structure or an electoral campaign.',
-        'Not recruiting anyone into confrontational public activity inside Venezuela.'
-      ],
-      body:
-        'Ateneo Abierto is independent, civilian, and educational. The skills people learn here belong to them.'
-    },
-    subscribe: {
-      title: 'Get updates',
-      body:
-        'We are preparing the first pilots, materials, and partnerships. Leave your email to receive project updates and hear when new ways to participate or support open up.',
-      emailLabel: 'Email address',
-      emailPlaceholder: 'you@example.org',
-      nameLabel: 'Name',
-      namePlaceholder: 'Your name',
-      newsletterLanguageLabel: 'Newsletter language',
-      participateLabel: 'I also want to hear about opportunities to participate.',
-      button: 'Subscribe',
-      privacy: 'If you want to support or collaborate, write to us.',
-      success: "You're in. We'll be in touch when things are moving.",
-      invalidEmail: 'Enter a valid email address to subscribe.',
-      providerError: 'We could not save your email. Please try again in a few minutes.'
-    },
+        savedAs: 'board-email.md'
+      }
+    ],
     footer: {
+      securityLine: 'Security is part of how we work.',
+      securityBody:
+        'We look after the data of the people who take part, and we never publish their names without permission.',
       contact: 'ateneo@aragort.com',
-      disclaimer:
-        'Security is built into how we work. We do not share information that could put anyone at risk — including operational details.'
+      contactLabel: 'Email',
+      sourceLabel: 'Source code',
+      sourceHref: 'https://github.com/dvd117/ateneo-abierto'
     }
   }
 };

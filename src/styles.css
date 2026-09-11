@@ -1,955 +1,512 @@
-@font-face {
-  font-family: "DM Sans";
-  font-style: normal;
-  font-weight: 300 800;
-  font-display: swap;
-  src: url("/fonts/dm-sans-latin-ext-variable.woff2") format("woff2");
-  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
-}
+/* --- generated from DESIGN.md --- */
+/* Ateneo Abierto · direction D "Instrumento" on the Guacamaya palette.
+   Edit DESIGN.md first, then re-emit this block. Nothing below the closing
+   fence may introduce a colour that is not a token declared here. */
+:root {
+  /* colours */
+  --graphite: #16150f;
+  --graphite-deep: #100f0b;
+  --graphite-panel: #1f1d16;
+  --graphite-line: #34312a;
+  --bone: #f0ece2;
+  --bone-soft: #cfc9bb;
+  --bone-muted: #a8a293;
+  --bone-dim: #8e887a;
+  --guacamaya: #e2a638;
+  --on-guacamaya: #17130a;
+  --guacamaya-on-paper: #8e610f;
+  --done-green: #79ad9b;
+  --paper: #f3eddf;
+  --ink: #1a1714;
+  --ink-muted: #6b604e;
+  --paper-line: #d9d1c0;
 
+  /* colour aliases */
+  --c-bg: var(--graphite);
+  --c-bg-deep: var(--graphite-deep);
+  --c-bg-panel: var(--graphite-panel);
+  --c-fg: var(--bone);
+  --c-fg-2: var(--bone-muted);
+  --c-fg-3: var(--bone-dim);
+  --c-fg-soft: var(--bone-soft);
+  --c-accent: var(--guacamaya);
+  --c-on-accent: var(--on-guacamaya);
+  --c-done: var(--done-green);
+  --c-border: var(--graphite-line);
+  --c-paper: var(--paper);
+  --c-ink: var(--ink);
+  --c-ink-2: var(--ink-muted);
+  --c-paper-border: var(--paper-line);
+  --c-accent-on-paper: var(--guacamaya-on-paper);
+
+  /* typography */
+  --font-serif: "Source Serif 4", "Iowan Old Style", Palatino, Georgia, serif;
+  --font-sans: "DM Sans", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --t-display: 400 clamp(2.1rem, 1.32rem + 2.6vw, 3.4rem) / 1.06 var(--font-serif);
+  --t-h1: 400 clamp(1.75rem, 1.36rem + 1.3vw, 2.4rem) / 1.1 var(--font-serif);
+  --t-h2: 400 1.65rem / 1.2 var(--font-serif);
+  --t-h3: 600 1.15rem / 1.3 var(--font-sans);
+  --t-lead: 400 1.2rem / 1.5 var(--font-serif);
+  --t-body: 400 1rem / 1.6 var(--font-sans);
+  --t-small: 400 0.8rem / 1.5 var(--font-sans);
+  --t-label: 600 0.75rem / 1 var(--font-sans);
+  --t-wordmark: 600 0.95rem / 1 var(--font-sans);
+  --t-mono: 500 0.85rem / 1.4 var(--font-mono);
+  --track-display: -0.012em;
+  --track-h1: -0.01em;
+  --track-label: 0.14em;
+
+  /* spacing */
+  --sp-page: 1.5rem;
+  --sp-section: 6rem;
+  --sp-stack: 1rem;
+  --sp-inline: 0.5rem;
+  --gap-lg: 2.5rem;
+  --gap-md: 1.5rem;
+  --gap-sm: 0.75rem;
+
+  /* radius */
+  --r-none: 0;
+  --r-sm: 0.25rem;
+  --r-md: 0.5rem;
+  --r-window: 0.875rem;
+  --r-pill: 999px;
+
+  /* motion */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --duration-ui: 180ms;
+  --duration-overlay: 240ms;
+  --duration-step: 420ms;
+  --duration-draw: 1200ms;
+
+  /* the one shadow on the page: the agent window */
+  --shadow-window: 0 20px 40px -18px rgba(0, 0, 0, 0.6);
+}
+/* --- end generated from DESIGN.md --- */
+
+/* Self-hosted only. No third-party font host, no CDN, per the threat model. */
 @font-face {
   font-family: "DM Sans";
   font-style: normal;
   font-weight: 300 800;
   font-display: swap;
   src: url("/fonts/dm-sans-latin-variable.woff2") format("woff2");
-  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-:root {
-  --paper: #f3eddf;
-  --paper-warm: #ebe2d0;
-  --ink: #171a16;
-  --green: #235e4f;
-  --terracotta: #b55234;
-  --ochre: #d39b35;
-  --workshop-signal: #c47a1e;
-  --line: rgba(23, 26, 22, 0.16);
-  --paper-soft: rgba(255, 255, 255, 0.22);
-  --font-brand: "DM Sans", "Avenir Next", Avenir, "Trebuchet MS", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
-  color: var(--ink);
-  background: var(--paper);
-  font-family: var(--font-brand);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
+@font-face {
+  font-family: "DM Sans";
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("/fonts/dm-sans-latin-ext-variable.woff2") format("woff2");
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF,
+    U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020,
+    U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
 }
 
-* {
+/* Source Serif 4, SIL OFL 1.1 (see fonts/source-serif-4-OFL.md). Instanced at
+   weight 400 and subset to Latin: the serif is never bold in this system. */
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/source-serif-4-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Source Serif 4";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/source-serif-4-latin-italic.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
+  -webkit-text-size-adjust: 100%;
   scroll-behavior: smooth;
-}
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(18px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.hero-copy .hero-brand {
-  animation: fade-up 0.5s ease both;
-  animation-delay: 60ms;
-}
-
-.hero-copy .eyebrow {
-  animation: fade-up 0.5s ease both;
-  animation-delay: 140ms;
-}
-
-.hero-copy h1 {
-  animation: fade-up 0.55s ease both;
-  animation-delay: 240ms;
-}
-
-.hero-copy .intro {
-  animation: fade-up 0.55s ease both;
-  animation-delay: 360ms;
-}
-
-.hero-copy .hero-actions {
-  animation: fade-up 0.5s ease both;
-  animation-delay: 440ms;
-}
-
-.open-room {
-  animation: fade-up 0.6s ease both;
-  animation-delay: 300ms;
-}
-
-/* Signature moment: the staircase draws itself instead of sitting there as a
-   third copy of the logo. Path length of the mark is ~150 user units. */
-@keyframes draw-staircase {
-  from {
-    stroke-dashoffset: 160;
-  }
-  to {
-    stroke-dashoffset: 0;
-  }
-}
-
-@keyframes dot-land {
-  from {
-    opacity: 0;
-    transform: translateY(-6px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.open-room-path {
-  stroke-dasharray: 160;
-  animation: draw-staircase 1.5s cubic-bezier(0.65, 0, 0.35, 1) both;
-  animation-delay: 500ms;
-}
-
-.open-room-dot {
-  transform-origin: center;
-  animation: dot-land 0.4s ease both;
-  animation-delay: 1.9s;
-}
-
-/* Scroll-reveal: elements start offset and settle when observed. */
-[data-reveal] {
-  opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s ease, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-[data-reveal].is-revealed {
-  opacity: 1;
-  transform: translateY(0);
 }
 
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-
-  .hero-copy .hero-brand,
-  .hero-copy .eyebrow,
-  .hero-copy h1,
-  .hero-copy .intro,
-  .hero-copy .hero-actions,
-  .open-room,
-  .open-room-path,
-  .open-room-dot {
-    animation: none;
-  }
-
-  .open-room-path {
-    stroke-dasharray: none;
-  }
-
-  /* initReveal() also short-circuits, but keep the CSS inert on its own. */
-  [data-reveal] {
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
-
-  .hero-cue-line,
-  .back-to-top {
-    animation: none;
-    transition: none;
-  }
-}
-
-:focus-visible {
-  outline: 2px solid var(--green);
-  outline-offset: 3px;
-  border-radius: 2px;
-}
-
-.subscribe-section :focus-visible {
-  outline-color: var(--ochre);
 }
 
 body {
   margin: 0;
-  min-width: 320px;
-  min-height: 100vh;
-  background: var(--paper);
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-button,
-input {
-  font: inherit;
-}
-
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 24px;
-  align-items: center;
-  min-height: 72px;
-  padding: 0 clamp(18px, 4vw, 48px);
-  border-bottom: 1px solid var(--line);
-  background: var(--paper);
-  background: color-mix(in srgb, var(--paper) 96%, var(--ink) 4%);
-  box-shadow: 0 1px 0 rgba(23, 26, 22, 0.04), 0 6px 18px -16px rgba(23, 26, 22, 0.32);
-  backdrop-filter: saturate(1.05);
-}
-
-.nav-wordmark {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  font-family: var(--font-brand);
-  font-size: clamp(18px, 2vw, 22px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-}
-
-.locale-toggle {
-  display: inline-flex;
-  gap: 4px;
-  padding: 4px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-}
-
-.locale-button {
-  min-width: 38px;
-  min-height: 32px;
-  border: 0;
-  border-radius: 999px;
-  background: transparent;
-  color: var(--ink);
-  cursor: pointer;
-  font-size: 13px;
-  font-weight: 700;
-  transition: background-color 0.15s ease, color 0.15s ease;
-}
-
-.locale-button:hover:not(.is-active) {
-  background: color-mix(in srgb, var(--ink) 8%, transparent);
-}
-
-.locale-button.is-active {
-  background: var(--green);
-  color: var(--paper);
-}
-
-.progress-rail {
-  position: absolute;
-  bottom: -1px;
-  left: 0;
-  width: 100%;
-  height: 2px;
-  overflow: hidden;
-}
-
-.progress-rail::after {
-  content: "";
-  display: block;
-  height: 100%;
-  background: var(--terracotta);
-  transform: scaleX(var(--progress, 0));
-  transform-origin: left center;
-}
-
-.hero {
-  position: relative;
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.76fr);
-  gap: clamp(32px, 6vw, 72px);
-  align-items: center;
-  min-height: calc(100vh - 72px);
-  padding: clamp(52px, 7vw, 96px) clamp(22px, 5vw, 72px);
-  background:
-    radial-gradient(ellipse 70% 60% at 12% 8%, color-mix(in srgb, var(--terracotta) 8%, transparent), transparent 65%),
-    radial-gradient(ellipse 50% 40% at 88% 92%, color-mix(in srgb, var(--green) 6%, transparent), transparent 70%);
-}
-
-.eyebrow {
-  margin: 0;
-  color: var(--green);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  line-height: 1;
-  text-transform: uppercase;
+  background: var(--c-bg);
+  color: var(--c-fg);
+  font: var(--t-body);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 h1,
 h2,
 h3,
-p {
-  margin-top: 0;
+h4,
+p,
+ul,
+ol,
+figure {
+  margin: 0;
 }
 
-/* The h1 is the promise, not the wordmark — it is a full sentence, so it is
-   set well below the old 132px display size. */
-h1 {
-  max-width: 15ch;
-  margin-bottom: 0;
-  margin-top: 22px;
-  font-size: clamp(38px, 6.4vw, 78px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  line-height: 1;
+ul,
+ol {
+  padding: 0;
+  list-style: none;
 }
 
-.hero-brand {
+a {
+  color: inherit;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+/* One focus treatment everywhere: the signal, offset off the element. */
+:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+  border-radius: var(--r-sm);
+}
+
+::selection {
+  background: var(--c-accent);
+  color: var(--c-on-accent);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: absolute;
+  left: var(--sp-page);
+  top: -4rem;
+  z-index: 10;
+  background: var(--c-bg-panel);
+  border: 1px solid var(--c-border);
+  border-radius: var(--r-md);
+  padding: 0.6rem 1rem;
+  transition: top var(--duration-ui) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+  top: 0.75rem;
+}
+
+/* ---------- type roles ---------- */
+
+.display {
+  font: var(--t-display);
+  letter-spacing: var(--track-display);
+}
+
+.section-title {
+  font: var(--t-h1);
+  letter-spacing: var(--track-h1);
+}
+
+.lead {
+  font: var(--t-lead);
+  color: var(--c-fg-soft);
+  max-width: 46ch;
+}
+
+.label {
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+}
+
+.eyebrow {
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+.small {
+  font: var(--t-small);
+  color: var(--c-fg-2);
+}
+
+/* Serif emphasis: the one italic in the system. */
+.display em,
+.lead em,
+.section-title em {
+  font-style: italic;
+}
+
+/* ---------- page frame ---------- */
+
+.shell {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+  padding-inline: var(--sp-page);
+}
+
+@media (min-width: 861px) {
+  .shell {
+    padding-inline: clamp(1.5rem, 4vw, 2.5rem);
+  }
+}
+
+.prose {
+  max-width: 68ch;
+}
+
+/* ---------- header ---------- */
+
+.site-header {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: var(--gap-md);
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.nav-wordmark {
   display: inline-flex;
   align-items: center;
-  margin: 0 0 18px;
-  padding-bottom: 6px;
-  border-bottom: 3px solid var(--terracotta);
-  font-size: clamp(19px, 2.2vw, 24px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  gap: 0.6rem;
+  margin-right: auto;
+  color: var(--c-fg);
+  text-decoration: none;
 }
 
-h2 {
-  margin-bottom: 18px;
-  font-size: clamp(36px, 6vw, 68px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 0.98;
+.nav-wordmark .wordmark {
+  font: var(--t-wordmark);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
 }
 
-h3 {
-  margin-bottom: 10px;
-  font-size: 22px;
-  font-weight: 700;
-  line-height: 1.05;
+/* The mark is 22 px beside the wordmark and nowhere else on the page. */
+.nav-mark {
+  flex: none;
+  width: 22px;
+  height: 22px;
 }
 
-.intro,
-.section-copy p,
-.pillar p,
-.not-list,
-.privacy-note,
-.site-footer p {
-  color: #33382f;
-  font-size: 18px;
-  line-height: 1.45;
+.nav-mark .mark-steps {
+  stroke: var(--c-accent);
 }
 
-.intro {
-  max-width: 620px;
-  margin-top: 18px;
+.nav-mark .mark-dot {
+  fill: var(--c-fg);
 }
 
-.hero-actions {
+.nav-links {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  align-items: center;
-  margin-top: 28px;
+  gap: var(--gap-md);
+  font: var(--t-small);
+  color: var(--c-fg-2);
 }
+
+.nav-links a {
+  text-decoration: none;
+}
+
+.nav-links a:hover {
+  color: var(--c-fg);
+}
+
+.locale-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font: var(--t-small);
+  color: var(--c-fg-2);
+}
+
+.locale-button {
+  padding: 0.2rem 0.45rem;
+  border-radius: var(--r-sm);
+  color: var(--c-fg-2);
+}
+
+.locale-button.is-active {
+  color: var(--c-fg);
+  background: var(--c-bg-panel);
+}
+
+@media (max-width: 640px) {
+  .nav-links {
+    display: none;
+  }
+}
+
+/* ---------- buttons ---------- */
 
 .button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 48px;
-  padding: 0 18px;
-  border: 0;
-  border-radius: 6px;
-  background: var(--green);
-  color: var(--paper);
-  cursor: pointer;
-  font-size: 15px;
-  font-weight: 700;
-  transition: transform 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
-}
-
-.button:hover {
-  background: color-mix(in srgb, var(--green) 90%, black 10%);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px -8px rgba(35, 94, 79, 0.55);
-}
-
-.button:active {
-  transform: translateY(0);
-  box-shadow: none;
-}
-
-.button:disabled {
-  cursor: wait;
-  opacity: 0.7;
-  transform: none;
-  box-shadow: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .button {
-    transition: background-color 0.15s ease;
-  }
-  .button:hover,
-  .button:active {
-    transform: none;
-  }
-}
-
-.open-room {
-  container-type: inline-size;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  align-items: end;
-  min-height: 360px;
-  padding: 28px;
-  background: var(--green);
-  border-bottom: 8px solid var(--terracotta);
-  border-left: 8px solid var(--terracotta);
-}
-
-.open-room-mark {
-  align-self: center;
-  justify-self: center;
-  width: clamp(180px, 24vw, 320px);
-  height: auto;
-  margin-bottom: clamp(26px, 4vw, 42px);
-}
-
-/* Quiet cue that the full-height hero continues below. */
-.hero-cue {
-  position: absolute;
-  bottom: clamp(18px, 3vw, 30px);
-  left: clamp(22px, 5vw, 72px);
-  display: grid;
-  place-items: center;
-  width: 34px;
-  height: 46px;
-}
-
-.hero-cue-line {
-  width: 1px;
-  height: 34px;
-  background: linear-gradient(to bottom, transparent, var(--terracotta));
-  animation: cue-drift 2.4s ease-in-out infinite;
-}
-
-@keyframes cue-drift {
-  0%,
-  100% {
-    opacity: 0.35;
-    transform: translateY(-4px);
-  }
-  50% {
-    opacity: 1;
-    transform: translateY(4px);
-  }
-}
-
-.section {
-  padding: clamp(56px, 8vw, 104px) clamp(22px, 5vw, 72px);
-  border-top: 1px solid var(--line);
-}
-
-.origin-section {
-  background: var(--green);
-  color: var(--paper);
-  border-top: 8px solid var(--terracotta);
-}
-
-.origin-section .eyebrow,
-.origin-section p {
-  color: #dfe9df;
-}
-
-.origin-section .eyebrow {
-  color: var(--ochre);
-}
-
-.origin-section .section-copy {
-  max-width: 900px;
-}
-
-.origin-section h2 {
-  max-width: 20ch;
-}
-
-/* The staircase made structural: each beat is a step, and the riser between
-   them is the same terracotta rule used everywhere else in the identity. */
-.origin-steps {
-  display: grid;
-  gap: 0;
-  max-width: 940px;
-  padding: 0;
-  margin: clamp(28px, 5vw, 48px) 0 0;
-  list-style: none;
-  counter-reset: origin-step;
-}
-
-.origin-step {
-  position: relative;
-  padding: 0 0 clamp(26px, 4vw, 38px) clamp(30px, 5vw, 56px);
-  border-left: 2px solid rgba(243, 237, 223, 0.22);
-}
-
-.origin-step:last-child {
-  padding-bottom: 0;
-  border-left-color: transparent;
-}
-
-/* Terracotta fills the riser only as far as the step has been revealed. */
-.origin-step::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -2px;
-  width: 2px;
-  height: 0;
-  background: var(--terracotta);
-  transition: height 0.7s ease 0.15s;
-}
-
-.origin-step.is-revealed::before {
-  height: 100%;
-}
-
-.origin-step-marker {
-  position: absolute;
-  top: -2px;
-  left: 0;
-  display: grid;
-  place-items: center;
-  width: 26px;
-  height: 26px;
-  transform: translateX(-50%);
-  border-radius: 2px;
-  background: var(--terracotta);
-  color: var(--paper);
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
+  gap: var(--sp-inline);
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  font-weight: 600;
   line-height: 1;
+  padding: 0.85rem 1.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--r-md);
+  text-decoration: none;
+  transition: background-color var(--duration-ui) var(--ease-out),
+    border-color var(--duration-ui) var(--ease-out);
 }
 
-.origin-step-heading {
-  margin-bottom: 8px;
-  color: var(--paper);
-  font-size: clamp(20px, 2.4vw, 27px);
-  letter-spacing: -0.01em;
+.button--fill {
+  background: var(--c-accent);
+  color: var(--c-on-accent);
 }
 
-.origin-step p {
-  max-width: 62ch;
-  margin-bottom: 0;
+.button--fill:active {
+  background: var(--c-accent-on-paper);
+  color: var(--c-fg);
 }
 
-/* The line the whole section exists to deliver. */
-.origin-closing {
-  max-width: 24ch;
-  margin: clamp(34px, 5vw, 56px) 0 0;
-  padding-top: clamp(22px, 3vw, 32px);
-  border-top: 2px solid var(--ochre);
-  font-size: clamp(24px, 3.4vw, 42px);
-  font-weight: 700;
-  letter-spacing: -0.01em;
-  line-height: 1.1;
+.button--line {
+  border-color: var(--c-border);
+  color: var(--c-fg);
 }
 
-.origin-section .origin-closing {
-  color: var(--paper);
+.button--line:active {
+  border-color: var(--c-accent);
 }
 
-.section-copy {
-  max-width: 940px;
+.link {
+  color: var(--c-accent);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
 }
 
-.audience-section {
-  background: var(--paper);
-  background: color-mix(in srgb, var(--terracotta) 13%, var(--paper));
+.link:hover {
+  border-bottom-color: var(--c-accent);
 }
 
-.audience-section .section-copy {
-  max-width: 920px;
+/* ---------- hero ---------- */
+
+.hero {
+  display: grid;
+  align-items: center;
+  gap: var(--gap-lg);
+  padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 8vw, var(--sp-section));
 }
 
-/* Audience types lifted out of the sentence so they can be scanned. */
-.audience-chips {
+@media (min-width: 861px) {
+  .hero {
+    grid-template-columns: 1.02fr 1fr;
+    gap: clamp(2rem, 4vw, 3.5rem);
+  }
+}
+
+.hero-title {
+  margin-top: 0.85rem;
+}
+
+.hero-manifesto {
+  margin-top: 1.1rem;
+}
+
+.hero-actions {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
-  padding: 0;
-  margin: 26px 0 0;
-  list-style: none;
+  gap: var(--gap-sm);
+  margin-top: var(--gap-lg);
 }
 
-.audience-chip {
-  padding: 9px 15px;
-  border: 1px solid color-mix(in srgb, var(--terracotta) 40%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--paper) 70%, transparent);
-  font-size: 15px;
-  font-weight: 700;
-}
+/* ---------- footer ---------- */
 
-.name-section {
-  background: var(--paper);
-  background: color-mix(in srgb, var(--green) 10%, var(--paper));
-}
-
-.name-section .section-copy {
-  max-width: 820px;
-}
-
-.name-section h2 {
-  max-width: 14ch;
-}
-
-.section-heading {
+.site-footer {
+  border-top: 1px solid var(--c-border);
+  padding-block: var(--gap-lg);
   display: grid;
-  gap: 12px;
-  margin-bottom: 28px;
+  gap: var(--gap-md);
+  color: var(--c-fg-2);
+  font: var(--t-small);
 }
 
-.pillars-section {
-  background: var(--paper-warm);
+.site-footer .security-line {
+  color: var(--c-fg);
 }
 
-.pillars {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: clamp(18px, 3vw, 34px);
-  align-items: start;
-  max-width: 1180px;
-}
-
-/* Three ascending steps — the mark's own geometry, carrying the three time
-   horizons the content already names. */
-.pillar {
-  padding: 18px 0 0;
-  border-top: 4px solid var(--green);
-  border-radius: 0;
-  background: transparent;
-  transition: transform 0.25s ease, border-top-color 0.25s ease;
-}
-
-.pillar[data-step="2"] {
-  margin-top: clamp(0px, 3vw, 34px);
-}
-
-.pillar[data-step="3"] {
-  margin-top: clamp(0px, 6vw, 68px);
-}
-
-.pillar:hover,
-.pillar:focus-within {
-  transform: translateY(-4px);
-  border-top-color: var(--terracotta);
-}
-
-.pillar-horizon {
-  margin-bottom: 12px;
-  color: var(--workshop-signal);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  line-height: 1;
+.footer-brand .wordmark {
+  font: var(--t-wordmark);
+  letter-spacing: var(--track-label);
   text-transform: uppercase;
+  color: var(--c-fg);
 }
 
-.pillar h3 {
-  max-width: 20ch;
+.footer-meta {
+  display: grid;
+  gap: var(--gap-sm);
+  justify-items: start;
 }
 
-.pillar p {
-  margin-bottom: 0;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pillar {
-    transition: border-top-color 0.25s ease;
-  }
-
-  .pillar:hover,
-  .pillar:focus-within {
-    transform: none;
+@media (min-width: 861px) {
+  .footer-meta {
+    justify-items: end;
+    text-align: right;
   }
 }
 
-.not-section {
-  background: var(--paper);
-  background: color-mix(in srgb, var(--ochre) 12%, var(--paper));
+@media (min-width: 861px) {
+  .site-footer {
+    grid-template-columns: 1fr 1.4fr 1fr;
+    align-items: start;
+  }
 }
 
-.not-list {
-  display: grid;
-  max-width: 900px;
-  gap: 14px;
-  padding: 0;
-  margin: 0 0 26px;
-  list-style: none;
-}
-
-.not-list li {
-  padding: 2px 0 2px 18px;
-  border-left: 4px solid var(--terracotta);
-  font-size: 18px;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.not-closing {
-  max-width: 640px;
-  margin-bottom: 0;
-}
-
-.subscribe-section {
-  display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(320px, 0.7fr);
-  gap: clamp(28px, 6vw, 72px);
-  align-items: start;
-  background: #1a1a12;
-  color: var(--paper);
-}
-
-.subscribe-section .eyebrow {
-  color: #7fb19f;
-}
-
-.subscribe-section .section-copy p,
-.privacy-note {
-  color: #dbe3df;
-}
-
-.subscribe-form {
-  display: grid;
-  gap: 16px;
-  padding: 22px;
-  border: 1px solid rgba(243, 237, 223, 0.2);
-  border-radius: 8px;
-  background: rgba(243, 237, 223, 0.06);
-}
-
-.subscribe-form label {
-  display: grid;
-  gap: 8px;
-  color: var(--paper);
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.newsletter-language {
-  display: grid;
-  gap: 10px;
-  padding: 0;
-  border: 0;
-  margin: 0;
-}
-
-.newsletter-language legend {
-  margin-bottom: 8px;
-  color: var(--paper);
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.newsletter-language label,
-.subscribe-form .participate-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-weight: 600;
-}
-
-.subscribe-form input {
-  width: 100%;
-  min-height: 48px;
-  border: 1px solid rgba(243, 237, 223, 0.24);
-  border-radius: 6px;
-  background: rgba(243, 237, 223, 0.08);
-  color: var(--paper);
-  padding: 0 14px;
-}
-
-.subscribe-form .newsletter-language input,
-.subscribe-form .participate-checkbox input {
-  width: auto;
-  min-height: auto;
-  padding: 0;
-  /* Default UA blue reads as a stray system control on the warm dark band. */
-  accent-color: var(--ochre);
-}
-
+/* Honeypot. Not display:none — bots read that as a trap; a clipped, untabbable
+   field reads as a real input to them and as nothing to everyone else. */
 .field-supplement {
   position: absolute;
-  left: -9999px;
   width: 1px;
   height: 1px;
   overflow: hidden;
-}
-
-.subscribe-form input::placeholder {
-  color: rgba(243, 237, 223, 0.68);
-}
-
-.subscribe-form .button {
-  width: fit-content;
-  background: var(--workshop-signal);
-  color: var(--ink);
-}
-
-.form-message {
-  min-height: 22px;
-  margin: 0;
-  font-size: 14px;
-  font-weight: 700;
-}
-
-.form-message.is-success {
-  color: #9ad6be;
-}
-
-.form-message.is-error {
-  color: #ffb299;
-}
-
-.privacy-note {
-  margin: 0;
-  font-size: 14px;
-}
-
-.site-footer {
-  display: grid;
-  grid-template-columns: minmax(0, 0.6fr) minmax(0, 1fr);
-  gap: 18px;
-  padding: 28px clamp(22px, 5vw, 72px);
-  border-top: 1px solid var(--line);
-}
-
-.site-footer a {
-  color: var(--green);
-  font-weight: 700;
-}
-
-.site-footer p {
-  margin: 0;
-  font-size: 14px;
-}
-
-.back-to-top {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 20;
-  width: 44px;
-  height: 44px;
-  border: 0;
-  border-radius: 50%;
-  background: var(--terracotta);
-  color: var(--paper);
-  cursor: pointer;
-  font-size: 18px;
-  line-height: 1;
+  clip-path: inset(50%);
   opacity: 0;
   pointer-events: none;
-  transform: translateY(12px) scale(0.92);
-  box-shadow: 0 8px 22px -10px rgba(181, 82, 52, 0.55);
-  transition: opacity 0.25s ease, transform 0.3s cubic-bezier(0.34, 1.4, 0.64, 1), background-color 0.15s ease;
-}
-
-.back-to-top.is-visible {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0) scale(1);
-}
-
-.back-to-top:hover {
-  background: color-mix(in srgb, var(--terracotta) 90%, black 10%);
-}
-
-/* Three pillars stay cramped well above the old 900px breakpoint, so step
-   down to 2-up first rather than jumping straight to a single column. */
-@media (max-width: 1080px) {
-  .pillars {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /* Three items in two columns leaves a hole. Give the long-term pillar the
-     full width instead — it is the north star, so it reads as the closer. */
-  .pillar[data-step="3"] {
-    grid-column: 1 / -1;
-    margin-top: clamp(10px, 2vw, 24px);
-  }
-
-  .pillar[data-step="3"] p {
-    max-width: 62ch;
-  }
-}
-
-@media (max-width: 900px) {
-  .site-header {
-    grid-template-columns: 1fr auto;
-    gap: 12px;
-    padding-bottom: 12px;
-    padding-top: 12px;
-  }
-
-  .hero,
-  .pillars,
-  .subscribe-section,
-  .site-footer {
-    grid-template-columns: 1fr;
-  }
-
-  .pillar[data-step="2"] {
-    margin-top: 0;
-  }
-
-  .hero {
-    min-height: auto;
-    padding-bottom: clamp(70px, 12vw, 96px);
-  }
-
-  .open-room {
-    min-height: 230px;
-  }
-}
-
-@media (max-width: 560px) {
-  .site-header {
-    position: relative;
-  }
-
-  h1 {
-    max-width: none;
-    font-size: clamp(32px, 8.6vw, 44px);
-  }
-
-  .hero-actions,
-  .button {
-    width: 100%;
-  }
-
-  .origin-step {
-    padding-left: 24px;
-  }
-
-  .origin-step-marker {
-    width: 22px;
-    height: 22px;
-    font-size: 10px;
-  }
-
-  /* Keep the floating button clear of the subscribe submit button. */
-  .back-to-top {
-    right: 16px;
-    bottom: 16px;
-  }
 }
