@@ -6,11 +6,16 @@ function prefersReducedMotion(): boolean {
 
 /**
  * Reveals `[data-reveal]` elements as they enter the viewport, staggering
- * siblings via `data-reveal-delay` (in ms). Returns a teardown function —
+ * siblings via `data-reveal-delay` (in ms). Pass `animate: false` to skip the
+ * observer entirely — the caller does that under `saveData`, the same way it
+ * declines to load the scene runner. Returns a teardown function —
  * `render()` replaces the whole DOM on locale switch, so the previous
  * observer has to be disconnected the same way the scroll listener is.
  */
-export function initReveal(scope: ParentNode = document): () => void {
+export function initReveal(
+  scope: ParentNode = document,
+  options: { animate?: boolean } = {}
+): () => void {
   const targets = Array.from(scope.querySelectorAll<HTMLElement>('[data-reveal]'));
 
   if (targets.length === 0) {
@@ -19,7 +24,7 @@ export function initReveal(scope: ParentNode = document): () => void {
 
   // Single guard for every scroll-triggered animation on the page: show
   // everything in its final state and never observe.
-  if (prefersReducedMotion() || typeof IntersectionObserver === 'undefined') {
+  if (options.animate === false || prefersReducedMotion() || typeof IntersectionObserver === 'undefined') {
     targets.forEach((target) => target.classList.add(REVEALED));
     return () => {};
   }

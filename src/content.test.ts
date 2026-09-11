@@ -118,6 +118,54 @@ describe('landing page copy', () => {
     expect(copy.es.scenes[3].prompt).toContain('junta');
   });
 
+  test('opens "De preguntar a delegar" on what the country needs, not on the dismantling', () => {
+    for (const locale of locales) {
+      const { shift } = copy[locale];
+
+      // Directive 4: the need leads; the dismantled system is context, and it
+      // may only appear later, in the body.
+      expect(shift.lead).not.toMatch(/desarmad|desmantel|taken apart|dismantl/i);
+      expect(shift.body).toMatch(/desarmad|taken apart/i);
+      // The "we didn't wait" energy survives the reframing.
+      expect(shift.body).toMatch(/no esperamos|did not wait/i);
+    }
+
+    expect(copy.es.shift.titleLines.map((line) => line.text)).toEqual([
+      'De preguntar',
+      'a delegar'
+    ]);
+    expect(copy.es.shift.titleLines[1].em).toBe(true);
+  });
+
+  test('runs one recognisable office task down both columns, five steps each', () => {
+    for (const locale of locales) {
+      const { shift } = copy[locale];
+
+      expect(shift.columns.map((column) => column.kind)).toEqual(['chatbot', 'agent']);
+      expect(shift.task).not.toMatch(/convocatoria/i);
+
+      for (const column of shift.columns) {
+        expect(column.steps).toHaveLength(5);
+        expect(column.tallyCount).toMatch(/5/);
+        expect(column.tallyText.length).toBeGreaterThan(0);
+
+        for (const step of column.steps) {
+          expect(step.actor.length).toBeGreaterThan(0);
+          expect(step.text.length).toBeGreaterThan(10);
+        }
+      }
+
+      // The count is the point: the agent column does three of the five.
+      const [chatbot, agent] = shift.columns;
+      expect(chatbot.steps.filter((step) => step.done)).toHaveLength(0);
+      expect(agent.steps.filter((step) => step.done)).toHaveLength(3);
+    }
+
+    // The task continues the window's first sequence rather than inventing one.
+    expect(copy.es.shift.task).toContain('gastos');
+    expect(copy.en.shift.task).toContain('spending');
+  });
+
   test('never uses the program names another organisation owns', () => {
     for (const locale of locales) {
       const all = JSON.stringify(copy[locale]).toLowerCase();

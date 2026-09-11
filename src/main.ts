@@ -1,5 +1,6 @@
 import { copy, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
+import { initReveal } from './reveal';
 import { pageMeta, renderPage, renderThread } from './render';
 import type { ScenePlayer } from './scene';
 import './styles.css';
@@ -45,9 +46,12 @@ function render(): void {
   root.innerHTML = renderPage(currentLocale);
   root.dataset.locale = currentLocale;
 
-  // A locale switch replaces the whole tree; drop the running sequence with it.
+  // A locale switch replaces the whole tree; drop the running sequence and the
+  // observer watching the old nodes with it.
   scenePlayer?.cancel();
   scenePlayer = undefined;
+  teardownReveal?.();
+  teardownReveal = undefined;
 
   bindEvents(copy[currentLocale]);
 }
@@ -236,6 +240,8 @@ function bindAgent(page: PageCopy): void {
   observer.observe(thread);
 }
 
+let teardownReveal: (() => void) | undefined;
+
 function bindEvents(page: PageCopy): void {
   root.querySelectorAll<HTMLButtonElement>('[data-locale]').forEach((button) => {
     button.addEventListener('click', () => {
@@ -248,6 +254,7 @@ function bindEvents(page: PageCopy): void {
   });
 
   bindAgent(page);
+  teardownReveal = initReveal(root, { animate: motionAllowed() });
 }
 
 // The server already sent this page, rendered, in the locale it chose. Keep that

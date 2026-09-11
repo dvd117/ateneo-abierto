@@ -87,6 +87,12 @@
         .agent-thread[data-autoplay] [data-beat] {
           display: revert;
         }
+
+        /* Nothing adds .is-revealed without JavaScript; show the sections. */
+        [data-reveal] {
+          opacity: 1;
+          transform: none;
+        }
       </style>
     </noscript>
     <script type="module" src="/src/main.ts"></script>

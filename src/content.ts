@@ -101,6 +101,41 @@ export type AgentChrome = {
   finished: string;
 };
 
+/** One step in the two columns of "De preguntar a delegar". */
+export type ShiftStep = {
+  /** Who does it: the visitor, the chatbot, or the agent. */
+  actor: string;
+  text: string;
+  /** The agent's own steps carry a tick, like the plan inside the window. */
+  done?: boolean;
+};
+
+export type ShiftColumn = {
+  /** `chatbot` is the tiring column; `agent` is the one that pays off. */
+  kind: 'chatbot' | 'agent';
+  title: string;
+  sub: string;
+  steps: ShiftStep[];
+  /** The count, set apart: "4 de 5" / "pasos los hiciste tú." */
+  tallyCount: string;
+  tallyText: string;
+};
+
+/**
+ * Section two. The same office task done both ways, so the difference is
+ * counted rather than claimed.
+ */
+export type ShiftCopy = {
+  eyebrow: string;
+  titleLines: { text: string; em?: boolean }[];
+  /** Opens on what the country needs, not on what was dismantled. */
+  lead: string;
+  body: string;
+  /** "La misma tarea: *…*" — the task both columns run. */
+  task: string;
+  columns: [ShiftColumn, ShiftColumn];
+};
+
 export type PageCopy = {
   languageLabel: string;
   languageSwitchTo: {
@@ -125,6 +160,7 @@ export type PageCopy = {
   };
   agent: AgentChrome;
   scenes: Scene[];
+  shift: ShiftCopy;
   footer: {
     securityLine: string;
     securityBody: string;
@@ -309,6 +345,45 @@ export const copy: Record<Locale, PageCopy> = {
         }
       }
     ],
+    shift: {
+      eyebrow: 'El cambio',
+      titleLines: [{ text: 'De preguntar' }, { text: 'a delegar', em: true }],
+      lead:
+        'Venezuela necesita gente que haga más con lo poco que tiene: menos horas, menos equipo, menos dinero.',
+      body:
+        'Eso ya está al alcance de cualquiera aquí, con herramientas gratuitas y sin saber programar. El sistema que debía enseñarlo lleva años desarmado, así que no esperamos a que alguien lo arregle: lo enseñamos nosotros.',
+      task: 'La misma tarea: *juntar los gastos de tres meses y decidir dónde recortar.*',
+      columns: [
+        {
+          kind: 'chatbot',
+          title: 'Con un chatbot',
+          sub: 'Tú preguntas, él responde, y el trabajo sigue siendo tuyo.',
+          steps: [
+            { actor: 'Tú', text: 'Le preguntas cómo comparar tres meses de gastos.' },
+            { actor: 'Chatbot', text: 'Te explica el método. Los números se los pegas tú.' },
+            { actor: 'Tú', text: 'Copias y pegas las tres hojas, columna por columna.' },
+            { actor: 'Tú', text: 'Revisas a mano qué subió y qué bajó.' },
+            { actor: 'Tú', text: 'Escribes el resumen y lo guardas.' }
+          ],
+          tallyCount: '4 de 5',
+          tallyText: 'pasos los hiciste tú.'
+        },
+        {
+          kind: 'agent',
+          title: 'Con un agente',
+          sub: 'Tú delegas, él planifica y ejecuta, tú decides.',
+          steps: [
+            { actor: 'Tú', text: 'Le pasas la carpeta y le dices qué necesitas.' },
+            { actor: 'Agente', text: 'Arma un plan y te lo muestra.', done: true },
+            { actor: 'Agente', text: 'Lee las tres hojas y unifica las categorías.', done: true },
+            { actor: 'Agente', text: 'Escribe el resumen y lo guarda en tu carpeta.', done: true },
+            { actor: 'Tú', text: 'Lo revisas y decides dónde recortar.' }
+          ],
+          tallyCount: '2 de 5',
+          tallyText: 'pasos son tuyos: pedir y decidir.'
+        }
+      ]
+    },
     footer: {
       securityLine: 'La seguridad es parte de cómo trabajamos.',
       securityBody:
@@ -490,6 +565,45 @@ export const copy: Record<Locale, PageCopy> = {
         }
       }
     ],
+    shift: {
+      eyebrow: 'The shift',
+      titleLines: [{ text: 'From asking' }, { text: 'to delegating', em: true }],
+      lead:
+        'Venezuela needs people who can do more with the little they have: fewer hours, less equipment, less money.',
+      body:
+        'That is already within reach here, with free tools and without knowing how to code. The system that should have taught it has been taken apart for years, so we did not wait for anyone to fix it: we teach it ourselves.',
+      task: 'The same task: *merge three months of spending and decide where to cut.*',
+      columns: [
+        {
+          kind: 'chatbot',
+          title: 'With a chatbot',
+          sub: 'You ask, it answers, and the work is still yours.',
+          steps: [
+            { actor: 'You', text: 'You ask it how to compare three months of spending.' },
+            { actor: 'Chatbot', text: 'It explains the method. You paste the numbers yourself.' },
+            { actor: 'You', text: 'You copy and paste the three sheets, column by column.' },
+            { actor: 'You', text: 'You check by hand what went up and what went down.' },
+            { actor: 'You', text: 'You write the summary and save it.' }
+          ],
+          tallyCount: '4 of 5',
+          tallyText: 'steps you did yourself.'
+        },
+        {
+          kind: 'agent',
+          title: 'With an agent',
+          sub: 'You delegate, it plans and executes, you decide.',
+          steps: [
+            { actor: 'You', text: 'You hand it the folder and say what you need.' },
+            { actor: 'Agent', text: 'It builds a plan and shows it to you.', done: true },
+            { actor: 'Agent', text: 'It reads the three sheets and reconciles the categories.', done: true },
+            { actor: 'Agent', text: 'It writes the summary and saves it to your folder.', done: true },
+            { actor: 'You', text: 'You check it and decide where to cut.' }
+          ],
+          tallyCount: '2 of 5',
+          tallyText: 'steps are yours: asking and deciding.'
+        }
+      ]
+    },
     footer: {
       securityLine: 'Security is part of how we work.',
       securityBody:

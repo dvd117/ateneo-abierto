@@ -1,4 +1,4 @@
-import { copy, type FileKind, type PageCopy, type Scene } from './content';
+import { copy, type FileKind, type PageCopy, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 
 /**
@@ -282,6 +282,63 @@ function renderHero(page: PageCopy): string {
   `;
 }
 
+/**
+ * "De preguntar a delegar": the same task run twice, side by side. The steps
+ * reveal in order as the column enters the viewport, so the count at the foot
+ * lands as the conclusion of something the visitor watched, not as a claim.
+ * `data-reveal` is the page-wide scroll hook; it short-circuits under reduced
+ * motion, where every step is simply already there.
+ */
+function renderShiftColumn(column: ShiftColumn, index: number): string {
+  const steps = column.steps
+    .map(
+      (step, order) => `
+        <li class="shift-step ${step.done ? 'is-done' : ''}" data-reveal data-reveal-delay="${order * 90}">
+          <span class="shift-tick" aria-hidden="true"></span>
+          <span class="shift-actor">${inline(step.actor)}</span>
+          <span class="shift-text">${inline(step.text)}</span>
+        </li>
+      `
+    )
+    .join('');
+
+  return `
+    <article class="shift-col shift-col--${column.kind}" data-reveal data-reveal-delay="${index * 120}">
+      <h3 class="shift-col-title">${inline(column.title)}</h3>
+      <p class="shift-col-sub">${inline(column.sub)}</p>
+      <ol class="shift-steps">${steps}</ol>
+      <p class="shift-tally" data-reveal data-reveal-delay="${column.steps.length * 90 + 120}">
+        <span class="shift-count">${inline(column.tallyCount)}</span>
+        <span>${inline(column.tallyText)}</span>
+      </p>
+    </article>
+  `;
+}
+
+function renderShift(page: PageCopy): string {
+  const { shift } = page;
+  const title = shift.titleLines
+    .map((line) => (line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)))
+    .join('<br />');
+
+  return `
+    <section class="shift shell" id="cambio" aria-labelledby="cambio-title">
+      <div class="shift-head">
+        <p class="eyebrow">${inline(shift.eyebrow)}</p>
+        <h2 class="section-title shift-title" id="cambio-title">${title}</h2>
+        <div class="shift-intro">
+          <p class="lead">${inline(shift.lead)}</p>
+          <p class="shift-body">${inline(shift.body)}</p>
+        </div>
+      </div>
+      <p class="shift-task">${inline(shift.task)}</p>
+      <div class="shift-grid">
+        ${shift.columns.map((column, index) => renderShiftColumn(column, index)).join('')}
+      </div>
+    </section>
+  `;
+}
+
 function renderFooter(page: PageCopy, locale: Locale): string {
   return `
     <footer class="site-footer shell">
@@ -338,6 +395,7 @@ export function renderPage(locale: Locale): string {
     ${renderHeader(page, locale)}
     <main id="contenido">
       ${renderHero(page)}
+      ${renderShift(page)}
     </main>
     ${renderFooter(page, locale)}
   `;
