@@ -72,6 +72,12 @@ export type PlayOptions = {
   input?: HTMLElement | null;
   /** Called once the last beat lands, for the screen-reader status line. */
   onFinish?: () => void;
+  /**
+   * Beats the visitor can already see, so the run must not hide them when it
+   * starts. The window waits with the opening message on screen rather than as
+   * an empty panel; blanking it here would flash.
+   */
+  revealed?: readonly string[];
 };
 
 function stepDuration(thread: HTMLElement): number {
@@ -127,11 +133,17 @@ export function playScene(thread: HTMLElement, options: PlayOptions = {}): Scene
     }
   };
 
-  // Start from nothing revealed and every step pending, at the top.
+  // Start from nothing revealed and every step pending, at the top — except
+  // the beats the caller says are already on screen.
+  const held = new Set(options.revealed ?? []);
   thread.classList.add('is-playing');
   thread.scrollTop = 0;
-  for (const el of beats.values()) {
-    el.classList.remove('is-in');
+  for (const [beat, el] of beats) {
+    if (held.has(beat)) {
+      el.classList.add('is-in');
+    } else {
+      el.classList.remove('is-in');
+    }
   }
   for (const step of allSteps) {
     step.classList.remove('is-running', 'is-done');

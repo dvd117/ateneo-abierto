@@ -439,10 +439,31 @@ button {
   padding-block: clamp(2.5rem, 6vw, 4.5rem) clamp(3rem, 8vw, var(--sp-section));
 }
 
+/* On a phone the window is the thing you came for, so it comes first and the
+   network follows it — otherwise the network sits on screen at load and has
+   finished lighting before anyone looks at it. */
 @media (min-width: 861px) {
   .hero {
     grid-template-columns: 1fr 1.08fr;
+    grid-template-areas:
+      "copy   window"
+      "net    window";
+    align-items: start;
     gap: clamp(2rem, 4vw, 3.5rem);
+  }
+
+  .hero-copy {
+    grid-area: copy;
+  }
+
+  .hero .net {
+    grid-area: net;
+    align-self: start;
+  }
+
+  .hero .agent-figure {
+    grid-area: window;
+    align-self: center;
   }
 }
 
@@ -627,9 +648,12 @@ button {
 
 /* Before the runner arrives. The server sends the finished thread so no-JS
    readers get it whole (index.html un-holds it in a <noscript> style); with
-   motion allowed it waits here, empty, until the first sequence starts. */
+   motion allowed it waits here until the window is properly on screen.
+   It waits holding the visitor's opening message and its files, not empty:
+   on a phone the window's top edge is visible well before the sequence is
+   allowed to start, and a blank panel there reads as broken. */
 @media (prefers-reduced-motion: no-preference) {
-  .agent-thread[data-autoplay] [data-beat] {
+  .agent-thread[data-autoplay] [data-beat]:not([data-beat="prompt"]):not([data-beat="files"]) {
     display: none;
   }
 }
@@ -1355,8 +1379,14 @@ button {
    a confirmed site, so a lit node never announces one. */
 
 .net {
-  margin-top: var(--gap-lg);
+  margin-top: var(--gap-sm);
   max-width: 34rem;
+}
+
+@media (min-width: 861px) {
+  .net {
+    margin-top: 0;
+  }
 }
 
 .net-head {

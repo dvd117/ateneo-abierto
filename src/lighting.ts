@@ -20,6 +20,10 @@ type StepOptions = {
 /**
  * Runs `step(k)` for k = 0…count while the element is in view, and resets to
  * `step(-1)` when it leaves, so scrolling back replays it.
+ *
+ * The threshold is capped against the viewport: a column taller than the
+ * screen can never reach a high ratio, and a fixed low one fires while a
+ * sliver is peeking — which is how a sequence ends up playing off screen.
  */
 function onScreen(
   target: HTMLElement,
@@ -50,6 +54,9 @@ function onScreen(
     return { cancel: clear };
   }
 
+  const height = target.getBoundingClientRect().height;
+  const ratio = height > 0 ? Math.min(threshold, (window.innerHeight * 0.7) / height) : threshold;
+
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
@@ -63,7 +70,7 @@ function onScreen(
         }
       }
     },
-    { threshold }
+    { threshold: ratio }
   );
 
   observer.observe(target);
@@ -124,17 +131,22 @@ export function playShiftColumn(column: HTMLElement): Player {
 
   column.classList.add('is-running');
 
-  return onScreen(column, rows.length, (k) => {
-    let active = false;
+  return onScreen(
+    column,
+    rows.length,
+    (k) => {
+      let active = false;
 
-    rows.forEach((row, index) => {
-      const done = k >= 0 && index < k;
-      row.classList.toggle('is-done', done);
-      row.classList.toggle('is-active', !done && !active && k >= 0);
+      rows.forEach((row, index) => {
+        const done = k >= 0 && index < k;
+        row.classList.toggle('is-done', done);
+        row.classList.toggle('is-active', !done && !active && k >= 0);
 
-      if (!done) {
-        active = true;
-      }
-    });
-  });
+        if (!done) {
+          active = true;
+        }
+      });
+    },
+    { threshold: 0.6 }
+  );
 }

@@ -50,6 +50,8 @@ function render(): void {
   // observer watching the old nodes with it.
   scenePlayer?.cancel();
   scenePlayer = undefined;
+  agentObserver?.disconnect();
+  agentObserver = undefined;
   teardownReveal?.();
   teardownReveal = undefined;
   lightingPlayers.forEach((player) => player.cancel());
@@ -72,6 +74,7 @@ function motionAllowed(): boolean {
 }
 
 let scenePlayer: ScenePlayer | undefined;
+let agentObserver: IntersectionObserver | undefined;
 let sceneModule: Promise<typeof import('./scene')> | undefined;
 let lightingPlayers: { cancel: () => void }[] = [];
 let lightingModule: Promise<typeof import('./lighting')> | undefined;
@@ -117,6 +120,21 @@ function bindLighting(): void {
     });
 }
 
+/**
+ * How much of the window has to be on screen before its sequence may start.
+ * Most of it, so the later beats do not land off screen — but never more than
+ * a short viewport can show, or on a small phone the sequence would never run.
+ */
+function visibleEnough(element: HTMLElement): number {
+  const height = element.getBoundingClientRect().height;
+
+  if (height === 0) {
+    return 0.85;
+  }
+
+  return Math.min(0.85, (window.innerHeight * 0.85) / height);
+}
+
 function bindAgent(page: PageCopy): void {
   const thread = root.querySelector<HTMLElement>('[data-thread]');
   const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('.agent-session[data-scene]'));
@@ -156,6 +174,34 @@ function bindAgent(page: PageCopy): void {
     if (left < visibleLeft || right > visibleRight) {
       tabList.scrollTo({ left: Math.max(0, left), behavior: motionAllowed() ? 'smooth' : 'auto' });
     }
+  }
+
+  /**
+   * Starts the prerendered sequence in place. Nothing is re-rendered, so the
+   * opening message the window was waiting on stays exactly where it is.
+   */
+  function playHeld(): void {
+    void loadSceneRunner()
+      .then(({ playScene }) => {
+        if (!thread || !thread.hasAttribute('data-autoplay')) {
+          return;
+        }
+
+        scenePlayer = playScene(thread, {
+          input: root.querySelector<HTMLElement>('[data-input]'),
+          revealed: ['prompt', 'files'],
+          onFinish: () => {
+            if (liveStatus) {
+              liveStatus.textContent = '';
+              liveStatus.textContent = page.agent.finished;
+            }
+          }
+        });
+        thread.removeAttribute('data-autoplay');
+      })
+      .catch(() => {
+        thread?.removeAttribute('data-autoplay');
+      });
   }
 
   function select(id: string, { play, focus }: { play: boolean; focus?: boolean }): void {
@@ -253,7 +299,7 @@ function bindAgent(page: PageCopy): void {
     }
   });
 
-  // The window is in the hero, so this fires at once on a normal load — but it
+  // The window is in the hero, so on a desktop load this fires at once — but it
   // keeps the runner unloaded for anyone who arrives at a deep link further
   // down the page, and it never loads at all under reduced motion or saveData.
   if (!motionAllowed()) {
@@ -265,19 +311,49 @@ function bindAgent(page: PageCopy): void {
     return;
   }
 
+  const window_ = root.querySelector<HTMLElement>('.agent') ?? thread;
+  let played = false;
+
+  /**
+   * The sequence only starts once the window is properly on screen, and it
+   * starts over when it comes back. On a phone the thread is taller than half
+   * the viewport, so a bare threshold fires while a sliver of the window is
+   * peeking and the opening beats play off screen; shrinking the root from the
+   * bottom means "in view" is measured against the part of the screen someone
+   * is actually reading.
+   */
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
-          observer.disconnect();
-          select(page.scenes[0].id, { play: true });
+          if (!played) {
+            played = true;
+
+            if (thread.hasAttribute('data-autoplay')) {
+              playHeld();
+            } else {
+              const current =
+                root.querySelector<HTMLElement>('.agent-session[aria-selected="true"]')?.dataset
+                  .scene ?? page.scenes[0].id;
+              select(current, { play: true });
+            }
+          }
+
+          continue;
         }
+
+        // Gone from view: drop whatever was running and arm the next entrance,
+        // so nobody comes back to a conversation that started without them.
+        played = false;
+        scenePlayer?.cancel();
+        scenePlayer = undefined;
       }
     },
-    { threshold: 0.3 }
+    { threshold: visibleEnough(window_) }
   );
 
-  observer.observe(thread);
+  observer.observe(window_);
+  agentObserver = observer;
 }
 
 let teardownReveal: (() => void) | undefined;

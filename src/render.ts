@@ -321,9 +321,9 @@ function renderHero(page: PageCopy): string {
         <div class="hero-actions">
           <a class="button button--fill" href="#sumarme">${page.hero.primaryCta}</a>
         </div>
-        ${renderNetwork(page)}
       </div>
       ${renderAgentWindow(page)}
+      ${renderNetwork(page)}
     </section>
   `;
 }
