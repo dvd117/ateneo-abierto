@@ -750,20 +750,30 @@ function renderNorth(page: PageCopy): string {
  * page, and it stays a promise until the visitor accepts it. main.ts owns the
  * iframe, and the CSP in src/app.ts names the one frame origin it may use.
  */
+// The frame's width in the layout: the full shell up to 860px, then the
+// grid's 7fr column, so a screen that cannot show 1280 pixels takes the 960.
+const TALK_POSTER_SIZES = '(min-width: 861px) 58vw, 100vw';
+
 function renderTalk(page: PageCopy): string {
   const { talk } = page;
 
   return `
     <section class="sec talk" id="charla" aria-labelledby="charla-title">
-      <div class="shell">
-        ${renderSecHead({ eyebrow: talk.eyebrow, title: inline(talk.title), id: 'charla-title', lead: talk.body })}
+      <div class="shell talk-grid">
+        <div class="talk-copy" data-reveal>
+          <p class="eyebrow">${inline(talk.eyebrow)}</p>
+          <h2 class="section-title" id="charla-title">${inline(talk.title)}</h2>
+          <p class="lead talk-lead">${inline(talk.body)}</p>
+        </div>
         <figure class="talk-figure" data-reveal>
           <div class="talk-frame" data-talk>
             <button class="talk-play" type="button" data-talk-play aria-label="${inline(talk.play)}">
               <picture>
-                <source srcset="/ignite-poster.webp" type="image/webp" />
-                <img class="talk-poster" src="/ignite-poster.jpg" alt="${inline(talk.posterAlt)}"
-                     width="960" height="540" loading="lazy" decoding="async" />
+                <source type="image/webp" sizes="${TALK_POSTER_SIZES}"
+                        srcset="/ignite-poster.webp 960w, /ignite-poster-1280.webp 1280w" />
+                <img class="talk-poster" src="/ignite-poster-1280.jpg" alt="${inline(talk.posterAlt)}"
+                     sizes="${TALK_POSTER_SIZES}" srcset="/ignite-poster.jpg 960w, /ignite-poster-1280.jpg 1280w"
+                     width="1280" height="720" loading="lazy" decoding="async" />
               </picture>
               <span class="talk-play-mark" aria-hidden="true"></span>
             </button>

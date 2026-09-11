@@ -226,11 +226,13 @@ describe('the map is vendored, not fetched', () => {
 
 describe('the one embed on the page', () => {
   test('vendors the poster and loads nothing from YouTube in the shell or the markup', () => {
-    expect(existsSync('public/ignite-poster.webp')).toBe(true);
-    expect(existsSync('public/ignite-poster.jpg')).toBe(true);
+    for (const name of ['ignite-poster', 'ignite-poster-1280']) {
+      expect(existsSync(`public/${name}.webp`)).toBe(true);
+      expect(existsSync(`public/${name}.jpg`)).toBe(true);
+    }
 
     const render = readFileSync('src/render.ts', 'utf8');
-    expect(render).toContain('/ignite-poster.webp');
+    expect(render).toContain('/ignite-poster-1280.webp 1280w');
     // The only mention is the plain watch link: an href, which fetches nothing.
     expect(render.match(/youtube/g)).toHaveLength(1);
     expect(render).toContain('href="https://www.youtube.com/watch?v=${TALK_VIDEO_ID}"');
