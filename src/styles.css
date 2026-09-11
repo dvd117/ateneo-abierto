@@ -2232,3 +2232,24 @@ p > .link,
   text-decoration-thickness: 1px;
   border-bottom: 0;
 }
+
+.footer-brand {
+  display: grid;
+  gap: var(--gap-sm);
+  justify-items: start;
+}
+
+.footer-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--gap-md);
+}
+
+.footer-nav a {
+  color: var(--c-fg-2);
+  text-decoration: none;
+}
+
+.footer-nav a:hover {
+  color: var(--c-fg);
+}

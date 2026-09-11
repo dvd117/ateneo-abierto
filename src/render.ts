@@ -687,6 +687,12 @@ function renderFooter(page: PageCopy, locale: Locale): string {
     <footer class="site-footer shell">
       <div class="footer-brand">
         <span class="wordmark">Ateneo Abierto</span>
+        <!-- The header's links are hidden on a phone and the header does not
+             follow the scroll, so on a long page the footer is the only way
+             back. Same three destinations, same words. -->
+        <nav class="footer-nav" aria-label="${page.sectionsLabel}">
+          ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
+        </nav>
       </div>
       <div class="footer-security">
         <p class="security-line">${page.footer.securityLine}</p>
