@@ -2,7 +2,7 @@ import type { Locale } from './locale';
 import './terminal-demo.css';
 
 /**
- * PROTOTYPE, dev server only (main.ts loads it behind import.meta.env.DEV, so
+ * PROTOTYPE, shelved (main.ts loads it only on the dev server at ?terminal, so
  * the production build never contains it). A tap-to-run terminal under the
  * glossary: five real commands on the sample folder from the agent window.
  * No free typing on purpose — nothing the visitor does can fail, and it works

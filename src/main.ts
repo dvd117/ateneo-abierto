@@ -593,9 +593,11 @@ function bindEvents(page: PageCopy): void {
   teardownReveal = initReveal(root, { animate: motionAllowed() });
   teardownChrome = bindChrome();
 
-  // PROTOTYPE: the tap-to-run terminal, dev server only. The build replaces
-  // import.meta.env.DEV with false and drops the module with the branch.
-  if (import.meta.env.DEV) {
+  // PROTOTYPE, shelved: the tap-to-run terminal. It asks visitors to learn
+  // commands the agent is there to run for them, so it does not ship (David,
+  // 2026-09-11). Kept for reference: dev server only, and only at ?terminal.
+  // The build replaces import.meta.env.DEV with false and drops the module.
+  if (import.meta.env.DEV && new URLSearchParams(window.location.search).has('terminal')) {
     const locale = currentLocale;
     void import('./terminal-demo').then(({ mountTerminalDemo }) => {
       mountTerminalDemo(root, locale, motionAllowed());
