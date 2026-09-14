@@ -100,8 +100,9 @@ function wave(t: number, frequency: number, phase: number): number {
  * stripes at one pitch, and inside each column the widths of ochre, dark
  * ochre and bone drift continuously along the band, so the colour mixed in
  * the eye changes gradually from one end to the other — one field, not a row
- * of blocks. `seed` shifts the waves so no two bands match. Our composition,
- * never the Maiquetía floor (see render.ts).
+ * of blocks. `seed` shifts the waves so no two bands match. Our composition:
+ * the Maiquetía floor is quoted in words under band three, never drawn here
+ * (see render.ts).
  */
 export function drawBand(field: SVGGElement, seed: number): void {
   const pitch = 6;

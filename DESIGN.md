@@ -384,10 +384,14 @@ still never loops:
     foot, where Únete is). Measured as each band crosses mid-screen: 0.12 / 0.53 / 0.89 at 390
     wide, 0.12 / 0.50 / 0.92 at 1280. The page visibly turns towards "done": the drift
     records progress, and tilt sits on top of it.
-  **It is his method, never his image**: it must not reproduce the
+  **It is his method, never his image**: the stripes must not reproduce the
   Maiquetía floor (*Cromointerferencia de color aditivo*) or its yellow/black/red/blue modules.
   On 2026-09-07 the artist's family publicly objected to unauthorised imitations of that
-  pattern, and David chose the method over the image (2026-09-11).
+  pattern, and David chose the method over the image (2026-09-11). The floor is quoted
+  deliberately in words, once (2026-09-14): a single line under band three, before Únete, the
+  only moment the page speaks in the founder's voice. It is a real paragraph beside the
+  `aria-hidden` band, Fraunces italic at the door "who" size, `bone-soft`, right-aligned on
+  desktop and centred on a phone, and unsigned. Bands one and two carry no line.
 
 Everything short-circuits under `prefers-reduced-motion` (bands stand still in resting ochre,
 still a moiré, and no orientation listener or permission prompt is ever attached), and

@@ -383,8 +383,10 @@ button {
 /* ---------- la vibración ----------
    The signature, after Cruz-Diez's additive-colour method: zones of stripes
    of varying width and colour, and a screen of fine dark lines that slides
-   over them, so tones appear and travel. Our palette, our composition —
-   never the Maiquetía floor (see render.ts).
+   over them, so tones appear and travel. Our palette, our composition. The
+   Maiquetía floor is referenced on purpose, in words only: the one line
+   under band three, before Únete (.band-voice, approved 2026-09-14; see
+   render.ts). The stripes never reproduce its image.
 
    The bands are instruments, not ornaments. The screen's travel records
    where the band is on the screen, and on a phone that reports its
@@ -399,6 +401,26 @@ button {
   background: var(--c-bg);
   border-top: 1px solid var(--c-border);
   overflow: hidden;
+}
+
+/* The page's one line in the founder's voice, under band three: the door
+   "who" line's size, in the manifesto serif's italic, unsigned. Right-aligned
+   under the band on desktop, centred on a phone. */
+.band-voice {
+  margin-block: var(--gap-sm) 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  color: var(--c-fg-soft);
+  text-align: right;
+}
+
+@media (max-width: 860px) {
+  .band-voice {
+    text-align: center;
+  }
 }
 
 .band-svg {

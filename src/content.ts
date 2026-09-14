@@ -415,6 +415,12 @@ export type PageCopy = {
   glossary: GlossaryCopy;
   doors: DoorsCopy;
   deepLinks: Record<DeepLinkRoute, DeepLinkCard>;
+  /**
+   * The one line under the last band, before Únete: the only place the page
+   * speaks in the founder's voice. It quotes the Maiquetía floor in words,
+   * never in image. Unsigned.
+   */
+  voice: string;
   principles: PrinciplesCopy;
   north: NorthCopy;
   talk: TalkCopy;
@@ -837,6 +843,8 @@ export const copy: Record<Locale, PageCopy> = {
         who: ['Quien ya armó algo y quiere enseñarlo,', 'o aprender del intento de otro.']
       }
     },
+    // DRAFT (2026-09-14): David approves or replaces the final wording before merge.
+    voice: 'Este piso lo conoces. Esta vez no es para irte.',
     principles: {
       eyebrow: 'Principios',
       title: 'Cómo trabajamos',
@@ -1356,6 +1364,8 @@ export const copy: Record<Locale, PageCopy> = {
         who: ['Anyone who has built something and wants to show it,', 'or to learn from someone else\u2019s attempt.']
       }
     },
+    // DRAFT (2026-09-14): David approves or replaces the final wording before merge.
+    voice: 'You know this floor. This time it is not for leaving.',
     principles: {
       eyebrow: 'Principles',
       title: 'How we work',

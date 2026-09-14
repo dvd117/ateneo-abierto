@@ -263,6 +263,22 @@ describe('landing page copy', () => {
     }
   });
 
+  test('gives band three the one line in the founder\'s voice, unsigned and outside the hidden band', () => {
+    // Drafts until David approves the final wording (2026-09-14).
+    expect(copy.es.voice).toBe('Este piso lo conoces. Esta vez no es para irte.');
+    expect(copy.en.voice).toBe('You know this floor. This time it is not for leaving.');
+
+    for (const locale of locales) {
+      const html = renderPage(locale);
+      const voices = html.match(/<p class="band-voice[^"]*">[^<]*<\/p>/g) ?? [];
+
+      expect(voices).toEqual([`<p class="band-voice shell">${copy[locale].voice}</p>`]);
+      // A sibling that follows band three's closing tag, not a child of the aria-hidden band.
+      expect(html).toMatch(/band--three" data-band aria-hidden="true">[\s\S]*?<\/svg>\s*<\/div>\s*<p class="band-voice shell">/);
+      expect(html.indexOf('band-voice')).toBeLessThan(html.indexOf('id="unete"'));
+    }
+  });
+
   test('says who each door is for, and places mentorships inside the hackathon', () => {
     // Nobody should have to guess which door is theirs.
     expect(copy.es.doors.doors[0].who).toMatch(/docentes|oficina/);

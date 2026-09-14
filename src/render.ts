@@ -431,12 +431,15 @@ function titleFrom(lines: { text: string; em?: boolean }[]): string {
  * palette: a row of zones, each a stripe recipe (pitch, colours, widths), and
  * over them a screen that slides as the band crosses the screen.
  *
- * It deliberately does not reproduce the Maiquetía floor or its colour
- * modules: in September 2026 the artist's family publicly objected to
- * unauthorised imitations of that pattern, and David chose the method over
- * the image (2026-09-11). Hidden from the tree: it says nothing.
+ * The image is still never the Maiquetía floor or its colour modules: in
+ * September 2026 the artist's family publicly objected to unauthorised
+ * imitations of that pattern, and David chose the method over the image
+ * (2026-09-11). The floor is referenced deliberately in words, and in one
+ * place only: the line under band three, before Únete (`voice` in
+ * content.ts), approved by David on 2026-09-14. The band itself is hidden
+ * from the tree: it says nothing. The line is a real paragraph beside it.
  */
-function renderBand(name: string, seed: number): string {
+function renderBand(name: string, seed: number, voice?: string): string {
   // The stripes are drawn in the browser (reveal.ts, drawBand): three bands
   // of ~200 columns each would add tens of kilobytes to the first response.
   // Until then — and without JavaScript — a plain stripe pattern stands in.
@@ -454,7 +457,8 @@ function renderBand(name: string, seed: number): string {
         </g>
         <rect class="band-screen" x="-120" width="1440" height="100" fill="url(#band-${name}-screen)"/>
       </svg>
-    </div>
+    </div>${voice ? `
+    <p class="band-voice shell">${inline(voice)}</p>` : ''}
   `;
 }
 
@@ -1038,7 +1042,7 @@ export function renderPage(locale: Locale): string {
       ${renderNorth(page)}
       ${renderPrinciples(page)}
       ${renderTalk(page)}
-      ${renderBand('three', 5)}
+      ${renderBand('three', 5, page.voice)}
       ${renderForm(page, locale)}
     </main>
     ${renderFooter(page, locale)}
