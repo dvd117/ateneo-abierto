@@ -972,9 +972,9 @@ export function pageMeta(locale: Locale): PageMeta {
 
   return {
     lang: locale,
-    title: `Ateneo Abierto | ${claim}`,
+    title: `Ateneo Abierto · ${claim}`,
     ogTitle: `Ateneo Abierto — ${claim}`,
-    description: page.hero.manifesto.replace(/\*/g, ''),
+    description: page.meta.description,
     ogImage: locale === 'es' ? 'https://ateneo-abierto.org/og.png' : 'https://ateneo-abierto.org/og-en.png',
     ogImageAlt: `Ateneo Abierto: ${claim}`,
     ogLocale: locale === 'es' ? 'es_VE' : 'en_US',

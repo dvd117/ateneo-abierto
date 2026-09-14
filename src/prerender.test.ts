@@ -37,7 +37,8 @@ describe('build-time prerender', () => {
     expect(html).toContain('Deja de preguntarle.');
     expect(html).toContain('data-thread data-autoplay');
     expect(html).toContain('<html lang="es"');
-    expect(html).toContain('<title>Ateneo Abierto | Deja de preguntarle. Empieza a delegarle.</title>');
+    expect(html).toContain('<title>Ateneo Abierto · Deja de preguntarle. Empieza a delegarle.</title>');
+    expect(html).toMatch(/name="description"\s+content="[^"]*herramientas abiertas, gratis para empezar/);
   });
 
   test('writes the English page with English metadata throughout', () => {
@@ -50,7 +51,9 @@ describe('build-time prerender', () => {
     expect(html).toContain('property="og:locale" content="en_US"');
     expect(html).toContain('property="og:locale:alternate" content="es_VE"');
     expect(html).toContain('href="https://ateneo-abierto.org/?lang=en"');
+    expect(html).toContain('<title>Ateneo Abierto · Stop asking it things. Start handing it work.</title>');
     expect(html).toMatch(/name="description"\s+content="A chatbot answers you\./);
+    expect(html).toMatch(/name="description"\s+content="[^"]*open tools, free to start/);
     expect(html).toContain('property="og:title" content="Ateneo Abierto — Stop asking it things. Start handing it work."');
     expect(html).toContain('name="twitter:title" content="Ateneo Abierto — Stop asking it things. Start handing it work."');
     expect(html).toContain('property="og:image" content="https://ateneo-abierto.org/og-en.png"');

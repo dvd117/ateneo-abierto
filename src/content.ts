@@ -368,6 +368,10 @@ export type PageCopy = {
   /** The floating button that returns to the top of the page. */
   toTop: string;
   nav: NavLink[];
+  /** The head: search and link-preview description. The title comes from the hero claim. */
+  meta: {
+    description: string;
+  };
   hero: {
     eyebrow: string;
     /** Headline lines; `em` sets the italic line. */
@@ -417,6 +421,10 @@ export const copy: Record<Locale, PageCopy> = {
       { label: 'El norte', href: '#norte' },
       { label: 'Únete', href: '#unete' }
     ],
+    meta: {
+      description:
+        'Un chatbot te responde. Un agente hace el trabajo contigo. Aprende a delegarle trabajo de oficina a un agente, con herramientas abiertas, gratis para empezar, desde Venezuela.'
+    },
     hero: {
       eyebrow: 'Más allá del chatbot',
       titleLines: [{ text: 'Deja de preguntarle.' }, { text: 'Empieza a delegarle.', em: true }],
@@ -925,6 +933,10 @@ export const copy: Record<Locale, PageCopy> = {
       { label: 'Where this goes', href: '#norte' },
       { label: 'Join', href: '#unete' }
     ],
+    meta: {
+      description:
+        'A chatbot answers you. An agent does the work with you. Learn to hand office work to an agent, with open tools, free to start, from Venezuela.'
+    },
     hero: {
       eyebrow: 'Beyond the chatbot',
       titleLines: [{ text: 'Stop asking it things.' }, { text: 'Start handing it work.', em: true }],
