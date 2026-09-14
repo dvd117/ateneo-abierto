@@ -34,8 +34,8 @@ describe('landing page copy', () => {
       expect(hero).not.toMatch(/\b20(2[6-9]|3\d)\b/);
     }
 
-    expect(copy.es.hero.manifesto).toContain('sin pagar nada para empezar');
-    expect(copy.en.hero.manifesto).toContain('at no cost to start');
+    expect(copy.es.hero.manifesto).toContain('gratis y sin saber programar');
+    expect(copy.en.hero.manifesto).toContain('free, and without knowing how to code');
   });
 
   test('labels the agent window as a local simulation', () => {

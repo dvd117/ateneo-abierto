@@ -405,7 +405,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'Más allá del chatbot',
       titleLines: [{ text: 'Deja de preguntarle.' }, { text: 'Empieza a delegarle.', em: true }],
       manifesto:
-        'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega un documento. Aprende a delegar en hackatones y Demo Nights en Venezuela, con herramientas libres y sin pagar nada para empezar.',
+        'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega el documento. Aprender a delegarle es la habilidad que viene, y desde Venezuela puedes empezar hoy: gratis y sin saber programar.',
       primaryCta: 'Únete',
       byline: 'La idea, en 5 minutos',
       bylineLink: 'Mira la charla',
@@ -429,7 +429,7 @@ export const copy: Record<Locale, PageCopy> = {
     },
     network: {
       label: 'La red que estamos tejiendo',
-      caption: 'Bibliotecas, mentores y ciudades',
+      caption: 'Gente, mentores y ciudades',
       alt: 'Ocho ciudades venezolanas unidas por una red: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná y Ciudad Guayana. Son ciudades que queremos alcanzar, no sedes confirmadas.',
       cities: [
         { name: 'Caracas', x: 244, y: 16, lx: 244, ly: 30 },
@@ -637,7 +637,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'El cambio',
       titleLines: [{ text: 'De preguntar' }, { text: 'a delegar', em: true }],
       lead:
-        'Los chatbots ya leen tus documentos y te devuelven archivos. La diferencia está en cuánto del trabajo sigue siendo tuyo. Un agente trabaja en tu carpeta, sigue un plan y revisa su propio trabajo: lo que antes te consumía demasiado tiempo se resuelve mientras haces otra cosa, y el criterio sigue siendo tuyo.',
+        'Los chatbots ya leen tus documentos y te devuelven archivos. La diferencia está en cuánto del trabajo sigue siendo tuyo. Un agente trabaja en tu carpeta, sigue un plan y revisa lo que hace: la tarea se resuelve mientras haces otra cosa, y el criterio sigue siendo tuyo.',
       task: 'La misma tarea: *juntar los gastos de tres meses y decidir dónde recortar.*',
       columns: [
         {
@@ -652,7 +652,7 @@ export const copy: Record<Locale, PageCopy> = {
             { actor: 'Tú', text: 'Lo guardas en tu carpeta. El mes que viene, empiezas de cero.' }
           ],
           tallyCount: '4 de 5',
-          tallyText: 'pasos pasan por ti.'
+          tallyText: 'pasos los haces tú.'
         },
         {
           kind: 'agent',
@@ -666,7 +666,7 @@ export const copy: Record<Locale, PageCopy> = {
             { actor: 'Tú', text: 'Lo revisas y decides dónde recortar. El mes que viene, se lo pides en una línea.' }
           ],
           tallyCount: '2 de 5',
-          tallyText: 'pasos son tuyos: pedir y decidir.'
+          tallyText: 'pasos los haces tú: pedir y decidir.'
         }
       ]
     },
@@ -755,7 +755,7 @@ export const copy: Record<Locale, PageCopy> = {
           id: 'demo-nights',
           n: '03',
           title: 'Demo Nights',
-          body: 'Entre 2 y 5 minutos: muestras la herramienta que te ha sido útil en tu trabajo y cuentas cómo llegaste ahí.',
+          body: 'Entre 2 y 5 minutos: muestras la herramienta que te ha sido útil en tu trabajo, qué salió mal antes de que funcionara, y cómo llegaste ahí.',
           whoLabel: 'Para quién',
           who: 'Quien ya armó algo y quiere enseñarlo, o aprender del intento de otro.',
           details: {
@@ -912,10 +912,10 @@ export const copy: Record<Locale, PageCopy> = {
       { label: 'Join', href: '#unete' }
     ],
     hero: {
-      eyebrow: 'Past the chatbot',
+      eyebrow: 'Beyond the chatbot',
       titleLines: [{ text: 'Stop asking it things.' }, { text: 'Start handing it work.', em: true }],
       manifesto:
-        'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan, and hands you a document. Learn to delegate at hackathons and Demo Nights in Venezuela, with free and open tools and at no cost to start.',
+        'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan and hands you the document. Learning to delegate to it is the skill that’s coming, and from Venezuela you can start today: free, and without knowing how to code.',
       primaryCta: 'Join',
       byline: 'The idea, in 5 minutes',
       bylineLink: 'Watch the talk',
@@ -939,7 +939,7 @@ export const copy: Record<Locale, PageCopy> = {
     },
     network: {
       label: 'The network we’re weaving',
-      caption: 'Libraries, mentors and cities',
+      caption: 'People, mentors and cities',
       alt: 'Eight Venezuelan cities joined in a network: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná and Ciudad Guayana. These are cities we want to reach, not confirmed sites.',
       cities: [
         { name: 'Caracas', x: 244, y: 16, lx: 244, ly: 30 },
@@ -1071,7 +1071,7 @@ export const copy: Record<Locale, PageCopy> = {
             lead: 'Three ideas hold the text together:',
             items: [
               'Access counts for more than talent',
-              'A tool alone doesn’t teach; company does',
+              'A tool alone doesn’t teach; guidance does',
               'What you learn stays with you, not on the platform',
               '8 revision questions, answers at the end'
             ]
@@ -1145,7 +1145,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'The shift',
       titleLines: [{ text: 'From asking' }, { text: 'to delegating', em: true }],
       lead:
-        'Chatbots already read your documents and hand files back. The difference is how much of the work is still yours. An agent works in your folder, follows a plan and checks its own work: what used to take far too much of your time gets done while you do something else, and the judgment stays yours.',
+        'Chatbots already read your documents and hand files back. The difference is how much of the work is still yours. An agent works in your folder, follows a plan and checks what it does: the task gets done while you do something else, and the judgment stays yours.',
       task: 'The same task: *merge three months of spending and decide where to cut.*',
       columns: [
         {
@@ -1160,7 +1160,7 @@ export const copy: Record<Locale, PageCopy> = {
             { actor: 'You', text: 'You save it in your folder. Next month, you start from scratch.' }
           ],
           tallyCount: '4 of 5',
-          tallyText: 'steps go through you.'
+          tallyText: 'steps are yours to do.'
         },
         {
           kind: 'agent',
@@ -1174,7 +1174,7 @@ export const copy: Record<Locale, PageCopy> = {
             { actor: 'You', text: 'You check it and decide where to cut. Next month, you ask in one line.' }
           ],
           tallyCount: '2 of 5',
-          tallyText: 'steps are yours: asking and deciding.'
+          tallyText: 'steps are yours to do: asking and deciding.'
         }
       ]
     },
@@ -1261,7 +1261,7 @@ export const copy: Record<Locale, PageCopy> = {
           id: 'demo-nights',
           n: '03',
           title: 'Demo Nights',
-          body: 'Two to five minutes: you show the tool that has been useful in your work, and how you got there.',
+          body: 'Two to five minutes: you show the tool that has been useful in your work, what went wrong before it worked, and how you got there.',
           whoLabel: 'Who it’s for',
           who: 'Anyone who has built something and wants to show it, or to learn from someone else\u2019s attempt.',
           details: {
