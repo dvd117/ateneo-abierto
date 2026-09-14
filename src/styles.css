@@ -1343,6 +1343,72 @@ main .door[id] {
   transform: scale(0.88);
 }
 
+/* The typed-task prototype (HERO_INPUT 'typed'): the same box, now a real
+   text field with a real send button, and the carry-to-form checkbox under it. */
+.agent-input--typed {
+  margin: 0;
+}
+
+.agent-input--typed:focus-within {
+  border-color: var(--c-fg-3);
+}
+
+.agent-input-field {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--c-fg);
+  font: inherit;
+}
+
+.agent-input-field::placeholder {
+  color: var(--c-fg-2);
+  opacity: 1;
+}
+
+.agent-input-field:focus {
+  outline: none;
+}
+
+.agent-input--typed:has(.agent-input-field:focus-visible) {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.agent-input--typed .agent-send {
+  font: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.agent-input--typed:has(.agent-input-field:not(:placeholder-shown)) .agent-send {
+  background: var(--c-fg);
+  border-color: var(--c-fg);
+  color: var(--c-bg-panel);
+}
+
+.agent-input--typed .agent-send:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 2px;
+}
+
+.agent-carry {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.55em;
+  font: var(--t-small);
+  color: var(--c-fg-2);
+  cursor: pointer;
+}
+
+.agent-carry input {
+  accent-color: var(--c-accent);
+  margin: 0;
+}
+
 /* ---------- the delivered file ----------
    The second round ends in the file the visitor will actually send. A card,
    like an attachment in the real tools, with a drawn thumbnail of its format;

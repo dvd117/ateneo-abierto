@@ -1,4 +1,4 @@
-import { copy, DEEP_LINK_ROUTES, type DeepLinkRoute, type PageCopy } from './content';
+import { copy, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
 import { drawBand, initBands, initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
@@ -13,6 +13,10 @@ if (!app) {
 }
 
 const root = app;
+
+/** The hero input variant: the build's HERO_INPUT, unless ?hero= asks for the other one to review it. */
+const heroParam = new URLSearchParams(window.location.search).get('hero');
+const heroInput: HeroInput = heroParam === 'typed' || heroParam === 'scripted' ? heroParam : HERO_INPUT;
 
 /** Set by the prerender on /hackaton, /talleres and /demo-nights: the door this page opens at. */
 const deepLink = DEEP_LINK_ROUTES.find((route) => route === root.dataset.deepLink);
@@ -49,7 +53,7 @@ function render(): void {
   setMetaContent('meta[property="og:title"]', meta.ogTitle);
   setMetaContent('meta[name="twitter:title"]', meta.ogTitle);
 
-  root.innerHTML = renderPage(currentLocale);
+  root.innerHTML = renderPage(currentLocale, { heroInput });
   root.dataset.locale = currentLocale;
 
   // A locale switch replaces the whole tree; drop the running sequence and the
@@ -236,7 +240,10 @@ function bindAgent(page: PageCopy): void {
       });
   }
 
-  function select(id: string, { play, focus }: { play: boolean; focus?: boolean }): void {
+  function select(
+    id: string,
+    { play, focus, afterRender }: { play: boolean; focus?: boolean; afterRender?: (thread: HTMLElement) => void }
+  ): void {
     const scene = page.scenes.find((candidate) => candidate.id === id);
 
     if (!scene || !thread) {
@@ -247,6 +254,7 @@ function bindAgent(page: PageCopy): void {
     scenePlayer = undefined;
 
     thread.innerHTML = renderThread(page, scene);
+    afterRender?.(thread);
     thread.scrollTop = 0;
     thread.setAttribute('aria-labelledby', `task-${scene.id}`);
 
@@ -300,10 +308,50 @@ function bindAgent(page: PageCopy): void {
     tab.addEventListener('click', () => {
       const id = tab.dataset.scene;
       if (id) {
+        typedTurn = undefined;
         select(id, { play: true });
       }
     });
   }
+
+  // The typed-task prototype: the visitor's own task picks the closest scripted
+  // sequence, which then plays with their words as its first message. The text
+  // stays in this page; the checkbox only copies it into the join form.
+  /** Whether the window's sequence has started since it last came into view. */
+  let played = false;
+
+  // The last typed task, so the window coming back into view replays it rather
+  // than the scripted prompt; picking a task in the list clears it.
+  let typedTurn: { sceneId: string; write: (target: HTMLElement) => void } | undefined;
+  const typedForm = root.querySelector<HTMLFormElement>('[data-typed-form]');
+  const typedField = typedForm?.querySelector<HTMLInputElement>('[data-typed-field]');
+  typedForm?.addEventListener('submit', (event) => {
+    event.preventDefault();
+    const text = typedField?.value.trim() ?? '';
+    if (!typedField || !text) {
+      return;
+    }
+
+    void import('./typed-task').then(({ matchScene, writeTypedTurn }) => {
+      const match = matchScene(text, page.scenes);
+      const ack = match.score > 0 ? page.agent.typed.hit : page.agent.typed.miss;
+
+      const sceneId = page.scenes[match.index].id;
+      typedTurn = { sceneId, write: (target) => writeTypedTurn(target, text, ack) };
+      // Counts as the window's run: the observer must not restart it with the script.
+      played = true;
+      select(sceneId, { play: true, afterRender: typedTurn.write });
+
+      if (root.querySelector<HTMLInputElement>('[data-carry]')?.checked) {
+        const delegate = root.querySelector<HTMLInputElement>('#join-delegate');
+        if (delegate) {
+          delegate.value = text.slice(0, delegate.maxLength > 0 ? delegate.maxLength : 200);
+        }
+      }
+
+      typedField.value = '';
+    });
+  });
 
   // Tablist keyboard model. The list is vertical on desktop and a row on a
   // phone, so both arrow pairs move; Home/End jump to the ends.
@@ -327,6 +375,7 @@ function bindAgent(page: PageCopy): void {
     event.preventDefault();
     const id = tabs[next]?.dataset.scene;
     if (id) {
+      typedTurn = undefined;
       select(id, { play: true, focus: true });
     }
   });
@@ -344,7 +393,6 @@ function bindAgent(page: PageCopy): void {
   }
 
   const window_ = root.querySelector<HTMLElement>('.agent') ?? thread;
-  let played = false;
 
   /**
    * The sequence only starts once the window is properly on screen, and it
@@ -367,7 +415,10 @@ function bindAgent(page: PageCopy): void {
               const current =
                 root.querySelector<HTMLElement>('.agent-session[aria-selected="true"]')?.dataset
                   .scene ?? page.scenes[0].id;
-              select(current, { play: true });
+              select(current, {
+                play: true,
+                afterRender: typedTurn?.sceneId === current ? typedTurn.write : undefined
+              });
             }
           }
 
@@ -650,7 +701,7 @@ function openAtDoor(container: ParentNode, route: DeepLinkRoute): void {
 
 // The server already sent this page, rendered, in the locale it chose. Keep that
 // DOM and only wire it up — unless this visitor saved the other language.
-if (root.dataset.locale === currentLocale && root.childElementCount > 0) {
+if (root.dataset.locale === currentLocale && heroInput === HERO_INPUT && root.childElementCount > 0) {
   bindEvents(copy[currentLocale]);
 } else {
   render();

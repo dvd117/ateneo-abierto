@@ -53,6 +53,11 @@ export type Scene = {
   prompt: string;
   /** File chips that attach to the prompt. */
   files: string[];
+  /**
+   * For the typed-task prototype: 8 to 15 words drawn from this task's own
+   * prompt, files and document. A typed task plays the scene it hits most.
+   */
+  keywords: string[];
   /** The agent's one line before the plan. */
   ack: string;
   /** Exactly four plan steps, ticked one at a time. */
@@ -143,6 +148,17 @@ export type AgentChrome = {
   insideWords: { read: string; write: string; skill: string; rules: string };
   /** The instructions file the agent reads before every task. */
   rulesFile: string;
+  /** The typed-task prototype (HERO_INPUT 'typed'). */
+  typed: {
+    /** The agent's first line when the typed task matched a scene. */
+    hit: string;
+    /** …and when it matched none, so scene one plays. */
+    miss: string;
+    /** The checkbox that copies the typed task into the form. */
+    carry: string;
+    /** Accessible name of the send button. */
+    send: string;
+  };
 };
 
 /**
@@ -433,6 +449,15 @@ export type PageCopy = {
   };
 };
 
+/**
+ * The hero window's input. `scripted` (the default) types each sequence's
+ * follow-up by itself; `typed` is a prototype David is still weighing, where
+ * the visitor types a task and the closest scripted sequence plays for it.
+ * `?hero=typed` or `?hero=scripted` overrides this at runtime for review.
+ */
+export type HeroInput = 'scripted' | 'typed';
+export const HERO_INPUT: HeroInput = 'scripted';
+
 export const copy: Record<Locale, PageCopy> = {
   es: {
     languageLabel: 'Idioma',
@@ -476,7 +501,13 @@ export const copy: Record<Locale, PageCopy> = {
       finished: 'El agente terminó la tarea y guardó el documento.',
       inside: 'Ver por dentro',
       insideWords: { read: 'Leyó', write: 'Escribió', skill: 'Usó la skill', rules: 'Leyó tus instrucciones' },
-      rulesFile: 'AGENTS.md'
+      rulesFile: 'AGENTS.md',
+      typed: {
+        hit: 'Esto lo haría así:',
+        miss: 'No tengo un ejemplo igual, pero se parece a esto:',
+        carry: 'Llevar esta tarea al formulario',
+        send: 'Enviar'
+      }
     },
     network: {
       label: 'La red que estamos tejiendo',
@@ -510,6 +541,7 @@ export const copy: Record<Locale, PageCopy> = {
         prompt:
           'Tengo tres hojas de cálculo con los gastos del trimestre. Júntalas y hazme un resumen de una página.',
         files: ['gastos-julio.csv', 'gastos-agosto.csv', 'gastos-septiembre.csv'],
+        keywords: ['gastos', 'hojas', 'calculo', 'trimestre', 'resumen', 'excel', 'factura', 'cuentas', 'mes', 'recibos', 'categoria', 'transporte', 'csv'],
         ack: 'Va. Este es mi plan:',
         steps: [
           'Leer las 3 hojas',
@@ -554,6 +586,7 @@ export const copy: Record<Locale, PageCopy> = {
         prompt:
           'En esa carpeta están mis notas de la clase. Ármame una presentación de 6 láminas para el lunes.',
         files: ['notas-clase.md', 'ejercicios.md', 'preguntas.md'],
+        keywords: ['clase', 'laminas', 'presentacion', 'powerpoint', 'notas', 'lunes', 'diapositivas', 'esquema', 'ejercicios', 'ciclo', 'agua'],
         ack: 'Listo. Este es mi plan:',
         steps: [
           'Leer las notas de la carpeta',
@@ -600,6 +633,7 @@ export const copy: Record<Locale, PageCopy> = {
         prompt:
           'Este PDF es la lectura de la semana. Hazme apuntes y agrégale preguntas para repasar.',
         files: ['lectura-semana-3.pdf'],
+        keywords: ['pdf', 'lectura', 'apuntes', 'preguntas', 'repasar', 'repaso', 'semana', 'estudiar', 'capitulo', 'contabilidad', 'balance', 'imprimir'],
         ack: 'Va. Este es mi plan:',
         steps: [
           'Leer el PDF completo',
@@ -645,6 +679,7 @@ export const copy: Record<Locale, PageCopy> = {
         prompt:
           'Con el informe del mes, escríbeme un correo corto para la junta. Directo, sin adornos.',
         files: ['informe-septiembre.md'],
+        keywords: ['correo', 'junta', 'informe', 'borrador', 'carta', 'word', 'firmar', 'redactar', 'septiembre', 'directo', 'equipo'],
         ack: 'Listo. Este es mi plan:',
         steps: [
           'Leer el informe del mes',
@@ -1004,7 +1039,13 @@ export const copy: Record<Locale, PageCopy> = {
       finished: 'The agent finished the task and saved the document.',
       inside: 'Show what it runs',
       insideWords: { read: 'Read', write: 'Wrote', skill: 'Used the skill', rules: 'Read your instructions' },
-      rulesFile: 'AGENTS.md'
+      rulesFile: 'AGENTS.md',
+      typed: {
+        hit: 'Here is how I would do it:',
+        miss: 'I have no example quite like that, but it looks like this:',
+        carry: 'Carry this task to the form',
+        send: 'Send'
+      }
     },
     network: {
       label: 'The network we’re weaving',
@@ -1038,6 +1079,7 @@ export const copy: Record<Locale, PageCopy> = {
         prompt:
           'I have three spreadsheets with this quarter’s spending. Merge them and give me a one-page summary.',
         files: ['spending-july.csv', 'spending-august.csv', 'spending-september.csv'],
+        keywords: ['spending', 'spreadsheets', 'quarter', 'summary', 'excel', 'invoice', 'accounts', 'month', 'receipts', 'category', 'transport', 'expenses', 'csv'],
         ack: 'On it. Here’s my plan:',
         steps: [
           'Read the 3 spreadsheets',
@@ -1081,6 +1123,7 @@ export const copy: Record<Locale, PageCopy> = {
         session: 'Monday’s class',
         prompt: 'My class notes are in that folder. Build me a 6-slide deck for Monday.',
         files: ['class-notes.md', 'exercises.md', 'questions.md'],
+        keywords: ['class', 'slides', 'deck', 'presentation', 'powerpoint', 'notes', 'monday', 'outline', 'exercises', 'lesson', 'water'],
         ack: 'Sure. Here’s my plan:',
         steps: [
           'Read the notes in the folder',
@@ -1126,6 +1169,7 @@ export const copy: Record<Locale, PageCopy> = {
         session: 'This week’s reading',
         prompt: 'This PDF is the reading for the week. Make me notes and add questions to revise.',
         files: ['reading-week-3.pdf'],
+        keywords: ['pdf', 'reading', 'revise', 'revision', 'questions', 'week', 'study', 'chapter', 'accounting', 'balance', 'print'],
         ack: 'On it. Here’s my plan:',
         steps: [
           'Read the full PDF',
@@ -1171,6 +1215,7 @@ export const copy: Record<Locale, PageCopy> = {
         prompt:
           'Using the monthly report, write me a short email for the board. Direct, no padding.',
         files: ['report-september.md'],
+        keywords: ['email', 'board', 'report', 'draft', 'letter', 'word', 'sign', 'write', 'september', 'team', 'message'],
         ack: 'Sure. Here’s my plan:',
         steps: [
           'Read the monthly report',

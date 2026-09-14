@@ -1,4 +1,4 @@
-import { copy, type DeepLinkRoute, type Door, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
+import { copy, HERO_INPUT, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
@@ -263,7 +263,30 @@ function renderStatus(page: PageCopy, fileName: string, beat: string): string {
   `;
 }
 
-function renderAgentWindow(page: PageCopy): string {
+/**
+ * The typed-task prototype's input: a real text box and a live send button,
+ * inside a form so Enter sends, and under it the checkbox that copies the
+ * task into the join form. main.ts wires it; nothing is submitted anywhere.
+ */
+export function renderTypedInput(page: PageCopy): string {
+  return `
+            <form class="agent-input agent-input--typed" data-input data-typed-form>
+              <input class="agent-input-field" type="text" maxlength="140" autocomplete="off"
+                     placeholder="${inline(page.agent.inputPlaceholder)}" aria-label="${inline(page.agent.inputPlaceholder)}" data-typed-field />
+              <button class="agent-send" type="submit" aria-label="${inline(page.agent.typed.send)}" data-send>↑</button>
+            </form>
+            <label class="agent-carry"><input type="checkbox" data-carry /> ${inline(page.agent.typed.carry)}</label>`;
+}
+
+function renderScriptedInput(page: PageCopy): string {
+  return `
+            <p class="agent-input" aria-hidden="true" data-input>
+              <span class="agent-input-text" data-input-text>${inline(page.agent.inputPlaceholder)}</span>
+              <span class="agent-send" data-send>↑</span>
+            </p>`;
+}
+
+function renderAgentWindow(page: PageCopy, heroInput: HeroInput): string {
   const [first] = page.scenes;
 
   // The session list is the window's one control, as in the real tools: pick a
@@ -300,11 +323,7 @@ function renderAgentWindow(page: PageCopy): string {
             <div class="agent-thread" id="agent-thread" role="tabpanel" tabindex="0"
                  aria-labelledby="task-${first.id}" data-thread data-autoplay>
               ${renderThread(page, first)}
-            </div>
-            <p class="agent-input" aria-hidden="true" data-input>
-              <span class="agent-input-text" data-input-text>${inline(page.agent.inputPlaceholder)}</span>
-              <span class="agent-send" data-send>↑</span>
-            </p>
+            </div>${heroInput === 'typed' ? renderTypedInput(page) : renderScriptedInput(page)}
           </div>
         </div>
       </div>
@@ -359,7 +378,7 @@ function renderNetwork(page: PageCopy): string {
   `;
 }
 
-function renderHero(page: PageCopy): string {
+function renderHero(page: PageCopy, heroInput: HeroInput): string {
   // Each line of the headline is its own block, so each sits on one line at
   // desktop sizes and rises on its own when the page opens.
   const headline = page.hero.titleLines
@@ -383,7 +402,7 @@ function renderHero(page: PageCopy): string {
             <p class="hero-byline">${inline(page.hero.byline)} · <a class="link" href="#charla">${inline(page.hero.bylineLink)} <span aria-hidden="true">&darr;</span></a></p>
           </div>
         </div>
-        ${renderAgentWindow(page)}
+        ${renderAgentWindow(page, heroInput)}
         ${renderNetwork(page)}
       </div>
     </section>
@@ -1026,7 +1045,8 @@ export function pageMeta(locale: Locale, route?: DeepLinkRoute): PageMeta {
 }
 
 /** Everything inside #app, for one locale. */
-export function renderPage(locale: Locale): string {
+export function renderPage(locale: Locale, options: { heroInput?: HeroInput } = {}): string {
+  const heroInput = options.heroInput ?? HERO_INPUT;
   const page = copy[locale];
 
   return `
@@ -1034,7 +1054,7 @@ export function renderPage(locale: Locale): string {
     ${renderPositions(page)}
     ${renderHeader(page, locale)}
     <main id="contenido">
-      ${renderHero(page)}
+      ${renderHero(page, heroInput)}
       ${renderBand('one', 0)}
       ${renderShift(page)}
       ${renderDoors(page)}
