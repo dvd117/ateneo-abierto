@@ -321,9 +321,9 @@ export type TalkCopy = {
 };
 
 /**
- * Section seven: the form. Four fields, the same ones the previous site
- * collected, because they are already wired to the four MailerLite groups —
- * and because the least we can ask for is the least we should ask for.
+ * Section seven: the form. The four fields wired to the MailerLite groups, and
+ * under them two optional answers, city and what you would delegate
+ * (2026-09-14). Still the least we can ask for.
  */
 export type FormCopy = {
   eyebrow: string;
@@ -336,6 +336,12 @@ export type FormCopy = {
   newsletterLegend: string;
   newsletterOptions: { es: string; en: string };
   participateLabel: string;
+  /** Optional, under the checkbox. */
+  cityLabel: string;
+  cityPlaceholder: string;
+  /** Optional, under the checkbox. */
+  delegateLabel: string;
+  delegatePlaceholder: string;
   submit: string;
   /** Under the button, and it is the whole promise. */
   privacy: string;
@@ -874,8 +880,7 @@ export const copy: Record<Locale, PageCopy> = {
     form: {
       eyebrow: 'Mantente al tanto',
       title: 'Únete',
-      lead:
-        'Déjanos tu correo para mantenerte al tanto de las próximas oportunidades y actividades.',
+      lead: 'Te avisamos de la próxima hackatón y Demo Night. Nada más.',
       nameLabel: 'Nombre',
       namePlaceholder: 'Cómo te llamas',
       emailLabel: 'Correo',
@@ -883,6 +888,10 @@ export const copy: Record<Locale, PageCopy> = {
       newsletterLegend: 'Idioma del boletín',
       newsletterOptions: { es: 'Español', en: 'Inglés' },
       participateLabel: 'Quiero participar en una hackatón',
+      cityLabel: 'Ciudad',
+      cityPlaceholder: 'Dónde estás',
+      delegateLabel: '¿Qué te gustaría delegar?',
+      delegatePlaceholder: 'Una tarea que te quita tiempo',
       submit: 'Únete',
       privacy: 'Solo usamos estos datos para escribirte.',
       allies: '¿Financias, enseñas o tienes un espacio? Escríbenos:',
@@ -1372,8 +1381,7 @@ export const copy: Record<Locale, PageCopy> = {
     form: {
       eyebrow: 'Stay in the loop',
       title: 'Join',
-      lead:
-        'Leave us your email and we’ll keep you posted on upcoming opportunities and activities.',
+      lead: 'We’ll let you know about the next hackathon and Demo Night. Nothing else.',
       nameLabel: 'Name',
       namePlaceholder: 'What we should call you',
       emailLabel: 'Email',
@@ -1381,6 +1389,10 @@ export const copy: Record<Locale, PageCopy> = {
       newsletterLegend: 'Newsletter language',
       newsletterOptions: { es: 'Spanish', en: 'English' },
       participateLabel: 'I want to take part in a hackathon',
+      cityLabel: 'City',
+      cityPlaceholder: 'Where you are',
+      delegateLabel: 'What would you like to delegate?',
+      delegatePlaceholder: 'A task that eats your time',
       submit: 'Join',
       privacy: 'We only use this to write to you.',
       allies: 'Do you fund, teach, or have a space? Write to us:',

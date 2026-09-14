@@ -3,6 +3,8 @@ export type SubscribeInput = {
   name?: string;
   newsletterLocale: 'es' | 'en';
   participate?: boolean;
+  city?: string;
+  delegate?: string;
 };
 
 export type SubscribeResult =
@@ -37,11 +39,20 @@ export function createSubscribeHandler(provider: SubscribeProvider) {
   };
 }
 
-export const mailerliteProvider: SubscribeProvider = async ({ email, name, newsletterLocale, participate }) => {
+export const mailerliteProvider: SubscribeProvider = async ({ email, name, newsletterLocale, participate, city, delegate }) => {
   const res = await fetch('/api/subscribe', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, name: name ?? '', newsletterLocale, participate: participate ?? false, website: '' }),
+    body: JSON.stringify({
+      email,
+      name: name ?? '',
+      newsletterLocale,
+      participate: participate ?? false,
+      // The optional answers travel only when someone wrote one.
+      ...(city ? { city } : {}),
+      ...(delegate ? { delegate } : {}),
+      website: '',
+    }),
   });
 
   const data = await res.json() as { ok: boolean; reason?: string };

@@ -1,5 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { copy } from './content';
+import { renderPage } from './render';
 
 const locales = ['es', 'en'] as const;
 
@@ -406,7 +407,7 @@ describe('landing page copy', () => {
   });
 
 
-  test('asks for the four fields the lists are wired to, and nothing else', () => {
+  test('asks for the fields the lists are wired to, the new two optional, and nothing else', () => {
     for (const locale of locales) {
       const { form } = copy[locale];
 
@@ -416,12 +417,22 @@ describe('landing page copy', () => {
       expect(form.participateLabel.length).toBeGreaterThan(0);
       expect(form.submit.length).toBeGreaterThan(0);
 
-      // The brief's extra intake fields were dropped: the MailerLite groups
-      // take these four, and a conversation takes the rest.
+      // City and what you would delegate joined on 2026-09-14, both optional.
+      expect(form.cityLabel.length).toBeGreaterThan(0);
+      expect(form.cityPlaceholder.length).toBeGreaterThan(0);
+      expect(form.delegateLabel.length).toBeGreaterThan(0);
+      expect(form.delegatePlaceholder.length).toBeGreaterThan(0);
+
+      const markup = renderPage(locale);
+      expect(markup).toMatch(/<input[^>]*name="city"[^>]*\/>/);
+      expect(markup).toMatch(/<input[^>]*name="delegate"[^>]*\/>/);
+      expect(markup.match(/<input[^>]*name="city"[^>]*\/>/)?.[0]).not.toContain('required');
+      expect(markup.match(/<input[^>]*name="delegate"[^>]*\/>/)?.[0]).not.toContain('required');
+
+      // Still nothing about what someone does for a living.
       const all = JSON.stringify(form).toLowerCase();
-      expect(all).not.toContain('ciudad');
       expect(all).not.toContain('qué haces');
-      expect(all).not.toContain('delegar');
+      expect(all).not.toContain('what you do');
     }
 
     // The privacy line under the button is exact, in Spanish.

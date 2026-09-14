@@ -477,7 +477,9 @@ function bindForm(page: PageCopy): void {
       email: String(data.get('email') ?? ''),
       name: String(data.get('name') ?? '') || undefined,
       newsletterLocale: newsletterLocale === 'en' ? 'en' : 'es',
-      participate: data.get('participate') === 'yes'
+      participate: data.get('participate') === 'yes',
+      city: String(data.get('city') ?? '').trim() || undefined,
+      delegate: String(data.get('delegate') ?? '').trim() || undefined
     })
       .then((result) => {
         if (result.ok) {

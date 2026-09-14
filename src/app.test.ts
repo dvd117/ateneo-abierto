@@ -186,6 +186,33 @@ describe('POST /api/subscribe', () => {
     expect(body.fields.participation_interest).toBeUndefined();
   });
 
+  test('sends a capped, stripped city and holds the delegate answer back', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: JSON.stringify({
+        email: 'user@example.com',
+        newsletterLocale: 'es',
+        city: `  <b>Maracay</b>${'x'.repeat(200)}`,
+        delegate: 'Los informes de fin de mes',
+        website: ''
+      }),
+    });
+
+    expect(res.status).toBe(200);
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string);
+    expect(body.fields.city.startsWith('Maracay')).toBe(true);
+    expect(body.fields.city).not.toContain('<');
+    expect(body.fields.city.length).toBeLessThanOrEqual(100);
+    // Off until the delegate_task custom field exists in MailerLite.
+    expect(body.fields.delegate_task).toBeUndefined();
+  });
+
   test('returns 400 for missing newsletter language', async () => {
     const res = await app.request('/api/subscribe', {
       method: 'POST',

@@ -191,6 +191,13 @@ app.post(
     const name = typeof body.name === 'string'
       ? body.name.trim().slice(0, 100).replace(/<[^>]*>/g, '')
       : '';
+    // The two optional answers, capped and stripped the way name is.
+    const city = typeof body.city === 'string'
+      ? body.city.trim().slice(0, 100).replace(/<[^>]*>/g, '')
+      : '';
+    const delegate = typeof body.delegate === 'string'
+      ? body.delegate.trim().slice(0, 200).replace(/<[^>]*>/g, '')
+      : '';
     const newsletterLocale = body.newsletterLocale;
     const participate = body.participate === true;
 
@@ -217,6 +224,8 @@ app.post(
         newsletterLocale,
         groups,
         participationInterest: participate || undefined,
+        city: city || undefined,
+        delegate: delegate || undefined,
       }, apiKey);
       return c.json({ ok: true });
     } catch (err) {

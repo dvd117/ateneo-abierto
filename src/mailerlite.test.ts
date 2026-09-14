@@ -1,5 +1,5 @@
 import { describe, test, expect, vi, afterEach } from 'vitest';
-import { addSubscriber } from './mailerlite';
+import { addSubscriber, buildFields, DELEGATE_TASK_FIELD, SEND_DELEGATE_TASK } from './mailerlite';
 
 const API_KEY = 'test-key';
 
@@ -149,6 +149,51 @@ describe('addSubscriber', () => {
       email: 'user@example.com',
       fields: { preferred_language: 'es', participation_interest: 'yes' },
       groups: ['group-es', 'participate-es'],
+    });
+  });
+
+  test('sends the city to the built-in field and holds the delegate answer back', async () => {
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    await addSubscriber({
+      email: 'user@example.com',
+      newsletterLocale: 'es',
+      groups: ['group-es'],
+      city: 'Maracay',
+      delegate: 'Los informes de fin de mes',
+    }, API_KEY);
+
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    expect(JSON.parse(init.body as string).fields).toEqual({ preferred_language: 'es', city: 'Maracay' });
+  });
+});
+
+describe('buildFields', () => {
+  const input = {
+    email: 'user@example.com',
+    newsletterLocale: 'es' as const,
+    groups: ['group-es'],
+    delegate: 'Los informes de fin de mes',
+  };
+
+  test('keeps delegate_task out until the custom field is confirmed', () => {
+    // Flip SEND_DELEGATE_TASK in mailerlite.ts once David confirms the field.
+    expect(SEND_DELEGATE_TASK).toBe(false);
+    expect(buildFields(input)).not.toHaveProperty(DELEGATE_TASK_FIELD);
+  });
+
+  test('sends delegate_task once the flag is on', () => {
+    expect(DELEGATE_TASK_FIELD).toBe('delegate_task');
+    expect(buildFields(input, { sendDelegateTask: true })).toEqual({
+      preferred_language: 'es',
+      delegate_task: 'Los informes de fin de mes',
+    });
+  });
+
+  test('sends nothing for empty optional answers', () => {
+    expect(buildFields({ ...input, delegate: '', city: '' }, { sendDelegateTask: true })).toEqual({
+      preferred_language: 'es',
     });
   });
 });

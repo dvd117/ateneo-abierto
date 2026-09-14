@@ -4,20 +4,45 @@ export type MailerLiteInput = {
   newsletterLocale: 'es' | 'en';
   groups: string[];
   participationInterest?: boolean;
+  /** MailerLite's built-in `city` field: no dashboard setup needed. */
+  city?: string;
+  /** "What would you like to delegate?" Needs a custom field; see below. */
+  delegate?: string;
 };
 
 const DEFAULT_TIMEOUT_MS = 5000;
+
+/** The custom field the delegate answer goes to, once it exists in MailerLite. */
+export const DELEGATE_TASK_FIELD = 'delegate_task';
+
+/**
+ * Off until the `delegate_task` custom field is confirmed in the MailerLite
+ * dashboard (2026-09-14). The form still collects the answer; flip this to
+ * send it.
+ */
+export const SEND_DELEGATE_TASK = false;
+
+export function buildFields(
+  input: MailerLiteInput,
+  options: { sendDelegateTask?: boolean } = {}
+): Record<string, string> {
+  const sendDelegateTask = options.sendDelegateTask ?? SEND_DELEGATE_TASK;
+
+  return {
+    ...(input.name ? { name: input.name } : {}),
+    preferred_language: input.newsletterLocale,
+    ...(input.participationInterest ? { participation_interest: 'yes' } : {}),
+    ...(input.city ? { city: input.city } : {}),
+    ...(sendDelegateTask && input.delegate ? { [DELEGATE_TASK_FIELD]: input.delegate } : {}),
+  };
+}
 
 export async function addSubscriber(
   input: MailerLiteInput,
   apiKey: string,
   timeoutMs: number = DEFAULT_TIMEOUT_MS
 ): Promise<void> {
-  const fields = {
-    ...(input.name ? { name: input.name } : {}),
-    preferred_language: input.newsletterLocale,
-    ...(input.participationInterest ? { participation_interest: 'yes' } : {}),
-  };
+  const fields = buildFields(input);
 
   let res: Response;
   try {

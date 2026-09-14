@@ -804,10 +804,11 @@ function renderTalk(page: PageCopy): string {
 
 
 /**
- * The form. Four fields, and every one of them is used: name and email go to
- * MailerLite, the language picks the list, and the checkbox adds the
- * participation group. Nothing here asks what someone does for a living or
- * what they would delegate — that is a conversation, not an intake field.
+ * The form. Name and email go to MailerLite, the language picks the list, and
+ * the checkbox adds the participation group. Two optional answers sit under
+ * the checkbox (2026-09-14): the city goes to MailerLite's built-in field, and
+ * what someone would delegate is collected but only sent once its custom field
+ * exists (see SEND_DELEGATE_TASK). Nothing asks what someone does for a living.
  *
  * Funders and hosts get one line under the button rather than a second form:
  * there is one way in, and it is this one.
@@ -859,6 +860,17 @@ function renderForm(page: PageCopy, locale: Locale): string {
           <input type="checkbox" name="participate" value="yes" />
           <span>${inline(form.participateLabel)}</span>
         </label>
+
+        <p class="field">
+          <label class="field-label" for="join-city">${inline(form.cityLabel)}</label>
+          <input class="field-input" id="join-city" name="city" type="text" autocomplete="address-level2"
+                 placeholder="${inline(form.cityPlaceholder)}" maxlength="100" />
+        </p>
+        <p class="field">
+          <label class="field-label" for="join-delegate">${inline(form.delegateLabel)}</label>
+          <input class="field-input" id="join-delegate" name="delegate" type="text" autocomplete="off"
+                 placeholder="${inline(form.delegatePlaceholder)}" maxlength="200" />
+        </p>
 
         <!-- Not display:none — a bot reads that as a trap. See .field-supplement. -->
         <label class="field-supplement" aria-hidden="true">
