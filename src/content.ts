@@ -509,10 +509,10 @@ export const copy: Record<Locale, PageCopy> = {
       },
       {
         id: 'presentacion',
-        session: 'Presentación del taller',
+        session: 'Clase del lunes',
         prompt:
-          'En esa carpeta están mis notas del taller. Ármame una presentación de 6 láminas con eso.',
-        files: ['notas-taller.md', 'ejemplos.md', 'preguntas.md'],
+          'En esa carpeta están mis notas de la clase. Ármame una presentación de 6 láminas para el lunes.',
+        files: ['notas-clase.md', 'ejercicios.md', 'preguntas.md'],
         ack: 'Listo. Este es mi plan:',
         steps: [
           'Leer las notas de la carpeta',
@@ -522,35 +522,35 @@ export const copy: Record<Locale, PageCopy> = {
         ],
         doc: {
           kicker: 'Esquema · 6 láminas',
-          title: 'Delegar tu primera tarea',
+          title: 'El ciclo del agua',
           list: {
             items: [
-              'Qué cambia cuando delegas en vez de preguntar',
-              'El agente vive en tu computadora, no en una pestaña',
-              'Tu primera tarea, paso a paso',
-              'Cómo revisar lo que te entrega',
-              'Los tres errores del principio',
-              'Qué vas a delegar el lunes'
+              'Qué es el ciclo del agua y por qué no se detiene',
+              'Evaporación: del mar y los ríos al aire',
+              'Condensación: cómo se forman las nubes',
+              'Precipitación: lluvia, granizo y nieve',
+              'Infiltración y escorrentía: a dónde va el agua',
+              'Ejercicio: el ciclo en tu ciudad'
             ]
           },
-          note: 'Cada lámina lleva tres puntos y un ejemplo tuyo, no uno inventado.'
+          note: 'Cada lámina lleva tres puntos y un ejemplo de tus notas, no uno inventado.'
         },
-        savedAs: 'presentacion-taller.md',
+        savedAs: 'clase-lunes.md',
         followUp: {
           prompt: 'Me gusta el orden. Hazla en PowerPoint.',
           ack: 'Listo, la armo en PowerPoint:',
           steps: ['Crear las 6 láminas en PowerPoint', 'Guardarla en tu carpeta'],
-          file: { name: 'presentacion-taller.pptx', kind: 'pptx', detail: 'PowerPoint · 6 láminas · 84 KB' }
+          file: { name: 'clase-lunes.pptx', kind: 'pptx', detail: 'PowerPoint · 6 láminas · 84 KB' }
         },
         inside: {
           steps: [
-            [['run', 'ls notas/'], ['read', 'notas-taller.md']],
+            [['run', 'ls notas/'], ['read', 'notas-clase.md']],
             [['run', 'grep -h "^## " notas/*.md']],
-            [['write', 'presentacion-taller.md']],
+            [['write', 'clase-lunes.md']],
             [['run', 'ls ~/Documentos/Ateneo']]
           ],
           skill: 'pptx',
-          followSteps: [[['run', 'python3 crear_laminas.py presentacion-taller.md']], [['write', 'presentacion-taller.pptx']]]
+          followSteps: [[['run', 'python3 crear_laminas.py clase-lunes.md']], [['write', 'clase-lunes.pptx']]]
         }
       },
       {
@@ -568,13 +568,13 @@ export const copy: Record<Locale, PageCopy> = {
         ],
         doc: {
           kicker: 'Apuntes · Lectura 3',
-          title: 'Ideas principales y repaso',
+          title: 'Contabilidad básica: el balance',
           list: {
-            lead: 'Tres ideas sostienen el texto:',
+            lead: 'Tres ideas sostienen el capítulo:',
             items: [
-              'El acceso pesa más que el talento',
-              'Una herramienta sola no enseña; el acompañamiento sí',
-              'Lo que aprendes se queda contigo, no en la plataforma',
+              'Todo lo que la empresa tiene salió de algún lado: activo = pasivo + patrimonio',
+              'El balance es la foto de un día; el estado de resultados es la película del período',
+              'Registrar tarde o a medias es la fuente de casi todos los errores',
               '8 preguntas de repaso, con las respuestas al final'
             ]
           },
@@ -1014,9 +1014,9 @@ export const copy: Record<Locale, PageCopy> = {
       },
       {
         id: 'presentacion',
-        session: 'Workshop deck',
-        prompt: 'My workshop notes are in that folder. Build me a 6-slide deck from them.',
-        files: ['workshop-notes.md', 'examples.md', 'questions.md'],
+        session: 'Monday’s class',
+        prompt: 'My class notes are in that folder. Build me a 6-slide deck for Monday.',
+        files: ['class-notes.md', 'exercises.md', 'questions.md'],
         ack: 'Sure. Here’s my plan:',
         steps: [
           'Read the notes in the folder',
@@ -1026,35 +1026,35 @@ export const copy: Record<Locale, PageCopy> = {
         ],
         doc: {
           kicker: 'Outline · 6 slides',
-          title: 'Delegating your first task',
+          title: 'The water cycle',
           list: {
             items: [
-              'What changes when you delegate instead of asking',
-              'The agent lives on your computer, not in a tab',
-              'Your first task, step by step',
-              'How to check what it hands back',
-              'The three beginner mistakes',
-              'What you’ll delegate on Monday'
+              'What the water cycle is and why it never stops',
+              'Evaporation: from seas and rivers into the air',
+              'Condensation: how clouds form',
+              'Precipitation: rain, hail and snow',
+              'Infiltration and runoff: where the water goes',
+              'Exercise: the cycle in your city'
             ]
           },
-          note: 'Each slide carries three points and one example of your own, not an invented one.'
+          note: 'Each slide carries three points and one example from your notes, not an invented one.'
         },
-        savedAs: 'workshop-deck.md',
+        savedAs: 'monday-class.md',
         followUp: {
           prompt: 'I like the order. Make it in PowerPoint.',
           ack: 'Sure, building it in PowerPoint:',
           steps: ['Build the 6 slides in PowerPoint', 'Save it to your folder'],
-          file: { name: 'workshop-deck.pptx', kind: 'pptx', detail: 'PowerPoint · 6 slides · 84 KB' }
+          file: { name: 'monday-class.pptx', kind: 'pptx', detail: 'PowerPoint · 6 slides · 84 KB' }
         },
         inside: {
           steps: [
-            [['run', 'ls notes/'], ['read', 'workshop-notes.md']],
+            [['run', 'ls notes/'], ['read', 'class-notes.md']],
             [['run', 'grep -h "^## " notes/*.md']],
-            [['write', 'workshop-deck.md']],
+            [['write', 'monday-class.md']],
             [['run', 'ls ~/Documents/Ateneo']]
           ],
           skill: 'pptx',
-          followSteps: [[['run', 'python3 build_slides.py workshop-deck.md']], [['write', 'workshop-deck.pptx']]]
+          followSteps: [[['run', 'python3 build_slides.py monday-class.md']], [['write', 'monday-class.pptx']]]
         }
       },
       {
@@ -1071,13 +1071,13 @@ export const copy: Record<Locale, PageCopy> = {
         ],
         doc: {
           kicker: 'Notes · Reading 3',
-          title: 'Main ideas and revision',
+          title: 'Basic accounting: the balance sheet',
           list: {
-            lead: 'Three ideas hold the text together:',
+            lead: 'Three ideas hold the chapter together:',
             items: [
-              'Access counts for more than talent',
-              'A tool alone doesn’t teach; guidance does',
-              'What you learn stays with you, not on the platform',
+              'Everything the business owns came from somewhere: assets = liabilities + equity',
+              'The balance sheet is one day’s photo; the income statement is the period’s film',
+              'Recording late or halfway is where almost every error starts',
               '8 revision questions, answers at the end'
             ]
           },
