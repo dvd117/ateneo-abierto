@@ -536,9 +536,12 @@ function bindChrome(): () => void {
     };
   }
 
-  // Hidden over the hero, where there is no top to go back to, and over the
-  // map, where on a phone it would sit on the Zona en Reclamación.
-  const north = root.querySelector<HTMLElement>('#norte');
+  // Hidden over the hero, where there is no top to go back to; over the map,
+  // where on a phone it would sit on the Zona en Reclamación; and over the
+  // form, where it would sit on a field someone is typing in.
+  const covered = ['#norte', '#unete']
+    .map((selector) => root.querySelector<HTMLElement>(selector))
+    .filter((section): section is HTMLElement => section !== null);
   const covering = new Set<Element>();
   const observer = new IntersectionObserver((entries) => {
     for (const entry of entries) {
@@ -548,7 +551,7 @@ function bindChrome(): () => void {
     toTop.classList.toggle('is-shown', covering.size === 0);
   });
   observer.observe(hero);
-  if (north) observer.observe(north);
+  covered.forEach((section) => observer.observe(section));
 
   return () => {
     stopRail();
