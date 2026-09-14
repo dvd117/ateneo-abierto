@@ -375,14 +375,15 @@ still never loops:
     eased towards the scroll position so a wheel notch reads as a sweep, not a flicker between
     two states (David, 2026-09-11).
   - *Tilt, on a phone.* Where `DeviceOrientationEvent` reports a tilt, left-right `gamma`
-    (±30°, clamped) adds up to ±90 units of travel on top of the scroll position, with the same
-    easing, so a still hand still sees the scroll motion. iOS asks permission once, on the first
-    tap that ends on a band, never on load; denied or unavailable, the band stays on scroll.
-  - *Colour, everywhere else.* The ochre stripes mix towards `done-green` in OKLab as the
+    (±30°, clamped; `beta` when the screen is turned to landscape) adds up to ±90 units of
+    travel on top of the scroll position, with the same easing, so a still hand still sees the
+    scroll motion. iOS asks permission once, on the first tap that ends on a band, never on
+    load; denied or unavailable, the band stays on scroll.
+  - *Colour, on every device.* The ochre stripes mix towards `done-green` in OKLab as the
     reader nears the form (`--band-mix`, the reading rail's own ratio: 0 at the top, 1 at the
     foot, where Únete is). Measured as each band crosses mid-screen: 0.12 / 0.53 / 0.89 at 390
-    wide, 0.12 / 0.50 / 0.92 at 1280. The page visibly turns towards "done". A tilting phone
-    keeps the resting ochre.
+    wide, 0.12 / 0.50 / 0.92 at 1280. The page visibly turns towards "done": the drift
+    records progress, and tilt sits on top of it.
   **It is his method, never his image**: it must not reproduce the
   Maiquetía floor (*Cromointerferencia de color aditivo*) or its yellow/black/red/blue modules.
   On 2026-09-07 the artist's family publicly objected to unauthorised imitations of that

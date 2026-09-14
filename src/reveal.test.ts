@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { bandMix, initBands, initProgressRail, initReveal, tiltShift } from './reveal';
+import { bandMix, initBands, initProgressRail, initReveal, screenTilt, tiltShift } from './reveal';
 
 /**
  * These run in the default node environment (the project has no jsdom), so the
@@ -125,6 +125,16 @@ describe('the bands as instruments', () => {
     expect(tiltShift(-120, 90)).toBe(-90);
     expect(tiltShift(null, 90)).toBe(0);
     expect(tiltShift(Number.NaN, 90)).toBe(0);
+  });
+
+  test('reads beta instead of gamma when the screen is turned to landscape', () => {
+    const lean = { beta: 12, gamma: -40 };
+
+    expect(screenTilt(lean, 0)).toBe(-40);
+    expect(screenTilt(lean, 90)).toBe(12);
+    expect(screenTilt(lean, 270)).toBe(-12);
+    expect(screenTilt(lean, 180)).toBe(40);
+    expect(screenTilt({ beta: null, gamma: null }, 90)).toBeNull();
   });
 
   test('reads the reading rail\'s ratio: 0 at the top, 1 at the foot, where the form is', () => {

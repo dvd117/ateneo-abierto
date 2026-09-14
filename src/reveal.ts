@@ -139,16 +139,51 @@ export function drawBand(field: SVGGElement, seed: number): void {
 export const TILT_RANGE = 30;
 
 /**
- * Left-right tilt (DeviceOrientationEvent.gamma) as band travel: ±30° maps
- * linearly onto ±`travel`, and anything past that holds at the edge.
+ * Left-right tilt as band travel: ±30° maps linearly onto ±`travel`, and
+ * anything past that holds at the edge.
  */
-export function tiltShift(gamma: number | null, travel: number): number {
-  if (gamma === null || !Number.isFinite(gamma)) {
+export function tiltShift(degrees: number | null, travel: number): number {
+  if (degrees === null || !Number.isFinite(degrees)) {
     return 0;
   }
 
-  const clamped = Math.max(-TILT_RANGE, Math.min(TILT_RANGE, gamma));
+  const clamped = Math.max(-TILT_RANGE, Math.min(TILT_RANGE, degrees));
   return (clamped / TILT_RANGE) * travel;
+}
+
+/**
+ * The tilt across the screen as the reader holds it. Upright, that is gamma;
+ * turned to landscape, the screen's left-right axis is the device's own
+ * front-back one, so it is beta, signed so leaning the screen's left edge
+ * down moves the field the same way it does upright. `angle` is
+ * screen.orientation.angle (0, 90, 180 or 270).
+ */
+export function screenTilt(event: { beta: number | null; gamma: number | null }, angle: number): number | null {
+  switch (((angle % 360) + 360) % 360) {
+    case 90:
+      return event.beta;
+    case 270:
+      return event.beta === null ? null : -event.beta;
+    case 180:
+      return event.gamma === null ? null : -event.gamma;
+    default:
+      return event.gamma;
+  }
+}
+
+/**
+ * The screen's rotation from the device's natural position. The angle, not
+ * the landscape/portrait type, is what decides the axis: a tablet whose
+ * natural position is landscape reports landscape at angle 0, and gamma is
+ * already its left-right tilt. Without screen.orientation, the shape decides.
+ */
+function screenAngle(): number {
+  const orientation = window.screen?.orientation;
+  if (orientation) {
+    return orientation.angle;
+  }
+
+  return window.innerWidth > window.innerHeight ? 90 : 0;
 }
 
 /**
@@ -184,9 +219,10 @@ type OrientationEventWithPermission = typeof DeviceOrientationEvent & {
  * as it crosses the screen — the diagonal screen one way, the field the
  * other — so the moiré between them travels and says where the band is. On a
  * phone that reports its orientation, left-right tilt is added on top of that
- * scroll position, so the bands also move with the hand; everywhere else the
+ * scroll position, so the bands also move with the hand. On every device the
  * ochre stripes turn towards done-green as the reader approaches the form
- * (--band-mix, the reading rail's ratio: 0 at the top, 1 at the foot).
+ * (--band-mix, the reading rail's ratio: 0 at the top, 1 at the foot): the
+ * drift records progress, and tilt sits on top of it.
  *
  * The motion eases towards its target instead of jumping with it: a wheel
  * notch moves the screen by several of its own pitches, and without easing
@@ -212,7 +248,7 @@ export function initBands(
   const onScreen = new Set<HTMLElement>();
   let frame = 0;
   let tilt = 0;
-  let tilting = false;
+  let angle = screenAngle();
 
   const measure = () => {
     const height = window.innerHeight;
@@ -227,9 +263,7 @@ export function initBands(
       // -0.5 as the band enters at the bottom, +0.5 as it leaves at the top.
       const position = Math.max(-0.75, Math.min(0.75, 0.5 - (rect.top + rect.height / 2) / height));
       target.set(band, position * travel + tilt);
-      if (!tilting) {
-        band.style.setProperty('--band-mix', mix.toFixed(3));
-      }
+      band.style.setProperty('--band-mix', mix.toFixed(3));
     }
   };
 
@@ -262,22 +296,18 @@ export function initBands(
   };
 
   const onOrientation = (event: DeviceOrientationEvent) => {
+    const degrees = screenTilt(event, angle);
     // Desktops define the event and may fire it once with nulls: that is not a tilt.
-    if (event.gamma === null) {
+    if (degrees === null) {
       return;
     }
 
-    if (!tilting) {
-      tilting = true;
-      // Tilt replaces the colour drift: the bands keep their resting ochre.
-      for (const band of bands) {
-        band.dataset.tilt = '';
-        band.style.removeProperty('--band-mix');
-      }
-    }
-
-    tilt = tiltShift(event.gamma, travel);
+    tilt = tiltShift(degrees, travel);
     onScroll();
+  };
+
+  const onRotate = () => {
+    angle = screenAngle();
   };
 
   let listening = false;
@@ -285,6 +315,7 @@ export function initBands(
     if (!listening) {
       listening = true;
       window.addEventListener('deviceorientation', onOrientation, { passive: true });
+      window.addEventListener('orientationchange', onRotate, { passive: true });
     }
   };
 
@@ -324,6 +355,7 @@ export function initBands(
     window.removeEventListener('resize', onScroll);
     if (listening) {
       window.removeEventListener('deviceorientation', onOrientation);
+      window.removeEventListener('orientationchange', onRotate);
     }
     if (askOnTouch) {
       bands.forEach((band) => band.removeEventListener('touchend', askOnTouch!));
