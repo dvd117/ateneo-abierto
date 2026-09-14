@@ -534,10 +534,19 @@ function bindChrome(): () => void {
     };
   }
 
-  const observer = new IntersectionObserver(([entry]) => {
-    toTop.classList.toggle('is-shown', !entry.isIntersecting);
+  // Hidden over the hero, where there is no top to go back to, and over the
+  // map, where on a phone it would sit on the Zona en Reclamación.
+  const north = root.querySelector<HTMLElement>('#norte');
+  const covering = new Set<Element>();
+  const observer = new IntersectionObserver((entries) => {
+    for (const entry of entries) {
+      if (entry.isIntersecting) covering.add(entry.target);
+      else covering.delete(entry.target);
+    }
+    toTop.classList.toggle('is-shown', covering.size === 0);
   });
   observer.observe(hero);
+  if (north) observer.observe(north);
 
   return () => {
     stopRail();

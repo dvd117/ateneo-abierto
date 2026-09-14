@@ -264,7 +264,7 @@ opacities are composited over the ground before the ratio is taken).
 | graphite-land vs graphite (map landmass) | 1.64 | 1.6–1.9 target |
 | bone-dim at 0.55 vs graphite-land (coastline, inside) | 1.93 | ground |
 | bone-dim at 0.55 vs graphite (coastline, outside) | 2.42 | ground |
-| guacamaya at 0.45 vs graphite (Zona en Reclamación hatch) | 2.67 | ground |
+| guacamaya at 0.45 vs graphite (Zona en Reclamación hatch and dashed outline) | 2.67 | ground |
 | bone-muted / graphite (claim label, on its knockout) | 7.19 | 4.5 |
 | bone-dim / graphite knockout over land (planned or unlit city label) | 5.18 | 4.5 |
 | bone-soft / graphite knockout over land (city label) | 11.08 | 4.5 |
@@ -275,8 +275,8 @@ opacities are composited over the ground before the ratio is taken).
 
 The map's ground is visible on purpose. At 1.08 (land) and 1.41 (hatch) the country and the
 Zona en Reclamación disappeared on a phone at normal brightness, so the land is now
-`graphite-land` at 1.64 with a 1px `bone-dim` coastline, and the claim is hatched in
-`guacamaya` at 0.45. The ground, the coastline, the hatch and the resting edges of the hero
+`graphite-land` at 1.64 with a 1px `bone-dim` coastline, and the claim is hatched and
+outlined in `guacamaya` at 0.45, one colour for the whole zone. The ground, the coastline, the hatch and the resting edges of the hero
 network still sit below 3: they give the picture its shape, not its information. Every piece
 of information the map carries — which cities, which are lit, which are only planned — is in
 the labels and in the figure's alt text. Because the labels now cross a brighter land, each
@@ -313,9 +313,10 @@ the page: about 123 KB.
 
 ## Layout
 
-Page order (decision 8): hero → De preguntar a delegar → Tres puertas (+ Talleres) → Cómo
-trabajamos → El norte (map) → Ignite Talk slot → Únete → footer with the security
-line and ES/EN.
+Page order (revised 2026-09-14): hero → El cambio → Programa (the three doors, the
+mentorías row, and the glossary as a closed strip) → El norte (map) → Cómo trabajamos →
+Ignite Talk → Únete → footer with the security line and ES/EN. Three bands: after the
+hero, before El norte, before Únete.
 
 - **Hero.** Two columns on desktop, headline left, agent window right. On mobile the window
   stacks under the headline, and the window's session list — its one control, as in the real

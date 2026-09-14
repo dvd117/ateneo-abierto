@@ -2424,12 +2424,13 @@ main [id] {
 }
 
 /* ---------- cómo trabajamos ----------
-   Four rules in one row, each under its own rule line, on the base ground
-   between the doors' deep one and the band before the map. */
+   Four rules in one row, each under its own rule line, on the deep ground
+   after the map. */
 
-/* Grounds alternate down the page: shift deep, glossary base, doors deep,
-   principles base. */
-.doors {
+/* Grounds down the page (2026-09-14): shift deep, programa base, band, norte
+   base, principles deep, talk deep, band, join base. The map stays on the
+   base ground its contrast table was computed against. */
+.principles {
   background-color: var(--c-bg-deep);
 }
 
@@ -2578,7 +2579,8 @@ main [id] {
 /* Hatched, not filled: the claim is drawn, not asserted. */
 .map-claim {
   fill: url(#claim-hatch);
-  stroke: var(--c-border);
+  stroke: var(--c-accent);
+  stroke-opacity: 0.45;
   stroke-width: 1;
   stroke-dasharray: 4 3;
 }

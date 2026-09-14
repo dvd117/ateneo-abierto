@@ -984,9 +984,9 @@ export function renderPage(locale: Locale): string {
       ${renderBand('one', 0)}
       ${renderShift(page)}
       ${renderDoors(page)}
-      ${renderPrinciples(page)}
       ${renderBand('two', 3)}
       ${renderNorth(page)}
+      ${renderPrinciples(page)}
       ${renderTalk(page)}
       ${renderBand('three', 5)}
       ${renderForm(page, locale)}
