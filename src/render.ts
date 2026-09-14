@@ -1,4 +1,4 @@
-import { copy, type Door, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
+import { copy, type DeepLinkRoute, type Door, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
@@ -552,7 +552,7 @@ function renderGlossary(page: PageCopy): string {
  */
 function renderDoor(page: PageCopy, door: Door, order: number): string {
   return `
-    <article class="door" data-reveal data-reveal-delay="${order * 90}">
+    <article class="door" id="${door.id}" data-reveal data-reveal-delay="${order * 90}">
       <p class="door-n" aria-hidden="true">${inline(door.n)}</p>
       <h3 class="door-title">${inline(door.title)}</h3>
       <p class="door-body">${inline(door.body)}</p>
@@ -958,28 +958,66 @@ export type PageMeta = {
   /** Link previews: the name and the claim, without the tab title's bar. */
   ogTitle: string;
   description: string;
-  /** The 1200×630 preview, one per locale, so a shared link reads in its language. */
+  /** The 1200×630 preview, one per locale and route, so a shared link reads in its language. */
   ogImage: string;
   ogImageAlt: string;
   ogLocale: string;
   ogLocaleAlternate: string;
   canonical: string;
+  /** The same page in each language, for the hreflang links. */
+  alternates: { es: string; en: string };
 };
 
-export function pageMeta(locale: Locale): PageMeta {
+const SITE = 'https://ateneo-abierto.org';
+
+/** The door's first sentence: the description a deep link's preview carries. */
+export function firstSentence(text: string): string {
+  const match = /^.*?[.!?](?=\s|$)/.exec(text);
+  return match ? match[0] : text;
+}
+
+/**
+ * The head of one page. Without a route it is the home page; with one it is
+ * the home page opened at that door, and the head speaks for the door.
+ */
+export function pageMeta(locale: Locale, route?: DeepLinkRoute): PageMeta {
   const page = copy[locale];
+  const path = route ? `/${route}` : '/';
+  const alternates = { es: `${SITE}${path}`, en: `${SITE}${path}?lang=en` };
+  const shared = {
+    lang: locale,
+    ogLocale: locale === 'es' ? 'es_VE' : 'en_US',
+    ogLocaleAlternate: locale === 'es' ? 'en_US' : 'es_VE',
+    canonical: alternates[locale],
+    alternates
+  };
+  const suffix = locale === 'es' ? '' : '-en';
+
+  if (route) {
+    const door = page.doors.doors.find((candidate) => candidate.id === route);
+    if (!door) {
+      throw new Error(`no door for route ${route}`);
+    }
+
+    return {
+      ...shared,
+      title: `Ateneo Abierto · ${door.title}`,
+      ogTitle: `Ateneo Abierto — ${door.title}`,
+      description: firstSentence(door.body),
+      ogImage: `${SITE}/og-${route}${suffix}.png`,
+      ogImageAlt: `Ateneo Abierto: ${door.title}. ${door.whoLabel}: ${door.who}`
+    };
+  }
+
   const claim = page.hero.titleLines.map((line) => line.text).join(' ');
 
   return {
-    lang: locale,
+    ...shared,
     title: `Ateneo Abierto · ${claim}`,
     ogTitle: `Ateneo Abierto — ${claim}`,
     description: page.meta.description,
-    ogImage: locale === 'es' ? 'https://ateneo-abierto.org/og.png' : 'https://ateneo-abierto.org/og-en.png',
-    ogImageAlt: `Ateneo Abierto: ${claim}`,
-    ogLocale: locale === 'es' ? 'es_VE' : 'en_US',
-    ogLocaleAlternate: locale === 'es' ? 'en_US' : 'es_VE',
-    canonical: locale === 'es' ? 'https://ateneo-abierto.org/' : 'https://ateneo-abierto.org/?lang=en'
+    ogImage: `${SITE}/og${suffix}.png`,
+    ogImageAlt: `Ateneo Abierto: ${claim}`
   };
 }
 

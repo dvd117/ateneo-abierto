@@ -1,4 +1,4 @@
-import { copy, type PageCopy } from './content';
+import { copy, DEEP_LINK_ROUTES, type DeepLinkRoute, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
 import { drawBand, initBands, initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
@@ -13,6 +13,9 @@ if (!app) {
 }
 
 const root = app;
+
+/** Set by the prerender on /hackaton, /talleres and /demo-nights: the door this page opens at. */
+const deepLink = DEEP_LINK_ROUTES.find((route) => route === root.dataset.deepLink);
 
 let currentLocale = detectLocale({
   search: window.location.search,
@@ -35,7 +38,7 @@ function setMetaContent(selector: string, value: string): void {
 }
 
 function render(): void {
-  const meta = pageMeta(currentLocale);
+  const meta = pageMeta(currentLocale, deepLink);
 
   document.documentElement.lang = meta.lang;
   document.title = meta.title;
@@ -619,10 +622,40 @@ function bindEvents(page: PageCopy): void {
   }
 }
 
+/**
+ * A door's own address opens the home page at that door: one jump, no smooth
+ * scroll on load, and focus on the door's title so a keyboard or screen-reader
+ * user starts there too. Runs once, after the first render; a later locale
+ * switch keeps wherever the visitor has got to.
+ */
+function openAtDoor(container: ParentNode, route: DeepLinkRoute): void {
+  const door = container.querySelector<HTMLElement>(`#${route}`);
+  const title = door?.querySelector<HTMLElement>('.door-title');
+
+  if (!door || !title) {
+    return;
+  }
+
+  // Not scrollIntoView: the door is still mid-entrance (translated), and the
+  // browser would aim at the moved box and land short once it settles.
+  let top = 0;
+  for (let node: HTMLElement | null = door; node; node = node.offsetParent as HTMLElement | null) {
+    top += node.offsetTop;
+  }
+  // 'instant', not 'auto': html has scroll-behavior: smooth, which 'auto' would inherit.
+  window.scrollTo({ top: top - parseFloat(getComputedStyle(door).scrollMarginTop || '0'), behavior: 'instant' });
+  title.setAttribute('tabindex', '-1');
+  title.focus({ preventScroll: true });
+}
+
 // The server already sent this page, rendered, in the locale it chose. Keep that
 // DOM and only wire it up — unless this visitor saved the other language.
 if (root.dataset.locale === currentLocale && root.childElementCount > 0) {
   bindEvents(copy[currentLocale]);
 } else {
   render();
+}
+
+if (deepLink) {
+  openAtDoor(root, deepLink);
 }

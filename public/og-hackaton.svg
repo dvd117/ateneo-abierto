@@ -1,0 +1,62 @@
+<svg width="1200" height="630" viewBox="0 0 1200 630" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <style>
+    @font-face {
+      font-family: "Figtree";
+      font-style: normal;
+      font-weight: 300 900;
+      src: url("fonts/figtree-latin.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Fraunces";
+      font-style: normal;
+      font-weight: 400 700;
+      src: url("fonts/fraunces-latin.woff2") format("woff2");
+    }
+    @font-face {
+      font-family: "Fraunces";
+      font-style: italic;
+      font-weight: 400;
+      src: url("fonts/fraunces-latin-italic.woff2") format("woff2");
+    }
+    .sans {
+      font-family: "Figtree", "Avenir Next", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+    }
+    .serif {
+      font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
+      font-weight: 560;
+      font-variation-settings: "opsz" 144;
+    }
+    .serif-em {
+      font-family: "Fraunces", "Iowan Old Style", Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      font-variation-settings: "opsz" 144;
+    }
+    .mono {
+      font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+    }
+  </style>
+
+  <rect width="1200" height="630" fill="#16150f"/>
+
+  <!-- wordmark, same lockup as the nav (variant B): bone steps, ochre dot -->
+  <g transform="translate(80, 70) scale(0.5)">
+    <path d="M14 68 L14 52 L32 52 L32 36 L50 36 L50 20 L66 20"
+          stroke="#f0ece2" stroke-width="5.5" fill="none"
+          stroke-linecap="square" stroke-linejoin="miter"/>
+    <rect x="52" y="12" width="8" height="8" fill="#e2a638"/>
+  </g>
+  <text class="sans" x="128" y="101" font-size="22" font-weight="600" fill="#f0ece2"
+        letter-spacing="3.1">ATENEO ABIERTO</text>
+
+  <text class="sans" x="80" y="200" font-size="18" font-weight="600" fill="#e2a638"
+        letter-spacing="2.6">01 · PROGRAMA</text>
+
+  <text class="serif" x="76" y="302" font-size="96" fill="#f0ece2" letter-spacing="-2.6">Hackatón para</text>
+  <text class="serif-em" x="76" y="400" font-size="96" fill="#e2a638" letter-spacing="-1">no técnicos</text>
+  <text class="sans" x="80" y="474" font-size="28" fill="#cfc9bb">Gente de oficina, docentes, comerciantes,</text>
+  <text class="sans" x="80" y="512" font-size="28" fill="#cfc9bb">equipos de organizaciones.</text>
+
+  <line x1="80" y1="560" x2="1120" y2="560" stroke="#34312a" stroke-width="1"/>
+  <text class="mono" x="80" y="592" font-size="16" fill="#a8a293">ateneo-abierto.org/hackaton</text>
+</svg>

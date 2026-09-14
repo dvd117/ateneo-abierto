@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { copy } from './content';
+import { copy, DEEP_LINK_ROUTES, type DeepLinkRoute } from './content';
 import { renderPage } from './render';
 
 const locales = ['es', 'en'] as const;
@@ -239,6 +239,28 @@ describe('landing page copy', () => {
     // Demo Nights is the settled name, in both locales.
     expect(copy.es.doors.doors[2].title).toBe('Demo Nights');
     expect(copy.en.doors.doors[2].title).toBe('Demo Nights');
+  });
+
+  test('gives each door its own address, with a card that only rearranges the door copy', () => {
+    for (const locale of locales) {
+      const page = copy[locale];
+      expect(page.doors.doors.map((door) => door.id)).toEqual([...DEEP_LINK_ROUTES]);
+
+      for (const door of page.doors.doors) {
+        const card = page.deepLinks[door.id as DeepLinkRoute];
+        expect(card.headline.length).toBeGreaterThanOrEqual(1);
+        expect(card.headline.length).toBeLessThanOrEqual(2);
+        expect(card.who.length).toBeLessThanOrEqual(2);
+        expect(card.headline.join(' ')).toBe(door.title);
+        expect(card.who.join(' ')).toBe(door.who);
+      }
+
+      // The door ids are real anchors on the page the addresses open.
+      const html = renderPage(locale);
+      for (const route of DEEP_LINK_ROUTES) {
+        expect(html).toContain(`<article class="door" id="${route}"`);
+      }
+    }
   });
 
   test('says who each door is for, and places mentorships inside the hackathon', () => {

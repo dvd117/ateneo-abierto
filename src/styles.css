@@ -487,6 +487,20 @@ main [id] {
   scroll-margin-top: 4.5rem;
 }
 
+/* A door's own address (/hackaton, /talleres, /demo-nights) opens the page
+   with the door flush under the header: its margin is the header's height
+   (53.8 px at every width: one row, 0.85rem padding, 1px rule). */
+main .door[id] {
+  scroll-margin-top: 3.375rem;
+}
+
+/* The door title takes focus on arrival (tabindex="-1", set by main.ts) so a
+   keyboard or screen-reader user starts there. It is not a control, so it
+   draws no focus ring: on a phone the ring read as a selection box. */
+.door-title[tabindex="-1"]:focus {
+  outline: none;
+}
+
 .to-top {
   position: fixed;
   right: clamp(1rem, 3vw, 2rem);

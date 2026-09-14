@@ -1,4 +1,4 @@
-import { Hono } from 'hono';
+import { Hono, type Context, type Next } from 'hono';
 import { secureHeaders } from 'hono/secure-headers';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { bodyLimit } from 'hono/body-limit';
@@ -68,17 +68,30 @@ export function pickLocale(query: string | undefined, acceptLanguage: string | u
   return 'es';
 }
 
-const pageCache = new Map<PageLocale, string>();
+/**
+ * The three doors as their own addresses. Kept here rather than read from
+ * content.ts: the runtime image ships only the server files (see Dockerfile).
+ * Each must match a prerendered {route}.html and {route}.en.html.
+ */
+export const DEEP_LINK_ROUTES = ['hackaton', 'talleres', 'demo-nights'] as const;
+type DeepLinkRoute = (typeof DEEP_LINK_ROUTES)[number];
 
-function readPage(locale: PageLocale): string | null {
-  const cached = pageCache.get(locale);
+/** The prerendered file for one page: index(.en).html or {route}(.en).html. */
+export function pageFile(locale: PageLocale, route?: DeepLinkRoute): string {
+  return `${route ?? 'index'}${locale === 'en' ? '.en' : ''}.html`;
+}
+
+const pageCache = new Map<string, string>();
+
+function readPage(file: string): string | null {
+  const cached = pageCache.get(file);
   if (cached !== undefined) {
     return cached;
   }
 
   try {
-    const html = readFileSync(join(distDir, locale === 'en' ? 'index.en.html' : 'index.html'), 'utf8');
-    pageCache.set(locale, html);
+    const html = readFileSync(join(distDir, file), 'utf8');
+    pageCache.set(file, html);
     return html;
   } catch {
     return null;
@@ -115,26 +128,44 @@ app.use(
 
 app.get('/api/health', (c) => c.json({ ok: true }));
 
-// The home page, already rendered in the visitor's language by the build.
-app.get('/', async (c, next) => {
-  const locale = pickLocale(c.req.query('lang'), c.req.header('accept-language'));
-  const html = readPage(locale);
+/**
+ * A page already rendered in the visitor's language by the build: the home
+ * page, or the home page opened at one door. Locale is picked the same way for both.
+ */
+function servePage(route?: DeepLinkRoute) {
+  return (c: Context, next: Next) => {
+    const locale = pickLocale(c.req.query('lang'), c.req.header('accept-language'));
+    const html = readPage(pageFile(locale, route));
 
-  if (html === null) {
-    return next();
-  }
+    if (html === null) {
+      return next();
+    }
 
-  c.header('Content-Language', locale);
-  c.header('Vary', 'Accept-Language');
-  // Assets are content-hashed; the page itself must revalidate to pick them up.
-  c.header('Cache-Control', 'no-cache');
-  return c.html(html);
-});
+    c.header('Content-Language', locale);
+    c.header('Vary', 'Accept-Language');
+    // Assets are content-hashed; the page itself must revalidate to pick them up.
+    c.header('Cache-Control', 'no-cache');
+    return c.html(html);
+  };
+}
 
-app.get('/manifesto', (c) => {
-  const lang = c.req.query('lang');
-  return c.redirect(lang === 'es' || lang === 'en' ? `/?lang=${lang}` : '/', 301);
-});
+app.get('/', servePage());
+for (const route of DEEP_LINK_ROUTES) {
+  app.get(`/${route}`, servePage(route));
+}
+
+/** A permanent redirect that keeps a supported ?lang= and drops anything else. */
+function redirectTo(path: string) {
+  return (c: Context) => {
+    const lang = c.req.query('lang');
+    return c.redirect(lang === 'es' || lang === 'en' ? `${path}?lang=${lang}` : path, 301);
+  };
+}
+
+app.get('/manifesto', redirectTo('/'));
+// The English spellings people will guess, onto the one address per door.
+app.get('/hackathon', redirectTo('/hackaton'));
+app.get('/workshops', redirectTo('/talleres'));
 
 const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 type NewsletterLocale = 'es' | 'en';

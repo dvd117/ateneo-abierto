@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import type { OutputAsset, OutputBundle } from 'rollup';
 import type { Plugin } from 'vite';
 import type { Locale } from '../src/locale';
+import { DEEP_LINK_ROUTES, type DeepLinkRoute } from '../src/content';
 import { pageMeta, renderPage } from '../src/render';
 
 /**
@@ -14,6 +15,10 @@ import { pageMeta, renderPage } from '../src/render';
  *
  *   dist/index.html      Spanish (the default)
  *   dist/index.en.html   English
+ *   dist/hackaton.html, hackaton.en.html, talleres…, demo-nights…
+ *                        the same page opened at one door: its own head (title,
+ *                        description, preview card, canonical) and a
+ *                        data-deep-link on #app that main.ts scrolls to.
  *   dist/csp.json        sha256 hashes of the inline <style> blocks, which the
  *                        Hono server adds to its Content-Security-Policy so
  *                        inline CSS is allowed by hash, never by 'unsafe-inline'.
@@ -40,16 +45,26 @@ function replaceOnce(html: string, pattern: RegExp, value: string, label: string
   return html.replace(pattern, (_match, before: string, after: string) => `${before}${value}${after}`);
 }
 
-export function fillTemplate(template: string, locale: Locale): string {
+/** Where a page is written: index(.en).html for home, {route}(.en).html for a door. */
+export function pageFileName(locale: Locale, route?: DeepLinkRoute): string {
+  return `${route ?? 'index'}${locale === 'en' ? '.en' : ''}.html`;
+}
+
+export function fillTemplate(template: string, locale: Locale, route?: DeepLinkRoute): string {
   if (!template.includes(PLACEHOLDER)) {
     throw new Error('[prerender] index.html has no <!--prerender--> placeholder');
   }
 
-  const meta = pageMeta(locale);
+  const meta = pageMeta(locale, route);
   let html = template.replace(PLACEHOLDER, () => renderPage(locale));
 
   html = replaceOnce(html, /(<html lang=")[^"]*(")/, meta.lang, '<html lang>');
-  html = replaceOnce(html, /(<div id="app" data-locale=")[^"]*(")/, locale, '#app data-locale');
+  html = replaceOnce(
+    html,
+    /(<div id="app" data-locale=")[^"]*(")/,
+    route ? `${locale}" data-deep-link="${route}` : locale,
+    '#app data-locale'
+  );
   html = replaceOnce(html, /(<title>)[^<]*(<\/title>)/, escapeAttr(meta.title), '<title>');
   html = replaceOnce(
     html,
@@ -84,13 +99,23 @@ export function fillTemplate(template: string, locale: Locale): string {
   html = replaceOnce(html, /(<meta name="twitter:image:alt" content=")[^"]*(")/, escapeAttr(meta.ogImageAlt), 'twitter:image:alt');
   html = replaceOnce(html, /(<link rel="canonical" href=")[^"]*(")/, meta.canonical, 'canonical');
   html = replaceOnce(html, /(<meta property="og:url" content=")[^"]*(")/, meta.canonical, 'og:url');
+  html = replaceOnce(html, /(<link rel="alternate" hreflang="es" href=")[^"]*(")/, meta.alternates.es, 'hreflang es');
+  html = replaceOnce(html, /(<link rel="alternate" hreflang="en" href=")[^"]*(")/, meta.alternates.en, 'hreflang en');
+  html = replaceOnce(
+    html,
+    /(<link rel="alternate" hreflang="x-default" href=")[^"]*(")/,
+    meta.alternates.es,
+    'hreflang x-default'
+  );
+  html = replaceOnce(html, /("@type": "WebSite"[^}]*?"url": ")[^"]*(")/, meta.canonical, 'JSON-LD WebSite url');
   // Only the WebSite node's description, which follows the page's language;
-  // the Organization node carries no copy and stays as written. The value is
-  // JSON-escaped, and `<` too, so no description can close the script early.
+  // the Organization node carries no copy and stays as written. A door page
+  // keeps the site's description: the node describes the site, not the door.
+  // The value is JSON-escaped, and `<` too, so no description can close the script early.
   html = replaceOnce(
     html,
     /("@type": "WebSite"[^}]*?"description": ")[^"]*(")/,
-    JSON.stringify(meta.description).slice(1, -1).replace(/</g, '\\u003c'),
+    JSON.stringify(pageMeta(locale).description).slice(1, -1).replace(/</g, '\\u003c'),
     'JSON-LD WebSite description'
   );
 
@@ -146,21 +171,32 @@ export function prerender(): Plugin {
       delete bundle[stylesheet.fileName];
 
       const spanish = fillTemplate(template, 'es');
-      const english = fillTemplate(template, 'en');
       page.source = spanish;
 
-      this.emitFile({ type: 'asset', fileName: 'index.en.html', source: english });
+      const others: [string, string][] = [['index.en.html', fillTemplate(template, 'en')]];
+      for (const route of DEEP_LINK_ROUTES) {
+        for (const locale of ['es', 'en'] as const) {
+          others.push([pageFileName(locale, route), fillTemplate(template, locale, route)]);
+        }
+      }
+
+      for (const [fileName, source] of others) {
+        this.emitFile({ type: 'asset', fileName, source });
+      }
+
       this.emitFile({
         type: 'asset',
         fileName: 'csp.json',
         source: `${JSON.stringify({ styleSrc: styleHashes(spanish) }, null, 2)}\n`
       });
 
-      // Both locales share one stylesheet and one noscript block, so one set
-      // of hashes has to cover both. Fail the build if that ever stops being true.
+      // Every page shares one stylesheet and one noscript block, so one set
+      // of hashes has to cover all of them. Fail the build if that ever stops being true.
       const spanishHashes = styleHashes(spanish).join(' ');
-      if (styleHashes(english).join(' ') !== spanishHashes) {
-        this.error('inline <style> blocks differ between locales; csp.json would not cover both');
+      for (const [fileName, source] of others) {
+        if (styleHashes(source).join(' ') !== spanishHashes) {
+          this.error(`inline <style> blocks in ${fileName} differ from index.html; csp.json would not cover it`);
+        }
       }
     }
   };

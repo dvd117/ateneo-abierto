@@ -2,7 +2,8 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, test, expect, vi, afterEach, beforeAll, afterAll } from 'vitest';
-import { app, loadStyleHashes, pickLocale } from './app';
+import { app, DEEP_LINK_ROUTES, loadStyleHashes, pageFile, pickLocale } from './app';
+import { DEEP_LINK_ROUTES as CONTENT_ROUTES } from './content';
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -48,6 +49,33 @@ describe('static app routes', () => {
 
     expect(res.status).toBe(301);
     expect(res.headers.get('location')).toBe('/');
+  });
+});
+
+describe('door addresses', () => {
+  test('redirects the English spellings to the one address per door, keeping ?lang', async () => {
+    for (const [from, to] of [['/hackathon', '/hackaton'], ['/workshops', '/talleres']]) {
+      const bare = await app.request(from);
+      expect(bare.status).toBe(301);
+      expect(bare.headers.get('location')).toBe(to);
+
+      const english = await app.request(`${from}?lang=en`);
+      expect(english.headers.get('location')).toBe(`${to}?lang=en`);
+
+      const unsupported = await app.request(`${from}?lang=fr`);
+      expect(unsupported.headers.get('location')).toBe(to);
+    }
+  });
+
+  test('maps each route and locale to its prerendered file', () => {
+    expect(pageFile('es')).toBe('index.html');
+    expect(pageFile('en')).toBe('index.en.html');
+    expect(pageFile('es', 'hackaton')).toBe('hackaton.html');
+    expect(pageFile('en', 'demo-nights')).toBe('demo-nights.en.html');
+  });
+
+  test('knows the same routes the page does', () => {
+    expect([...DEEP_LINK_ROUTES]).toEqual([...CONTENT_ROUTES]);
   });
 });
 
@@ -377,6 +405,8 @@ describe('prerendered home page', () => {
       `<html lang="es"><body>Deja de preguntarle.${'<p>relleno</p>'.repeat(200)}</body></html>`
     );
     writeFileSync(join(dir, 'index.en.html'), '<html lang="en"><body>Stop asking it things.</body></html>');
+    writeFileSync(join(dir, 'hackaton.html'), '<html lang="es"><body>Hackatón para no técnicos</body></html>');
+    writeFileSync(join(dir, 'hackaton.en.html'), '<html lang="en"><body>Hackathon for non-technical people</body></html>');
     writeFileSync(
       join(dir, 'csp.json'),
       JSON.stringify({ styleSrc: [esHash, "'unsafe-inline'", 'https://evil.example'] })
@@ -415,6 +445,21 @@ describe('prerendered home page', () => {
     const byBrowser = await pagesApp.request('/', { headers: { 'Accept-Language': 'en-GB,en;q=0.9' } });
     expect(await byBrowser.text()).toContain('Stop asking it things.');
     expect(byBrowser.headers.get('content-language')).toBe('en');
+  });
+
+  test('serves a door page in the language picked the same way as home', async () => {
+    const spanish = await pagesApp.request('/hackaton');
+    expect(spanish.status).toBe(200);
+    expect(await spanish.text()).toContain('Hackatón para no técnicos');
+    expect(spanish.headers.get('content-language')).toBe('es');
+    expect(spanish.headers.get('cache-control')).toBe('no-cache');
+
+    const byQuery = await pagesApp.request('/hackaton?lang=en');
+    expect(await byQuery.text()).toContain('Hackathon for non-technical people');
+
+    const byBrowser = await pagesApp.request('/hackaton', { headers: { 'Accept-Language': 'en-US,en;q=0.9' } });
+    expect(await byBrowser.text()).toContain('Hackathon for non-technical people');
+    expect(byBrowser.headers.get('vary')).toContain('Accept-Language');
   });
 
   test('allows inline CSS by exact hash only, never by unsafe-inline', async () => {

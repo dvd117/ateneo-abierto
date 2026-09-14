@@ -244,6 +244,26 @@ export type DoorsCopy = {
 };
 
 /**
+ * The three doors as their own addresses (/hackaton, /talleres, /demo-nights),
+ * so a post about one door previews that door. The route is the door's id.
+ */
+export const DEEP_LINK_ROUTES = ['hackaton', 'talleres', 'demo-nights'] as const;
+export type DeepLinkRoute = (typeof DEEP_LINK_ROUTES)[number];
+
+/**
+ * How a door's link-preview card lays out its own copy. Nothing here is new
+ * wording: the title, description and alt text are read from the door, and
+ * these are the door title and its "who" line broken where the 1200-wide card
+ * needs them (content.test.ts checks they join back into the door's strings).
+ */
+export type DeepLinkCard = {
+  /** The door title in one or two lines; a second line takes the signal colour. */
+  headline: string[];
+  /** The door's `who`, in one or two lines. */
+  who: string[];
+};
+
+/**
  * One of the four principles. `icon` names a drawing in render.ts rather than
  * carrying markup, so the copy file stays text.
  */
@@ -394,6 +414,7 @@ export type PageCopy = {
   shift: ShiftCopy;
   glossary: GlossaryCopy;
   doors: DoorsCopy;
+  deepLinks: Record<DeepLinkRoute, DeepLinkCard>;
   principles: PrinciplesCopy;
   north: NorthCopy;
   talk: TalkCopy;
@@ -800,6 +821,20 @@ export const copy: Record<Locale, PageCopy> = {
       mentorship: {
         label: 'Mentorías',
         text: 'en cada hackatón, un mentor por equipo, desde que eligen la tarea hasta que la presentan. Vienen incluidas.'
+      }
+    },
+    deepLinks: {
+      hackaton: {
+        headline: ['Hackatón para', 'no técnicos'],
+        who: ['Gente de oficina, docentes, comerciantes,', 'equipos de organizaciones.']
+      },
+      talleres: {
+        headline: ['Talleres'],
+        who: ['Equipos, organizaciones, escuelas y universidades', 'que quieren empezar juntos.']
+      },
+      'demo-nights': {
+        headline: ['Demo', 'Nights'],
+        who: ['Quien ya armó algo y quiere enseñarlo,', 'o aprender del intento de otro.']
       }
     },
     principles: {
@@ -1305,6 +1340,20 @@ export const copy: Record<Locale, PageCopy> = {
       mentorship: {
         label: 'Mentorship',
         text: 'at every hackathon, one mentor per team, from choosing the task to presenting it. Included.'
+      }
+    },
+    deepLinks: {
+      hackaton: {
+        headline: ['Hackathon for', 'non-technical people'],
+        who: ['Office workers, teachers, shopkeepers,', 'teams inside organizations.']
+      },
+      talleres: {
+        headline: ['Workshops'],
+        who: ['Teams, organizations, schools and universities', 'that want to start together.']
+      },
+      'demo-nights': {
+        headline: ['Demo', 'Nights'],
+        who: ['Anyone who has built something and wants to show it,', 'or to learn from someone else\u2019s attempt.']
       }
     },
     principles: {
