@@ -67,7 +67,7 @@ describe('build-time prerender', () => {
     expect(html).toMatch(/name="description"\s+content="A chatbot answers you\./);
     expect(html).toMatch(/name="description"\s+content="[^"]*open tools, free to start/);
     // The WebSite node speaks the page's language; the Organization node is left alone.
-    expect(html).toContain('"@type": "WebSite", "url": "https://ateneo-abierto.org/?lang=en", "name": "Ateneo Abierto", "description": "A chatbot answers you. An agent does the work with you.');
+    expect(html).toContain('"@type": "WebSite", "url": "https://ateneo-abierto.org/", "name": "Ateneo Abierto", "description": "A chatbot answers you. An agent does the work with you.');
     expect(html).not.toContain('"description": "old"');
     expect(html).toContain('{ "@type": "Organization", "name": "Ateneo Abierto", "email": "old@example.org" }');
     expect(html).toContain('property="og:title" content="Ateneo Abierto — Stop asking it things. Start handing it work."');
@@ -92,7 +92,7 @@ describe('build-time prerender', () => {
     expect(es).toContain('hreflang="es" href="https://ateneo-abierto.org/hackaton"');
     expect(es).toContain('hreflang="en" href="https://ateneo-abierto.org/hackaton?lang=en"');
     expect(es).toContain('hreflang="x-default" href="https://ateneo-abierto.org/hackaton"');
-    expect(es).toContain('"@type": "WebSite", "url": "https://ateneo-abierto.org/hackaton", "name": "Ateneo Abierto", "description": "Un chatbot');
+    expect(es).toContain('"@type": "WebSite", "url": "https://ateneo-abierto.org/", "name": "Ateneo Abierto", "description": "Un chatbot');
 
     const en = fillTemplate(template, 'en', 'demo-nights');
     expect(en).toContain('data-locale="en" data-deep-link="demo-nights"');

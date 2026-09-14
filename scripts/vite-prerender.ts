@@ -107,10 +107,10 @@ export function fillTemplate(template: string, locale: Locale, route?: DeepLinkR
     meta.alternates.es,
     'hreflang x-default'
   );
-  html = replaceOnce(html, /("@type": "WebSite"[^}]*?"url": ")[^"]*(")/, meta.canonical, 'JSON-LD WebSite url');
   // Only the WebSite node's description, which follows the page's language;
   // the Organization node carries no copy and stays as written. A door page
-  // keeps the site's description: the node describes the site, not the door.
+  // keeps the site's description and url: the node describes the site (one
+  // @id, one url), not the door.
   // The value is JSON-escaped, and `<` too, so no description can close the script early.
   html = replaceOnce(
     html,
