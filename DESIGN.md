@@ -9,6 +9,7 @@ colors:
   graphite-panel: "#1f1d16"
   graphite-raise: "#302e26"
   graphite-line: "#34312a"
+  graphite-land: "#3e3b34"
   bone: "#f0ece2"
   bone-soft: "#cfc9bb"
   bone-muted: "#a8a293"
@@ -206,7 +207,7 @@ meaning is carried by structure (see Layout).
 - **Base.** `graphite` for the page, `graphite-deep` for bands that need to recede,
   `graphite-panel` for the agent window and cards, `graphite-raise` for the one surface that
   sits *on* the panel (the visitor's message bubble and the selected task in the session list),
-  `graphite-line` for every border.
+  `graphite-line` for every border, `graphite-land` only for the landmass on the map.
 - **Text.** `bone` for headlines and body; `bone-soft` for the manifesto voice; `bone-muted`
   for UI text; `bone-dim` only for inactive map labels.
 - **Signal.** `guacamaya` is the only accent. It fills the primary button (label in
@@ -255,10 +256,32 @@ Page and identity pairs first, then the pairs the agent window adds
 | bone-soft / graphite (map city label) | 11.08 | 4.5 |
 | bone-dim / graphite (planned city, map caption) | 5.18 | 4.5 |
 
-The map's landmass (`graphite-panel` on `graphite`, 1.08) and the hatching of the Zona en
-Reclamación (`graphite-line` on `graphite`, 1.41) are deliberately below 3: they are the quiet
-ground the nodes sit on, and every piece of information the map carries — which cities, which
-are lit, which are only planned — is also in the labels and in the figure's alt text.
+Pairs added 2026-09-14, when the map's ground was made visible (computed, not eyeballed;
+opacities are composited over the ground before the ratio is taken).
+
+| Pair | Ratio | Need |
+|---|---|---|
+| graphite-land vs graphite (map landmass) | 1.64 | 1.6–1.9 target |
+| bone-dim at 0.55 vs graphite-land (coastline, inside) | 1.93 | ground |
+| bone-dim at 0.55 vs graphite (coastline, outside) | 2.42 | ground |
+| guacamaya at 0.45 vs graphite (Zona en Reclamación hatch) | 2.67 | ground |
+| bone-muted / graphite (claim label, on its knockout) | 7.19 | 4.5 |
+| bone-dim / graphite knockout over land (planned or unlit city label) | 5.18 | 4.5 |
+| bone-soft / graphite knockout over land (city label) | 11.08 | 4.5 |
+| bone-dim vs graphite-land (planned or unlit node ring, UI) | 3.17 | 3 |
+| paper vs graphite-land (lit library node) | 9.57 | 3 |
+| bone-dim at 0.5 vs graphite (hero network edge at rest) | 2.23 | ground |
+| bone-muted vs graphite (hero network node ring at rest, UI) | 7.19 | 3 |
+
+The map's ground is visible on purpose. At 1.08 (land) and 1.41 (hatch) the country and the
+Zona en Reclamación disappeared on a phone at normal brightness, so the land is now
+`graphite-land` at 1.64 with a 1px `bone-dim` coastline, and the claim is hatched in
+`guacamaya` at 0.45. The ground, the coastline, the hatch and the resting edges of the hero
+network still sit below 3: they give the picture its shape, not its information. Every piece
+of information the map carries — which cities, which are lit, which are only planned — is in
+the labels and in the figure's alt text. Because the labels now cross a brighter land, each
+map label carries a solid graphite knockout (four 1px text-shadow offsets, no blur), so
+the text sits on graphite and keeps the ratios in the tables above.
 
 `graphite-line` on `graphite-panel` is 1.30 and is deliberately below 3: it is a decorative
 separator, never the only thing identifying a control. Where an edge does carry state — the

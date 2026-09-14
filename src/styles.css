@@ -9,6 +9,7 @@
   --graphite-panel: #1f1d16;
   --graphite-raise: #302e26;
   --graphite-line: #34312a;
+  --graphite-land: #3e3b34;
   --bone: #f0ece2;
   --bone-soft: #cfc9bb;
   --bone-muted: #a8a293;
@@ -1853,7 +1854,9 @@ main [id] {
   stroke: var(--c-accent);
   stroke-width: 1.2;
   opacity: 0.7;
-  transition: opacity var(--duration-step) var(--ease-out);
+  transition:
+    opacity var(--duration-step) var(--ease-out),
+    stroke var(--duration-step) var(--ease-out);
 }
 
 .net-node circle {
@@ -1884,13 +1887,16 @@ main [id] {
 
 /* The runner adds .is-lighting; until then every node stands lit, which is
    also what anyone without the runner sees. */
+/* At rest the network is drawn in bone, visible but quiet; lighting turns it
+   ochre. */
 .net.is-lighting .net-edge:not(.is-lit) {
-  opacity: 0.12;
+  stroke: var(--c-fg-3);
+  opacity: 0.5;
 }
 
 .net.is-lighting .net-node:not(.is-lit) circle {
   fill: var(--c-bg);
-  stroke: var(--c-fg-3);
+  stroke: var(--c-fg-2);
 }
 
 .net.is-lighting .net-city:not(.is-lit) {
@@ -2459,11 +2465,16 @@ main [id] {
   overflow: visible;
 }
 
+/* The ground is visible on purpose (2026-09-14): at 1.08 the country vanished
+   on a phone at normal brightness. The coastline is a 1px stroke at any
+   scale, never a glow. */
 .map-land {
-  fill: var(--c-bg-panel);
-  stroke: var(--c-border);
-  stroke-width: 1.2;
+  fill: var(--graphite-land);
+  stroke: var(--c-fg-3);
+  stroke-opacity: 0.55;
+  stroke-width: 1px;
   stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
 }
 
 /* Hatched, not filled: the claim is drawn, not asserted. */
@@ -2475,8 +2486,21 @@ main [id] {
 }
 
 .map-hatch-line {
-  stroke: var(--c-border);
+  stroke: var(--c-accent);
+  stroke-opacity: 0.45;
   stroke-width: 1.1;
+}
+
+/* A solid graphite edge round each map label, so the text sits on graphite
+   wherever it crosses the land or the hatch and keeps its table ratio.
+   Four 1px offsets, no blur: an edge, not a glow. */
+.map-city,
+.map-claim-label {
+  text-shadow:
+    1px 0 0 var(--c-bg),
+    -1px 0 0 var(--c-bg),
+    0 1px 0 var(--c-bg),
+    0 -1px 0 var(--c-bg);
 }
 
 .map-claim-label {
@@ -2489,7 +2513,7 @@ main [id] {
   font: var(--t-small);
   font-size: clamp(0.56rem, 0.4rem + 0.45vw, 0.7rem);
   line-height: 1.25;
-  color: var(--c-fg-3);
+  color: var(--c-fg-2);
 }
 
 .map-edge {
