@@ -509,31 +509,38 @@ function renderShift(page: PageCopy): string {
 }
 
 /**
- * "Palabras que vas a oír": the words behind the window, each with the thing
- * itself in the terminal's type, so the definition has something to point at.
+ * "Cuatro palabras que vas a oír": the words behind the window, each with the
+ * thing itself in the terminal's type, so the definition has something to
+ * point at. A native <details> strip under the doors, closed at every width:
+ * nobody needs these words to sign up (2026-09-14). The summary may hold one
+ * heading, so the title is an h3 under Programa's h2. No reveal on the cards:
+ * opening it shows them at once, with no motion of our own.
  */
 function renderGlossary(page: PageCopy): string {
   const { glossary } = page;
 
   return `
-    <section class="sec glossary" id="glosario" aria-labelledby="glosario-title">
-      <div class="shell">
-        ${renderSecHead({ eyebrow: glossary.eyebrow, title: inline(glossary.title), id: 'glosario-title', lead: glossary.lead })}
-        <dl class="gl-grid">
-          ${glossary.items
-            .map(
-              (item, order) => `
-                <div class="gl" data-reveal data-reveal-delay="${(order % 3) * 80}">
-                  <dt class="gl-term">${inline(item.term)}</dt>
-                  <dd class="gl-sample"><code>${inline(item.sample)}</code></dd>
-                  <dd class="gl-body">${inline(item.body)}</dd>
-                </div>
-              `
-            )
-            .join('')}
-        </dl>
-      </div>
-    </section>
+    <details class="gl-strip" id="glosario">
+      <summary class="gl-summary">
+        <span class="eyebrow">${inline(glossary.eyebrow)}</span>
+        <h3 class="gl-title">${inline(glossary.title)}</h3>
+        <span class="gl-lead">${inline(glossary.lead)}</span>
+        <span class="gl-toggle" aria-hidden="true"></span>
+      </summary>
+      <dl class="gl-grid">
+        ${glossary.items
+          .map(
+            (item) => `
+              <div class="gl">
+                <dt class="gl-term">${inline(item.term)}</dt>
+                <dd class="gl-sample"><code>${inline(item.sample)}</code></dd>
+                <dd class="gl-body">${inline(item.body)}</dd>
+              </div>
+            `
+          )
+          .join('')}
+      </dl>
+    </details>
   `;
 }
 
@@ -606,6 +613,7 @@ function renderDoors(page: PageCopy): string {
         <p class="doors-extra">
           <b>${inline(doors.mentorship.label)}</b> ${inline(doors.mentorship.text)}
         </p>
+        ${renderGlossary(page)}
       </div>
       ${doors.doors.map((door) => renderDoorDialog(page, door)).join('')}
     </section>
@@ -976,7 +984,6 @@ export function renderPage(locale: Locale): string {
       ${renderBand('one', 0)}
       ${renderShift(page)}
       ${renderDoors(page)}
-      ${renderGlossary(page)}
       ${renderPrinciples(page)}
       ${renderBand('two', 3)}
       ${renderNorth(page)}

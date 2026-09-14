@@ -2268,12 +2268,110 @@ main [id] {
   color: var(--c-fg);
 }
 
-/* ---------- palabras que vas a oír ---------- */
+/* ---------- cuatro palabras que vas a oír ----------
+   A strip under the doors, not a section: closed at every width, opened by
+   the browser's own <details>, with no motion of ours. */
+
+.gl-strip {
+  margin-top: var(--gap-md);
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.gl-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 0.4rem var(--gap-md);
+  padding-block: var(--gap-md);
+  list-style: none;
+  cursor: pointer;
+}
+
+.gl-summary::-webkit-details-marker {
+  display: none;
+}
+
+.gl-summary > .eyebrow,
+.gl-title,
+.gl-lead {
+  grid-column: 1;
+  margin: 0;
+}
+
+.gl-summary > .eyebrow {
+  display: block;
+}
+
+.gl-title {
+  font: var(--t-h2);
+  color: var(--c-fg);
+}
+
+.gl-lead {
+  font: var(--t-body);
+  color: var(--c-fg-2);
+}
+
+/* A plus that loses its upright when open. The glyph, in bone, is what marks
+   the control; the ring is only its edge. */
+.gl-toggle {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  position: relative;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--c-border);
+  border-radius: 50%;
+}
+
+.gl-toggle::before,
+.gl-toggle::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 0.9rem;
+  height: 1.5px;
+  background: var(--c-fg);
+  transform: translate(-50%, -50%);
+}
+
+.gl-toggle::after {
+  transform: translate(-50%, -50%) rotate(90deg);
+}
+
+.gl-strip[open] .gl-toggle::after {
+  display: none;
+}
+
+.gl-summary:hover .gl-toggle {
+  border-color: var(--c-fg-3);
+}
+
+@media (min-width: 861px) {
+  .gl-summary {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr) auto;
+    column-gap: var(--gap-lg);
+  }
+
+  .gl-lead {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: end;
+  }
+
+  .gl-toggle {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+  }
+}
 
 .gl-grid {
   display: grid;
   gap: var(--gap-md);
   margin: 0;
+  padding-bottom: var(--gap-md);
 }
 
 @media (min-width: 561px) {
@@ -2284,7 +2382,7 @@ main [id] {
 
 @media (min-width: 1025px) {
   .gl-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 

@@ -519,8 +519,11 @@ describe('landing page copy', () => {
     for (const locale of locales) {
       const terms = copy[locale].glossary.items.map((item) => item.term);
 
-      expect(terms).toContain('Terminal');
-      expect(terms).toContain('Markdown');
+      // Four words, 2026-09-14: Terminal contradicted "not a terminal" and
+      // Markdown's point already lives in "Tus archivos son tuyos".
+      expect(terms).toHaveLength(4);
+      expect(terms).not.toContain('Terminal');
+      expect(terms).not.toContain('Markdown');
       expect(terms).toContain('Skill');
       expect(copy[locale].glossary.items.some((item) => item.sample.includes('AGENTS.md'))).toBe(true);
       expect(copy[locale].glossary.items.some((item) => item.sample.includes('CLAUDE.md'))).toBe(true);

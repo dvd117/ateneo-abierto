@@ -145,7 +145,10 @@ export type AgentChrome = {
   rulesFile: string;
 };
 
-/** "Palabras que vas a oír": the concepts behind the window, named. */
+/**
+ * "Cuatro palabras que vas a oír": the concepts behind the window, named, in a
+ * strip under the doors that stays closed until someone opens it.
+ */
 export type GlossaryCopy = {
   eyebrow: string;
   title: string;
@@ -679,23 +682,13 @@ export const copy: Record<Locale, PageCopy> = {
     },
     glossary: {
       eyebrow: 'Glosario',
-      title: 'Palabras que vas a oír',
-      lead: 'No necesitas saberlas para inscribirte. Te las vas a encontrar desde el primer día de la hackatón, y son así de simples.',
+      title: 'Cuatro palabras que vas a oír',
+      lead: 'No necesitas saberlas para inscribirte.',
       items: [
         {
           term: 'Agente',
           sample: '“Júntame estas tres hojas.”',
           body: 'Un programa que recibe una tarea, arma un plan y lo ejecuta en tu computadora: abre archivos, corre comandos y te entrega el resultado para que lo revises.'
-        },
-        {
-          term: 'Terminal',
-          sample: '$ ls Documentos',
-          body: 'La ventana donde se le dan órdenes a la computadora escribiendo, en vez de hacer clic. El agente la usa para leer, convertir y ordenar tus archivos; tú puedes mirar lo que hace.'
-        },
-        {
-          term: 'Markdown',
-          sample: '# Título  ·  - un punto',
-          body: 'Texto plano con unas pocas marcas: # para un título, - para una lista. Lo lee cualquier programa y cualquier agente, y de ahí sale el Word o el PDF que envías.'
         },
         {
           term: 'Skill',
@@ -1192,23 +1185,13 @@ export const copy: Record<Locale, PageCopy> = {
     },
     glossary: {
       eyebrow: 'Glossary',
-      title: 'Words you’ll hear',
-      lead: 'You don’t need them to sign up. You’ll meet them on day one of the hackathon, and they’re this simple.',
+      title: 'Four words you’ll hear',
+      lead: 'You don’t need them to sign up.',
       items: [
         {
           term: 'Agent',
           sample: '“Merge these three sheets.”',
           body: 'A program that takes a task, makes a plan and carries it out on your computer: it opens files, runs commands and hands you the result to check.'
-        },
-        {
-          term: 'Terminal',
-          sample: '$ ls Documents',
-          body: 'The window where you give the computer orders by typing instead of clicking. The agent uses it to read, convert and sort your files; you can watch what it does.'
-        },
-        {
-          term: 'Markdown',
-          sample: '# Title  ·  - a point',
-          body: 'Plain text with a few marks: # for a heading, - for a list. Any program and any agent can read it, and the Word file or PDF you send is made from it.'
         },
         {
           term: 'Skill',
