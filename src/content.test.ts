@@ -224,11 +224,15 @@ describe('landing page copy', () => {
       expect(new Set(doors.doors.map((door) => door.id)).size).toBe(3);
       expect(Object.values(doors.dialog).every((label) => label.length > 0)).toBe(true);
 
-      // Talleres is the fourth thing we do, not a fourth door: one line, and
-      // it goes through the same form rather than a second address.
-      expect(doors.workshops.label.length).toBeGreaterThan(0);
-      expect(doors.workshops.text.length).toBeGreaterThan(20);
-      expect(doors.workshops.cta.length).toBeGreaterThan(0);
+      // Mentorships come with the hackathon, so they are one line under the
+      // doors with no way in of their own (2026-09-14).
+      expect(doors.mentorship.label.length).toBeGreaterThan(0);
+      expect(doors.mentorship.text.length).toBeGreaterThan(20);
+      expect('cta' in doors.mentorship).toBe(false);
+
+      // Talleres is door 02, and it is arranged by email, not through the form.
+      expect(doors.doors.map((door) => door.id)).toEqual(['hackaton', 'talleres', 'demo-nights']);
+      expect(doors.doors.map((door) => door.cta ?? 'join')).toEqual(['join', 'mail', 'join']);
     }
 
     // Demo Nights is the settled name, in both locales.
@@ -239,11 +243,14 @@ describe('landing page copy', () => {
   test('says who each door is for, and places mentorships inside the hackathon', () => {
     // Nobody should have to guess which door is theirs.
     expect(copy.es.doors.doors[0].who).toMatch(/docentes|oficina/);
-    expect(copy.es.doors.doors[1].who).toMatch(/hackatón/i);
-    expect(copy.en.doors.doors[1].who).toMatch(/hackathon/i);
+    expect(copy.es.doors.doors[1].who).toMatch(/organizaciones/);
+    expect(copy.en.doors.doors[1].who).toMatch(/organizations/);
     // David, 2026-09-11: mentors work inside each hackathon, not after it.
-    expect(copy.es.doors.doors[1].details.expect).toMatch(/incluidas en la hackatón/);
-    expect(JSON.stringify(copy.es.doors.doors[1])).not.toMatch(/semanas|a tu ritmo/);
+    expect(copy.es.doors.mentorship.text).toMatch(/cada hackatón[\s\S]*incluidas/);
+    expect(copy.en.doors.mentorship.text).toMatch(/every hackathon[\s\S]*Included/);
+    expect(copy.es.doors.doors[0].details.expect).toMatch(/Mentorías incluidas/);
+    expect(copy.en.doors.doors[0].details.expect).toMatch(/Mentorship included/);
+    expect(JSON.stringify(copy.es.doors.mentorship)).not.toMatch(/semanas|a tu ritmo/);
     expect(copy.es.principles.items[0].body).not.toMatch(/qué cedes|revisar, adaptar/);
 
     // Neither door may ask for code as a precondition.

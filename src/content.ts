@@ -200,6 +200,11 @@ export type Door = {
   body: string;
   whoLabel: string;
   who: string;
+  /**
+   * Where the dialog sends you: the form (`join`, the default) or an email to
+   * us (`mail`), for the door that is arranged by writing rather than signing up.
+   */
+  cta?: 'join' | 'mail';
   /** What the dialog behind "Ver detalles" says: the door, opened. */
   details: {
     goal: string;
@@ -209,8 +214,8 @@ export type Door = {
 };
 
 /**
- * Section three. Three doors plus the one thing organisations ask for, which
- * goes through the same form rather than a second address.
+ * Section three. Three doors, and under them the one thing that comes with a
+ * door rather than being one: mentorship, included in every hackathon.
  */
 export type DoorsCopy = {
   eyebrow: string;
@@ -224,12 +229,14 @@ export type DoorsCopy = {
     activitiesLabel: string;
     expectLabel: string;
     join: string;
+    /** The way in for a `mail` door. */
+    mail: string;
     close: string;
   };
-  workshops: {
+  /** One line under the doors, no call to action: it cannot be entered on its own. */
+  mentorship: {
     label: string;
     text: string;
-    cta: string;
   };
 };
 
@@ -716,7 +723,7 @@ export const copy: Record<Locale, PageCopy> = {
           id: 'hackaton',
           n: '01',
           title: 'Hackatón para no técnicos',
-          body: 'En un fin de semana aprendes a usar tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código.',
+          body: 'En un fin de semana aprendes a usar tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código. Un mentor acompaña a cada equipo de principio a fin.',
           whoLabel: 'Para quién',
           who: 'Gente de oficina, docentes, comerciantes, equipos de organizaciones.',
           // Approved in David's copy review, 2026-09-11. Format, venue, places
@@ -729,26 +736,29 @@ export const copy: Record<Locale, PageCopy> = {
               'Mentores te acompañan a instalar el agente y a darle tus primeras instrucciones, con archivos de ejemplo.',
               'Al cierre, cada equipo muestra lo que logró.'
             ],
-            expect: 'Un fin de semana, presencial. No necesitas saber programar. Trae tu laptop; una modesta sirve.'
+            expect: 'Un fin de semana, presencial. No necesitas saber programar. Trae tu laptop; una modesta sirve. Mentorías incluidas.'
           }
         },
         {
-          id: 'mentorias',
+          // Talleres is the way in for organizations, so it is a door; the
+          // mentorships come with the hackathon and moved to the line under
+          // the doors (decided 2026-09-14).
+          id: 'talleres',
           n: '02',
-          title: 'Mentorías',
-          // Mentorships happen inside each hackathon, not as a sustained
-          // programme after it (David, 2026-09-11).
-          body: 'En cada hackatón, gente que ya usa agentes en su trabajo acompaña a los equipos para que salgan con algo que funciona de verdad, no solo en la demo.',
+          title: 'Talleres',
+          body: 'Una sesión práctica para tu equipo u organización, armada sobre el trabajo que ya hacen: sus archivos, sus informes, sus tareas de cada semana.',
           whoLabel: 'Para quién',
-          who: 'Los equipos de cada hackatón, desde que eligen su tarea hasta que la presentan.',
+          who: 'Equipos, organizaciones, escuelas y universidades que quieren empezar juntos.',
+          cta: 'mail',
           details: {
-            goal: 'Que ningún equipo se quede trabado: cada uno sale de la hackatón con su agente funcionando.',
+            goal: 'Que el equipo salga con una o dos tareas reales delegadas y una forma de seguir por su cuenta.',
             activities: [
-              'Un mentor acompaña a cada equipo durante la hackatón.',
-              'Ayuda a elegir una tarea que se pueda resolver en un fin de semana.',
-              'Revisa con el equipo lo que entrega el agente y ajustan las instrucciones hasta que funcione.'
+              'Antes de la sesión levantamos las tareas que más tiempo les quitan.',
+              'Sesión de medio día, presencial o remota, con sus propios archivos.',
+              'Cada persona sale con su agente instalado y sus instrucciones escritas.',
+              'Un seguimiento a las dos semanas para ajustar lo que no funcionó.'
             ],
-            expect: 'Vienen incluidas en la hackatón: no hay que inscribirse aparte.'
+            expect: 'Se coordina por correo. Escríbenos y armamos la sesión a la medida.'
           }
         },
         {
@@ -775,12 +785,14 @@ export const copy: Record<Locale, PageCopy> = {
         activitiesLabel: 'Qué hacemos',
         expectLabel: 'Qué esperar',
         join: 'Únete',
+        mail: 'Escríbenos',
         close: 'Cerrar'
       },
-      workshops: {
-        label: 'Talleres',
-        text: 'para equipos y organizaciones: una sesión práctica a la medida de lo que ya hacen.',
-        cta: 'Escríbenos'
+      // Mentorships happen inside each hackathon, not as a sustained
+      // programme after it (David, 2026-09-11).
+      mentorship: {
+        label: 'Mentorías',
+        text: 'en cada hackatón, un mentor por equipo, desde que eligen la tarea hasta que la presentan. Vienen incluidas.'
       }
     },
     principles: {
@@ -1224,7 +1236,7 @@ export const copy: Record<Locale, PageCopy> = {
           id: 'hackaton',
           n: '01',
           title: 'Hackathon for non-technical people',
-          body: 'In one weekend you learn to use your first agent and walk out with it working, even if you’ve never written a line of code.',
+          body: 'In one weekend you learn to use your first agent and walk out with it working, even if you’ve never written a line of code. A mentor stays with each team from start to finish.',
           whoLabel: 'Who it’s for',
           who: 'Office workers, teachers, shopkeepers, teams inside organizations.',
           // Approved in David's copy review, 2026-09-11. Format, venue, places
@@ -1237,24 +1249,26 @@ export const copy: Record<Locale, PageCopy> = {
               'Mentors help you install the agent and give it its first instructions, using sample files.',
               'At the close, each team shows what it got done.'
             ],
-            expect: 'One weekend, in person. You don’t need to know how to code. Bring your laptop; a modest one will do.'
+            expect: 'One weekend, in person. You don’t need to know how to code. Bring your laptop; a modest one will do. Mentorship included.'
           }
         },
         {
-          id: 'mentorias',
+          id: 'talleres',
           n: '02',
-          title: 'Mentorships',
-          body: 'At every hackathon, people who already use agents in their work stay with the teams so they leave with something that really works, not just in the demo.',
+          title: 'Workshops',
+          body: 'A hands-on session for your team or organization, built on the work you already do: your files, your reports, your weekly tasks.',
           whoLabel: 'Who it’s for',
-          who: 'The teams at each hackathon, from choosing their task to presenting it.',
+          who: 'Teams, organizations, schools and universities that want to start together.',
+          cta: 'mail',
           details: {
-            goal: 'That no team gets stuck: each one leaves the hackathon with its agent working.',
+            goal: 'That the team leaves with one or two real tasks delegated, and a way to keep going on its own.',
             activities: [
-              'A mentor stays with each team through the hackathon.',
-              'They help pick a task that can be solved in a weekend.',
-              'They review what the agent hands back with the team and adjust the instructions until it works.'
+              'Before the session we map the tasks that eat the most time.',
+              'A half-day session, in person or remote, using your own files.',
+              'Everyone leaves with their agent installed and their instructions written.',
+              'A follow-up two weeks later to fix what didn’t work.'
             ],
-            expect: 'Included in the hackathon: there’s nothing extra to sign up for.'
+            expect: 'Arranged by email. Write to us and we shape the session to fit.'
           }
         },
         {
@@ -1281,12 +1295,12 @@ export const copy: Record<Locale, PageCopy> = {
         activitiesLabel: 'What we do',
         expectLabel: 'What to expect',
         join: 'Join',
+        mail: 'Write to us',
         close: 'Close'
       },
-      workshops: {
-        label: 'Workshops',
-        text: 'for teams and organizations: a practical session shaped around the work they already do.',
-        cta: 'Write to us'
+      mentorship: {
+        label: 'Mentorship',
+        text: 'at every hackathon, one mentor per team, from choosing the task to presenting it. Included.'
       }
     },
     principles: {

@@ -2253,8 +2253,8 @@ main [id] {
   justify-self: start;
 }
 
-/* Talleres: not a fourth door, so it sits under the rule as one line rather
-   than as a card. */
+/* Mentorías: included in the hackathon, not a door of their own, so they sit
+   under the rule as one line rather than as a card. */
 .doors-extra {
   margin-top: var(--gap-lg);
   padding-top: var(--gap-md);

@@ -583,7 +583,11 @@ function renderDoorDialog(page: PageCopy, door: Door): string {
           </ol>
         </div>
         <p class="dlg-expect"><span class="dlg-label">${inline(dialog.expectLabel)}</span>${inline(door.details.expect)}</p>
-        <a class="button button--fill dlg-join" href="#unete" data-dialog-join>${inline(dialog.join)}</a>
+        ${
+          door.cta === 'mail'
+            ? `<a class="button button--fill dlg-join" href="mailto:${page.footer.contact}">${inline(dialog.mail)}</a>`
+            : `<a class="button button--fill dlg-join" href="#unete" data-dialog-join>${inline(dialog.join)}</a>`
+        }
       </div>
     </dialog>
   `;
@@ -600,8 +604,7 @@ function renderDoors(page: PageCopy): string {
           ${doors.doors.map((door, order) => renderDoor(page, door, order)).join('')}
         </div>
         <p class="doors-extra">
-          <b>${inline(doors.workshops.label)}</b> ${inline(doors.workshops.text)}
-          <a class="link" href="mailto:${page.footer.contact}">${inline(doors.workshops.cta)} <span aria-hidden="true">&rarr;</span></a>
+          <b>${inline(doors.mentorship.label)}</b> ${inline(doors.mentorship.text)}
         </p>
       </div>
       ${doors.doors.map((door) => renderDoorDialog(page, door)).join('')}
