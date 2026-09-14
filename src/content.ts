@@ -878,7 +878,7 @@ export const copy: Record<Locale, PageCopy> = {
         who: ['Quien ya armó algo y quiere enseñarlo,', 'o aprender del intento de otro.']
       }
     },
-    // DRAFT (2026-09-14): David approves or replaces the final wording before merge.
+    // Approved 2026-09-14.
     voice: 'Este piso lo conoces. Esta vez no es para irte.',
     principles: {
       eyebrow: 'Principios',
@@ -1409,7 +1409,7 @@ export const copy: Record<Locale, PageCopy> = {
         who: ['Anyone who has built something and wants to show it,', 'or to learn from someone else\u2019s attempt.']
       }
     },
-    // DRAFT (2026-09-14): David approves or replaces the final wording before merge.
+    // Approved 2026-09-14.
     voice: 'You know this floor. This time it is not for leaving.',
     principles: {
       eyebrow: 'Principles',
