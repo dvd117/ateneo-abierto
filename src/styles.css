@@ -1726,6 +1726,12 @@ main .door[id] {
 
 .shift-col {
   padding-block: var(--gap-lg) 0;
+  /* The columns are grid cells, so they already share a height; this pushes
+     each tally to the foot of that shared height, so both counts sit on one
+     line however differently the steps above them wrap. */
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
 }
 
 @media (min-width: 861px) {
@@ -1754,7 +1760,9 @@ main .door[id] {
 
 .shift-rows {
   list-style: none;
-  margin: var(--gap-md) 0 0;
+  /* The auto bottom margin absorbs the slack in the shorter column, so the
+     tally below it lands at the same height as its neighbour's. */
+  margin: var(--gap-md) 0 auto;
   padding: 0;
   position: relative;
   /* One width for the pill column, the thread and the row grid, so the thread
