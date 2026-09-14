@@ -152,7 +152,7 @@ describe('addSubscriber', () => {
     });
   });
 
-  test('sends the city to the built-in field and holds the delegate answer back', async () => {
+  test('sends the city to the built-in field and the delegate answer to its custom field', async () => {
     const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
     vi.stubGlobal('fetch', mockFetch);
 
@@ -165,7 +165,11 @@ describe('addSubscriber', () => {
     }, API_KEY);
 
     const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
-    expect(JSON.parse(init.body as string).fields).toEqual({ preferred_language: 'es', city: 'Maracay' });
+    expect(JSON.parse(init.body as string).fields).toEqual({
+      preferred_language: 'es',
+      city: 'Maracay',
+      delegate_task: 'Los informes de fin de mes',
+    });
   });
 });
 
@@ -177,10 +181,14 @@ describe('buildFields', () => {
     delegate: 'Los informes de fin de mes',
   };
 
-  test('keeps delegate_task out until the custom field is confirmed', () => {
-    // Flip SEND_DELEGATE_TASK in mailerlite.ts once David confirms the field.
-    expect(SEND_DELEGATE_TASK).toBe(false);
-    expect(buildFields(input)).not.toHaveProperty(DELEGATE_TASK_FIELD);
+  test('sends delegate_task by default now that the custom field exists', () => {
+    // The field was created in MailerLite on 2026-09-14.
+    expect(SEND_DELEGATE_TASK).toBe(true);
+    expect(buildFields(input)).toHaveProperty(DELEGATE_TASK_FIELD, 'Los informes de fin de mes');
+  });
+
+  test('keeps delegate_task out when the flag is off', () => {
+    expect(buildFields(input, { sendDelegateTask: false })).not.toHaveProperty(DELEGATE_TASK_FIELD);
   });
 
   test('sends delegate_task once the flag is on', () => {

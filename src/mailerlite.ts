@@ -16,11 +16,12 @@ const DEFAULT_TIMEOUT_MS = 5000;
 export const DELEGATE_TASK_FIELD = 'delegate_task';
 
 /**
- * Off until the `delegate_task` custom field is confirmed in the MailerLite
- * dashboard (2026-09-14). The form still collects the answer; flip this to
- * send it.
+ * On: the `delegate_task` custom field was created in the MailerLite dashboard
+ * (2026-09-14). Its key could not be read back from /api/fields, so if the
+ * first live submit is refused, check the field list against
+ * DELEGATE_TASK_FIELD before anything else.
  */
-export const SEND_DELEGATE_TASK = false;
+export const SEND_DELEGATE_TASK = true;
 
 export function buildFields(
   input: MailerLiteInput,

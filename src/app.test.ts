@@ -214,7 +214,7 @@ describe('POST /api/subscribe', () => {
     expect(body.fields.participation_interest).toBeUndefined();
   });
 
-  test('sends a capped, stripped city and holds the delegate answer back', async () => {
+  test('sends a capped, stripped city and the delegate answer', async () => {
     process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
     const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
     vi.stubGlobal('fetch', mockFetch);
@@ -237,8 +237,8 @@ describe('POST /api/subscribe', () => {
     expect(body.fields.city.startsWith('Maracay')).toBe(true);
     expect(body.fields.city).not.toContain('<');
     expect(body.fields.city.length).toBeLessThanOrEqual(100);
-    // Off until the delegate_task custom field exists in MailerLite.
-    expect(body.fields.delegate_task).toBeUndefined();
+    // The delegate_task custom field exists in MailerLite since 2026-09-14.
+    expect(body.fields.delegate_task).toBe('Los informes de fin de mes');
   });
 
   test('returns 400 for missing newsletter language', async () => {
