@@ -383,12 +383,20 @@ button {
 /* ---------- la vibración ----------
    The signature, after Cruz-Diez's additive-colour method: zones of stripes
    of varying width and colour, and a screen of fine dark lines that slides
-   over them as the band crosses the screen, so tones appear and travel.
-   Our palette, our composition — never the Maiquetía floor (see render.ts).
-   Static under reduced motion, where the screen still mixes the colours. */
+   over them, so tones appear and travel. Our palette, our composition —
+   never the Maiquetía floor (see render.ts).
+
+   The bands are instruments, not ornaments. The screen's travel records
+   where the band is on the screen; on a phone that reports its orientation
+   it also follows left-right tilt (initBands, --band-shift); elsewhere the
+   ochre stripes turn towards done-green as the reader nears the form
+   (--band-mix, the reading rail's ratio: 0 at the top, 1 at the foot where
+   Únete is). Static in resting
+   ochre under reduced motion and saveData, where the screen still mixes
+   the colours. */
 
 .band {
-  height: clamp(72px, 9vw, 136px);
+  height: clamp(64px, 10vh, 140px);
   background: var(--c-bg);
   border-top: 1px solid var(--c-border);
   overflow: hidden;
@@ -400,8 +408,11 @@ button {
   height: 100%;
 }
 
+/* The fallback first, for a browser without color-mix. At --band-mix 0 the
+   mix is the accent exactly; a tilting phone (data-tilt) keeps it there. */
 .bz-o {
   fill: var(--c-accent);
+  fill: color-mix(in oklab, var(--c-accent), var(--c-done) calc(var(--band-mix, 0) * 100%));
 }
 
 .bz-d {

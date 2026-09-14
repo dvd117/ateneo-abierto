@@ -135,28 +135,88 @@ export function drawBand(field: SVGGElement, seed: number): void {
   field.replaceChildren(fragment);
 }
 
+/** How far a phone may lean, in degrees, before the bands stop following it. */
+export const TILT_RANGE = 30;
+
 /**
- * Moves each band's two layers in opposite directions as it crosses the
- * screen — the diagonal screen one way, the field the other — so the moiré
- * between them travels. The motion eases towards the scroll position instead
- * of jumping with it: a wheel notch moves the screen by several of its own
- * pitches, and without easing the eye reads that as a flicker between two
- * states (David, 2026-09-11). The caller skips this under reduced motion and
- * saveData; the bands then stand still, still mixing their colours.
+ * Left-right tilt (DeviceOrientationEvent.gamma) as band travel: ±30° maps
+ * linearly onto ±`travel`, and anything past that holds at the edge.
  */
-export function initBands(bands: HTMLElement[], travel = 90): () => void {
-  if (bands.length === 0) {
+export function tiltShift(gamma: number | null, travel: number): number {
+  if (gamma === null || !Number.isFinite(gamma)) {
+    return 0;
+  }
+
+  const clamped = Math.max(-TILT_RANGE, Math.min(TILT_RANGE, gamma));
+  return (clamped / TILT_RANGE) * travel;
+}
+
+/**
+ * How far the reader has come down the page: the reading rail's own ratio
+ * (initProgressRail), 0 at the top and 1 at the foot, where the form is. The
+ * bands read it as they cross the screen: about 0.1 at band one, 0.5 at band
+ * two and 0.9 at band three, at phone and desktop widths alike.
+ */
+export function bandMix(scrollY: number, scrollable: number): number {
+  if (scrollable <= 0) {
+    return 0;
+  }
+
+  return Math.max(0, Math.min(1, scrollY / scrollable));
+}
+
+/** The same gate the page uses for all motion: reduced motion or saveData stop it. */
+export function motionAllowed(): boolean {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    return false;
+  }
+
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  return connection?.saveData !== true;
+}
+
+type OrientationEventWithPermission = typeof DeviceOrientationEvent & {
+  requestPermission?: () => Promise<'granted' | 'denied'>;
+};
+
+/**
+ * The bands as instruments. Each one's two layers move in opposite directions
+ * as it crosses the screen — the diagonal screen one way, the field the
+ * other — so the moiré between them travels and says where the band is. On a
+ * phone that reports its orientation, left-right tilt is added on top of that
+ * scroll position, so the bands also move with the hand; everywhere else the
+ * ochre stripes turn towards done-green as the reader approaches the form
+ * (--band-mix, the reading rail's ratio: 0 at the top, 1 at the foot).
+ *
+ * The motion eases towards its target instead of jumping with it: a wheel
+ * notch moves the screen by several of its own pitches, and without easing
+ * the eye reads that as a flicker between two states (David, 2026-09-11).
+ *
+ * Nothing here runs under reduced motion or saveData — no scroll listener, no
+ * orientation listener, no permission prompt — and the bands stand still in
+ * their resting colours. The caller gates this too; the gate here is the one
+ * the tests hold.
+ */
+export function initBands(
+  bands: HTMLElement[],
+  options: { travel?: number } = {}
+): () => void {
+  if (bands.length === 0 || !motionAllowed()) {
     return () => {};
   }
 
+  const travel = options.travel ?? 90;
   const current = new Map<HTMLElement, number>();
   const target = new Map<HTMLElement, number>();
   // Each band is some 660 shapes; only the ones on screen are repainted.
   const onScreen = new Set<HTMLElement>();
   let frame = 0;
+  let tilt = 0;
+  let tilting = false;
 
   const measure = () => {
     const height = window.innerHeight;
+    const mix = bandMix(window.scrollY, document.documentElement.scrollHeight - height);
     onScreen.clear();
     for (const band of bands) {
       const rect = band.getBoundingClientRect();
@@ -166,7 +226,10 @@ export function initBands(bands: HTMLElement[], travel = 90): () => void {
       onScreen.add(band);
       // -0.5 as the band enters at the bottom, +0.5 as it leaves at the top.
       const position = Math.max(-0.75, Math.min(0.75, 0.5 - (rect.top + rect.height / 2) / height));
-      target.set(band, position * travel);
+      target.set(band, position * travel + tilt);
+      if (!tilting) {
+        band.style.setProperty('--band-mix', mix.toFixed(3));
+      }
     }
   };
 
@@ -198,6 +261,57 @@ export function initBands(bands: HTMLElement[], travel = 90): () => void {
     }
   };
 
+  const onOrientation = (event: DeviceOrientationEvent) => {
+    // Desktops define the event and may fire it once with nulls: that is not a tilt.
+    if (event.gamma === null) {
+      return;
+    }
+
+    if (!tilting) {
+      tilting = true;
+      // Tilt replaces the colour drift: the bands keep their resting ochre.
+      for (const band of bands) {
+        band.dataset.tilt = '';
+        band.style.removeProperty('--band-mix');
+      }
+    }
+
+    tilt = tiltShift(event.gamma, travel);
+    onScroll();
+  };
+
+  let listening = false;
+  const listen = () => {
+    if (!listening) {
+      listening = true;
+      window.addEventListener('deviceorientation', onOrientation, { passive: true });
+    }
+  };
+
+  const Orientation = (window as Window & { DeviceOrientationEvent?: OrientationEventWithPermission })
+    .DeviceOrientationEvent;
+  let askOnTouch: (() => void) | undefined;
+
+  if (Orientation) {
+    if (typeof Orientation.requestPermission === 'function') {
+      // iOS asks, and only in answer to a gesture: once, on the first tap that
+      // ends on a band — never on load. Denied or failed, the bands stay on scroll.
+      const request = Orientation.requestPermission.bind(Orientation);
+      askOnTouch = () => {
+        bands.forEach((band) => band.removeEventListener('touchend', askOnTouch!));
+        askOnTouch = undefined;
+        request()
+          .then((state) => {
+            if (state === 'granted') listen();
+          })
+          .catch(() => {});
+      };
+      bands.forEach((band) => band.addEventListener('touchend', askOnTouch!, { passive: true }));
+    } else {
+      listen();
+    }
+  }
+
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', onScroll, { passive: true });
   onScroll();
@@ -208,5 +322,11 @@ export function initBands(bands: HTMLElement[], travel = 90): () => void {
     }
     window.removeEventListener('scroll', onScroll);
     window.removeEventListener('resize', onScroll);
+    if (listening) {
+      window.removeEventListener('deviceorientation', onOrientation);
+    }
+    if (askOnTouch) {
+      bands.forEach((band) => band.removeEventListener('touchend', askOnTouch!));
+    }
   };
 }

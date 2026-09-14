@@ -214,8 +214,10 @@ meaning is carried by structure (see Layout).
   `on-guacamaya`, never white), draws the active edges of the map, marks the eyebrow, the
   focus ring, and the edge of the selected task in the agent window. Flat, never metallic, never a gradient; that is the
   line between macaw and crypto.
-- **Done.** `done-green` only for completed steps and the "listo" status line. Never for
-  anything else, so a green mark always means the agent finished.
+- **Done.** `done-green` only for completed steps and the "listo" status line, and for
+  one gradual exception: the bands' ochre stripes turn towards it as the reader nears Únete
+  (see Motion), so the page itself arrives at "done". Never as a flat mark for anything
+  else, so a green mark always means the agent finished.
 - **Paper.** `paper` + `ink` for the produced document inside the window, and as the lit
   library nodes on the map (treatment B, decided 2026-09-11: paper nodes, ochre edges). On
   paper, the accent is `guacamaya-on-paper`, never `guacamaya`.
@@ -272,6 +274,17 @@ opacities are composited over the ground before the ratio is taken).
 | paper vs graphite-land (lit library node) | 9.57 | 3 |
 | bone-dim at 0.5 vs graphite (hero network edge at rest) | 2.23 | ground |
 | bone-muted vs graphite (hero network node ring at rest, UI) | 7.19 | 3 |
+
+Pairs added 2026-09-14 for the bands' colour drift: `.bz-o` is
+`color-mix(in oklab, guacamaya, done-green)` at `--band-mix` × 100 %, computed in OKLab and
+converted back to sRGB before the ratio is taken.
+
+| Pair | Ratio | Need |
+|---|---|---|
+| band ochre at mix 0 (guacamaya) vs graphite | 8.49 | 3 |
+| band ochre at mix 0.45 (#b7ab6f) vs graphite | 7.90 | 3 |
+| band ochre at mix 0.85 (#8cad90) vs graphite | 7.40 | 3 |
+| band ochre at mix 1 (done-green) vs graphite | 7.20 | 3 |
 
 The map's ground is visible on purpose. At 1.08 (land) and 1.41 (hatch) the country and the
 Zona en Reclamación disappeared on a phone at normal brightness, so the land is now
@@ -353,17 +366,30 @@ still never loops:
   additive-colour method: one continuous field of vertical stripes (pitch 6) in which the
   widths of ochre, dark ochre and bone drift on slow waves along the band, so the colour mixed
   in the eye changes gradually — one field, not a row of blocks — under a screen of diagonal
-  dark lines (45°). As the band crosses the screen the screen slides one way and the field the
-  other, eased towards the scroll position so a wheel notch reads as a sweep, not a flicker
-  between two states (David, 2026-09-11). The field is drawn in the browser (`drawBand`), so it
-  costs nothing in the first response; only bands near the viewport repaint (60 fps at 4× CPU
-  throttling). Three bands mark the chapters (after the hero, before El norte, before Únete),
-  each with its own wave phase. **It is his method, never his image**: it must not reproduce the
+  dark lines (45°). The field is drawn in the browser (`drawBand`), so it costs nothing in the
+  first response; only bands near the viewport repaint (60 fps at 4× CPU throttling). Three
+  bands mark the chapters (after the hero, before El norte, before Únete), each with its own
+  wave phase, at `clamp(64px, 10vh, 140px)` so a phone does not read them as a barcode.
+  **The bands are instruments, not ornaments** (2026-09-14): they record where the reader is.
+  - *Scroll.* As a band crosses the screen the screen slides one way and the field the other,
+    eased towards the scroll position so a wheel notch reads as a sweep, not a flicker between
+    two states (David, 2026-09-11).
+  - *Tilt, on a phone.* Where `DeviceOrientationEvent` reports a tilt, left-right `gamma`
+    (±30°, clamped) adds up to ±90 units of travel on top of the scroll position, with the same
+    easing, so a still hand still sees the scroll motion. iOS asks permission once, on the first
+    tap that ends on a band, never on load; denied or unavailable, the band stays on scroll.
+  - *Colour, everywhere else.* The ochre stripes mix towards `done-green` in OKLab as the
+    reader nears the form (`--band-mix`, the reading rail's own ratio: 0 at the top, 1 at the
+    foot, where Únete is). Measured as each band crosses mid-screen: 0.12 / 0.53 / 0.89 at 390
+    wide, 0.12 / 0.50 / 0.92 at 1280. The page visibly turns towards "done". A tilting phone
+    keeps the resting ochre.
+  **It is his method, never his image**: it must not reproduce the
   Maiquetía floor (*Cromointerferencia de color aditivo*) or its yellow/black/red/blue modules.
   On 2026-09-07 the artist's family publicly objected to unauthorised imitations of that
   pattern, and David chose the method over the image (2026-09-11).
 
-Everything short-circuits under `prefers-reduced-motion` (bands stand still, still a moiré), and
+Everything short-circuits under `prefers-reduced-motion` (bands stand still in resting ochre,
+still a moiré, and no orientation listener or permission prompt is ever attached), and
 the interactive layer is not loaded at all under `saveData`.
 
 ## Texture, elevation and depth
