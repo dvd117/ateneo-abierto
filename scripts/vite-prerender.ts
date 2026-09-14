@@ -84,6 +84,15 @@ export function fillTemplate(template: string, locale: Locale): string {
   html = replaceOnce(html, /(<meta name="twitter:image:alt" content=")[^"]*(")/, escapeAttr(meta.ogImageAlt), 'twitter:image:alt');
   html = replaceOnce(html, /(<link rel="canonical" href=")[^"]*(")/, meta.canonical, 'canonical');
   html = replaceOnce(html, /(<meta property="og:url" content=")[^"]*(")/, meta.canonical, 'og:url');
+  // Only the WebSite node's description, which follows the page's language;
+  // the Organization node carries no copy and stays as written. The value is
+  // JSON-escaped, and `<` too, so no description can close the script early.
+  html = replaceOnce(
+    html,
+    /("@type": "WebSite"[^}]*?"description": ")[^"]*(")/,
+    JSON.stringify(meta.description).slice(1, -1).replace(/</g, '\\u003c'),
+    'JSON-LD WebSite description'
+  );
 
   return html;
 }

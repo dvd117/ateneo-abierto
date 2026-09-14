@@ -23,6 +23,14 @@ const template = `<!doctype html>
     <link rel="canonical" href="https://ateneo-abierto.org/" />
     <title>Ateneo Abierto</title>
     <link rel="stylesheet" crossorigin href="/assets/index-abc123.css">
+    <script type="application/ld+json">
+      {
+        "@graph": [
+          { "@type": "WebSite", "name": "Ateneo Abierto", "description": "old", "inLanguage": ["es", "en"] },
+          { "@type": "Organization", "name": "Ateneo Abierto", "email": "old@example.org" }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="app" data-locale="es"><!--prerender--></div>
@@ -39,6 +47,7 @@ describe('build-time prerender', () => {
     expect(html).toContain('<html lang="es"');
     expect(html).toContain('<title>Ateneo Abierto · Deja de preguntarle. Empieza a delegarle.</title>');
     expect(html).toMatch(/name="description"\s+content="[^"]*herramientas abiertas, gratis para empezar/);
+    expect(html).toContain('"@type": "WebSite", "name": "Ateneo Abierto", "description": "Un chatbot te responde.');
   });
 
   test('writes the English page with English metadata throughout', () => {
@@ -54,6 +63,10 @@ describe('build-time prerender', () => {
     expect(html).toContain('<title>Ateneo Abierto · Stop asking it things. Start handing it work.</title>');
     expect(html).toMatch(/name="description"\s+content="A chatbot answers you\./);
     expect(html).toMatch(/name="description"\s+content="[^"]*open tools, free to start/);
+    // The WebSite node speaks the page's language; the Organization node is left alone.
+    expect(html).toContain('"@type": "WebSite", "name": "Ateneo Abierto", "description": "A chatbot answers you. An agent does the work with you.');
+    expect(html).not.toContain('"description": "old"');
+    expect(html).toContain('{ "@type": "Organization", "name": "Ateneo Abierto", "email": "old@example.org" }');
     expect(html).toContain('property="og:title" content="Ateneo Abierto — Stop asking it things. Start handing it work."');
     expect(html).toContain('name="twitter:title" content="Ateneo Abierto — Stop asking it things. Start handing it work."');
     expect(html).toContain('property="og:image" content="https://ateneo-abierto.org/og-en.png"');
