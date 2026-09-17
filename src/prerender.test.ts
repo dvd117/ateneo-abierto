@@ -48,7 +48,7 @@ describe('build-time prerender', () => {
     expect(html).toContain('Deja de preguntarle.');
     expect(html).toContain('data-thread data-autoplay');
     expect(html).toContain('<html lang="es"');
-    expect(html).toContain('<title>Ateneo Abierto · Deja de preguntarle. Empieza a delegarle.</title>');
+    expect(html).toContain('<title>Ateneo Abierto · Deja de preguntarle. Empieza a dirigirlo.</title>');
     expect(html).toMatch(/name="description"\s+content="[^"]*herramientas abiertas, gratis para empezar/);
     expect(html).toContain('"@type": "WebSite", "url": "https://ateneo-abierto.org/", "name": "Ateneo Abierto", "description": "Un chatbot te responde.');
   });

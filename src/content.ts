@@ -475,13 +475,13 @@ export const copy: Record<Locale, PageCopy> = {
     ],
     meta: {
       description:
-        'Un chatbot te responde. Un agente hace el trabajo contigo. Aprende a delegarle trabajo de oficina a un agente, con herramientas abiertas, gratis para empezar, desde Venezuela.'
+        'Un chatbot te responde. Un agente hace el trabajo contigo. Aprende a dirigir a un agente en el trabajo de oficina, con herramientas abiertas, gratis para empezar, desde Venezuela.'
     },
     hero: {
       eyebrow: 'Más allá del chatbot',
-      titleLines: [{ text: 'Deja de preguntarle.' }, { text: 'Empieza a delegarle.', em: true }],
+      titleLines: [{ text: 'Deja de preguntarle.' }, { text: 'Empieza a dirigirlo.', em: true }],
       manifesto:
-        'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega el documento. Aprender a delegarle es la habilidad que viene, y desde Venezuela puedes empezar hoy: gratis y sin saber programar.',
+        'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega el documento. Aprender a dirigirlo es la habilidad que viene, y desde Venezuela puedes empezar hoy: gratis y sin saber programar.',
       primaryCta: 'Únete',
       byline: 'La idea, en 5 minutos',
       bylineLink: 'Mira la charla',
@@ -721,7 +721,7 @@ export const copy: Record<Locale, PageCopy> = {
     ],
     shift: {
       eyebrow: 'El cambio',
-      titleLines: [{ text: 'De preguntar' }, { text: 'a delegar', em: true }],
+      titleLines: [{ text: 'De preguntar' }, { text: 'a dirigir', em: true }],
       lead:
         'Los chatbots ya leen tus documentos y te devuelven archivos. La diferencia está en cuánto del trabajo sigue siendo tuyo. Un agente trabaja en tu carpeta, sigue un plan y revisa lo que hace: la tarea se resuelve mientras haces otra cosa, y el criterio sigue siendo tuyo.',
       task: 'La misma tarea: *juntar los gastos de tres meses y decidir dónde recortar.*',
@@ -820,7 +820,7 @@ export const copy: Record<Locale, PageCopy> = {
           who: 'Equipos, organizaciones, escuelas y universidades que quieren empezar juntos.',
           cta: 'mail',
           details: {
-            goal: 'Que el equipo salga con una o dos tareas reales delegadas y una forma de seguir por su cuenta.',
+            goal: 'Que el equipo salga dirigiendo una o dos tareas reales y con una forma de seguir por su cuenta.',
             activities: [
               'Antes de la sesión levantamos las tareas que más tiempo les quitan.',
               'Sesión de medio día, presencial o remota, con sus propios archivos.',
@@ -976,7 +976,7 @@ export const copy: Record<Locale, PageCopy> = {
       participateLabel: 'Quiero participar en una hackatón',
       cityLabel: 'Ciudad',
       cityPlaceholder: 'Dónde estás',
-      delegateLabel: '¿Qué te gustaría delegar?',
+      delegateLabel: '¿Qué tarea te gustaría dirigir?',
       delegatePlaceholder: 'Una tarea que te quita tiempo',
       submit: 'Únete',
       privacy: 'Solo usamos estos datos para escribirte.',
@@ -1019,7 +1019,7 @@ export const copy: Record<Locale, PageCopy> = {
       eyebrow: 'Beyond the chatbot',
       titleLines: [{ text: 'Stop asking it things.' }, { text: 'Start handing it work.', em: true }],
       manifesto:
-        'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan and hands you the document. Learning to delegate to it is the skill that’s coming, and from Venezuela you can start today: free, and without knowing how to code.',
+        'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan and hands you the document. Learning to direct it is the skill that’s coming, and from Venezuela you can start today: free, and without knowing how to code.',
       primaryCta: 'Join',
       byline: 'The idea, in 5 minutes',
       bylineLink: 'Watch the talk',
@@ -1257,7 +1257,7 @@ export const copy: Record<Locale, PageCopy> = {
     ],
     shift: {
       eyebrow: 'The shift',
-      titleLines: [{ text: 'From asking' }, { text: 'to delegating', em: true }],
+      titleLines: [{ text: 'From asking' }, { text: 'to directing', em: true }],
       lead:
         'Chatbots already read your documents and hand files back. The difference is how much of the work is still yours. An agent works in your folder, follows a plan and checks what it does: the task gets done while you do something else, and the judgment stays yours.',
       task: 'The same task: *merge three months of spending and decide where to cut.*',
@@ -1353,7 +1353,7 @@ export const copy: Record<Locale, PageCopy> = {
           who: 'Teams, organizations, schools and universities that want to start together.',
           cta: 'mail',
           details: {
-            goal: 'That the team leaves with one or two real tasks delegated, and a way to keep going on its own.',
+            goal: 'That the team leaves directing one or two real tasks, and a way to keep going on its own.',
             activities: [
               'Before the session we map the tasks that eat the most time.',
               'A half-day session, in person or remote, using your own files.',
@@ -1507,7 +1507,7 @@ export const copy: Record<Locale, PageCopy> = {
       participateLabel: 'I want to take part in a hackathon',
       cityLabel: 'City',
       cityPlaceholder: 'Where you are',
-      delegateLabel: 'What would you like to delegate?',
+      delegateLabel: 'What task would you like to direct?',
       delegatePlaceholder: 'A task that eats your time',
       submit: 'Join',
       privacy: 'We only use this to write to you.',

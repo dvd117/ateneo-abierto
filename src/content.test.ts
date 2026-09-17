@@ -8,7 +8,7 @@ describe('landing page copy', () => {
   test('leads with the claim of the page in both locales', () => {
     expect(copy.es.hero.titleLines.map((line) => line.text)).toEqual([
       'Deja de preguntarle.',
-      'Empieza a delegarle.'
+      'Empieza a dirigirlo.'
     ]);
 
     // The second line is the italic one in both locales; the design puts the
@@ -137,7 +137,7 @@ describe('landing page copy', () => {
 
     expect(copy.es.shift.titleLines.map((line) => line.text)).toEqual([
       'De preguntar',
-      'a delegar'
+      'a dirigir'
     ]);
     expect(copy.es.shift.titleLines[1].em).toBe(true);
   });
