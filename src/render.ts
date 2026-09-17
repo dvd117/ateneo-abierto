@@ -1,5 +1,6 @@
-import { copy, HERO_INPUT, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
+import { copy, copyFor, HERO_INPUT, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
+import { DEFAULT_MODE, type Mode } from './mode';
 import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
 /**
@@ -95,6 +96,33 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
     : `<span class="visually-hidden"> · ${page.languageSwitchTo[locale]}</span>`;
 
   return `<button class="locale-button ${isActive ? 'is-active' : ''}" type="button" data-locale="${locale}" aria-pressed="${isActive}">${label}${describe}</button>`;
+}
+
+/**
+ * The audience-mode toggle, built exactly like the locale one: same group
+ * role, same visually-hidden description on the inactive button only, so a
+ * screen reader is not told to "switch to technical" while already there.
+ *
+ * It sits in the footer rather than the header on purpose. It is an escape
+ * hatch for the reader who wants the denser version, not a gate: nobody
+ * should meet a "which of these are you?" control before they have read a
+ * word of the page.
+ */
+function renderModeButton(page: PageCopy, current: Mode, mode: Mode): string {
+  const isActive = current === mode;
+  const describe = isActive
+    ? ''
+    : `<span class="visually-hidden"> · ${page.modeSwitchTo[mode]}</span>`;
+
+  return `<button class="locale-button ${isActive ? 'is-active' : ''}" type="button" data-mode="${mode}" aria-pressed="${isActive}">${page.modeOptions[mode]}${describe}</button>`;
+}
+
+function renderModeToggle(page: PageCopy, mode: Mode): string {
+  return `
+        <div class="locale-toggle mode-toggle" role="group" aria-label="${page.modeLabel}">
+          ${renderModeButton(page, mode, 'general')}
+          ${renderModeButton(page, mode, 'tech')}
+        </div>`;
 }
 
 /**
@@ -913,7 +941,7 @@ function renderForm(page: PageCopy, locale: Locale): string {
   `;
 }
 
-function renderFooter(page: PageCopy, locale: Locale): string {
+function renderFooter(page: PageCopy, locale: Locale, mode: Mode): string {
   return `
     <footer class="site-footer">
       <div class="shell footer-grid">
@@ -934,6 +962,7 @@ function renderFooter(page: PageCopy, locale: Locale): string {
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
         </div>
+        ${renderModeToggle(page, mode)}
         <p>
           ${page.footer.contactLabel}:
           <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
@@ -1003,6 +1032,13 @@ export function firstSentence(text: string): string {
  * The head of one page. Without a route it is the home page; with one it is
  * the home page opened at that door, and the head speaks for the door.
  */
+/**
+ * The head of a page, which is deliberately mode-independent.
+ *
+ * `canonical` and the hreflang alternates carry no ?mode=, so every mode of a
+ * page points at the default-mode address and the two variants never compete
+ * as separate URLs. Mode changes how the page reads, not which page it is.
+ */
 export function pageMeta(locale: Locale, route?: DeepLinkRoute): PageMeta {
   const page = copy[locale];
   const path = route ? `/${route}` : '/';
@@ -1045,9 +1081,13 @@ export function pageMeta(locale: Locale, route?: DeepLinkRoute): PageMeta {
 }
 
 /** Everything inside #app, for one locale. */
-export function renderPage(locale: Locale, options: { heroInput?: HeroInput } = {}): string {
+export function renderPage(
+  locale: Locale,
+  options: { heroInput?: HeroInput; mode?: Mode } = {}
+): string {
   const heroInput = options.heroInput ?? HERO_INPUT;
-  const page = copy[locale];
+  const mode = options.mode ?? DEFAULT_MODE;
+  const page = copyFor(locale, mode);
 
   return `
     <a class="skip-link" href="#contenido">${page.skipToContent}</a>
@@ -1065,7 +1105,7 @@ export function renderPage(locale: Locale, options: { heroInput?: HeroInput } = 
       ${renderBand('three', 5, page.voice)}
       ${renderForm(page, locale)}
     </main>
-    ${renderFooter(page, locale)}
+    ${renderFooter(page, locale, mode)}
     ${renderToTop(page)}
   `;
 }

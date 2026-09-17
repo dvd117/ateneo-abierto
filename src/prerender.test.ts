@@ -63,15 +63,15 @@ describe('build-time prerender', () => {
     expect(html).toContain('property="og:locale" content="en_US"');
     expect(html).toContain('property="og:locale:alternate" content="es_VE"');
     expect(html).toContain('href="https://ateneo-abierto.org/?lang=en"');
-    expect(html).toContain('<title>Ateneo Abierto · Stop asking it things. Start handing it work.</title>');
+    expect(html).toContain('<title>Ateneo Abierto · Stop asking it things. Start directing it.</title>');
     expect(html).toMatch(/name="description"\s+content="A chatbot answers you\./);
     expect(html).toMatch(/name="description"\s+content="[^"]*open tools, free to start/);
     // The WebSite node speaks the page's language; the Organization node is left alone.
     expect(html).toContain('"@type": "WebSite", "url": "https://ateneo-abierto.org/", "name": "Ateneo Abierto", "description": "A chatbot answers you. An agent does the work with you.');
     expect(html).not.toContain('"description": "old"');
     expect(html).toContain('{ "@type": "Organization", "name": "Ateneo Abierto", "email": "old@example.org" }');
-    expect(html).toContain('property="og:title" content="Ateneo Abierto — Stop asking it things. Start handing it work."');
-    expect(html).toContain('name="twitter:title" content="Ateneo Abierto — Stop asking it things. Start handing it work."');
+    expect(html).toContain('property="og:title" content="Ateneo Abierto — Stop asking it things. Start directing it."');
+    expect(html).toContain('name="twitter:title" content="Ateneo Abierto — Stop asking it things. Start directing it."');
     expect(html).toContain('property="og:image" content="https://ateneo-abierto.org/og-en.png"');
     expect(html).toContain('name="twitter:image" content="https://ateneo-abierto.org/og-en.png"');
     expect(html).not.toContain('content="old"');
@@ -112,6 +112,57 @@ describe('build-time prerender', () => {
     expect(pageFileName('en')).toBe('index.en.html');
     expect(pageFileName('es', 'talleres')).toBe('talleres.html');
     expect(pageFileName('en', 'demo-nights')).toBe('demo-nights.en.html');
+  });
+
+  test('names the technical mode without renaming anything that existed', () => {
+    expect(pageFileName('es', undefined, 'general')).toBe('index.html');
+    expect(pageFileName('es', undefined, 'tech')).toBe('index.tech.html');
+    expect(pageFileName('en', undefined, 'tech')).toBe('index.en.tech.html');
+    expect(pageFileName('es', 'talleres', 'tech')).toBe('talleres.tech.html');
+    expect(pageFileName('en', 'demo-nights', 'tech')).toBe('demo-nights.en.tech.html');
+  });
+
+  test('writes the technical page with the technical words and nothing else changed', () => {
+    const general = fillTemplate(template, 'es');
+    const tech = fillTemplate(template, 'es', undefined, 'tech');
+
+    // The overlay's section is rewritten...
+    expect(general).toContain('Cuatro palabras que vas a oír');
+    expect(tech).toContain('Cuatro palabras, sin rodeos');
+    expect(tech).toContain('acceso a tu shell');
+    expect(tech).not.toContain('Cuatro palabras que vas a oír');
+
+    // ...and everything the overlay does not name is the same promise.
+    expect(tech).toContain('Deja de preguntarle.');
+    expect(tech).toContain('Empieza a dirigirlo.');
+    expect(tech).toContain('Tres puertas');
+  });
+
+  test('marks the technical page in the markup, and leaves the default unmarked', () => {
+    expect(fillTemplate(template, 'es', undefined, 'tech')).toContain(
+      '<div id="app" data-locale="es" data-mode="tech">'
+    );
+    expect(fillTemplate(template, 'en', 'talleres', 'tech')).toContain(
+      '<div id="app" data-locale="en" data-deep-link="talleres" data-mode="tech">'
+    );
+    // Only #app is checked: the toggle's own buttons carry data-mode too.
+    expect(fillTemplate(template, 'es')).toContain('<div id="app" data-locale="es">');
+    expect(fillTemplate(template, 'es', undefined, 'general')).toContain(
+      '<div id="app" data-locale="es">'
+    );
+  });
+
+  test('points every mode of a page at the default mode as its canonical', () => {
+    const tech = fillTemplate(template, 'es', undefined, 'tech');
+
+    expect(tech).toContain('rel="canonical" href="https://ateneo-abierto.org/"');
+    expect(tech).not.toContain('canonical" href="https://ateneo-abierto.org/?mode=tech"');
+    expect(tech).toContain('hreflang="en" href="https://ateneo-abierto.org/?lang=en"');
+    expect(tech).not.toMatch(/hreflang="[^"]*" href="[^"]*mode=/);
+
+    const door = fillTemplate(template, 'en', 'hackaton', 'tech');
+    expect(door).toContain('rel="canonical" href="https://ateneo-abierto.org/hackaton?lang=en"');
+    expect(door).not.toContain('mode=tech"');
   });
 
   test('fails loudly rather than ship a page with stale metadata', () => {

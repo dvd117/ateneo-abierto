@@ -1,4 +1,5 @@
 import type { Locale } from './locale';
+import type { Mode } from './mode';
 
 /**
  * Typed content source for the page. Everything the visitor reads lives here,
@@ -399,6 +400,13 @@ export type PageCopy = {
     es: string;
     en: string;
   };
+  /**
+   * The audience-mode toggle. Named for the page ("version"), never for the
+   * reader: nothing here asks anyone to declare what they are.
+   */
+  modeLabel: string;
+  modeOptions: Record<Mode, string>;
+  modeSwitchTo: Record<Mode, string>;
   skipToContent: string;
   sectionsLabel: string;
   /** The floating button that returns to the top of the page. */
@@ -464,6 +472,15 @@ export const copy: Record<Locale, PageCopy> = {
     languageSwitchTo: {
       es: 'Cambiar a español',
       en: 'Cambiar a inglés'
+    },
+    modeLabel: 'Versión',
+    modeOptions: {
+      general: 'Para todos',
+      tech: 'Técnica'
+    },
+    modeSwitchTo: {
+      general: 'Cambiar a la versión para todos',
+      tech: 'Cambiar a la versión técnica'
     },
     skipToContent: 'Saltar al contenido',
     sectionsLabel: 'Secciones',
@@ -1003,6 +1020,15 @@ export const copy: Record<Locale, PageCopy> = {
       es: 'Switch to Spanish',
       en: 'Switch to English'
     },
+    modeLabel: 'Version',
+    modeOptions: {
+      general: 'For everyone',
+      tech: 'Technical'
+    },
+    modeSwitchTo: {
+      general: 'Switch to the version for everyone',
+      tech: 'Switch to the technical version'
+    },
     skipToContent: 'Skip to content',
     sectionsLabel: 'Sections',
     toTop: 'Back to top',
@@ -1017,7 +1043,7 @@ export const copy: Record<Locale, PageCopy> = {
     },
     hero: {
       eyebrow: 'Beyond the chatbot',
-      titleLines: [{ text: 'Stop asking it things.' }, { text: 'Start handing it work.', em: true }],
+      titleLines: [{ text: 'Stop asking it things.' }, { text: 'Start directing it.', em: true }],
       manifesto:
         'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan and hands you the document. Learning to direct it is the skill that’s coming, and from Venezuela you can start today: free, and without knowing how to code.',
       primaryCta: 'Join',
@@ -1529,3 +1555,102 @@ export const copy: Record<Locale, PageCopy> = {
     }
   }
 };
+
+/**
+ * Audience modes.
+ *
+ * `general` is `copy` above — the whole page as written, and what every
+ * visitor gets unless they ask for otherwise. `tech` is an overlay, not a
+ * second site: it names only the sections whose wording genuinely changes for
+ * someone who already works with software, and everything it leaves out falls
+ * through to `copy`.
+ *
+ * An overlay rather than a second PageCopy because most of the page does not
+ * change. The claim, the doors, the north and the form are the same promise to
+ * both readers; rewriting them per mode would drift them apart and double the
+ * copy David has to review. Add a section here only when the two readers
+ * actually need different words.
+ *
+ * Only `glossary` is converted so far, as the worked example. The rest of the
+ * technical-mode copy is David's to write.
+ */
+export type ModeOverlay = {
+  glossary?: GlossaryCopy;
+};
+
+export const modeCopy: Record<Locale, Partial<Record<Mode, ModeOverlay>>> = {
+  es: {
+    tech: {
+      glossary: {
+        eyebrow: 'Glosario',
+        title: 'Cuatro palabras, sin rodeos',
+        lead: 'Si ya trabajas con software, esto es lo que hay debajo.',
+        items: [
+          {
+            term: 'Agente',
+            sample: '“Júntame estas tres hojas.”',
+            body: 'Un bucle sobre un modelo con acceso a tu shell y a tu sistema de archivos: recibe la tarea, arma un plan, ejecuta comandos y se detiene para que revises. Corre en tu máquina y cada paso queda a la vista.'
+          },
+          {
+            term: 'Skill',
+            sample: 'skills/xlsx',
+            body: 'Una carpeta versionada con instrucciones y scripts que el agente carga cuando la tarea la pide. Son archivos de texto: se leen, se editan y se comparten como cualquier repositorio.'
+          },
+          {
+            term: 'Instrucciones',
+            sample: 'AGENTS.md  ·  CLAUDE.md',
+            body: 'Un archivo en la raíz del proyecto que el agente lee antes de cada tarea: convenciones, formatos, rutas que no debe tocar. Es configuración en texto plano, no un ajuste escondido en una interfaz.'
+          },
+          {
+            term: 'Tu carpeta',
+            sample: 'Documentos/Ateneo',
+            body: 'El directorio de trabajo del agente. Lo que produce queda ahí, en tu máquina y bajo tu control de versiones: no sube a ningún lado a menos que tú lo subas.'
+          }
+        ]
+      }
+    }
+  },
+  en: {
+    tech: {
+      glossary: {
+        eyebrow: 'Glossary',
+        title: 'Four words, plainly',
+        lead: 'If you already work with software, this is what sits underneath.',
+        items: [
+          {
+            term: 'Agent',
+            sample: '“Merge these three sheets.”',
+            body: 'A loop around a model with access to your shell and your filesystem: it takes the task, makes a plan, runs commands and stops for you to check. It runs on your machine and every step stays visible.'
+          },
+          {
+            term: 'Skill',
+            sample: 'skills/xlsx',
+            body: 'A version-controlled folder of instructions and scripts the agent loads when a task calls for it. They are text files: you can read one, edit it and share it like any repository.'
+          },
+          {
+            term: 'Instructions',
+            sample: 'AGENTS.md  ·  CLAUDE.md',
+            body: 'A file at the root of the project that the agent reads before every task: conventions, formats, paths it must not touch. Configuration in plain text, not a setting buried in an interface.'
+          },
+          {
+            term: 'Your folder',
+            sample: 'Documents/Ateneo',
+            body: 'The agent’s working directory. What it produces stays there, on your machine and under your version control: nothing is uploaded unless you upload it.'
+          }
+        ]
+      }
+    }
+  }
+};
+
+/**
+ * The page as one reader sees it: `copy` with that mode's overlay laid over
+ * it, section by section. A section the overlay does not name is the same
+ * object as in `copy`, not a copy of it.
+ */
+export function copyFor(locale: Locale, mode: Mode): PageCopy {
+  const base = copy[locale];
+  const overlay = modeCopy[locale][mode];
+
+  return overlay ? { ...base, ...overlay } : base;
+}

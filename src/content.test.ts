@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'vitest';
-import { copy, DEEP_LINK_ROUTES, type DeepLinkRoute } from './content';
+import { copy, copyFor, modeCopy, DEEP_LINK_ROUTES, type DeepLinkRoute } from './content';
 import { renderPage } from './render';
+import { DEFAULT_MODE } from './mode';
 
 const locales = ['es', 'en'] as const;
 
@@ -576,6 +577,93 @@ describe('landing page copy', () => {
       expect(terms).toContain('Skill');
       expect(copy[locale].glossary.items.some((item) => item.sample.includes('AGENTS.md'))).toBe(true);
       expect(copy[locale].glossary.items.some((item) => item.sample.includes('CLAUDE.md'))).toBe(true);
+    }
+  });
+});
+
+describe('audience modes', () => {
+  test('the default mode is the page as written, object for object', () => {
+    for (const locale of locales) {
+      expect(copyFor(locale, DEFAULT_MODE)).toBe(copy[locale]);
+    }
+  });
+
+  test('the technical mode overlays the glossary and nothing else yet', () => {
+    for (const locale of locales) {
+      expect(Object.keys(modeCopy[locale].tech ?? {})).toEqual(['glossary']);
+
+      const tech = copyFor(locale, 'tech');
+      expect(tech.glossary).not.toBe(copy[locale].glossary);
+      expect(tech.glossary).toEqual(modeCopy[locale].tech?.glossary);
+
+      // Everything the overlay does not name falls through, not copied.
+      expect(tech.hero).toBe(copy[locale].hero);
+      expect(tech.doors).toBe(copy[locale].doors);
+      expect(tech.shift).toBe(copy[locale].shift);
+      expect(tech.form).toBe(copy[locale].form);
+    }
+  });
+
+  test('the technical glossary keeps the same four words', () => {
+    for (const locale of locales) {
+      const general = copy[locale].glossary.items.map((item) => item.term);
+      const tech = copyFor(locale, 'tech').glossary.items.map((item) => item.term);
+
+      // Same concepts, said to a reader who already knows the machine. A
+      // different set of words would make this a second site, not a mode.
+      expect(tech).toEqual(general);
+    }
+  });
+
+  test('neither mode promises to teach anyone to code', () => {
+    for (const locale of locales) {
+      const words = copyFor(locale, 'tech')
+        .glossary.items.map((item) => `${item.term} ${item.body}`)
+        .join(' ')
+        .toLowerCase();
+
+      expect(words).not.toMatch(/aprende a programar|learn to (code|program)/);
+    }
+  });
+
+  test('the toggle names the version, never the reader', () => {
+    for (const locale of locales) {
+      const page = copy[locale];
+
+      expect(page.modeOptions.general.length).toBeGreaterThan(0);
+      expect(page.modeOptions.tech.length).toBeGreaterThan(0);
+      // Nothing may ask a visitor to file themselves under "not technical".
+      expect(`${page.modeLabel} ${page.modeOptions.general}`.toLowerCase()).not.toMatch(
+        /no t[eé]cnic|non-technical|not technical/
+      );
+    }
+  });
+
+  test('renders one toggle, with the current mode pressed', () => {
+    for (const locale of locales) {
+      const general = renderPage(locale);
+      const tech = renderPage(locale, { mode: 'tech' });
+
+      expect(general.match(/data-mode="/g)).toHaveLength(2);
+      expect(general).toContain('data-mode="general" aria-pressed="true"');
+      expect(general).toContain('data-mode="tech" aria-pressed="false"');
+      expect(tech).toContain('data-mode="tech" aria-pressed="true"');
+      expect(tech).toContain('data-mode="general" aria-pressed="false"');
+
+      // The switch is described on the inactive button only.
+      expect(general).toContain(`${copy[locale].modeSwitchTo.tech}`);
+      expect(general).not.toContain(`${copy[locale].modeSwitchTo.general}`);
+    }
+  });
+
+  test('a mode changes its section and leaves the rest of the page alone', () => {
+    for (const locale of locales) {
+      const tech = renderPage(locale, { mode: 'tech' });
+
+      expect(tech).toContain(copyFor(locale, 'tech').glossary.title);
+      expect(tech).not.toContain(copy[locale].glossary.title);
+      expect(tech).toContain(copy[locale].doors.title);
+      expect(tech).toContain(copy[locale].north.lead);
     }
   });
 });

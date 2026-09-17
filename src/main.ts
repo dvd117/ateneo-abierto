@@ -1,5 +1,6 @@
-import { copy, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput, type PageCopy } from './content';
+import { copyFor, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
+import { DEFAULT_MODE, detectMode, isMode, readSavedMode, saveMode, updateUrlMode, type Mode } from './mode';
 import { drawBand, initBands, initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
 import { pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
@@ -27,10 +28,28 @@ let currentLocale = detectLocale({
   browserLanguages: navigator.languages
 });
 
+/**
+ * Audience mode. A door page ignores a saved mode on purpose (see
+ * detectMode): arriving at /talleres from a link is a stronger signal about
+ * what this visitor came for than what they last pressed.
+ */
+let currentMode = detectMode({
+  search: window.location.search,
+  savedMode: readSavedMode(window.localStorage),
+  deepLink
+});
+
 function setLocale(locale: Locale): void {
   currentLocale = locale;
   saveLocale(window.localStorage, locale);
   window.history.replaceState(null, '', updateUrlLocale(new URL(window.location.href), locale));
+  render();
+}
+
+function setMode(mode: Mode): void {
+  currentMode = mode;
+  saveMode(window.localStorage, mode);
+  window.history.replaceState(null, '', updateUrlMode(new URL(window.location.href), mode));
   render();
 }
 
@@ -53,8 +72,14 @@ function render(): void {
   setMetaContent('meta[property="og:title"]', meta.ogTitle);
   setMetaContent('meta[name="twitter:title"]', meta.ogTitle);
 
-  root.innerHTML = renderPage(currentLocale, { heroInput });
+  root.innerHTML = renderPage(currentLocale, { heroInput, mode: currentMode });
   root.dataset.locale = currentLocale;
+  // Absent rather than "general", to match what the prerender writes.
+  if (currentMode === DEFAULT_MODE) {
+    delete root.dataset.mode;
+  } else {
+    root.dataset.mode = currentMode;
+  }
 
   // A locale switch replaces the whole tree; drop the running sequence and the
   // observer watching the old nodes with it.
@@ -69,7 +94,7 @@ function render(): void {
   lightingPlayers.forEach((player) => player.cancel());
   lightingPlayers = [];
 
-  bindEvents(copy[currentLocale]);
+  bindEvents(copyFor(currentLocale, currentMode));
 }
 
 /**
@@ -653,6 +678,14 @@ function bindEvents(page: PageCopy): void {
     });
   });
 
+  root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((button) => {
+    button.addEventListener('click', () => {
+      if (isMode(button.dataset.mode)) {
+        setMode(button.dataset.mode);
+      }
+    });
+  });
+
   bindAgent(page);
   bindDialogs();
   bindTalk(page);
@@ -699,10 +732,19 @@ function openAtDoor(container: ParentNode, route: DeepLinkRoute): void {
   title.focus({ preventScroll: true });
 }
 
-// The server already sent this page, rendered, in the locale it chose. Keep that
-// DOM and only wire it up — unless this visitor saved the other language.
-if (root.dataset.locale === currentLocale && heroInput === HERO_INPUT && root.childElementCount > 0) {
-  bindEvents(copy[currentLocale]);
+// The server already sent this page, rendered, in the locale and mode it chose.
+// Keep that DOM and only wire it up — unless this visitor saved the other
+// language, or the other mode. The server never sees a saved mode, so a
+// returning technical reader is the case that re-renders here.
+const servedMode: Mode = isMode(root.dataset.mode) ? root.dataset.mode : DEFAULT_MODE;
+
+if (
+  root.dataset.locale === currentLocale &&
+  servedMode === currentMode &&
+  heroInput === HERO_INPUT &&
+  root.childElementCount > 0
+) {
+  bindEvents(copyFor(currentLocale, currentMode));
 } else {
   render();
 }
