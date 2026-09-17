@@ -44,11 +44,29 @@ function setLocale(locale: Locale): void {
   render();
 }
 
+/**
+ * The offer lives at the end of the glossary, and render() replaces the whole
+ * tree — so without this the reader taps "read the technical version" and the
+ * strip they were reading snaps shut under them, hiding the very words that
+ * changed. Reopen it and put focus back on the offer, which now names the way
+ * back.
+ */
 function setMode(mode: Mode): void {
+  const wasOpen = root.querySelector<HTMLDetailsElement>('.gl-strip')?.open ?? false;
+
   currentMode = mode;
   saveMode(window.localStorage, mode);
   window.history.replaceState(null, '', updateUrlMode(new URL(window.location.href), mode));
   render();
+
+  if (wasOpen) {
+    const strip = root.querySelector<HTMLDetailsElement>('.gl-strip');
+
+    if (strip) {
+      strip.open = true;
+      strip.querySelector<HTMLButtonElement>('.gl-mode-link')?.focus();
+    }
+  }
 }
 
 function setMetaContent(selector: string, value: string): void {

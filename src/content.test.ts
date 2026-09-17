@@ -626,33 +626,58 @@ describe('audience modes', () => {
     }
   });
 
-  test('the toggle names the version, never the reader', () => {
+  test('the offer names the version, never the reader', () => {
     for (const locale of locales) {
       const page = copy[locale];
 
-      expect(page.modeOptions.general.length).toBeGreaterThan(0);
-      expect(page.modeOptions.tech.length).toBeGreaterThan(0);
-      // Nothing may ask a visitor to file themselves under "not technical".
-      expect(`${page.modeLabel} ${page.modeOptions.general}`.toLowerCase()).not.toMatch(
-        /no t[eé]cnic|non-technical|not technical/
-      );
+      expect(page.modeSwitchTo.general.length).toBeGreaterThan(0);
+      expect(page.modeSwitchTo.tech.length).toBeGreaterThan(0);
+
+      // The mode's own words may never ask a visitor to file themselves
+      // under "not technical". Both entries are now visible copy — one per
+      // mode — so both are checked, not just the label.
+      //
+      // Scoped to the mode strings on purpose: the hackatón door is named
+      // "para no técnicos" in approved copy, so a whole-page sweep would
+      // guard something this test was never about.
+      expect(
+        `${page.modeSwitchTo.general} ${page.modeSwitchTo.tech}`.toLowerCase()
+      ).not.toMatch(/no t[eé]cnic|non-technical|not technical/);
     }
   });
 
-  test('renders one toggle, with the current mode pressed', () => {
+  test('offers the other version once, at the end of the glossary', () => {
     for (const locale of locales) {
       const general = renderPage(locale);
       const tech = renderPage(locale, { mode: 'tech' });
 
-      expect(general.match(/data-mode="/g)).toHaveLength(2);
-      expect(general).toContain('data-mode="general" aria-pressed="true"');
-      expect(general).toContain('data-mode="tech" aria-pressed="false"');
-      expect(tech).toContain('data-mode="tech" aria-pressed="true"');
-      expect(tech).toContain('data-mode="general" aria-pressed="false"');
+      // One offer, for the version the reader is not in. Never a pair, and
+      // never the version they are already reading.
+      expect(general.match(/data-mode="/g)).toHaveLength(1);
+      expect(general).toContain('data-mode="tech"');
+      expect(general).toContain(copy[locale].modeSwitchTo.tech);
+      expect(general).not.toContain(copy[locale].modeSwitchTo.general);
 
-      // The switch is described on the inactive button only.
-      expect(general).toContain(`${copy[locale].modeSwitchTo.tech}`);
-      expect(general).not.toContain(`${copy[locale].modeSwitchTo.general}`);
+      expect(tech.match(/data-mode="/g)).toHaveLength(1);
+      expect(tech).toContain('data-mode="general"');
+      expect(tech).toContain(copy[locale].modeSwitchTo.general);
+      expect(tech).not.toContain(copy[locale].modeSwitchTo.tech);
+    }
+  });
+
+  test('the offer sits inside the glossary strip and nowhere else', () => {
+    for (const locale of locales) {
+      const page = renderPage(locale);
+      const strip = page.slice(page.indexOf('<details class="gl-strip"'));
+      const glossary = strip.slice(0, strip.indexOf('</details>'));
+
+      // Inside the strip that the mode actually rewrites — so the offer is
+      // made to someone already reading those words, and never at the door.
+      expect(glossary).toContain('data-mode="tech"');
+      // The footer keeps the language toggle and nothing else about modes.
+      const footer = page.slice(page.indexOf('<footer'));
+      expect(footer).not.toContain('data-mode');
+      expect(footer).toContain('data-locale="es"');
     }
   });
 

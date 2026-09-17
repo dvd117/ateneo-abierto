@@ -99,30 +99,25 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
 }
 
 /**
- * The audience-mode toggle, built exactly like the locale one: same group
- * role, same visually-hidden description on the inactive button only, so a
- * screen reader is not told to "switch to technical" while already there.
+ * The offer to read the other version: one quiet link, and only ever the
+ * version the reader is not already in.
  *
- * It sits in the footer rather than the header on purpose. It is an escape
- * hatch for the reader who wants the denser version, not a gate: nobody
- * should meet a "which of these are you?" control before they have read a
- * word of the page.
+ * It lives at the end of the glossary, inside the closed strip, because the
+ * glossary is the one section whose words actually change with the mode. The
+ * offer therefore appears exactly where it pays off, to someone who has
+ * already read something — and never at the door. A reader must not have to
+ * classify themselves before the page will say anything to them.
+ *
+ * A link rather than a two-button group for the same reason: a toggle asks
+ * "which of these are you?", an offer just says what else is here.
  */
-function renderModeButton(page: PageCopy, current: Mode, mode: Mode): string {
-  const isActive = current === mode;
-  const describe = isActive
-    ? ''
-    : `<span class="visually-hidden"> · ${page.modeSwitchTo[mode]}</span>`;
+function renderModeOffer(page: PageCopy, mode: Mode): string {
+  const other: Mode = mode === 'tech' ? 'general' : 'tech';
 
-  return `<button class="locale-button ${isActive ? 'is-active' : ''}" type="button" data-mode="${mode}" aria-pressed="${isActive}">${page.modeOptions[mode]}${describe}</button>`;
-}
-
-function renderModeToggle(page: PageCopy, mode: Mode): string {
   return `
-        <div class="locale-toggle mode-toggle" role="group" aria-label="${page.modeLabel}">
-          ${renderModeButton(page, mode, 'general')}
-          ${renderModeButton(page, mode, 'tech')}
-        </div>`;
+      <p class="gl-mode">
+        <button class="link gl-mode-link" type="button" data-mode="${other}">${inline(page.modeSwitchTo[other])}</button>
+      </p>`;
 }
 
 /**
@@ -567,7 +562,7 @@ function renderShift(page: PageCopy): string {
  * heading, so the title is an h3 under Programa's h2. No reveal on the cards:
  * opening it shows them at once, with no motion of our own.
  */
-function renderGlossary(page: PageCopy): string {
+function renderGlossary(page: PageCopy, mode: Mode): string {
   const { glossary } = page;
 
   return `
@@ -591,6 +586,7 @@ function renderGlossary(page: PageCopy): string {
           )
           .join('')}
       </dl>
+${renderModeOffer(page, mode)}
     </details>
   `;
 }
@@ -651,7 +647,7 @@ function renderDoorDialog(page: PageCopy, door: Door): string {
   `;
 }
 
-function renderDoors(page: PageCopy): string {
+function renderDoors(page: PageCopy, mode: Mode): string {
   const { doors } = page;
 
   return `
@@ -664,7 +660,7 @@ function renderDoors(page: PageCopy): string {
         <p class="doors-extra">
           <b>${inline(doors.mentorship.label)}</b> ${inline(doors.mentorship.text)}
         </p>
-        ${renderGlossary(page)}
+        ${renderGlossary(page, mode)}
       </div>
       ${doors.doors.map((door) => renderDoorDialog(page, door)).join('')}
     </section>
@@ -941,7 +937,7 @@ function renderForm(page: PageCopy, locale: Locale): string {
   `;
 }
 
-function renderFooter(page: PageCopy, locale: Locale, mode: Mode): string {
+function renderFooter(page: PageCopy, locale: Locale): string {
   return `
     <footer class="site-footer">
       <div class="shell footer-grid">
@@ -962,7 +958,6 @@ function renderFooter(page: PageCopy, locale: Locale, mode: Mode): string {
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
         </div>
-        ${renderModeToggle(page, mode)}
         <p>
           ${page.footer.contactLabel}:
           <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
@@ -1097,7 +1092,7 @@ export function renderPage(
       ${renderHero(page, heroInput)}
       ${renderBand('one', 0)}
       ${renderShift(page)}
-      ${renderDoors(page)}
+      ${renderDoors(page, mode)}
       ${renderBand('two', 3)}
       ${renderNorth(page)}
       ${renderPrinciples(page)}
@@ -1105,7 +1100,7 @@ export function renderPage(
       ${renderBand('three', 5, page.voice)}
       ${renderForm(page, locale)}
     </main>
-    ${renderFooter(page, locale, mode)}
+    ${renderFooter(page, locale)}
     ${renderToTop(page)}
   `;
 }

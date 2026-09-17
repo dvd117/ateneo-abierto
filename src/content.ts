@@ -401,11 +401,11 @@ export type PageCopy = {
     en: string;
   };
   /**
-   * The audience-mode toggle. Named for the page ("version"), never for the
-   * reader: nothing here asks anyone to declare what they are.
+   * The offer at the end of the glossary, in the words of the version being
+   * offered. Named for the page ("version"), never for the reader: nothing
+   * here asks anyone to declare what they are. Only the version the reader is
+   * not already in is ever rendered, so both entries are visible copy.
    */
-  modeLabel: string;
-  modeOptions: Record<Mode, string>;
   modeSwitchTo: Record<Mode, string>;
   skipToContent: string;
   sectionsLabel: string;
@@ -472,11 +472,6 @@ export const copy: Record<Locale, PageCopy> = {
     languageSwitchTo: {
       es: 'Cambiar a español',
       en: 'Cambiar a inglés'
-    },
-    modeLabel: 'Versión',
-    modeOptions: {
-      general: 'Para todos',
-      tech: 'Técnica'
     },
     modeSwitchTo: {
       general: 'Cambiar a la versión para todos',
@@ -1019,11 +1014,6 @@ export const copy: Record<Locale, PageCopy> = {
     languageSwitchTo: {
       es: 'Switch to Spanish',
       en: 'Switch to English'
-    },
-    modeLabel: 'Version',
-    modeOptions: {
-      general: 'For everyone',
-      tech: 'Technical'
     },
     modeSwitchTo: {
       general: 'Switch to the version for everyone',

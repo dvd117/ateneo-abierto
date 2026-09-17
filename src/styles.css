@@ -644,14 +644,6 @@ main .door[id] {
   background: var(--c-bg-panel);
 }
 
-/* The audience-mode toggle reuses the locale toggle's shape, but its labels
-   are words rather than two letters, so it needs room to wrap on a phone
-   instead of pushing the footer column wide. */
-.mode-toggle {
-  flex-wrap: wrap;
-  max-width: 100%;
-}
-
 /* On a phone the header keeps only the call to action; the footer carries
    the rest. */
 @media (max-width: 640px) {
@@ -2499,7 +2491,6 @@ main .door[id] {
   display: grid;
   gap: var(--gap-md);
   margin: 0;
-  padding-bottom: var(--gap-md);
 }
 
 @media (min-width: 561px) {
@@ -2549,6 +2540,21 @@ main .door[id] {
   font: var(--t-body);
   font-size: 0.98rem;
   color: var(--c-fg-2);
+}
+
+/* The offer to read the other version: the last line inside the opened strip,
+   set at the body's small size and never as a button, so it reads as one more
+   thing on the page rather than a control the reader has to answer. */
+.gl-mode {
+  margin: var(--gap-md) 0 0;
+  padding-bottom: var(--gap-md);
+  font: var(--t-small);
+  color: var(--c-fg-2);
+}
+
+.gl-mode-link {
+  font: inherit;
+  cursor: pointer;
 }
 
 /* ---------- cómo trabajamos ----------
