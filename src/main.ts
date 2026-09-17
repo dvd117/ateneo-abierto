@@ -29,14 +29,12 @@ let currentLocale = detectLocale({
 });
 
 /**
- * Audience mode. A door page ignores a saved mode on purpose (see
- * detectMode): arriving at /talleres from a link is a stronger signal about
- * what this visitor came for than what they last pressed.
+ * Audience mode. Independent of the door: a deep link says which topic
+ * someone came for, not whether they are technical (see detectMode).
  */
 let currentMode = detectMode({
   search: window.location.search,
-  savedMode: readSavedMode(window.localStorage),
-  deepLink
+  savedMode: readSavedMode(window.localStorage)
 });
 
 function setLocale(locale: Locale): void {

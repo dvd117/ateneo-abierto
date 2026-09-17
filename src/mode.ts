@@ -13,23 +13,20 @@
  * shape, same URL-writing helper — so there is one thing to learn, not two.
  */
 
-import type { DeepLinkRoute } from './content';
-
 export type Mode = 'general' | 'tech';
 
 /** What a visitor gets when nothing says otherwise. Never `tech`. */
 export const DEFAULT_MODE: Mode = 'general';
 
+/**
+ * Deliberately no deep link here. A door says which topic someone came for,
+ * not whether they are technical: the two are orthogonal, so opening
+ * /talleres must not throw away a mode the reader chose. The door decides
+ * which page is served; it never decides the mode.
+ */
 export type ModeDetectionInput = {
   search: string;
   savedMode: string | null;
-  /**
-   * The door this page was opened at, if any. A deep link is an explicit
-   * intent signal and outranks a stored or defaulted mode: someone arriving at
-   * /talleres from a link gets that door as written, not as their last visit
-   * left the site. An explicit ?mode= in the link still wins over both.
-   */
-  deepLink?: DeepLinkRoute | null;
 };
 
 export function isMode(value: string | null | undefined): value is Mode {
@@ -42,10 +39,6 @@ export function detectMode(input: ModeDetectionInput): Mode {
 
   if (isMode(urlMode)) {
     return urlMode;
-  }
-
-  if (input.deepLink) {
-    return DEFAULT_MODE;
   }
 
   if (isMode(input.savedMode)) {

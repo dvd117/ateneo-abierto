@@ -1039,7 +1039,7 @@ export const copy: Record<Locale, PageCopy> = {
     ],
     meta: {
       description:
-        'A chatbot answers you. An agent does the work with you. Learn to hand office work to an agent, with open tools, free to start, from Venezuela.'
+        'A chatbot answers you. An agent does the work with you. Learn to direct an agent on office work, with open tools, free to start, from Venezuela.'
     },
     hero: {
       eyebrow: 'Beyond the chatbot',

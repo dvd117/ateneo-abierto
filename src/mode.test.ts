@@ -1,38 +1,42 @@
 import { describe, expect, test } from 'vitest';
-import { DEFAULT_MODE, detectMode, isMode, updateUrlMode } from './mode';
+import { DEFAULT_MODE, detectMode, isMode, updateUrlMode, type ModeDetectionInput } from './mode';
 
 describe('detectMode', () => {
   test('defaults to the mode everyone gets, never the technical one', () => {
     expect(DEFAULT_MODE).toBe('general');
-    expect(
-      detectMode({ search: '', savedMode: null, deepLink: null })
-    ).toBe('general');
+    expect(detectMode({ search: '', savedMode: null })).toBe('general');
   });
 
   test('uses an explicit ?mode= first', () => {
-    expect(detectMode({ search: '?mode=tech', savedMode: 'general', deepLink: null })).toBe('tech');
-    expect(detectMode({ search: '?mode=general', savedMode: 'tech', deepLink: null })).toBe('general');
+    expect(detectMode({ search: '?mode=tech', savedMode: 'general' })).toBe('tech');
+    expect(detectMode({ search: '?mode=general', savedMode: 'tech' })).toBe('general');
   });
 
   test('keeps a saved mode when the URL says nothing', () => {
-    expect(detectMode({ search: '', savedMode: 'tech', deepLink: null })).toBe('tech');
+    expect(detectMode({ search: '', savedMode: 'tech' })).toBe('tech');
   });
 
   test('ignores an unsupported ?mode= rather than guessing', () => {
-    expect(detectMode({ search: '?mode=expert', savedMode: null, deepLink: null })).toBe('general');
-    expect(detectMode({ search: '?mode=', savedMode: null, deepLink: null })).toBe('general');
+    expect(detectMode({ search: '?mode=expert', savedMode: null })).toBe('general');
+    expect(detectMode({ search: '?mode=', savedMode: null })).toBe('general');
   });
 
-  test('lets a door outrank a saved mode', () => {
-    expect(detectMode({ search: '', savedMode: 'tech', deepLink: 'talleres' })).toBe('general');
-  });
-
-  test('but an explicit ?mode= in the door link still wins', () => {
-    expect(detectMode({ search: '?mode=tech', savedMode: null, deepLink: 'talleres' })).toBe('tech');
+  test('a door never decides the mode: a door is a topic, not a technical level', () => {
+    // /talleres says this person wants workshops. It says nothing about
+    // whether they read code, so opening a door must not discard a mode the
+    // reader chose. Detection therefore takes no door at all — the case is
+    // unrepresentable rather than merely untaken, and this guards the day
+    // someone is tempted to pass one in again.
+    expect(Object.keys({ search: '', savedMode: null } satisfies ModeDetectionInput)).toEqual([
+      'search',
+      'savedMode'
+    ]);
+    expect(detectMode({ search: '', savedMode: 'tech' })).toBe('tech');
+    expect(detectMode({ search: '?lang=en', savedMode: 'tech' })).toBe('tech');
   });
 
   test('reads the mode alongside another param', () => {
-    expect(detectMode({ search: '?lang=en&mode=tech', savedMode: null, deepLink: null })).toBe('tech');
+    expect(detectMode({ search: '?lang=en&mode=tech', savedMode: null })).toBe('tech');
   });
 });
 
