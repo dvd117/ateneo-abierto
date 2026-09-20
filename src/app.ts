@@ -264,7 +264,11 @@ app.post(
     // than letting the parse throw its way to a 500.
     let body: Record<string, unknown>;
     try {
-      body = await c.req.json<Record<string, unknown>>();
+      const parsed: unknown = await c.req.json();
+      if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+        return c.json({ ok: false, reason: 'invalid-json' }, 400);
+      }
+      body = parsed as Record<string, unknown>;
     } catch {
       return c.json({ ok: false, reason: 'invalid-json' }, 400);
     }

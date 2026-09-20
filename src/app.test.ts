@@ -476,6 +476,18 @@ describe('POST /api/subscribe', () => {
     expect(body.reason).toBe('invalid-json');
   });
 
+  test.each(['null', '[1,2]', '"hello"', '123'])('returns 400 invalid-json for a non-object body: %s', async (body) => {
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body,
+    });
+
+    expect(res.status).toBe(400);
+    const response = await res.json() as { reason: string };
+    expect(response.reason).toBe('invalid-json');
+  });
+
   test('rate-limits one address after five posts in a minute', async () => {
     process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 201 })));
@@ -718,4 +730,3 @@ describe('prerendered home page', () => {
     expect(loadStyleHashes(dir)).toEqual([esHash]);
   });
 });
-
