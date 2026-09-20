@@ -16,6 +16,14 @@ updates:
         update-types: [minor, patch]
     open-pull-requests-limit: 5
 
+    # @types/node tracks the runtime, not npm's latest. CI and the Dockerfile
+    # both run Node 22; types from a newer line describe APIs that are not
+    # there at runtime, and tsc still goes green. Raise this pin in the same
+    # commit that raises the runtime, never before it.
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+
   - package-ecosystem: github-actions
     directory: /
     schedule:
