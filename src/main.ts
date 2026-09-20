@@ -1,6 +1,5 @@
-import { copyFor, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput, type PageCopy } from './content';
+import { copy, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
-import { DEFAULT_MODE, detectMode, isMode, readSavedMode, saveMode, updateUrlMode, type Mode } from './mode';
 import { drawBand, initBands, initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
 import { pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
@@ -28,45 +27,11 @@ let currentLocale = detectLocale({
   browserLanguages: navigator.languages
 });
 
-/**
- * Audience mode. Independent of the door: a deep link says which topic
- * someone came for, not whether they are technical (see detectMode).
- */
-let currentMode = detectMode({
-  search: window.location.search,
-  savedMode: readSavedMode(window.localStorage)
-});
-
 function setLocale(locale: Locale): void {
   currentLocale = locale;
   saveLocale(window.localStorage, locale);
   window.history.replaceState(null, '', updateUrlLocale(new URL(window.location.href), locale));
   render();
-}
-
-/**
- * The offer lives at the end of the glossary, and render() replaces the whole
- * tree — so without this the reader taps "read the technical version" and the
- * strip they were reading snaps shut under them, hiding the very words that
- * changed. Reopen it and put focus back on the offer, which now names the way
- * back.
- */
-function setMode(mode: Mode): void {
-  const wasOpen = root.querySelector<HTMLDetailsElement>('.gl-strip')?.open ?? false;
-
-  currentMode = mode;
-  saveMode(window.localStorage, mode);
-  window.history.replaceState(null, '', updateUrlMode(new URL(window.location.href), mode));
-  render();
-
-  if (wasOpen) {
-    const strip = root.querySelector<HTMLDetailsElement>('.gl-strip');
-
-    if (strip) {
-      strip.open = true;
-      strip.querySelector<HTMLButtonElement>('.gl-mode-link')?.focus();
-    }
-  }
 }
 
 function setMetaContent(selector: string, value: string): void {
@@ -88,14 +53,8 @@ function render(): void {
   setMetaContent('meta[property="og:title"]', meta.ogTitle);
   setMetaContent('meta[name="twitter:title"]', meta.ogTitle);
 
-  root.innerHTML = renderPage(currentLocale, { heroInput, mode: currentMode });
+  root.innerHTML = renderPage(currentLocale, { heroInput });
   root.dataset.locale = currentLocale;
-  // Absent rather than "general", to match what the prerender writes.
-  if (currentMode === DEFAULT_MODE) {
-    delete root.dataset.mode;
-  } else {
-    root.dataset.mode = currentMode;
-  }
 
   // A locale switch replaces the whole tree; drop the running sequence and the
   // observer watching the old nodes with it.
@@ -110,7 +69,7 @@ function render(): void {
   lightingPlayers.forEach((player) => player.cancel());
   lightingPlayers = [];
 
-  bindEvents(copyFor(currentLocale, currentMode));
+  bindEvents(copy[currentLocale]);
 }
 
 /**
@@ -632,9 +591,11 @@ function bindChrome(): () => void {
   }
 
   // Hidden over the hero, where there is no top to go back to; over the map,
-  // where on a phone it would sit on the Zona en Reclamación; and over the
-  // form, where it would sit on a field someone is typing in.
-  const covered = ['#norte', '#unete']
+  // where on a phone it would sit on the Zona en Reclamación; over the form,
+  // where it would sit on a field someone is typing in; and over the footer,
+  // which would otherwise have to reserve a band of empty space under its
+  // last line just to stay out from under the button.
+  const covered = ['#norte', '#unete', '.site-footer']
     .map((selector) => root.querySelector<HTMLElement>(selector))
     .filter((section): section is HTMLElement => section !== null);
   const covering = new Set<Element>();
@@ -694,14 +655,6 @@ function bindEvents(page: PageCopy): void {
     });
   });
 
-  root.querySelectorAll<HTMLButtonElement>('[data-mode]').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (isMode(button.dataset.mode)) {
-        setMode(button.dataset.mode);
-      }
-    });
-  });
-
   bindAgent(page);
   bindDialogs();
   bindTalk(page);
@@ -748,19 +701,14 @@ function openAtDoor(container: ParentNode, route: DeepLinkRoute): void {
   title.focus({ preventScroll: true });
 }
 
-// The server already sent this page, rendered, in the locale and mode it chose.
-// Keep that DOM and only wire it up — unless this visitor saved the other
-// language, or the other mode. The server never sees a saved mode, so a
-// returning technical reader is the case that re-renders here.
-const servedMode: Mode = isMode(root.dataset.mode) ? root.dataset.mode : DEFAULT_MODE;
-
+// The server already sent this page, rendered, in the locale it chose. Keep
+// that DOM and only wire it up — unless this visitor saved the other language.
 if (
   root.dataset.locale === currentLocale &&
-  servedMode === currentMode &&
   heroInput === HERO_INPUT &&
   root.childElementCount > 0
 ) {
-  bindEvents(copyFor(currentLocale, currentMode));
+  bindEvents(copy[currentLocale]);
 } else {
   render();
 }

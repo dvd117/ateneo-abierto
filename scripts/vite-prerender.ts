@@ -2,7 +2,6 @@ import { createHash } from 'node:crypto';
 import type { OutputAsset, OutputBundle } from 'rollup';
 import type { Plugin } from 'vite';
 import type { Locale } from '../src/locale';
-import { DEFAULT_MODE, type Mode } from '../src/mode';
 import { DEEP_LINK_ROUTES, type DeepLinkRoute } from '../src/content';
 import { pageMeta, renderPage } from '../src/render';
 
@@ -48,39 +47,25 @@ function replaceOnce(html: string, pattern: RegExp, value: string, label: string
 
 /**
  * Where a page is written: index(.en).html for home, {route}(.en).html for a
- * door, and the same name with `.tech` before `.html` for the technical mode.
- * The default mode keeps the plain name, so every address that existed before
- * still resolves to the same file.
+ * door.
  */
-export function pageFileName(locale: Locale, route?: DeepLinkRoute, mode: Mode = DEFAULT_MODE): string {
-  const suffix = `${locale === 'en' ? '.en' : ''}${mode === DEFAULT_MODE ? '' : `.${mode}`}`;
-  return `${route ?? 'index'}${suffix}.html`;
+export function pageFileName(locale: Locale, route?: DeepLinkRoute): string {
+  return `${route ?? 'index'}${locale === 'en' ? '.en' : ''}.html`;
 }
 
-export function fillTemplate(
-  template: string,
-  locale: Locale,
-  route?: DeepLinkRoute,
-  mode: Mode = DEFAULT_MODE
-): string {
+export function fillTemplate(template: string, locale: Locale, route?: DeepLinkRoute): string {
   if (!template.includes(PLACEHOLDER)) {
     throw new Error('[prerender] index.html has no <!--prerender--> placeholder');
   }
 
   const meta = pageMeta(locale, route);
-  let html = template.replace(PLACEHOLDER, () => renderPage(locale, { mode }));
+  let html = template.replace(PLACEHOLDER, () => renderPage(locale));
 
   html = replaceOnce(html, /(<html lang=")[^"]*(")/, meta.lang, '<html lang>');
   html = replaceOnce(
     html,
     /(<div id="app" data-locale=")[^"]*(")/,
-    [
-      locale,
-      route ? `" data-deep-link="${route}` : '',
-      // Only the non-default mode is marked, so the default page's markup is
-      // byte-identical to what it was before modes existed.
-      mode === DEFAULT_MODE ? '' : `" data-mode="${mode}`
-    ].join(''),
+    [locale, route ? `" data-deep-link="${route}` : ''].join(''),
     '#app data-locale'
   );
   html = replaceOnce(html, /(<title>)[^<]*(<\/title>)/, escapeAttr(meta.title), '<title>');
@@ -191,21 +176,16 @@ export function prerender(): Plugin {
       const spanish = fillTemplate(template, 'es');
       page.source = spanish;
 
-      // Every page of the matrix except the Spanish, default-mode home page,
-      // which is index.html itself: route x locale x mode.
+      // Every page of the matrix except the Spanish home page, which is
+      // index.html itself: route x locale.
       const others: [string, string][] = [];
       for (const route of [undefined, ...DEEP_LINK_ROUTES] as const) {
         for (const locale of ['es', 'en'] as const) {
-          for (const mode of ['general', 'tech'] as const) {
-            if (!route && locale === 'es' && mode === 'general') {
-              continue;
-            }
-
-            others.push([
-              pageFileName(locale, route, mode),
-              fillTemplate(template, locale, route, mode)
-            ]);
+          if (!route && locale === 'es') {
+            continue;
           }
+
+          others.push([pageFileName(locale, route), fillTemplate(template, locale, route)]);
         }
       }
 

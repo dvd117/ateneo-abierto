@@ -592,7 +592,7 @@ main .door[id] {
   text-transform: uppercase;
 }
 
-/* The mark is 22 px beside the wordmark and nowhere else on the page. */
+/* The mark is 22 px beside the wordmark, in the header and in the footer. */
 .nav-mark {
   flex: none;
   width: 22px;
@@ -2070,8 +2070,9 @@ main .door[id] {
 .site-footer {
   border-top: 1px solid var(--c-border);
   background-color: var(--c-bg-deep);
-  /* Room under the last line for the floating back-to-top button. */
-  padding-block: var(--gap-lg) 6rem;
+  /* The back-to-top button hides over the footer, so the last line needs no
+     band of empty space under it. */
+  padding-block: var(--gap-lg);
   color: var(--c-fg-2);
   font: var(--t-small);
 }
@@ -2081,8 +2082,70 @@ main .door[id] {
   gap: var(--gap-md);
 }
 
-.site-footer .security-line {
+/* The two marks on the last row: quiet at rest, lit only on the way in. They
+   are 44px tap targets that still read as small marks. */
+.footer-marks {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.footer-marks a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--c-fg-2);
+  transition: color 140ms ease;
+}
+
+.footer-marks a:hover,
+.footer-marks a:focus-visible {
   color: var(--c-fg);
+}
+
+.foot-cc {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22rem;
+}
+
+.foot-i {
+  display: block;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+
+.foot-i .foot-fill {
+  fill: currentColor;
+  stroke: none;
+}
+
+/* The solid GitHub mark reads heavier than the hairline glyphs at the same
+   size; hold it back on both weight and size. */
+.foot-i--solid {
+  width: 15px;
+  height: 15px;
+  fill: currentColor;
+  stroke: none;
+  opacity: 0.8;
+}
+
+/* The same lockup as the header's: mark, then name, on one line. */
+.footer-wordmark {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
 }
 
 .footer-brand .wordmark {
@@ -2107,8 +2170,17 @@ main .door[id] {
 
 @media (min-width: 861px) {
   .footer-grid {
-    grid-template-columns: 1fr 1.4fr 1fr;
-    align-items: start;
+    grid-template-columns: 1fr auto 1fr;
+    /* Centred, not top-aligned: the marks sit in 44px tap targets and the two
+       text columns are two lines each, so three different heights only look
+       level from their middles. */
+    align-items: center;
+  }
+
+  /* The middle of the three columns, where the security line used to sit.
+     On a phone the grid stacks and the marks sit left under the nav. */
+  .footer-marks {
+    justify-content: center;
   }
 }
 
@@ -2136,8 +2208,9 @@ main .door[id] {
 }
 
 /* The staircase as structure: on a wide screen the three doors climb, left
-   to right, the way the program does — the hackathon, the mentors inside
-   it, then showing what you built. */
+   to right, the way someone actually arrives — a Demo Night to come and look,
+   a workshop that brings your team, then the hackathon where you build it
+   yourself. Each step asks for more than the one before it. */
 @media (min-width: 861px) {
   .door-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -2542,19 +2615,13 @@ main .door[id] {
   color: var(--c-fg-2);
 }
 
-/* The offer to read the other version: the last line inside the opened strip,
-   set at the body's small size and never as a button, so it reads as one more
-   thing on the page rather than a control the reader has to answer. */
-.gl-mode {
+/* The long version of this section's argument, on David's own site: one
+   quiet line under the two columns, at the small size, never a button. The
+   page keeps exactly one call to action and this is not it. */
+.shift-more {
   margin: var(--gap-md) 0 0;
-  padding-bottom: var(--gap-md);
   font: var(--t-small);
   color: var(--c-fg-2);
-}
-
-.gl-mode-link {
-  font: inherit;
-  cursor: pointer;
 }
 
 /* ---------- cómo trabajamos ----------

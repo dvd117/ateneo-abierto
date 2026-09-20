@@ -1,5 +1,4 @@
 import type { Locale } from './locale';
-import type { Mode } from './mode';
 
 /**
  * Typed content source for the page. Everything the visitor reads lives here,
@@ -173,7 +172,7 @@ export type GlossaryCopy = {
   items: { term: string; sample: string; body: string }[];
 };
 
-/** One step in the two columns of "De preguntar a delegar". */
+/** One step in the two columns of "De preguntar a dirigir". */
 export type ShiftStep = {
   /** Who does it: the visitor, the chatbot, or the agent. */
   actor: string;
@@ -205,6 +204,14 @@ export type ShiftCopy = {
   /** "La misma tarea: *…*" — the task both columns run. */
   task: string;
   columns: [ShiftColumn, ShiftColumn];
+  /**
+   * The long version of this section's argument, on David's own site. A plain
+   * line under the two columns, never a button: the one call to action on the
+   * page is Únete, and this must not compete with it. It sits here because a
+   * reader who wants the argument at length is reading this section — never in
+   * the hero, where they have not met the argument yet.
+   */
+  more: { lead: string; label: string; href: string };
 };
 
 /**
@@ -264,7 +271,18 @@ export type DoorsCopy = {
  * The three doors as their own addresses (/hackaton, /talleres, /demo-nights),
  * so a post about one door previews that door. The route is the door's id.
  */
-export const DEEP_LINK_ROUTES = ['hackaton', 'talleres', 'demo-nights'] as const;
+/**
+ * The source of this site and the licence its copy carries, linked as two
+ * marks on the last row of the footer. The deed is the only one of the two
+ * that has a language, so it is chosen per locale.
+ */
+export const REPO = 'https://github.com/dvd117/ateneo-abierto';
+export const LICENCE = {
+  name: 'CC BY-SA 4.0',
+  deed: { es: 'https://creativecommons.org/licenses/by-sa/4.0/deed.es', en: 'https://creativecommons.org/licenses/by-sa/4.0/deed.en' }
+} as const;
+
+export const DEEP_LINK_ROUTES = ['demo-nights', 'talleres', 'hackaton'] as const;
 export type DeepLinkRoute = (typeof DEEP_LINK_ROUTES)[number];
 
 /**
@@ -400,13 +418,6 @@ export type PageCopy = {
     es: string;
     en: string;
   };
-  /**
-   * The offer at the end of the glossary, in the words of the version being
-   * offered. Named for the page ("version"), never for the reader: nothing
-   * here asks anyone to declare what they are. Only the version the reader is
-   * not already in is ever rendered, so both entries are visible copy.
-   */
-  modeSwitchTo: Record<Mode, string>;
   skipToContent: string;
   sectionsLabel: string;
   /** The floating button that returns to the top of the page. */
@@ -450,10 +461,11 @@ export type PageCopy = {
   talk: TalkCopy;
   form: FormCopy;
   footer: {
-    securityLine: string;
-    securityBody: string;
     contact: string;
     contactLabel: string;
+    /** The two marks on the last row: the source, and the licence on the copy. */
+    repoLabel: string;
+    licenceLabel: string;
   };
 };
 
@@ -472,10 +484,6 @@ export const copy: Record<Locale, PageCopy> = {
     languageSwitchTo: {
       es: 'Cambiar a español',
       en: 'Cambiar a inglés'
-    },
-    modeSwitchTo: {
-      general: 'Cambiar a la versión para todos',
-      tech: 'Cambiar a la versión técnica'
     },
     skipToContent: 'Saltar al contenido',
     sectionsLabel: 'Secciones',
@@ -766,7 +774,12 @@ export const copy: Record<Locale, PageCopy> = {
           tallyCount: '2 de 5',
           tallyText: 'pasos los haces tú: pedir y decidir.'
         }
-      ]
+      ],
+      more: {
+        lead: 'Esto mismo, explicado mejor:',
+        label: 'Por qué dejé los chatbots',
+        href: 'https://aragort.com/escritos/por-que-deje-los-chatbots'
+      }
     },
     glossary: {
       eyebrow: 'Glosario',
@@ -801,23 +814,20 @@ export const copy: Record<Locale, PageCopy> = {
       lead: 'Entra por la que te quede más cerca. Ninguna te pide saber programar.',
       doors: [
         {
-          id: 'hackaton',
+          id: 'demo-nights',
           n: '01',
-          title: 'Hackatón para no técnicos',
-          body: 'En un fin de semana aprendes a usar tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código. Un mentor acompaña a cada equipo de principio a fin.',
+          title: 'Demo Nights',
+          body: 'Entre 2 y 5 minutos: muestras la herramienta que te ha sido útil en tu trabajo, qué salió mal antes de que funcionara, y cómo llegaste ahí.',
           whoLabel: 'Para quién',
-          who: 'Gente de oficina, docentes, comerciantes, equipos de organizaciones.',
-          // Approved in David's copy review, 2026-09-11. Format, venue, places
-          // and cost are still to confirm before launch.
+          who: 'Quien ya armó algo y quiere enseñarlo, o aprender del intento de otro.',
           details: {
-            goal: 'Que salgas usando un agente en una tarea real de tu trabajo o tus estudios.',
+            goal: 'Aprender de lo que otros ya están haciendo, y mostrar lo tuyo.',
             activities: [
-              'Arrancamos con una demostración en vivo: la misma tarea, con chatbot y con agente.',
-              'Eliges una tarea que hoy te quita tiempo y la trabajas en un equipo pequeño.',
-              'Mentores te acompañan a instalar el agente y a darle tus primeras instrucciones, con archivos de ejemplo.',
-              'Al cierre, cada equipo muestra lo que logró.'
+              'Demostraciones de 2 a 5 minutos: qué tarea, con qué herramienta, qué salió mal y cómo lo resolviste.',
+              'Preguntas al final de cada demo.',
+              'Conversación abierta para conocer a gente que resuelve problemas parecidos.'
             ],
-            expect: 'Un fin de semana, presencial. No necesitas saber programar. Trae tu laptop; una modesta sirve. Mentorías incluidas.'
+            expect: 'Una noche, abierta a cualquiera. Para mirar no hace falta inscribirse; para presentar, sí.'
           }
         },
         {
@@ -843,20 +853,23 @@ export const copy: Record<Locale, PageCopy> = {
           }
         },
         {
-          id: 'demo-nights',
+          id: 'hackaton',
           n: '03',
-          title: 'Demo Nights',
-          body: 'Entre 2 y 5 minutos: muestras la herramienta que te ha sido útil en tu trabajo, qué salió mal antes de que funcionara, y cómo llegaste ahí.',
+          title: 'Hackatón para no técnicos',
+          body: 'En un fin de semana aprendes a usar tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código. Un mentor acompaña a cada equipo de principio a fin.',
           whoLabel: 'Para quién',
-          who: 'Quien ya armó algo y quiere enseñarlo, o aprender del intento de otro.',
+          who: 'Gente de oficina, docentes, comerciantes, equipos de organizaciones.',
+          // Approved in David's copy review, 2026-09-11. Format, venue, places
+          // and cost are still to confirm before launch.
           details: {
-            goal: 'Aprender de lo que otros ya están haciendo, y mostrar lo tuyo.',
+            goal: 'Que salgas usando un agente en una tarea real de tu trabajo o tus estudios.',
             activities: [
-              'Demostraciones de 2 a 5 minutos: qué tarea, con qué herramienta, qué salió mal y cómo lo resolviste.',
-              'Preguntas al final de cada demo.',
-              'Conversación abierta para conocer a gente que resuelve problemas parecidos.'
+              'Arrancamos con una demostración en vivo: la misma tarea, con chatbot y con agente.',
+              'Eliges una tarea que hoy te quita tiempo y la trabajas en un equipo pequeño.',
+              'Mentores te acompañan a instalar el agente y a darle tus primeras instrucciones, con archivos de ejemplo.',
+              'Al cierre, cada equipo muestra lo que logró.'
             ],
-            expect: 'Una noche, abierta a cualquiera. Para mirar no hace falta inscribirse; para presentar, sí.'
+            expect: 'Un fin de semana, presencial. No necesitas saber programar. Trae tu laptop; una modesta sirve. Mentorías incluidas.'
           }
         }
       ],
@@ -877,17 +890,17 @@ export const copy: Record<Locale, PageCopy> = {
       }
     },
     deepLinks: {
-      hackaton: {
-        headline: ['Hackatón para', 'no técnicos'],
-        who: ['Gente de oficina, docentes, comerciantes,', 'equipos de organizaciones.']
+      'demo-nights': {
+        headline: ['Demo', 'Nights'],
+        who: ['Quien ya armó algo y quiere enseñarlo,', 'o aprender del intento de otro.']
       },
       talleres: {
         headline: ['Talleres'],
         who: ['Equipos, organizaciones, escuelas y universidades', 'que quieren empezar juntos.']
       },
-      'demo-nights': {
-        headline: ['Demo', 'Nights'],
-        who: ['Quien ya armó algo y quiere enseñarlo,', 'o aprender del intento de otro.']
+      hackaton: {
+        headline: ['Hackatón para', 'no técnicos'],
+        who: ['Gente de oficina, docentes, comerciantes,', 'equipos de organizaciones.']
       }
     },
     // Approved 2026-09-14.
@@ -1002,11 +1015,10 @@ export const copy: Record<Locale, PageCopy> = {
       }
     },
     footer: {
-      securityLine: 'La seguridad es parte de cómo trabajamos.',
-      securityBody:
-        'Cuidamos los datos de quienes participan y nunca publicamos sus nombres sin permiso.',
       contact: 'ateneo@aragort.com',
-      contactLabel: 'Escríbenos'
+      contactLabel: 'Escríbenos',
+      repoLabel: 'El código de este sitio en GitHub',
+      licenceLabel: 'Los textos, bajo licencia CC BY-SA 4.0'
     }
   },
   en: {
@@ -1014,10 +1026,6 @@ export const copy: Record<Locale, PageCopy> = {
     languageSwitchTo: {
       es: 'Switch to Spanish',
       en: 'Switch to English'
-    },
-    modeSwitchTo: {
-      general: 'Switch to the version for everyone',
-      tech: 'Switch to the technical version'
     },
     skipToContent: 'Skip to content',
     sectionsLabel: 'Sections',
@@ -1306,7 +1314,12 @@ export const copy: Record<Locale, PageCopy> = {
           tallyCount: '2 of 5',
           tallyText: 'steps are yours to do: asking and deciding.'
         }
-      ]
+      ],
+      more: {
+        lead: 'The same argument, at length (in Spanish):',
+        label: 'Por qué dejé los chatbots',
+        href: 'https://aragort.com/escritos/por-que-deje-los-chatbots'
+      }
     },
     glossary: {
       eyebrow: 'Glossary',
@@ -1341,23 +1354,20 @@ export const copy: Record<Locale, PageCopy> = {
       lead: 'Come in through whichever one is closest to you. None of them asks you to know how to code.',
       doors: [
         {
-          id: 'hackaton',
+          id: 'demo-nights',
           n: '01',
-          title: 'Hackathon for non-technical people',
-          body: 'In one weekend you learn to use your first agent and walk out with it working, even if you’ve never written a line of code. A mentor stays with each team from start to finish.',
+          title: 'Demo Nights',
+          body: 'Two to five minutes: you show the tool that has been useful in your work, what went wrong before it worked, and how you got there.',
           whoLabel: 'Who it’s for',
-          who: 'Office workers, teachers, shopkeepers, teams inside organizations.',
-          // Approved in David's copy review, 2026-09-11. Format, venue, places
-          // and cost are still to confirm before launch.
+          who: 'Anyone who has built something and wants to show it, or to learn from someone else\u2019s attempt.',
           details: {
-            goal: 'That you leave using an agent on a real task from your work or your studies.',
+            goal: 'Learn from what others are already doing, and show your own.',
             activities: [
-              'We open with a live demo: the same task, with a chatbot and with an agent.',
-              'You pick a task that eats your time today and work on it in a small team.',
-              'Mentors help you install the agent and give it its first instructions, using sample files.',
-              'At the close, each team shows what it got done.'
+              'Two-to-five-minute demos: which task, which tool, what went wrong and how you fixed it.',
+              'Questions after each demo.',
+              'Open conversation to meet people solving similar problems.'
             ],
-            expect: 'One weekend, in person. You don’t need to know how to code. Bring your laptop; a modest one will do. Mentorship included.'
+            expect: 'One evening, open to anyone. You don’t need to sign up to watch; you do to present.'
           }
         },
         {
@@ -1380,20 +1390,23 @@ export const copy: Record<Locale, PageCopy> = {
           }
         },
         {
-          id: 'demo-nights',
+          id: 'hackaton',
           n: '03',
-          title: 'Demo Nights',
-          body: 'Two to five minutes: you show the tool that has been useful in your work, what went wrong before it worked, and how you got there.',
+          title: 'Hackathon for non-technical people',
+          body: 'In one weekend you learn to use your first agent and walk out with it working, even if you’ve never written a line of code. A mentor stays with each team from start to finish.',
           whoLabel: 'Who it’s for',
-          who: 'Anyone who has built something and wants to show it, or to learn from someone else\u2019s attempt.',
+          who: 'Office workers, teachers, shopkeepers, teams inside organizations.',
+          // Approved in David's copy review, 2026-09-11. Format, venue, places
+          // and cost are still to confirm before launch.
           details: {
-            goal: 'Learn from what others are already doing, and show your own.',
+            goal: 'That you leave using an agent on a real task from your work or your studies.',
             activities: [
-              'Two-to-five-minute demos: which task, which tool, what went wrong and how you fixed it.',
-              'Questions after each demo.',
-              'Open conversation to meet people solving similar problems.'
+              'We open with a live demo: the same task, with a chatbot and with an agent.',
+              'You pick a task that eats your time today and work on it in a small team.',
+              'Mentors help you install the agent and give it its first instructions, using sample files.',
+              'At the close, each team shows what it got done.'
             ],
-            expect: 'One evening, open to anyone. You don’t need to sign up to watch; you do to present.'
+            expect: 'One weekend, in person. You don’t need to know how to code. Bring your laptop; a modest one will do. Mentorship included.'
           }
         }
       ],
@@ -1412,17 +1425,17 @@ export const copy: Record<Locale, PageCopy> = {
       }
     },
     deepLinks: {
-      hackaton: {
-        headline: ['Hackathon for', 'non-technical people'],
-        who: ['Office workers, teachers, shopkeepers,', 'teams inside organizations.']
+      'demo-nights': {
+        headline: ['Demo', 'Nights'],
+        who: ['Anyone who has built something and wants to show it,', 'or to learn from someone else\u2019s attempt.']
       },
       talleres: {
         headline: ['Workshops'],
         who: ['Teams, organizations, schools and universities', 'that want to start together.']
       },
-      'demo-nights': {
-        headline: ['Demo', 'Nights'],
-        who: ['Anyone who has built something and wants to show it,', 'or to learn from someone else\u2019s attempt.']
+      hackaton: {
+        headline: ['Hackathon for', 'non-technical people'],
+        who: ['Office workers, teachers, shopkeepers,', 'teams inside organizations.']
       }
     },
     // Approved 2026-09-14.
@@ -1537,110 +1550,10 @@ export const copy: Record<Locale, PageCopy> = {
       }
     },
     footer: {
-      securityLine: 'Security is part of how we work.',
-      securityBody:
-        'We look after the data of the people who take part, and we never publish their names without permission.',
       contact: 'ateneo@aragort.com',
-      contactLabel: 'Write to us'
+      contactLabel: 'Write to us',
+      repoLabel: 'This site’s source on GitHub',
+      licenceLabel: 'The copy, under a CC BY-SA 4.0 licence'
     }
   }
 };
-
-/**
- * Audience modes.
- *
- * `general` is `copy` above — the whole page as written, and what every
- * visitor gets unless they ask for otherwise. `tech` is an overlay, not a
- * second site: it names only the sections whose wording genuinely changes for
- * someone who already works with software, and everything it leaves out falls
- * through to `copy`.
- *
- * An overlay rather than a second PageCopy because most of the page does not
- * change. The claim, the doors, the north and the form are the same promise to
- * both readers; rewriting them per mode would drift them apart and double the
- * copy David has to review. Add a section here only when the two readers
- * actually need different words.
- *
- * Only `glossary` is converted so far, as the worked example. The rest of the
- * technical-mode copy is David's to write.
- */
-export type ModeOverlay = {
-  glossary?: GlossaryCopy;
-};
-
-export const modeCopy: Record<Locale, Partial<Record<Mode, ModeOverlay>>> = {
-  es: {
-    tech: {
-      glossary: {
-        eyebrow: 'Glosario',
-        title: 'Cuatro palabras, sin rodeos',
-        lead: 'Si ya trabajas con software, esto es lo que hay debajo.',
-        items: [
-          {
-            term: 'Agente',
-            sample: '“Júntame estas tres hojas.”',
-            body: 'Un bucle sobre un modelo con acceso a tu shell y a tu sistema de archivos: recibe la tarea, arma un plan, ejecuta comandos y se detiene para que revises. Corre en tu máquina y cada paso queda a la vista.'
-          },
-          {
-            term: 'Skill',
-            sample: 'skills/xlsx',
-            body: 'Una carpeta versionada con instrucciones y scripts que el agente carga cuando la tarea la pide. Son archivos de texto: se leen, se editan y se comparten como cualquier repositorio.'
-          },
-          {
-            term: 'Instrucciones',
-            sample: 'AGENTS.md  ·  CLAUDE.md',
-            body: 'Un archivo en la raíz del proyecto que el agente lee antes de cada tarea: convenciones, formatos, rutas que no debe tocar. Es configuración en texto plano, no un ajuste escondido en una interfaz.'
-          },
-          {
-            term: 'Tu carpeta',
-            sample: 'Documentos/Ateneo',
-            body: 'El directorio de trabajo del agente. Lo que produce queda ahí, en tu máquina y bajo tu control de versiones: no sube a ningún lado a menos que tú lo subas.'
-          }
-        ]
-      }
-    }
-  },
-  en: {
-    tech: {
-      glossary: {
-        eyebrow: 'Glossary',
-        title: 'Four words, plainly',
-        lead: 'If you already work with software, this is what sits underneath.',
-        items: [
-          {
-            term: 'Agent',
-            sample: '“Merge these three sheets.”',
-            body: 'A loop around a model with access to your shell and your filesystem: it takes the task, makes a plan, runs commands and stops for you to check. It runs on your machine and every step stays visible.'
-          },
-          {
-            term: 'Skill',
-            sample: 'skills/xlsx',
-            body: 'A version-controlled folder of instructions and scripts the agent loads when a task calls for it. They are text files: you can read one, edit it and share it like any repository.'
-          },
-          {
-            term: 'Instructions',
-            sample: 'AGENTS.md  ·  CLAUDE.md',
-            body: 'A file at the root of the project that the agent reads before every task: conventions, formats, paths it must not touch. Configuration in plain text, not a setting buried in an interface.'
-          },
-          {
-            term: 'Your folder',
-            sample: 'Documents/Ateneo',
-            body: 'The agent’s working directory. What it produces stays there, on your machine and under your version control: nothing is uploaded unless you upload it.'
-          }
-        ]
-      }
-    }
-  }
-};
-
-/**
- * The page as one reader sees it: `copy` with that mode's overlay laid over
- * it, section by section. A section the overlay does not name is the same
- * object as in `copy`, not a copy of it.
- */
-export function copyFor(locale: Locale, mode: Mode): PageCopy {
-  const base = copy[locale];
-  const overlay = modeCopy[locale][mode];
-
-  return overlay ? { ...base, ...overlay } : base;
-}

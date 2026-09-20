@@ -2,7 +2,7 @@ import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, test, expect, vi, afterEach, beforeAll, afterAll } from 'vitest';
-import { app, DEEP_LINK_ROUTES, loadStyleHashes, pageFile, pickLocale, pickMode } from './app';
+import { app, DEEP_LINK_ROUTES, loadStyleHashes, pageFile, pickLocale } from './app';
 import { DEEP_LINK_ROUTES as CONTENT_ROUTES } from './content';
 
 afterEach(() => {
@@ -76,45 +76,6 @@ describe('door addresses', () => {
 
   test('knows the same routes the page does', () => {
     expect([...DEEP_LINK_ROUTES]).toEqual([...CONTENT_ROUTES]);
-  });
-});
-
-describe('audience mode of a served page', () => {
-  test('serves the mode everyone gets unless the address asks otherwise', () => {
-    expect(pickMode(undefined)).toBe('general');
-    expect(pickMode('')).toBe('general');
-    expect(pickMode('tech')).toBe('tech');
-    expect(pickMode('general')).toBe('general');
-  });
-
-  test('ignores a mode it does not have a page for', () => {
-    expect(pickMode('expert')).toBe('general');
-    expect(pickMode('technical')).toBe('general');
-  });
-
-  test('maps each route, locale and mode to its prerendered file', () => {
-    // The default mode keeps every file name the site already had.
-    expect(pageFile('es', undefined, 'general')).toBe('index.html');
-    expect(pageFile('en', undefined, 'general')).toBe('index.en.html');
-    expect(pageFile('es', undefined, 'tech')).toBe('index.tech.html');
-    expect(pageFile('en', undefined, 'tech')).toBe('index.en.tech.html');
-    expect(pageFile('es', 'talleres', 'tech')).toBe('talleres.tech.html');
-    expect(pageFile('en', 'demo-nights', 'tech')).toBe('demo-nights.en.tech.html');
-  });
-
-  test('keeps ?mode=tech across the spelling redirects, and drops the default', async () => {
-    const tech = await app.request('/workshops?mode=tech');
-    expect(tech.status).toBe(301);
-    expect(tech.headers.get('location')).toBe('/talleres?mode=tech');
-
-    const both = await app.request('/hackathon?lang=en&mode=tech');
-    expect(both.headers.get('location')).toBe('/hackaton?lang=en&mode=tech');
-
-    const general = await app.request('/workshops?mode=general');
-    expect(general.headers.get('location')).toBe('/talleres');
-
-    const nonsense = await app.request('/workshops?mode=expert');
-    expect(nonsense.headers.get('location')).toBe('/talleres');
   });
 });
 

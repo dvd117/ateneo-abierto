@@ -13,9 +13,6 @@ export const app = new Hono();
 const distDir = process.env.DIST_DIR ?? './dist';
 
 type PageLocale = 'es' | 'en';
-/** Kept in step with src/mode.ts; the runtime image ships only the server files. */
-type PageMode = 'general' | 'tech';
-const DEFAULT_PAGE_MODE: PageMode = 'general';
 
 /**
  * Hashes of the inline <style> blocks the prerender wrote into the pages
@@ -72,30 +69,19 @@ export function pickLocale(query: string | undefined, acceptLanguage: string | u
 }
 
 /**
- * Audience mode from the URL alone. The server has no access to what a
- * visitor saved, so it answers with the default unless the address says
- * otherwise — which is also what makes a ?mode= link shareable: it renders
- * the same page for whoever opens it.
- */
-export function pickMode(query: string | undefined): PageMode {
-  return query === 'general' || query === 'tech' ? query : DEFAULT_PAGE_MODE;
-}
-
-/**
  * The three doors as their own addresses. Kept here rather than read from
  * content.ts: the runtime image ships only the server files (see Dockerfile).
  * Each must match a prerendered {route}.html and {route}.en.html.
  */
-export const DEEP_LINK_ROUTES = ['hackaton', 'talleres', 'demo-nights'] as const;
+export const DEEP_LINK_ROUTES = ['demo-nights', 'talleres', 'hackaton'] as const;
 type DeepLinkRoute = (typeof DEEP_LINK_ROUTES)[number];
 
 /**
- * The prerendered file for one page: index(.en)(.tech).html or the same for a
- * door. Must stay in step with pageFileName in scripts/vite-prerender.ts.
+ * The prerendered file for one page: index(.en).html or the same for a door.
+ * Must stay in step with pageFileName in scripts/vite-prerender.ts.
  */
-export function pageFile(locale: PageLocale, route?: DeepLinkRoute, mode: PageMode = DEFAULT_PAGE_MODE): string {
-  const suffix = `${locale === 'en' ? '.en' : ''}${mode === DEFAULT_PAGE_MODE ? '' : `.${mode}`}`;
-  return `${route ?? 'index'}${suffix}.html`;
+export function pageFile(locale: PageLocale, route?: DeepLinkRoute): string {
+  return `${route ?? 'index'}${locale === 'en' ? '.en' : ''}.html`;
 }
 
 const pageCache = new Map<string, string>();
@@ -152,16 +138,13 @@ app.get('/api/health', (c) => c.json({ ok: true }));
 function servePage(route?: DeepLinkRoute) {
   return (c: Context, next: Next) => {
     const locale = pickLocale(c.req.query('lang'), c.req.header('accept-language'));
-    const mode = pickMode(c.req.query('mode'));
-    const html = readPage(pageFile(locale, route, mode));
+    const html = readPage(pageFile(locale, route));
 
     if (html === null) {
       return next();
     }
 
     c.header('Content-Language', locale);
-    // Mode needs no Vary: it travels in the query string, which is already
-    // part of a cache key. Only the Accept-Language fallback is invisible.
     c.header('Vary', 'Accept-Language');
     // Assets are content-hashed; the page itself must revalidate to pick them up.
     c.header('Cache-Control', 'no-cache');
@@ -174,16 +157,12 @@ for (const route of DEEP_LINK_ROUTES) {
   app.get(`/${route}`, servePage(route));
 }
 
-/** A permanent redirect that keeps a supported ?lang= and ?mode=, and drops anything else. */
+/** A permanent redirect that keeps a supported ?lang= and drops anything else. */
 function redirectTo(path: string) {
   return (c: Context) => {
     const lang = c.req.query('lang');
-    const mode = c.req.query('mode');
-    const kept = new URLSearchParams();
-    if (lang === 'es' || lang === 'en') kept.set('lang', lang);
-    if (mode === 'tech') kept.set('mode', mode);
-    const query = kept.toString();
-    return c.redirect(query ? `${path}?${query}` : path, 301);
+    const query = lang === 'es' || lang === 'en' ? `?lang=${lang}` : '';
+    return c.redirect(`${path}${query}`, 301);
   };
 }
 

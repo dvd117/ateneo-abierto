@@ -1,6 +1,5 @@
-import { copy, copyFor, HERO_INPUT, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
+import { copy, HERO_INPUT, LICENCE, REPO, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
-import { DEFAULT_MODE, type Mode } from './mode';
 import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
 /**
@@ -71,7 +70,8 @@ export function inline(text: string): string {
 
 /**
  * The staircase mark: three ascending steps and a dot. Bone steps, ochre dot,
- * 22 px, beside the wordmark. It appears here and as the favicon, nowhere else.
+ * 22 px. It goes wherever the wordmark goes — the header and the footer — so
+ * the name is one lockup and never two. Also the favicon; nowhere else.
  */
 function renderMark(): string {
   return `
@@ -96,28 +96,6 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
     : `<span class="visually-hidden"> · ${page.languageSwitchTo[locale]}</span>`;
 
   return `<button class="locale-button ${isActive ? 'is-active' : ''}" type="button" data-locale="${locale}" aria-pressed="${isActive}">${label}${describe}</button>`;
-}
-
-/**
- * The offer to read the other version: one quiet link, and only ever the
- * version the reader is not already in.
- *
- * It lives at the end of the glossary, inside the closed strip, because the
- * glossary is the one section whose words actually change with the mode. The
- * offer therefore appears exactly where it pays off, to someone who has
- * already read something — and never at the door. A reader must not have to
- * classify themselves before the page will say anything to them.
- *
- * A link rather than a two-button group for the same reason: a toggle asks
- * "which of these are you?", an offer just says what else is here.
- */
-function renderModeOffer(page: PageCopy, mode: Mode): string {
-  const other: Mode = mode === 'tech' ? 'general' : 'tech';
-
-  return `
-      <p class="gl-mode">
-        <button class="link gl-mode-link" type="button" data-mode="${other}">${inline(page.modeSwitchTo[other])}</button>
-      </p>`;
 }
 
 /**
@@ -505,7 +483,7 @@ function renderBand(name: string, seed: number, voice?: string): string {
 }
 
 /**
- * "De preguntar a delegar": the same task run twice, side by side, as in the
+ * "De preguntar a dirigir": the same task run twice, side by side, as in the
  * approved mockup — no cards. Two columns split by one rule, each step a row
  * of [actor pill · line · tick], the pills strung on a vertical thread. The
  * agent's rows tick in order as the column enters the viewport, and the count
@@ -549,6 +527,10 @@ function renderShift(page: PageCopy): string {
         <div class="shift-cmp">
           ${shift.columns.map((column) => renderShiftColumn(column)).join('')}
         </div>
+        <p class="shift-more">
+          ${inline(shift.more.lead)}
+          <a class="link" href="${shift.more.href}" target="_blank" rel="noopener noreferrer">${inline(shift.more.label)}</a>
+        </p>
       </div>
     </section>
   `;
@@ -562,7 +544,7 @@ function renderShift(page: PageCopy): string {
  * heading, so the title is an h3 under Programa's h2. No reveal on the cards:
  * opening it shows them at once, with no motion of our own.
  */
-function renderGlossary(page: PageCopy, mode: Mode): string {
+function renderGlossary(page: PageCopy): string {
   const { glossary } = page;
 
   return `
@@ -586,7 +568,6 @@ function renderGlossary(page: PageCopy, mode: Mode): string {
           )
           .join('')}
       </dl>
-${renderModeOffer(page, mode)}
     </details>
   `;
 }
@@ -647,7 +628,7 @@ function renderDoorDialog(page: PageCopy, door: Door): string {
   `;
 }
 
-function renderDoors(page: PageCopy, mode: Mode): string {
+function renderDoors(page: PageCopy): string {
   const { doors } = page;
 
   return `
@@ -660,7 +641,7 @@ function renderDoors(page: PageCopy, mode: Mode): string {
         <p class="doors-extra">
           <b>${inline(doors.mentorship.label)}</b> ${inline(doors.mentorship.text)}
         </p>
-        ${renderGlossary(page, mode)}
+        ${renderGlossary(page)}
       </div>
       ${doors.doors.map((door) => renderDoorDialog(page, door)).join('')}
     </section>
@@ -937,22 +918,46 @@ function renderForm(page: PageCopy, locale: Locale): string {
   `;
 }
 
+/*
+ * The last row's two marks. GitHub keeps its own solid glyph, which does not
+ * read as a wire drawing; the Creative Commons pair is drawn as hairlines to
+ * match everything else on the page. Each carries its words for screen
+ * readers and as a tooltip, so nothing is lost by showing only the mark.
+ */
+const FOOTER_MARKS = {
+  github: `<svg class="foot-i foot-i--solid" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 .5a7.5 7.5 0 0 0-2.37 14.62c.37.07.51-.16.51-.36v-1.4c-2.09.45-2.53-.9-2.53-.9-.34-.87-.83-1.1-.83-1.1-.68-.47.05-.46.05-.46.75.06 1.15.78 1.15.78.67 1.15 1.76.82 2.19.63.07-.49.26-.82.48-1.01-1.67-.19-3.42-.84-3.42-3.72 0-.82.29-1.5.78-2.02-.08-.19-.34-.96.07-2.01 0 0 .63-.2 2.07.77a7.2 7.2 0 0 1 3.77 0c1.44-.97 2.07-.77 2.07-.77.41 1.05.15 1.82.07 2.01.49.52.78 1.2.78 2.02 0 2.89-1.76 3.53-3.43 3.71.27.24.51.69.51 1.4v2.07c0 .2.14.44.51.36A7.5 7.5 0 0 0 8 .5Z"/></svg>`,
+  licence: `<span class="foot-cc"><svg class="foot-i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.9"/><path d="M6.9 6.6a2 2 0 1 0 0 2.8"/><path d="M11.4 6.6a2 2 0 1 0 0 2.8"/></svg><svg class="foot-i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.9"/><circle class="foot-fill" cx="8" cy="5" r="1.25"/><path d="M5.2 12.6v-2.1a2.8 2.8 0 0 1 5.6 0v2.1"/></svg><svg class="foot-i" viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.9"/><path d="M11.1 6.3a3.5 3.5 0 1 0 .5 3.4"/><path d="M11.4 3.6v2.8H8.6"/></svg></span>`
+} as const;
+
+function renderFooterMarks(page: PageCopy, locale: Locale): string {
+  const marks = [
+    { href: REPO, label: page.footer.repoLabel, mark: FOOTER_MARKS.github, rel: '' },
+    { href: LICENCE.deed[locale], label: page.footer.licenceLabel, mark: FOOTER_MARKS.licence, rel: ' license' }
+  ];
+
+  return `
+        <ul class="footer-marks">
+          ${marks
+            .map(
+              ({ href, label, mark, rel }) => `<li><a href="${href}" title="${label}" target="_blank" rel="noopener noreferrer${rel}">${mark}<span class="visually-hidden">${inline(label)}</span></a></li>`
+            )
+            .join('')}
+        </ul>`;
+}
+
 function renderFooter(page: PageCopy, locale: Locale): string {
   return `
     <footer class="site-footer">
       <div class="shell footer-grid">
       <div class="footer-brand">
-        <span class="wordmark">Ateneo Abierto</span>
+        <span class="footer-wordmark">${renderMark()}<span class="wordmark">Ateneo Abierto</span></span>
         <!-- The header's section links are hidden on a phone, where it keeps
              only the call to action. Same three destinations, same words. -->
         <nav class="footer-nav" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
         </nav>
       </div>
-      <div class="footer-security">
-        <p class="security-line">${page.footer.securityLine}</p>
-        <p>${page.footer.securityBody}</p>
-      </div>
+${renderFooterMarks(page, locale)}
       <div class="footer-meta">
         <div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
@@ -1027,13 +1032,6 @@ export function firstSentence(text: string): string {
  * The head of one page. Without a route it is the home page; with one it is
  * the home page opened at that door, and the head speaks for the door.
  */
-/**
- * The head of a page, which is deliberately mode-independent.
- *
- * `canonical` and the hreflang alternates carry no ?mode=, so every mode of a
- * page points at the default-mode address and the two variants never compete
- * as separate URLs. Mode changes how the page reads, not which page it is.
- */
 export function pageMeta(locale: Locale, route?: DeepLinkRoute): PageMeta {
   const page = copy[locale];
   const path = route ? `/${route}` : '/';
@@ -1078,11 +1076,10 @@ export function pageMeta(locale: Locale, route?: DeepLinkRoute): PageMeta {
 /** Everything inside #app, for one locale. */
 export function renderPage(
   locale: Locale,
-  options: { heroInput?: HeroInput; mode?: Mode } = {}
+  options: { heroInput?: HeroInput } = {}
 ): string {
   const heroInput = options.heroInput ?? HERO_INPUT;
-  const mode = options.mode ?? DEFAULT_MODE;
-  const page = copyFor(locale, mode);
+  const page = copy[locale];
 
   return `
     <a class="skip-link" href="#contenido">${page.skipToContent}</a>
@@ -1092,7 +1089,7 @@ export function renderPage(
       ${renderHero(page, heroInput)}
       ${renderBand('one', 0)}
       ${renderShift(page)}
-      ${renderDoors(page, mode)}
+      ${renderDoors(page)}
       ${renderBand('two', 3)}
       ${renderNorth(page)}
       ${renderPrinciples(page)}

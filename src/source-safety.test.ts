@@ -165,9 +165,10 @@ describe('identity', () => {
 
     expect(styles).toMatch(/\.nav-wordmark \.wordmark\s*\{[^}]*text-transform:\s*uppercase;/s);
 
-    // The mark appears once in the nav. Anywhere else would be decoration.
+    // The mark goes with the wordmark: the header and the footer, and nowhere
+    // else. Anywhere else would be decoration (David, 2026-09-19).
     const marks = [...render.matchAll(/renderMark\(\)/g)];
-    expect(marks.length).toBe(2); // the definition and the single nav call site
+    expect(marks.length).toBe(3); // the definition, the header and the footer
   });
 });
 

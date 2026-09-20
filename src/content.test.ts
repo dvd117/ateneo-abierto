@@ -1,7 +1,6 @@
 import { describe, expect, test } from 'vitest';
-import { copy, copyFor, modeCopy, DEEP_LINK_ROUTES, type DeepLinkRoute } from './content';
+import { copy, DEEP_LINK_ROUTES, type DeepLinkRoute } from './content';
 import { renderPage } from './render';
-import { DEFAULT_MODE } from './mode';
 
 const locales = ['es', 'en'] as const;
 
@@ -232,14 +231,17 @@ describe('landing page copy', () => {
       expect(doors.mentorship.text.length).toBeGreaterThan(20);
       expect('cta' in doors.mentorship).toBe(false);
 
-      // Talleres is door 02, and it is arranged by email, not through the form.
-      expect(doors.doors.map((door) => door.id)).toEqual(['hackaton', 'talleres', 'demo-nights']);
+      // The doors run in the order someone arrives: come and look, bring your
+      // team, then build it yourself (David, 2026-09-19). Talleres stays door
+      // 02, and it is arranged by email, not through the form.
+      expect(doors.doors.map((door) => door.id)).toEqual(['demo-nights', 'talleres', 'hackaton']);
+      expect(doors.doors.map((door) => door.n)).toEqual(['01', '02', '03']);
       expect(doors.doors.map((door) => door.cta ?? 'join')).toEqual(['join', 'mail', 'join']);
     }
 
     // Demo Nights is the settled name, in both locales.
-    expect(copy.es.doors.doors[2].title).toBe('Demo Nights');
-    expect(copy.en.doors.doors[2].title).toBe('Demo Nights');
+    expect(copy.es.doors.doors[0].title).toBe('Demo Nights');
+    expect(copy.en.doors.doors[0].title).toBe('Demo Nights');
   });
 
   test('gives each door its own address, with a card that only rearranges the door copy', () => {
@@ -282,21 +284,21 @@ describe('landing page copy', () => {
 
   test('says who each door is for, and places mentorships inside the hackathon', () => {
     // Nobody should have to guess which door is theirs.
-    expect(copy.es.doors.doors[0].who).toMatch(/docentes|oficina/);
+    expect(copy.es.doors.doors[2].who).toMatch(/docentes|oficina/);
     expect(copy.es.doors.doors[1].who).toMatch(/organizaciones/);
     expect(copy.en.doors.doors[1].who).toMatch(/organizations/);
     // David, 2026-09-11: mentors work inside each hackathon, not after it.
     expect(copy.es.doors.mentorship.text).toMatch(/cada hackatón[\s\S]*incluidas/);
     expect(copy.en.doors.mentorship.text).toMatch(/every hackathon[\s\S]*Included/);
-    expect(copy.es.doors.doors[0].details.expect).toMatch(/Mentorías incluidas/);
-    expect(copy.en.doors.doors[0].details.expect).toMatch(/Mentorship included/);
+    expect(copy.es.doors.doors[2].details.expect).toMatch(/Mentorías incluidas/);
+    expect(copy.en.doors.doors[2].details.expect).toMatch(/Mentorship included/);
     expect(JSON.stringify(copy.es.doors.mentorship)).not.toMatch(/semanas|a tu ritmo/);
     expect(copy.es.principles.items[0].body).not.toMatch(/qué cedes|revisar, adaptar/);
 
     // Neither door may ask for code as a precondition.
     expect(copy.es.doors.lead).toMatch(/programar/);
-    expect(copy.es.doors.doors[0].body).toMatch(/línea de código/);
-    expect(copy.en.doors.doors[0].body).toMatch(/line of code/);
+    expect(copy.es.doors.doors[2].body).toMatch(/línea de código/);
+    expect(copy.en.doors.doors[2].body).toMatch(/line of code/);
   });
 
   test('keeps prices and dates out of the program section', () => {
@@ -503,18 +505,11 @@ describe('landing page copy', () => {
     }
   });
 
-  test('carries the security line and the contact address in the footer', () => {
+  test('carries the contact address in the footer', () => {
     for (const locale of locales) {
-      const { footer } = copy[locale];
-
-      expect(footer.securityLine.length).toBeGreaterThan(0);
-      expect(footer.contact).toBe('ateneo@aragort.com');
+      expect(copy[locale].footer.contact).toBe('ateneo@aragort.com');
     }
 
-    // The repository is private: nothing on the page points at the source.
-    expect(JSON.stringify(copy)).not.toContain('github.com');
-
-    expect(copy.es.footer.securityLine).toBe('La seguridad es parte de cómo trabajamos.');
   });
 
   test('keeps Spanish public copy in Venezuelan tuteo, without English jargon', () => {
@@ -577,118 +572,6 @@ describe('landing page copy', () => {
       expect(terms).toContain('Skill');
       expect(copy[locale].glossary.items.some((item) => item.sample.includes('AGENTS.md'))).toBe(true);
       expect(copy[locale].glossary.items.some((item) => item.sample.includes('CLAUDE.md'))).toBe(true);
-    }
-  });
-});
-
-describe('audience modes', () => {
-  test('the default mode is the page as written, object for object', () => {
-    for (const locale of locales) {
-      expect(copyFor(locale, DEFAULT_MODE)).toBe(copy[locale]);
-    }
-  });
-
-  test('the technical mode overlays the glossary and nothing else yet', () => {
-    for (const locale of locales) {
-      expect(Object.keys(modeCopy[locale].tech ?? {})).toEqual(['glossary']);
-
-      const tech = copyFor(locale, 'tech');
-      expect(tech.glossary).not.toBe(copy[locale].glossary);
-      expect(tech.glossary).toEqual(modeCopy[locale].tech?.glossary);
-
-      // Everything the overlay does not name falls through, not copied.
-      expect(tech.hero).toBe(copy[locale].hero);
-      expect(tech.doors).toBe(copy[locale].doors);
-      expect(tech.shift).toBe(copy[locale].shift);
-      expect(tech.form).toBe(copy[locale].form);
-    }
-  });
-
-  test('the technical glossary keeps the same four words', () => {
-    for (const locale of locales) {
-      const general = copy[locale].glossary.items.map((item) => item.term);
-      const tech = copyFor(locale, 'tech').glossary.items.map((item) => item.term);
-
-      // Same concepts, said to a reader who already knows the machine. A
-      // different set of words would make this a second site, not a mode.
-      expect(tech).toEqual(general);
-    }
-  });
-
-  test('neither mode promises to teach anyone to code', () => {
-    for (const locale of locales) {
-      const words = copyFor(locale, 'tech')
-        .glossary.items.map((item) => `${item.term} ${item.body}`)
-        .join(' ')
-        .toLowerCase();
-
-      expect(words).not.toMatch(/aprende a programar|learn to (code|program)/);
-    }
-  });
-
-  test('the offer names the version, never the reader', () => {
-    for (const locale of locales) {
-      const page = copy[locale];
-
-      expect(page.modeSwitchTo.general.length).toBeGreaterThan(0);
-      expect(page.modeSwitchTo.tech.length).toBeGreaterThan(0);
-
-      // The mode's own words may never ask a visitor to file themselves
-      // under "not technical". Both entries are now visible copy — one per
-      // mode — so both are checked, not just the label.
-      //
-      // Scoped to the mode strings on purpose: the hackatón door is named
-      // "para no técnicos" in approved copy, so a whole-page sweep would
-      // guard something this test was never about.
-      expect(
-        `${page.modeSwitchTo.general} ${page.modeSwitchTo.tech}`.toLowerCase()
-      ).not.toMatch(/no t[eé]cnic|non-technical|not technical/);
-    }
-  });
-
-  test('offers the other version once, at the end of the glossary', () => {
-    for (const locale of locales) {
-      const general = renderPage(locale);
-      const tech = renderPage(locale, { mode: 'tech' });
-
-      // One offer, for the version the reader is not in. Never a pair, and
-      // never the version they are already reading.
-      expect(general.match(/data-mode="/g)).toHaveLength(1);
-      expect(general).toContain('data-mode="tech"');
-      expect(general).toContain(copy[locale].modeSwitchTo.tech);
-      expect(general).not.toContain(copy[locale].modeSwitchTo.general);
-
-      expect(tech.match(/data-mode="/g)).toHaveLength(1);
-      expect(tech).toContain('data-mode="general"');
-      expect(tech).toContain(copy[locale].modeSwitchTo.general);
-      expect(tech).not.toContain(copy[locale].modeSwitchTo.tech);
-    }
-  });
-
-  test('the offer sits inside the glossary strip and nowhere else', () => {
-    for (const locale of locales) {
-      const page = renderPage(locale);
-      const strip = page.slice(page.indexOf('<details class="gl-strip"'));
-      const glossary = strip.slice(0, strip.indexOf('</details>'));
-
-      // Inside the strip that the mode actually rewrites — so the offer is
-      // made to someone already reading those words, and never at the door.
-      expect(glossary).toContain('data-mode="tech"');
-      // The footer keeps the language toggle and nothing else about modes.
-      const footer = page.slice(page.indexOf('<footer'));
-      expect(footer).not.toContain('data-mode');
-      expect(footer).toContain('data-locale="es"');
-    }
-  });
-
-  test('a mode changes its section and leaves the rest of the page alone', () => {
-    for (const locale of locales) {
-      const tech = renderPage(locale, { mode: 'tech' });
-
-      expect(tech).toContain(copyFor(locale, 'tech').glossary.title);
-      expect(tech).not.toContain(copy[locale].glossary.title);
-      expect(tech).toContain(copy[locale].doors.title);
-      expect(tech).toContain(copy[locale].north.lead);
     }
   });
 });
