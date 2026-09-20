@@ -6,6 +6,8 @@ import { compress } from 'hono/compress';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { addSubscriber } from './mailerlite';
+import { clientIp } from './client-ip';
+import { subscribeLimiter } from './rate-limit';
 
 export const app = new Hono();
 
@@ -196,8 +198,34 @@ function mailerLiteParticipateGroupIdFor(locale: NewsletterLocale): string | nul
     : process.env.MAILERLITE_PARTICIPATE_EN_ID) ?? null;
 }
 
+/**
+ * The socket address, for development, where nothing is in front of the
+ * server. In production the address comes from Deflect's headers instead.
+ */
+function remoteAddress(c: Context): string | null {
+  const env = c.env as { incoming?: { socket?: { remoteAddress?: string } } } | undefined;
+  return env?.incoming?.socket?.remoteAddress ?? null;
+}
+
+/**
+ * Five posts a minute per visitor. Runs before the body is read, so a flood
+ * costs a header lookup rather than a parse and a MailerLite call.
+ */
+const rateLimitSubscribe = async (c: Context, next: Next) => {
+  const ip = clientIp((name) => c.req.header(name), remoteAddress(c));
+  const decision = subscribeLimiter.check(ip);
+
+  if (!decision.allowed) {
+    c.header('Retry-After', String(decision.retryAfterSeconds));
+    return c.json({ ok: false, reason: 'rate-limited' }, 429);
+  }
+
+  return next();
+};
+
 app.post(
   '/api/subscribe',
+  rateLimitSubscribe,
   bodyLimit({ maxSize: 2 * 1024 }),
   async (c) => {
     // Content-Type enforcement
@@ -206,14 +234,22 @@ app.post(
       return c.json({ error: 'unsupported media type' }, 415);
     }
 
-    // Origin check (only enforced when SITE_ORIGIN env var is set)
+    // Origin check (only enforced when SITE_ORIGIN env var is set).
+    // A missing Origin is refused too: browsers always send it on a
+    // cross-origin POST, so only a non-browser caller arrives without one.
     const siteOrigin = process.env.SITE_ORIGIN;
-    const origin = c.req.header('origin');
-    if (siteOrigin && origin && origin !== siteOrigin) {
+    if (siteOrigin && c.req.header('origin') !== siteOrigin) {
       return c.json({ error: 'forbidden' }, 403);
     }
 
-    const body = await c.req.json<Record<string, unknown>>();
+    // Malformed JSON is a client mistake, not a server fault: say 400 rather
+    // than letting the parse throw its way to a 500.
+    let body: Record<string, unknown>;
+    try {
+      body = await c.req.json<Record<string, unknown>>();
+    } catch {
+      return c.json({ ok: false, reason: 'invalid-json' }, 400);
+    }
 
     // Honeypot — return ok silently so bots think they succeeded
     if (body.website) {

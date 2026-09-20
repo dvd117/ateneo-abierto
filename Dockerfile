@@ -20,7 +20,7 @@ RUN npm ci --omit=dev
 
 # Copy built frontend assets and server source
 COPY --chown=app:app --from=build /app/dist ./dist
-COPY --chown=app:app src/server.ts src/app.ts src/mailerlite.ts ./src/
+COPY --chown=app:app src/server.ts src/app.ts src/mailerlite.ts src/client-ip.ts src/rate-limit.ts ./src/
 
 USER app
 

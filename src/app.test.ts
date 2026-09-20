@@ -1,9 +1,16 @@
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { describe, test, expect, vi, afterEach, beforeAll, afterAll } from 'vitest';
+import { describe, test, expect, vi, afterEach, beforeEach, beforeAll, afterAll } from 'vitest';
 import { app, DEEP_LINK_ROUTES, loadStyleHashes, pageFile, pickLocale } from './app';
 import { DEEP_LINK_ROUTES as CONTENT_ROUTES } from './content';
+import { subscribeLimiter } from './rate-limit';
+
+// Every request in this file arrives without a client-IP header, so they all
+// share the unknown bucket. Without this, the file rate-limits itself.
+beforeEach(() => {
+  subscribeLimiter.reset();
+});
 
 afterEach(() => {
   vi.restoreAllMocks();
@@ -338,6 +345,138 @@ describe('POST /api/subscribe', () => {
     } else {
       delete process.env.SITE_ORIGIN;
     }
+  });
+
+  test('returns 403 when a caller sends no Origin at all', async () => {
+    const original = process.env.SITE_ORIGIN;
+    process.env.SITE_ORIGIN = 'https://ateneo-abierto.org';
+
+    // A browser always sends Origin on a cross-origin POST, so the caller
+    // arriving without one is a script, not a visitor.
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: validBody,
+    });
+
+    expect(res.status).toBe(403);
+    if (original !== undefined) {
+      process.env.SITE_ORIGIN = original;
+    } else {
+      delete process.env.SITE_ORIGIN;
+    }
+  });
+
+  test('accepts the matching Origin', async () => {
+    const original = process.env.SITE_ORIGIN;
+    process.env.SITE_ORIGIN = 'https://ateneo-abierto.org';
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 201 })));
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: { ...jsonHeaders, Origin: 'https://ateneo-abierto.org' },
+      body: validBody,
+    });
+
+    expect(res.status).toBe(200);
+    if (original !== undefined) {
+      process.env.SITE_ORIGIN = original;
+    } else {
+      delete process.env.SITE_ORIGIN;
+    }
+  });
+
+  test('returns 400, not 500, when the body is not JSON', async () => {
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: '{ this is not json',
+    });
+
+    expect(res.status).toBe(400);
+    const body = await res.json() as { reason: string };
+    expect(body.reason).toBe('invalid-json');
+  });
+
+  test('rate-limits one address after five posts in a minute', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 201 })));
+    const withIp = { ...jsonHeaders, 'True-Client-IP': '203.0.113.4' };
+
+    for (let i = 0; i < 5; i += 1) {
+      const ok = await app.request('/api/subscribe', { method: 'POST', headers: withIp, body: validBody });
+      expect(ok.status).toBe(200);
+    }
+
+    const res = await app.request('/api/subscribe', { method: 'POST', headers: withIp, body: validBody });
+
+    expect(res.status).toBe(429);
+    expect(Number(res.headers.get('retry-after'))).toBeGreaterThan(0);
+    const body = await res.json() as { reason: string };
+    expect(body.reason).toBe('rate-limited');
+  });
+
+  test('holds one address back without touching another', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 201 })));
+
+    for (let i = 0; i < 6; i += 1) {
+      await app.request('/api/subscribe', {
+        method: 'POST',
+        headers: { ...jsonHeaders, 'True-Client-IP': '203.0.113.4' },
+        body: validBody,
+      });
+    }
+
+    const other = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: { ...jsonHeaders, 'True-Client-IP': '198.51.100.9' },
+      body: validBody,
+    });
+
+    expect(other.status).toBe(200);
+  });
+
+  test('refuses before reading the body, so a flood costs no MailerLite call', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
+    vi.stubGlobal('fetch', mockFetch);
+    const withIp = { ...jsonHeaders, 'True-Client-IP': '203.0.113.4' };
+
+    for (let i = 0; i < 5; i += 1) {
+      await app.request('/api/subscribe', { method: 'POST', headers: withIp, body: validBody });
+    }
+    expect(mockFetch).toHaveBeenCalledTimes(5);
+
+    for (let i = 0; i < 20; i += 1) {
+      await app.request('/api/subscribe', { method: 'POST', headers: withIp, body: validBody });
+    }
+
+    expect(mockFetch).toHaveBeenCalledTimes(5);
+  });
+
+  test('does not bucket every visitor by the Deflect edge address', async () => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 201 })));
+
+    // X-Real-IP holds the edge, not the visitor. If it were read, six posts
+    // from six different people would lock the seventh one out.
+    for (let i = 0; i < 6; i += 1) {
+      await app.request('/api/subscribe', {
+        method: 'POST',
+        headers: { ...jsonHeaders, 'X-Real-IP': '185.196.61.178', 'True-Client-IP': `203.0.113.${i}` },
+        body: validBody,
+      });
+    }
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: { ...jsonHeaders, 'X-Real-IP': '185.196.61.178', 'True-Client-IP': '203.0.113.99' },
+      body: validBody,
+    });
+
+    expect(res.status).toBe(200);
   });
 
   test('returns 422 when MailerLite reports invalid email', async () => {

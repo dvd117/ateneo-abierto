@@ -21,6 +21,23 @@ services:
       - "traefik.http.routers.ateneo-abierto.service=ateneo-abierto"
       - "traefik.http.services.ateneo-abierto.loadbalancer.server.port=3000"
       - "traefik.docker.network=dokploy-network"
+      # Second layer under the app's own limiter (src/rate-limit.ts): this one
+      # turns a flood away at the edge, before it reaches a container at all.
+      # Same allowance, so neither layer is the surprising one.
+      - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.average=5"
+      - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.period=1m"
+      - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.burst=2"
+      # depth counts from the RIGHT of X-Forwarded-For, so this is the entry
+      # the trusted proxy wrote, not one the visitor could have sent ahead of
+      # it. Traefik only keeps an incoming XFF when the peer is a Deflect edge
+      # (forwardedHeaders.trustedIPs, re-rendered from the live edge list).
+      - "traefik.http.middlewares.ateneo-subscribe-ratelimit.ratelimit.sourceCriterion.ipStrategy.depth=1"
+      - "traefik.http.routers.ateneo-subscribe.rule=(Host(`ateneo-abierto.org`) || Host(`www.ateneo-abierto.org`)) && Path(`/api/subscribe`)"
+      - "traefik.http.routers.ateneo-subscribe.entrypoints=websecure"
+      - "traefik.http.routers.ateneo-subscribe.tls=true"
+      - "traefik.http.routers.ateneo-subscribe.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.ateneo-subscribe.middlewares=ateneo-subscribe-ratelimit"
+      - "traefik.http.routers.ateneo-subscribe.service=ateneo-abierto"
 
 networks:
   dokploy-network:

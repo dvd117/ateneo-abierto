@@ -285,3 +285,41 @@ describe('back to top', () => {
     expect(render).not.toMatch(/id="top"/);
   });
 });
+
+describe('the runtime image ships every file the server imports', () => {
+  /**
+   * The Dockerfile copies named server files rather than all of src/, so the
+   * image stays small and the browser bundle never rides along. The cost is
+   * that adding an import to app.ts can break production while every test
+   * passes — the failure only shows up as a crash loop after deploy.
+   */
+  function serverModules(): Set<string> {
+    const seen = new Set<string>();
+    const queue = ['server'];
+
+    while (queue.length > 0) {
+      const name = queue.pop() as string;
+      if (seen.has(name)) {
+        continue;
+      }
+      seen.add(name);
+
+      const source = readFileSync(`src/${name}.ts`, 'utf8');
+      for (const [, specifier] of source.matchAll(/from\s+'\.\/([\w.-]+)'/g)) {
+        queue.push(specifier);
+      }
+    }
+
+    return seen;
+  }
+
+  test('lists each of them in the COPY line', () => {
+    const dockerfile = readFileSync('Dockerfile', 'utf8');
+    const copied = dockerfile.match(/^COPY .*src\/server\.ts.*$/m)?.[0] ?? '';
+
+    expect(copied).not.toBe('');
+    for (const name of serverModules()) {
+      expect(copied).toContain(`src/${name}.ts`);
+    }
+  });
+});
