@@ -234,6 +234,13 @@ const rateLimitSubscribe = async (c: Context, next: Next) => {
   return next();
 };
 
+export function originAllowed(origin: string | undefined, siteOrigin: string): boolean {
+  if (origin === siteOrigin) return true;
+  const url = new URL(siteOrigin);
+  const host = url.host.startsWith('www.') ? url.host.slice(4) : url.host;
+  return origin === `${url.protocol}//${host}` || origin === `${url.protocol}//www.${host}`;
+}
+
 app.post(
   '/api/subscribe',
   rateLimitSubscribe,
@@ -249,7 +256,7 @@ app.post(
     // A missing Origin is refused too: browsers always send it on a
     // cross-origin POST, so only a non-browser caller arrives without one.
     const siteOrigin = process.env.SITE_ORIGIN;
-    if (siteOrigin && c.req.header('origin') !== siteOrigin) {
+    if (siteOrigin && !originAllowed(c.req.header('origin'), siteOrigin)) {
       return c.json({ error: 'forbidden' }, 403);
     }
 

@@ -387,6 +387,83 @@ describe('POST /api/subscribe', () => {
     }
   });
 
+  test('returns 403 for an unrelated origin', async () => {
+    const original = process.env.SITE_ORIGIN;
+    process.env.SITE_ORIGIN = 'https://ateneo-abierto.org';
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: { ...jsonHeaders, Origin: 'https://evil.com' },
+      body: validBody,
+    });
+
+    expect(res.status).toBe(403);
+    if (original !== undefined) {
+      process.env.SITE_ORIGIN = original;
+    } else {
+      delete process.env.SITE_ORIGIN;
+    }
+  });
+
+  test('returns 403 for an origin with the configured host as a suffix', async () => {
+    const original = process.env.SITE_ORIGIN;
+    process.env.SITE_ORIGIN = 'https://ateneo-abierto.org';
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: { ...jsonHeaders, Origin: 'https://ateneo-abierto.org.evil.com' },
+      body: validBody,
+    });
+
+    expect(res.status).toBe(403);
+    if (original !== undefined) {
+      process.env.SITE_ORIGIN = original;
+    } else {
+      delete process.env.SITE_ORIGIN;
+    }
+  });
+
+  test('returns 403 when the configured origin is missing', async () => {
+    const original = process.env.SITE_ORIGIN;
+    process.env.SITE_ORIGIN = 'https://ateneo-abierto.org';
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: validBody,
+    });
+
+    expect(res.status).toBe(403);
+    if (original !== undefined) {
+      process.env.SITE_ORIGIN = original;
+    } else {
+      delete process.env.SITE_ORIGIN;
+    }
+  });
+
+  test('accepts the apex and www spellings of the configured origin', async () => {
+    const original = process.env.SITE_ORIGIN;
+    process.env.SITE_ORIGIN = 'https://ateneo-abierto.org';
+
+    try {
+      for (const origin of ['https://ateneo-abierto.org', 'https://www.ateneo-abierto.org']) {
+        const res = await app.request('/api/subscribe', {
+          method: 'POST',
+          headers: { ...jsonHeaders, Origin: origin },
+          body: JSON.stringify({}),
+        });
+
+        expect(res.status).not.toBe(403);
+      }
+    } finally {
+      if (original !== undefined) {
+        process.env.SITE_ORIGIN = original;
+      } else {
+        delete process.env.SITE_ORIGIN;
+      }
+    }
+  });
+
   test('returns 400, not 500, when the body is not JSON', async () => {
     const res = await app.request('/api/subscribe', {
       method: 'POST',
