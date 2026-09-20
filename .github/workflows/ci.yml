@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The same two commands the README asks for before shipping.
+      - run: npm test
+      - run: npm run build
+
+      # A dependency advisory should fail here, not arrive as a surprise
+      # badge on a public repository.
+      - run: npm audit --audit-level=moderate

@@ -1,97 +1,105 @@
 # Ateneo Abierto
 
-Launch site for Ateneo Abierto.
+The site for [Ateneo Abierto](https://ateneo-abierto.org) — a Venezuelan civil
+society initiative teaching AI literacy to people that subscription paywalls and
+geo-restrictions leave out. One page, in Spanish and English, with a door for
+each of the three things it runs.
 
-## Current status
+Vite and TypeScript for the page, a small [Hono](https://hono.dev) server for
+`/api/*` and for the prerendered HTML. No framework, no external request from
+the page: the fonts, the map and the talk poster are all vendored.
 
-- Vite + TypeScript frontend served by a small Hono Node server in production.
-- Wordmark-first visual identity based on the Civic Hearth direction.
-- Bilingual Spanish/English copy.
-- One-page QR reveal landing page; `/manifesto` is retired and redirects to `/`.
-- Locale behavior:
-  - `?lang=es` and `?lang=en` override everything.
-  - Saved language preference is stored in `localStorage`.
-  - Browser language is used when there is no override or saved preference.
-  - English is the fallback.
-- Subscribe form posts to the Hono `/api/subscribe` endpoint and uses MailerLite.
-- Current Docker Compose routing points Traefik at `ateneo-abierto.org`; the durable Oslo QR URL is still pending.
-- DNS is temporarily on Cloudflare while Deflect account/NS setup remains blocked.
-
-## Run locally
+## Run it
 
 ```bash
 npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite. The dev command runs Vite for the frontend and the Hono server for `/api/*`; Vite proxies API requests to `localhost:3000`.
-
-Useful scripts:
+Vite prints a local URL and proxies `/api/*` to the Hono server on port 3000.
 
 ```bash
-npm run dev        # Vite frontend + Hono API server
-npm run dev:ui     # Vite frontend only
-npm run dev:server # Hono API server only
-npm run start      # run the Hono server against built dist/ assets
+npm run dev        # the page and the API together
+npm run dev:ui     # the page alone
+npm run dev:server # the API alone
+npm start          # the Hono server against a built dist/
 ```
 
-Useful language URLs:
+The subscribe form needs the environment below. Without it the server refuses to
+start rather than accepting signups it cannot deliver.
 
-```text
-/?lang=es
-/?lang=en
+```bash
+cp .env.example .env
 ```
 
-## Verify
+| Variable | Required | What it is |
+| --- | --- | --- |
+| `MAILERLITE_API_KEY` | yes | MailerLite v3 key |
+| `MAILERLITE_GROUP_ES_ID` | yes | group for Spanish subscribers |
+| `MAILERLITE_GROUP_EN_ID` | yes | group for English subscribers |
+| `MAILERLITE_PARTICIPATE_ES_ID` | no | subscribers who ticked "I want to take part" |
+| `MAILERLITE_PARTICIPATE_EN_ID` | no | the same, in English |
+| `SITE_ORIGIN` | in production | the origin allowed to post to `/api/subscribe` |
+| `PORT` | no | defaults to 3000 |
+
+## Check it
 
 ```bash
 npm test
 npm run build
 ```
 
-Run both before shipping. For release checks, also verify `/`, `/?lang=es`, `/?lang=en`, `/manifesto` redirects to `/`, `/api/health`, and one real subscribe flow with production credentials.
+Both before shipping. The suite covers the copy, the locale rules, the prerender
+and the API; `src/source-safety.test.ts` also asserts the things that are easy
+to break by accident — that the page loads nothing from a third party, that the
+design tokens match `DESIGN.md`, and that the runtime image copies every file
+the server imports.
 
-## Subscribe integration
+## How it fits together
 
-The client uses `mailerliteProvider` in `src/subscribe.ts`, which posts to `/api/subscribe`.
+| File | What it holds |
+| --- | --- |
+| `src/content.ts` | every word on the page, both languages |
+| `src/render.ts` | the page as HTML, from that content |
+| `src/locale.ts` | `?lang=`, saved preference, browser language, in that order |
+| `src/main.ts` | the behaviour a browser adds on top |
+| `src/app.ts` | Hono: security headers, pages, `/api/subscribe`, static files |
+| `src/client-ip.ts` | who is asking, from behind the CDN |
+| `src/rate-limit.ts` | how often one visitor may ask |
+| `src/mailerlite.ts` | the MailerLite call |
+| `src/server.ts` | the Node entry point and its crash handlers |
+| `src/styles.css` | the visual identity, generated in part from `DESIGN.md` |
+| `scripts/vite-prerender.ts` | writes the finished page into the HTML at build time |
+| `DESIGN.md` | the visual direction, and the source of truth for colour |
+| `mail/` | the welcome emails |
 
-The server sanitizes input, rejects invalid emails, uses a honeypot field, enforces JSON content,
+### Addresses
 
-and calls MailerLite through `src/mailerlite.ts`.
+`/` is the page. `/demo-nights`, `/talleres` and `/hackaton` are the same page
+opened at one door, each with its own title and link preview. `/hackathon` and
+`/workshops` redirect to the Spanish spellings; `/manifesto` is retired and
+redirects home. `?lang=es` and `?lang=en` override everything.
 
-Required environment:
+### The page is prerendered
 
-```text
-MAILERLITE_API_KEY=
-SITE_ORIGIN=https://example.org
-PORT=3000
-```
+`npm run build` renders every route and locale into its own HTML file and
+inlines the stylesheet, so the first response is the finished page rather than
+an empty `<div>` and a wait for two more files. The server picks the right file
+from `?lang=` and `Accept-Language`.
 
-## Deployment notes
+Inline CSS is allowed by exact SHA-256 hash, never by `'unsafe-inline'`: the
+build writes the hashes to `dist/csp.json` and the server reads them into the
+Content-Security-Policy.
 
-Cloudflare is the temporary DNS/CDN path. Deflect remains the preferred protective CDN path once account verification and nameserver setup are available.
+## Deploying
 
-Pending:
+`docker compose up` builds the image and serves it on port 3000, with Traefik
+labels for the production host. Pushing to `main` redeploys.
 
-- Deflect account/domain verification.
-- Final Deflect vs Cloudflare cutover decision.
-- Final durable URL for the Oslo QR code.
-- Production MailerLite API key and live subscribe test.
-- QR scan test from slide distance.
+## Licence
 
-## Project files
+Code is [MIT](LICENSE). The words, the visual direction and the project's own
+images are [CC BY-SA 4.0](LICENSE-CONTENT.md). The name and the mark are not
+covered by either. The fonts in `public/fonts/` carry their own licences.
 
-- `src/content.ts`: bilingual copy.
-- `src/locale.ts`: locale detection and URL/localStorage behavior.
-- `src/subscribe.ts`: client-side subscribe validation and `/api/subscribe` provider.
-- `src/mailerlite.ts`: MailerLite API adapter.
-- `src/app.ts`: Hono app, security headers, health check, subscribe endpoint, and static serving.
-- `src/server.ts`: Node server entry point and crash handlers.
-- `src/main.ts`: page rendering and form/toggle behavior.
-- `src/styles.css`: visual identity and responsive layout.
-- `src/*.test.ts`: unit and safety tests.
-- `public/`: favicon, avatar, OG images, and self-hosted fonts.
-- `scripts/render-brand-assets.sh`: regenerate PNG brand assets from SVG sources.
-- `DESIGN.md`: public visual identity reference.
-- `agent_docs/`: local agent-facing content, deployment, and structure notes.
-
+Security reports: [SECURITY.md](SECURITY.md).
