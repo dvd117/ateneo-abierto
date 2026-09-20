@@ -12,6 +12,13 @@ services:
       - PORT=3000
     networks:
       - dokploy-network
+    # Without this, one leak here takes down every other site on the VPS. The
+    # app is a Hono process serving prerendered files; 512M is far more than it
+    # uses and still small enough to contain a runaway.
+    deploy:
+      resources:
+        limits:
+          memory: 512M
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.ateneo-abierto.rule=Host(`ateneo-abierto.org`) || Host(`www.ateneo-abierto.org`)"

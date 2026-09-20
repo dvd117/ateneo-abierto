@@ -94,7 +94,13 @@ Content-Security-Policy.
 ## Deploying
 
 `docker compose up` builds the image and serves it on port 3000, with Traefik
-labels for the production host. Pushing to `main` redeploys.
+labels for the production host.
+
+Dokploy watches the `production` branch, not `main`. Pushing to `main` runs CI;
+only once the tests, the image build and its smoke boot all pass does the `ship`
+job fast-forward `production`, and that is what triggers the deploy. So a red
+build never reaches the site, and `production` never moves by hand — the push is
+fast-forward only and fails loudly rather than overwriting what is live.
 
 ## Licence
 

@@ -26,7 +26,12 @@ USER app
 
 EXPOSE 3000
 
+# An address, not a name: the check then depends on nothing but the socket.
+# `localhost` also works here — node-server passes no hostname to listen(), so
+# Node takes the dual-stack wildcard and answers on both loopbacks — but that
+# is a property of this server, not of the healthcheck, and a container that
+# fails this one is dropped from Traefik's backend pool entirely.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD wget -qO- http://localhost:3000/api/health || exit 1
+  CMD wget -qO- http://127.0.0.1:3000/api/health || exit 1
 
 CMD ["node_modules/.bin/tsx", "src/server.ts"]
