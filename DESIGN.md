@@ -141,12 +141,10 @@ motion:
 ## Overview
 
 Ateneo Abierto teaches people in Venezuela to delegate office work to AI agents, and points at a
-network of public libraries as the place where that happens. The site has to convince two
-audiences with one page: funders who need to see a serious, forward-looking program, and
-Caracas participants who need to feel "I could do this today". The redesign (direction D,
-"Instrumento", decided 2026-09-11) answers both with one object: a simulated desktop agent
-window, in the visitor's language, doing the kind of work they already do. Everything else on
-the page is quiet so that object can be loud.
+network of public libraries as the place where that happens. The redesign (direction D,
+"Instrumento") is built around one object: a simulated desktop agent window, in the visitor's
+language, doing the kind of work they already do. Everything else on the page is quiet so that
+object can be loud.
 
 The palette is **Guacamaya** (chosen 2026-09-11 over Arcilla and Farol): warm graphite base, the
 gold of the blue-and-yellow macaws that cross Caracas every evening as the one signal, a muted
@@ -163,12 +161,12 @@ offer a theme toggle.
 - **Participants:** Caracas and other Venezuelan cities, mixed devices. Phones are the majority
   for reading; a modest laptop on an unstable connection is the build device. Mobile data is
   metered and slow; power cuts are ordinary.
-- **Funders and allies:** laptops, good connections, often reading in English.
+- **Readers abroad:** laptops, good connections, often reading in English.
 - **Threat model:** public program, public site. No participant data on the page. The intake
   form collects the minimum (name, city, what you do, what you would delegate). No third-party
   scripts, no external fonts, no analytics that phone home; the agent window is fully local
   and makes no requests.
-- **Budget (from the handoff, to confirm):** first paint under 2 s on throttled 3G; core HTML +
+- **Budget:** first paint under 2 s on throttled 3G; core HTML +
   CSS under 100 KB; the interactive layer lazy-loaded and skipped under `saveData` and
   `prefers-reduced-motion`. `webgl: none` follows from all of the above.
 
@@ -306,8 +304,7 @@ All above the 10 risk line. Re-run the table whenever a token changes.
 
 ## Typography
 
-Two voices, deliberately split (pairing B, chosen by David 2026-09-11 over Bricolage
-Grotesque and Figtree alone; comparison in `.superpowers/brainstorm/…/fonts.html`):
+Two voices, deliberately split (pairing B, over Bricolage Grotesque and Figtree alone):
 
 - **Fraunces** (`display`, `h1`, `h2`) is the manifesto voice: the headline, section titles,
   the title of the produced document. A soft, slightly irregular serif at weight 560, optical
@@ -386,9 +383,7 @@ still never loops:
     records progress, and tilt sits on top of it.
   **It is his method, never his image**: the stripes must not reproduce the
   Maiquetía floor (*Cromointerferencia de color aditivo*) or its yellow/black/red/blue modules.
-  On 2026-09-07 the artist's family publicly objected to unauthorised imitations of that
-  pattern, and David chose the method over the image (2026-09-11). The floor is quoted
-  deliberately in words, once (2026-09-14): a single line under band three, before Únete, the
+  The floor is quoted deliberately in words, once: a single line under band three, before Únete, the
   only moment the page speaks in the founder's voice. It is a real paragraph beside the
   `aria-hidden` band, Fraunces italic at the door "who" size, `bone-soft`, right-aligned on
   desktop and centred on a phone, and unsigned. Bands one and two carry no line.

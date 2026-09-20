@@ -822,7 +822,7 @@ function renderTalk(page: PageCopy): string {
             <span class="talk-label">${inline(talk.label)}</span>
             <span class="talk-name">${inline(talk.talkTitle)}</span>
             <span class="talk-privacy">${inline(talk.privacy)}</span>
-            <a class="talk-watch link" href="https://www.youtube.com/watch?v=${TALK_VIDEO_ID}" target="_blank" rel="noopener">${inline(talk.watch)} <span aria-hidden="true">&nearr;</span></a>
+            <a class="talk-watch link" href="https://www.youtube.com/watch?v=${TALK_VIDEO_ID}" target="_blank" rel="noopener noreferrer">${inline(talk.watch)} <span aria-hidden="true">&nearr;</span></a>
           </figcaption>
         </figure>
       </div>

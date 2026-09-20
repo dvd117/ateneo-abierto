@@ -323,3 +323,20 @@ describe('the runtime image ships every file the server imports', () => {
     }
   });
 });
+
+describe('links that leave the site', () => {
+  test('every external link carries noopener AND noreferrer', () => {
+    const render = readFileSync('src/render.ts', 'utf8');
+    const anchors = [...render.matchAll(/<a\b[^>]*href="https?:\/\/[^>]*>/g)].map((m) => m[0]);
+
+    expect(anchors.length).toBeGreaterThan(0);
+    for (const anchor of anchors) {
+      // noopener alone still hands the destination a Referer. The header says
+      // origin-only today, but Deflect's Referrer-Policy toggle is per site and
+      // on for aragort.com, where it downgrades to the full URL — so the rel is
+      // the part of this that does not depend on an edge setting.
+      expect(anchor).toContain('noopener');
+      expect(anchor).toContain('noreferrer');
+    }
+  });
+});
