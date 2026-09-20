@@ -28,3 +28,11 @@ updates:
     directory: /
     schedule:
       interval: monthly
+
+  # The base image is the one dependency nothing was watching: npm covers the
+  # packages, github-actions covers CI, and node:22-alpine was renewed by
+  # nobody. Alpine patch releases carry the CVE fixes.
+  - package-ecosystem: docker
+    directory: /
+    schedule:
+      interval: weekly

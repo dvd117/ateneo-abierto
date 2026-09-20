@@ -4,6 +4,10 @@ on:
   push:
     branches: [main]
   pull_request:
+  # A new advisory lands on a day nobody commits. Without this, npm audit
+  # only runs when something else happens to change.
+  schedule:
+    - cron: "0 6 * * 1"
 
 permissions:
   contents: read
@@ -28,3 +32,73 @@ jobs:
       # A dependency advisory should fail here, not arrive as a surprise
       # badge on a public repository.
       - run: npm audit --audit-level=moderate
+
+  # npm run build is not docker build. The Dockerfile copies an explicit list
+  # of files from src/; add a module the server imports, forget that line, and
+  # the job above stays green while the container crashes on boot. This is the
+  # only step that would catch it before Dokploy does.
+  image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v3
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: false
+          load: true
+          tags: ateneo-abierto:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      # Build succeeding proves nothing about the CMD. Boot it and let the
+      # container's own HEALTHCHECK answer.
+      - name: Boot the image and wait for its healthcheck
+        run: |
+          # Dummy values only. The server refuses to start without these, and
+          # the healthcheck hits /api/health, which never calls MailerLite.
+          docker run -d --name ci-smoke \
+            -e PORT=3000 \
+            -e SITE_ORIGIN=http://localhost:3000 \
+            -e MAILERLITE_API_KEY=ci-not-a-real-key \
+            -e MAILERLITE_GROUP_ES_ID=0 \
+            -e MAILERLITE_GROUP_EN_ID=0 \
+            ateneo-abierto:ci
+          for i in $(seq 1 30); do
+            status=$(docker inspect -f '{{.State.Health.Status}}' ci-smoke 2>/dev/null || echo starting)
+            [ "$status" = "healthy" ] && echo "healthy after ${i}s" && exit 0
+            [ "$status" = "unhealthy" ] && break
+            sleep 1
+          done
+          echo "::error::container never reported healthy"
+          docker logs ci-smoke
+          exit 1
+
+  # Dokploy rebuilt on every push to main, so CI's verdict blocked nothing and
+  # a red build shipped. The obvious fix — turn auto-deploy off and drive the
+  # rebuild from here by webhook — does not work: Dokploy's own handler rejects
+  # the webhook when auto-deploy is off ("Automatic deployments are disabled
+  # for this compose"). The two switches are the same switch.
+  #
+  # So the gate moves to the branch instead. Dokploy watches `production` and
+  # still auto-deploys it; `production` only ever moves when this job advances
+  # it, and this job cannot start unless both jobs above passed. Pushing to
+  # main stays exactly as it was.
+  #
+  # Fast-forward only: if someone pushes to production by hand, this fails
+  # loudly rather than overwriting whatever is live.
+  ship:
+    needs: [verify, image]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+
+      - name: Advance production to this commit
+        run: git push origin ${{ github.sha }}:refs/heads/production
