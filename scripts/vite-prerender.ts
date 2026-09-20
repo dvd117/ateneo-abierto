@@ -1,6 +1,10 @@
 import { createHash } from 'node:crypto';
-import type { OutputAsset, OutputBundle } from 'rollup';
-import type { Plugin } from 'vite';
+// Vite 8 bundles rolldown and no longer re-exports rollup's types; its own
+// `Rollup` compat namespace is the supported way to name them from a plugin.
+import type { Plugin, Rollup } from 'vite';
+
+type OutputAsset = Rollup.OutputAsset;
+type OutputBundle = Rollup.OutputBundle;
 import type { Locale } from '../src/locale';
 import { DEEP_LINK_ROUTES, type DeepLinkRoute } from '../src/content';
 import { pageMeta, renderPage } from '../src/render';
