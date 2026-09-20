@@ -122,6 +122,17 @@ app.use(
       // created after the visitor presses play. Nothing else may be framed.
       // youtube.com rather than the no-cookie origin: see bindTalk in main.ts.
       frameSrc: ["'self'", 'https://www.youtube.com'],
+      // The three `default-src` does not cover.
+      //
+      // frameAncestors is the one browsers actually honour; X-Frame-Options
+      // above is the legacy spelling of the same intent, kept for old clients.
+      frameAncestors: ["'none'"],
+      // Without this, an injected <base> silently re-points every relative
+      // URL on the page — including the script tags — at another origin.
+      baseUri: ["'none'"],
+      // The page has exactly one form and it posts here. An injected form
+      // that ships the subscriber's address somewhere else will not submit.
+      formAction: ["'self'"],
     },
     permissionsPolicy: {
       camera: [],

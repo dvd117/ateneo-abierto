@@ -627,6 +627,15 @@ describe('prerendered home page', () => {
     expect(csp).toContain("frame-src 'self' https://www.youtube.com");
   });
 
+  test('closes the three holes default-src leaves open', async () => {
+    const res = await pagesApp.request('/');
+    const csp = res.headers.get('content-security-policy') ?? '';
+
+    expect(csp).toContain("frame-ancestors 'none'");
+    expect(csp).toContain("base-uri 'none'");
+    expect(csp).toContain("form-action 'self'");
+  });
+
   test('reads no hashes when csp.json is missing or malformed', () => {
     expect(loadStyleHashes(join(dir, 'nowhere'))).toEqual([]);
     expect(loadStyleHashes(dir)).toEqual([esHash]);
