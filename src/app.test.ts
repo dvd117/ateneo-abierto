@@ -241,11 +241,39 @@ describe('POST /api/subscribe', () => {
     expect(res.status).toBe(200);
     const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
     const body = JSON.parse(init.body as string);
-    expect(body.fields.city.startsWith('Maracay')).toBe(true);
+    expect(body.fields.city.startsWith('bMaracay/b')).toBe(true);
     expect(body.fields.city).not.toContain('<');
     expect(body.fields.city.length).toBeLessThanOrEqual(100);
     // The delegate_task custom field exists in MailerLite since 2026-09-14.
     expect(body.fields.delegate_task).toBe('Los informes de fin de mes');
+  });
+
+  test.each([
+    ['<b>Ana</b>', 'bAna/b'],
+    ['<img src=x onerror=alert(1)', 'img src=x onerror=alert(1)'],
+    ['José Ñúñez', 'José Ñúñez'],
+  ])('strips angle brackets from the name while preserving text: %s', async (input, expected) => {
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    const mockFetch = vi.fn().mockResolvedValue(new Response('{}', { status: 201 }));
+    vi.stubGlobal('fetch', mockFetch);
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: jsonHeaders,
+      body: JSON.stringify({
+        email: 'user@example.com',
+        name: input,
+        newsletterLocale: 'es',
+        website: ''
+      }),
+    });
+
+    expect(res.status).toBe(200);
+    const [, init] = mockFetch.mock.calls[0] as [string, RequestInit];
+    const body = JSON.parse(init.body as string);
+    expect(body.fields.name).toBe(expected);
+    expect(body.fields.name).not.toContain('<');
+    expect(body.fields.name).not.toContain('>');
   });
 
   test('returns 400 for missing newsletter language', async () => {
