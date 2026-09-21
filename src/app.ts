@@ -252,6 +252,11 @@ export function originAllowed(origin: string | undefined, siteOrigin: string): b
   return origin === `${url.protocol}//${host}` || origin === `${url.protocol}//www.${host}`;
 }
 
+/** Keep subscriber answers as text even when a downstream provider renders fields as HTML. */
+function stripAngleBrackets(value: string): string {
+  return value.replace(/[<>]/g, '');
+}
+
 app.post(
   '/api/subscribe',
   rateLimitSubscribe,
@@ -293,14 +298,14 @@ app.post(
     // Input validation
     const email = typeof body.email === 'string' ? body.email.trim() : '';
     const name = typeof body.name === 'string'
-      ? body.name.trim().slice(0, 100).replace(/<[^>]*>/g, '')
+      ? stripAngleBrackets(body.name.trim().slice(0, 100))
       : '';
     // The two optional answers, capped and stripped the way name is.
     const city = typeof body.city === 'string'
-      ? body.city.trim().slice(0, 100).replace(/<[^>]*>/g, '')
+      ? stripAngleBrackets(body.city.trim().slice(0, 100))
       : '';
     const delegate = typeof body.delegate === 'string'
-      ? body.delegate.trim().slice(0, 200).replace(/<[^>]*>/g, '')
+      ? stripAngleBrackets(body.delegate.trim().slice(0, 200))
       : '';
     const newsletterLocale = body.newsletterLocale;
     const participate = body.participate === true;

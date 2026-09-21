@@ -729,7 +729,6 @@ function renderMap(page: PageCopy): string {
 
   const labels = map.nodes
     .map((node, index) => {
-      const { x, y } = points[index];
       const planned = node.planned ? ' is-planned' : '';
       return `<span class="map-city${planned}" data-node="${index}">${inline(node.name)}</span>`;
     })
