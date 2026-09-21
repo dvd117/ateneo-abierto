@@ -1,4 +1,5 @@
 import { Hono, type Context, type Next } from 'hono';
+import { HTTPException } from 'hono/http-exception';
 import { secureHeaders } from 'hono/secure-headers';
 import { serveStatic } from '@hono/node-server/serve-static';
 import { bodyLimit } from 'hono/body-limit';
@@ -10,6 +11,16 @@ import { clientIp } from './client-ip';
 import { subscribeLimiter } from './rate-limit';
 
 export const app = new Hono();
+
+app.onError((err, c) => {
+  if (err instanceof HTTPException) {
+    const response = err.getResponse();
+    return c.newResponse(response.body, response);
+  }
+
+  console.error('[error] unhandled', err.message, err.stack);
+  return c.json({ ok: false, reason: 'server-error' }, 500);
+});
 
 /** Where `vite build` put the site. Overridable so tests can point at fixtures. */
 const distDir = process.env.DIST_DIR ?? './dist';

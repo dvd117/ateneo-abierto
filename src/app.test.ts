@@ -488,6 +488,30 @@ describe('POST /api/subscribe', () => {
     expect(response.reason).toBe('invalid-json');
   });
 
+  test('returns JSON server-error when the subscribe route throws', async () => {
+    const original = process.env.SITE_ORIGIN;
+    process.env.SITE_ORIGIN = 'not a URL';
+    const errorLog = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    try {
+      const res = await app.request('/api/subscribe', {
+        method: 'POST',
+        headers: { ...jsonHeaders, Origin: 'https://ateneo-abierto.org' },
+        body: validBody,
+      });
+
+      expect(res.status).toBe(500);
+      expect(await res.json()).toEqual({ ok: false, reason: 'server-error' });
+      expect(errorLog).toHaveBeenCalledWith('[error] unhandled', expect.any(String), expect.any(String));
+    } finally {
+      if (original !== undefined) {
+        process.env.SITE_ORIGIN = original;
+      } else {
+        delete process.env.SITE_ORIGIN;
+      }
+    }
+  });
+
   test('rate-limits one address after five posts in a minute', async () => {
     process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{}', { status: 201 })));
