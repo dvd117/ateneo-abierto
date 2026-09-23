@@ -236,6 +236,18 @@ describe('scene runner', () => {
     expect(onFinish).not.toHaveBeenCalled();
   });
 
+  test('a held window moves at the opening pace, not after the beats it already shows', () => {
+    const { thread, beats, input } = makeWindow();
+
+    playScene(asEl(thread), { stepMs: 100, input: asEl(input), revealed: ['prompt', 'files'] });
+    expect(revealed(beats)).toEqual(['prompt', 'files']);
+
+    // The opening cue waits 0.2 steps; a held run must not add the skipped
+    // beats' waits (0.2 + 0.9) in front of the first one it actually plays.
+    vi.advanceTimersByTime(20);
+    expect(revealed(beats)).toEqual(['prompt', 'files', 'ack']);
+  });
+
   test('still plays both rounds without an input box to type into', () => {
     const { thread, beats } = makeWindow();
 

@@ -405,6 +405,12 @@ function bindAgent(page: PageCopy): void {
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
+        // Fetch the runner at the first pixel, so a fast scroll does not also
+        // wait on the network once the window is far enough in to start.
+        if (entry.intersectionRatio > 0) {
+          loadSceneRunner().catch(() => undefined);
+        }
+
         if (entry.intersectionRatio >= start - 0.005) {
           if (!played) {
             played = true;

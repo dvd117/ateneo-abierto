@@ -168,6 +168,7 @@ export function playScene(thread: HTMLElement, options: PlayOptions = {}): Scene
   };
 
   let elapsed = 0;
+  let opening = true;
 
   for (const cue of TIMELINE) {
     const el = beats.get(cue.beat);
@@ -175,7 +176,14 @@ export function playScene(thread: HTMLElement, options: PlayOptions = {}): Scene
       continue;
     }
 
-    elapsed += cue.delay * unit;
+    // A beat already on screen costs no time: the first beat that actually
+    // plays takes the opening wait, so a held window moves as soon as it starts.
+    if (held.has(cue.beat)) {
+      continue;
+    }
+
+    elapsed += (opening ? TIMELINE[0].delay : cue.delay) * unit;
+    opening = false;
 
     // The follow-up is typed into the input, character by character, and sent
     // with the button on the right — then it appears in the conversation.
