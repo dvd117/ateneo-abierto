@@ -837,39 +837,38 @@ export const copy: Record<Locale, PageCopy> = {
           id: 'talleres',
           n: '02',
           title: 'Talleres',
-          body: 'Una sesión práctica para tu equipo u organización, armada sobre el trabajo que ya hacen: sus archivos, sus informes, sus tareas de cada semana.',
+          body: 'Sesiones prácticas en grupos pequeños, un tema a la vez. Aprendes a dirigir un agente en tareas reales, en tu propia computadora y con archivos de ejemplo.',
           whoLabel: 'Para quién',
-          who: 'Equipos, organizaciones, escuelas y universidades que quieren empezar juntos.',
+          who: 'Grupos abiertos y equipos de organizaciones, escuelas y universidades. Basta con saber lo básico de una computadora.',
           cta: 'mail',
           details: {
-            goal: 'Que el equipo salga dirigiendo una o dos tareas reales y con una forma de seguir por su cuenta.',
+            goal: 'Que salgas habiendo dirigido un agente por tu cuenta, en tu propia computadora, y con un espacio de trabajo listo para seguir usándolo.',
             activities: [
-              'Antes de la sesión levantamos las tareas que más tiempo les quitan.',
-              'Sesión de medio día, presencial o remota, con sus propios archivos.',
-              'Cada persona sale con su agente instalado y sus instrucciones escritas.',
-              'Un seguimiento a las dos semanas para ajustar lo que no funcionó.'
+              'Arrancamos con una demostración en vivo: la misma tarea, con chatbot y con agente.',
+              'Cada persona instala un agente en su computadora.',
+              'Trabajas con los archivos de una empresa de ejemplo: documentos, hojas de cálculo, presentaciones y PDF.',
+              'Al final le enseñas al agente una tarea propia.'
             ],
-            expect: 'Se coordina por correo. Escríbenos y armamos la sesión a la medida.'
+            expect: 'Presencial, dos horas y media, de 8 a 15 personas. Trae tu laptop. Se coordina por correo: escríbenos.'
           }
         },
         {
           id: 'hackaton',
           n: '03',
           title: 'Hackatón para no técnicos',
-          body: 'En un fin de semana aprendes a usar tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código. Un mentor acompaña a cada equipo de principio a fin.',
+          body: 'Un día en equipos pequeños, con un mentor por equipo. Cada equipo elige una tarea real y la resuelve con agentes, y lo que crea se publica abierto para cualquiera.',
           whoLabel: 'Para quién',
-          who: 'Gente de oficina, docentes, comerciantes, equipos de organizaciones.',
-          // Approved in David's copy review, 2026-09-11. Format, venue, places
-          // and cost are still to confirm before launch.
+          who: 'Personas que ya pasaron por un taller o por las demos y quieren ir más lejos.',
+          // Facts revised 2026-09-29 (one day, for alumni, outputs published). Venue and places still to confirm.
           details: {
-            goal: 'Que salgas usando un agente en una tarea real de tu trabajo o tus estudios.',
+            goal: 'Que aprendas de las demás personas: qué herramientas usan, cómo las usan y qué les funciona.',
             activities: [
-              'Arrancamos con una demostración en vivo: la misma tarea, con chatbot y con agente.',
-              'Eliges una tarea que hoy te quita tiempo y la trabajas en un equipo pequeño.',
-              'Mentores te acompañan a instalar el agente y a darle tus primeras instrucciones, con archivos de ejemplo.',
-              'Al cierre, cada equipo muestra lo que logró.'
+              'Cada equipo elige una tarea real que quiere resolver.',
+              'Un mentor acompaña a cada equipo durante toda la jornada.',
+              'Al cierre, cada equipo muestra lo que logró.',
+              'Lo que crea cada equipo, como instrucciones y habilidades para agentes, se publica en el repositorio de Ateneo Abierto, abierto y libre para que cualquiera lo use.'
             ],
-            expect: 'Un fin de semana, presencial. No necesitas saber programar. Trae tu laptop; una modesta sirve. Mentorías incluidas.'
+            expect: 'Un día, presencial. No necesitas saber programar. Trae tu laptop; una modesta sirve. Mentorías incluidas.'
           }
         }
       ],
@@ -896,11 +895,11 @@ export const copy: Record<Locale, PageCopy> = {
       },
       talleres: {
         headline: ['Talleres'],
-        who: ['Equipos, organizaciones, escuelas y universidades', 'que quieren empezar juntos.']
+        who: ['Grupos abiertos y equipos de organizaciones, escuelas y universidades.', 'Basta con saber lo básico de una computadora.']
       },
       hackaton: {
         headline: ['Hackatón para', 'no técnicos'],
-        who: ['Gente de oficina, docentes, comerciantes,', 'equipos de organizaciones.']
+        who: ['Personas que ya pasaron por un taller o por las demos', 'y quieren ir más lejos.']
       }
     },
     // Approved 2026-09-14.
@@ -1374,39 +1373,38 @@ export const copy: Record<Locale, PageCopy> = {
           id: 'talleres',
           n: '02',
           title: 'Workshops',
-          body: 'A hands-on session for your team or organization, built on the work you already do: your files, your reports, your weekly tasks.',
+          body: 'Hands-on sessions in small groups, one topic at a time. You learn to direct an agent on real tasks, on your own computer, using sample files.',
           whoLabel: 'Who it’s for',
-          who: 'Teams, organizations, schools and universities that want to start together.',
+          who: 'Open groups and teams from organizations, schools and universities. Knowing the basics of a computer is enough.',
           cta: 'mail',
           details: {
-            goal: 'That the team leaves directing one or two real tasks, and a way to keep going on its own.',
+            goal: 'That you leave having directed an agent on your own, on your own computer, with a workspace ready to keep using.',
             activities: [
-              'Before the session we map the tasks that eat the most time.',
-              'A half-day session, in person or remote, using your own files.',
-              'Everyone leaves with their agent installed and their instructions written.',
-              'A follow-up two weeks later to fix what didn’t work.'
+              'We open with a live demo: the same task, with a chatbot and with an agent.',
+              'Everyone installs an agent on their computer.',
+              'You work with the files of a sample company: documents, spreadsheets, slides and PDFs.',
+              'At the end you teach the agent a task of your own.'
             ],
-            expect: 'Arranged by email. Write to us and we shape the session to fit.'
+            expect: 'In person, two and a half hours, 8 to 15 people. Bring your laptop. Arranged by email: write to us.'
           }
         },
         {
           id: 'hackaton',
           n: '03',
           title: 'Hackathon for non-technical people',
-          body: 'In one weekend you learn to use your first agent and walk out with it working, even if you’ve never written a line of code. A mentor stays with each team from start to finish.',
+          body: 'One day in small teams, with a mentor per team. Each team picks a real task and solves it with agents, and what it builds is published openly for anyone.',
           whoLabel: 'Who it’s for',
-          who: 'Office workers, teachers, shopkeepers, teams inside organizations.',
-          // Approved in David's copy review, 2026-09-11. Format, venue, places
-          // and cost are still to confirm before launch.
+          who: 'People who have been through a workshop or the demos and want to go further.',
+          // Facts revised 2026-09-29 (one day, for alumni, outputs published). Venue and places still to confirm.
           details: {
-            goal: 'That you leave using an agent on a real task from your work or your studies.',
+            goal: 'That you learn from the others: which tools they use, how they use them and what works for them.',
             activities: [
-              'We open with a live demo: the same task, with a chatbot and with an agent.',
-              'You pick a task that eats your time today and work on it in a small team.',
-              'Mentors help you install the agent and give it its first instructions, using sample files.',
-              'At the close, each team shows what it got done.'
+              'Each team picks a real task it wants to solve.',
+              'A mentor stays with each team for the whole day.',
+              'At the close, each team shows what it got done.',
+              'What each team builds, such as instructions and skills for agents, is published in Ateneo Abierto’s repository, open and free for anyone to use.'
             ],
-            expect: 'One weekend, in person. You don’t need to know how to code. Bring your laptop; a modest one will do. Mentorship included.'
+            expect: 'One day, in person. You don’t need to know how to code. Bring your laptop; a modest one will do. Mentorship included.'
           }
         }
       ],
@@ -1431,11 +1429,11 @@ export const copy: Record<Locale, PageCopy> = {
       },
       talleres: {
         headline: ['Workshops'],
-        who: ['Teams, organizations, schools and universities', 'that want to start together.']
+        who: ['Open groups and teams from organizations, schools and universities.', 'Knowing the basics of a computer is enough.']
       },
       hackaton: {
         headline: ['Hackathon for', 'non-technical people'],
-        who: ['Office workers, teachers, shopkeepers,', 'teams inside organizations.']
+        who: ['People who have been through a workshop or the demos', 'and want to go further.']
       }
     },
     // Approved 2026-09-14.
@@ -1562,51 +1560,51 @@ export const copy: Record<Locale, PageCopy> = {
 export const aliados = {
   meta: {
     title: 'Aliados · Ateneo Abierto',
-    description: 'Ateneo Abierto forma a personas sin formación técnica para que usen la tecnología en su trabajo y en su vida. Conoce cómo sumarte como aliado.'
+    description: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar la tecnología en su trabajo y en su vida. Conoce cómo sumarte como aliado.'
   },
   eyebrow: 'Para aliados',
   titleLines: [{ text: 'La tecnología ya está al alcance de todos.' }, { text: 'Saber usarla, todavía no.', em: true }],
-  lead: 'Ateneo Abierto forma a personas sin formación técnica para que usen estas herramientas en su trabajo y en su vida, y para que se las enseñen a otros. Buscamos aliados para llegar a más gente.',
+  lead: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar estas herramientas en su trabajo y en su vida, y a enseñárselas a otras. Buscamos aliados para llegar a más personas.',
   proposal: [
-    { label: 'Qué hacemos', text: 'Demos, talleres y hackatones donde personas sin formación técnica aprenden a usar herramientas abiertas en tareas reales.' },
-    { label: 'Para quién', text: 'Gente de oficina, docentes, comerciantes, equipos de organizaciones y cualquiera que se haya quedado fuera.' },
+    { label: 'Qué hacemos', text: 'Demos, talleres y hackatones donde personas sin conocimientos técnicos aprenden a usar herramientas abiertas en tareas reales.' },
+    { label: 'Para quién', text: 'Personas que trabajan en oficinas, docentes, comerciantes y equipos de organizaciones.' },
     { label: 'Qué te proponemos', text: 'Que tu espacio, tu comunidad o tu experiencia nos ayuden a llegar a más personas. Nosotros ponemos la organización.' }
   ],
   gap: {
     title: 'La brecha',
     paragraphs: [
-      'Hoy buena parte del trabajo pasa por herramientas digitales, y muchas son abiertas y gratuitas. Cualquiera puede usarlas sin pagar licencias ni depender de una sola empresa.',
-      'Aun así, mucha gente se queda fuera porque nadie le enseñó a usarlas. Esa brecha cierra puertas de empleo, de estudio y de participación, y crece con cada herramienta nueva.'
+      'Hoy buena parte del trabajo pasa por herramientas digitales, y muchas de las mejores son abiertas. Nadie tiene que depender de una sola empresa para usarlas.',
+      'Aun así, muchas personas se quedan fuera porque nadie les enseñó a usarlas. Esa brecha cierra puertas de empleo, de estudio y de participación, y crece con cada herramienta nueva.'
     ],
-    thesis: 'Creemos que estas herramientas deberían poder usarlas incluso quienes nunca aprendieron a usar una computadora.'
+    thesis: 'Creemos que cualquier persona que sepa lo básico de una computadora puede aprender a usarlas.'
   },
   approach: {
-    title: 'Cómo la cerramos',
-    intro: 'Formamos personas con autonomía, capaces de usar la tecnología en su trabajo y en su vida, y de enseñarla. No formamos programadores.',
+    title: 'Cómo cerramos esa brecha',
+    intro: 'Hoy empezamos por los agentes de IA, herramientas a las que les das una tarea y trabajan contigo. Con ellas formamos personas con autonomía, capaces de usar la tecnología en su trabajo y en su vida, y de enseñarla. No formamos programadores.',
     pillars: [
       { title: 'Tú diriges.', body: 'La herramienta trabaja para la persona. Ella decide qué pedir, revisa el resultado y lo corrige.' },
       { title: 'Lo tuyo se queda contigo.', body: 'Enseñamos herramientas abiertas, para que tus archivos y tu trabajo sigan siendo tuyos.' },
       { title: 'Quien aprende, enseña.', body: 'Cada persona que formamos puede formar a otras, y así el conocimiento se multiplica.' }
-    ],
-    note: 'Hoy empezamos por los agentes de IA, herramientas a las que les das una tarea y trabajan contigo. Son la puerta de entrada que más interés despierta.'
+    ]
   },
   formats: {
-    title: 'Tres formatos',
+    title: 'Un camino en tres pasos',
+    intro: 'Cada formato lleva al siguiente. Primero ves lo que otras personas ya hacen, luego aprendes a hacerlo, y después lo llevas más lejos en equipo.',
     cards: [
       { title: 'Demos abiertas', href: '/demos', fields: [
-        { label: 'Para quién', text: 'Cualquier persona. Para mirar no hace falta inscribirse.' },
-        { label: 'Formato', text: 'Presentaciones de 2 a 5 minutos. Quien ya usa estas herramientas muestra qué tarea resolvió, qué falló antes de que funcionara y cómo lo logró.' },
-        { label: 'Con qué sales', text: 'Ideas probadas por otros y contacto con gente que resuelve problemas parecidos. También es la entrada para que la comunidad técnica se sume como mentora.' }
+        { label: 'Para quién', text: 'Cualquier persona. Para mirar no hace falta inscribirse; para presentar, sí.' },
+        { label: 'Formato', text: 'Presentaciones de 2 a 5 minutos, sin diapositivas. Quien ya usa estas herramientas muestra qué resolvió, qué falló en el intento y cómo lo logró.' },
+        { label: 'Con qué sales', text: 'Ideas probadas por otras personas y contacto con quienes resuelven problemas parecidos. También es la entrada para quienes tienen experiencia técnica y quieren ser mentores.' }
       ] },
       { title: 'Talleres', href: '/talleres', fields: [
-        { label: 'Para quién', text: 'Una organización, escuela, universidad o equipo de trabajo.' },
-        { label: 'Formato', text: 'Medio día, presencial o remoto, diseñado a la medida. Antes de la sesión identificamos las tareas que más tiempo le quitan al equipo, y el taller se trabaja con sus propios archivos. A las dos semanas hacemos un seguimiento.' },
-        { label: 'Con qué sale el equipo', text: 'Una o dos tareas reales bajo su dirección y una forma de seguir por su cuenta.' }
+        { label: 'Para quién', text: 'Grupos abiertos y equipos de organizaciones. Basta con saber lo básico de una computadora.' },
+        { label: 'Formato', text: 'Presencial, dos horas y media, de 8 a 15 personas, un tema a la vez. En el primero, cada persona instala un agente en su computadora, trabaja con los archivos de una empresa de ejemplo (documentos, hojas de cálculo, presentaciones y PDF) y al final le enseña al agente una tarea propia.' },
+        { label: 'Con qué sales', text: 'La experiencia de haber dirigido un agente por tu cuenta, en tu propia computadora, y un espacio de trabajo listo para seguir usándolo.' }
       ] },
       { title: 'Hackatón para no técnicos', href: '/hackaton', fields: [
-        { label: 'Para quién', text: 'Cualquier persona sin formación técnica, por convocatoria abierta.' },
-        { label: 'Formato', text: 'Un fin de semana presencial, en equipos pequeños, con un mentor por equipo. Cada quien elige una tarea que hoy le quita tiempo y la trabaja con archivos de ejemplo.' },
-        { label: 'Con qué sales', text: 'Sabiendo dirigir un agente en una tarea real de tu trabajo o tus estudios. Al cierre, cada equipo presenta lo que logró.' }
+        { label: 'Para quién', text: 'Personas que ya pasaron por un taller o por las demos y quieren ir más lejos.' },
+        { label: 'Formato', text: 'Un día, presencial, en equipos pequeños con un mentor por equipo. Cada equipo elige una tarea real y la resuelve con agentes.' },
+        { label: 'Con qué sales', text: 'Lo que aprendes de las demás personas: qué herramientas usan, cómo las usan y qué les funciona. Lo que crea cada equipo, como instrucciones y habilidades para agentes, se publica en el repositorio de Ateneo Abierto, abierto y libre para que cualquiera lo use.' }
       ] }
     ]
   },
@@ -1625,8 +1623,9 @@ export const aliados = {
       'Internet rápido.',
       'Formación continua: digital, financiera y profesional.',
       'Libros y acceso al conocimiento.',
-      'Espacios para trabajar, reunirse y conocer gente.',
-      'Encuentro entre comunidades distintas.'
+      'Espacios para trabajar, reunirse y conocer a otras personas.',
+      'Encuentro entre comunidades distintas.',
+      'Alfabetización digital desde cero, para quien nunca ha usado una computadora.'
     ],
     closing: 'El conocimiento como un servicio público, igual que el transporte o la salud.'
   },
@@ -1637,7 +1636,7 @@ export const aliados = {
       { title: 'Espacio', body: 'Presta tu sede para una demo, un taller o una hackatón. Se convierte en punto de encuentro y recibe un público nuevo.' },
       { title: 'Difusión', body: 'Comparte nuestras convocatorias y le das a tu comunidad acceso a una formación que no encuentra en otro lado.' },
       { title: 'Conexiones', body: 'Preséntanos a personas y organizaciones que deberían conocernos, y acercas comunidades que se necesitan.' },
-      { title: 'Mentoría', body: 'Acompaña a un equipo durante una hackatón, desde la tarea que elige hasta su presentación final. Pones tu experiencia al servicio de alguien que empieza y aprendes a enseñarla.' }
+      { title: 'Mentoría', body: 'Acompaña a un equipo durante la jornada de una hackatón, desde la tarea que elige hasta que la resuelve. Pones tu experiencia al servicio de alguien que empieza y aprendes a enseñarla.' }
     ],
     give: { label: 'Nosotros ponemos', text: 'el diseño de cada actividad, la convocatoria y el acompañamiento de principio a fin. Además conectamos a tu comunidad con otras: periodistas, organizaciones y la comunidad técnica.' },
     closing: 'Si trabajas en la cultura del conocimiento, aunque la tecnología no sea lo tuyo, este proyecto también es tuyo.'

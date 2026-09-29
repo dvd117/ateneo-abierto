@@ -87,7 +87,7 @@ describe('build-time prerender', () => {
 
     expect(es).toContain('<div id="app" data-locale="es" data-deep-link="hackaton">');
     expect(es).toContain('<title>Ateneo Abierto · Hackatón para no técnicos</title>');
-    expect(es).toMatch(/name="description"\s+content="En un fin de semana aprendes a usar tu primer agente y sales con él funcionando, aunque nunca hayas escrito una línea de código\."/);
+    expect(es).toMatch(/name="description"\s+content="Un día en equipos pequeños, con un mentor por equipo\."/);
     expect(es).toContain('property="og:title" content="Ateneo Abierto — Hackatón para no técnicos"');
     expect(es).toContain('property="og:image" content="https://ateneo-abierto.org/og-hackaton.png"');
     expect(es).toContain('name="twitter:image" content="https://ateneo-abierto.org/og-hackaton.png"');
@@ -157,8 +157,8 @@ describe('build-time prerender', () => {
       ...aliados.proposal.flatMap((row) => [row.label, row.text]),
       aliados.gap.title, ...aliados.gap.paragraphs, aliados.gap.thesis,
       aliados.approach.title, aliados.approach.intro,
-      ...aliados.approach.pillars.flatMap((pillar) => [pillar.title, pillar.body]), aliados.approach.note,
-      aliados.formats.title, ...aliados.formats.cards.flatMap((card) => [card.title, ...card.fields.flatMap((field) => [field.label, field.text])]),
+      ...aliados.approach.pillars.flatMap((pillar) => [pillar.title, pillar.body]),
+      aliados.formats.title, aliados.formats.intro, ...aliados.formats.cards.flatMap((card) => [card.title, ...card.fields.flatMap((field) => [field.label, field.text])]),
       aliados.respaldo.title, aliados.respaldo.body, aliados.respaldo.caption,
       aliados.vision.title, aliados.vision.near, aliados.vision.far, aliados.vision.farDetail,
       ...aliados.vision.items, aliados.vision.closing,
@@ -167,13 +167,13 @@ describe('build-time prerender', () => {
       aliados.roles.give.label, aliados.roles.give.text, aliados.roles.closing,
       aliados.contact.title, aliados.contact.line, aliados.contact.button
     ];
-    expect(strings).toHaveLength(77);
+    expect(strings).toHaveLength(78);
     for (const value of strings) {
       expect(copyFile).toContain(value);
       expect(html).toContain(value.replace(/"/g, '&quot;'));
       expect(value).not.toMatch(/[—–]/);
     }
-    for (const title of ['La brecha', 'Cómo la cerramos', 'Tres formatos', 'La idea ya salió al mundo', 'Hacia dónde vamos', 'Tu lugar en esto', 'Conversemos']) {
+    for (const title of ['La brecha', 'Cómo cerramos esa brecha', 'Un camino en tres pasos', 'La idea ya salió al mundo', 'Hacia dónde vamos', 'Tu lugar en esto', 'Conversemos']) {
       expect(html).toContain(`<h2 class="section-title" id="aliados-`);
       expect(html).toContain(`>${title}</h2>`);
     }

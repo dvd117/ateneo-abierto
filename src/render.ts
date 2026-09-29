@@ -1137,10 +1137,9 @@ export function renderAliadosPage(): string {
         <div class="aliados-approach-copy"><header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-approach-title">${inline(aliados.approach.title)}</h2></div></header>
           <p class="lead aliados-approach-intro" data-reveal>${inline(aliados.approach.intro)}</p></div>
         <div class="aliados-pillar-grid">${aliados.approach.pillars.map((pillar) => `<div class="door aliados-pillar" data-reveal><h3>${inline(pillar.title)}</h3><p>${inline(pillar.body)}</p></div>`).join('')}</div>
-        <p class="aliados-approach-note" data-reveal>${inline(aliados.approach.note)}</p>
       </div></section>
       <section class="sec aliados-formats" aria-labelledby="aliados-formats-title"><div class="shell">
-        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-formats-title">${inline(aliados.formats.title)}</h2></div></header>
+        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-formats-title">${inline(aliados.formats.title)}</h2></div><p class="lead sec-head-lead">${inline(aliados.formats.intro)}</p></header>
         <div class="door-grid aliados-format-grid">
           ${aliados.formats.cards.map((card) => `<article class="door aliados-format" data-reveal><h3 class="door-title">${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">Ver el formato <span aria-hidden="true">&nearr;</span></a></article>`).join('')}
         </div>

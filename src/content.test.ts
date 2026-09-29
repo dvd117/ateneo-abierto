@@ -284,7 +284,7 @@ describe('landing page copy', () => {
 
   test('says who each door is for, and places mentorships inside the hackathon', () => {
     // Nobody should have to guess which door is theirs.
-    expect(copy.es.doors.doors[2].who).toMatch(/docentes|oficina/);
+    expect(copy.es.doors.doors[2].who).toMatch(/taller|demos/);
     expect(copy.es.doors.doors[1].who).toMatch(/organizaciones/);
     expect(copy.en.doors.doors[1].who).toMatch(/organizations/);
     // David, 2026-09-11: mentors work inside each hackathon, not after it.
@@ -297,8 +297,8 @@ describe('landing page copy', () => {
 
     // Neither door may ask for code as a precondition.
     expect(copy.es.doors.lead).toMatch(/programar/);
-    expect(copy.es.doors.doors[2].body).toMatch(/línea de código/);
-    expect(copy.en.doors.doors[2].body).toMatch(/line of code/);
+    expect(copy.es.doors.doors[2].details.expect).toMatch(/No necesitas saber programar/);
+    expect(copy.en.doors.doors[2].details.expect).toMatch(/don’t need to know how to code/);
   });
 
   test('keeps prices and dates out of the program section', () => {
