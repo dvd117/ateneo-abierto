@@ -713,6 +713,7 @@ function openAtDoor(container: ParentNode, route: DeepLinkRoute): void {
 // never re-render it into the home page, whatever language was saved.
 if (root.dataset.page === 'aliados') {
   bindTalk(copy.es);
+  initProgressRail(root.querySelector<HTMLElement>('[data-progress]'));
   teardownReveal = initReveal(root, { animate: motionAllowed() });
 } else if (
   root.dataset.locale === currentLocale &&
