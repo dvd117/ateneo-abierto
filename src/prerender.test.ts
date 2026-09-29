@@ -94,13 +94,13 @@ describe('build-time prerender', () => {
     expect(es).toContain('hreflang="x-default" href="https://ateneo-abierto.org/hackaton"');
     expect(es).toContain('"@type": "WebSite", "url": "https://ateneo-abierto.org/", "name": "Ateneo Abierto", "description": "Un chatbot');
 
-    const en = fillTemplate(template, 'en', 'demo-nights');
-    expect(en).toContain('data-locale="en" data-deep-link="demo-nights"');
-    expect(en).toContain('<title>Ateneo Abierto · Demo Nights</title>');
+    const en = fillTemplate(template, 'en', 'demos');
+    expect(en).toContain('data-locale="en" data-deep-link="demos"');
+    expect(en).toContain('<title>Ateneo Abierto · Open Demos</title>');
     expect(en).toMatch(/name="description"\s+content="Two to five minutes: you show the tool/);
-    expect(en).toContain('property="og:image" content="https://ateneo-abierto.org/og-demo-nights-en.png"');
-    expect(en).toContain('rel="canonical" href="https://ateneo-abierto.org/demo-nights?lang=en"');
-    expect(en).toContain('hreflang="es" href="https://ateneo-abierto.org/demo-nights"');
+    expect(en).toContain('property="og:image" content="https://ateneo-abierto.org/og-demos-en.png"');
+    expect(en).toContain('rel="canonical" href="https://ateneo-abierto.org/demos?lang=en"');
+    expect(en).toContain('hreflang="es" href="https://ateneo-abierto.org/demos"');
     expect(en).not.toContain('content="old"');
 
     // The home page carries no deep link.
@@ -111,7 +111,7 @@ describe('build-time prerender', () => {
     expect(pageFileName('es')).toBe('index.html');
     expect(pageFileName('en')).toBe('index.en.html');
     expect(pageFileName('es', 'talleres')).toBe('talleres.html');
-    expect(pageFileName('en', 'demo-nights')).toBe('demo-nights.en.html');
+    expect(pageFileName('en', 'demos')).toBe('demos.en.html');
   });
 
   test('fails loudly rather than ship a page with stale metadata', () => {

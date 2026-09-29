@@ -19,7 +19,7 @@ import { pageMeta, renderPage } from '../src/render';
  *
  *   dist/index.html      Spanish (the default)
  *   dist/index.en.html   English
- *   dist/hackaton.html, hackaton.en.html, talleres…, demo-nights…
+ *   dist/hackaton.html, hackaton.en.html, talleres…, demos…
  *                        the same page opened at one door: its own head (title,
  *                        description, preview card, canonical) and a
  *                        data-deep-link on #app that main.ts scrolls to.

@@ -18,7 +18,7 @@ const root = app;
 const heroParam = new URLSearchParams(window.location.search).get('hero');
 const heroInput: HeroInput = heroParam === 'typed' || heroParam === 'scripted' ? heroParam : HERO_INPUT;
 
-/** Set by the prerender on /hackaton, /talleres and /demo-nights: the door this page opens at. */
+/** Set by the prerender on /hackaton, /talleres and /demos: the door this page opens at. */
 const deepLink = DEEP_LINK_ROUTES.find((route) => route === root.dataset.deepLink);
 
 let currentLocale = detectLocale({

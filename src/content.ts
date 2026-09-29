@@ -268,7 +268,7 @@ export type DoorsCopy = {
 };
 
 /**
- * The three doors as their own addresses (/hackaton, /talleres, /demo-nights),
+ * The three doors as their own addresses (/hackaton, /talleres, /demos),
  * so a post about one door previews that door. The route is the door's id.
  */
 /**
@@ -282,7 +282,7 @@ export const LICENCE = {
   deed: { es: 'https://creativecommons.org/licenses/by-sa/4.0/deed.es', en: 'https://creativecommons.org/licenses/by-sa/4.0/deed.en' }
 } as const;
 
-export const DEEP_LINK_ROUTES = ['demo-nights', 'talleres', 'hackaton'] as const;
+export const DEEP_LINK_ROUTES = ['demos', 'talleres', 'hackaton'] as const;
 export type DeepLinkRoute = (typeof DEEP_LINK_ROUTES)[number];
 
 /**
@@ -814,9 +814,9 @@ export const copy: Record<Locale, PageCopy> = {
       lead: 'Entra por la que te quede más cerca. Ninguna te pide saber programar.',
       doors: [
         {
-          id: 'demo-nights',
+          id: 'demos',
           n: '01',
-          title: 'Demo Nights',
+          title: 'Demos abiertas',
           body: 'Entre 2 y 5 minutos: muestras la herramienta que te ha sido útil en tu trabajo, qué salió mal antes de que funcionara, y cómo llegaste ahí.',
           whoLabel: 'Para quién',
           who: 'Quien ya armó algo y quiere enseñarlo, o aprender del intento de otro.',
@@ -827,7 +827,7 @@ export const copy: Record<Locale, PageCopy> = {
               'Preguntas al final de cada demo.',
               'Conversación abierta para conocer a gente que resuelve problemas parecidos.'
             ],
-            expect: 'Una noche, abierta a cualquiera. Para mirar no hace falta inscribirse; para presentar, sí.'
+            expect: 'Abierta a cualquiera. Para mirar no hace falta inscribirse; para presentar, sí.'
           }
         },
         {
@@ -890,8 +890,8 @@ export const copy: Record<Locale, PageCopy> = {
       }
     },
     deepLinks: {
-      'demo-nights': {
-        headline: ['Demo', 'Nights'],
+      demos: {
+        headline: ['Demos', 'abiertas'],
         who: ['Quien ya armó algo y quiere enseñarlo,', 'o aprender del intento de otro.']
       },
       talleres: {
@@ -941,7 +941,7 @@ export const copy: Record<Locale, PageCopy> = {
       lead:
         'Hay bibliotecas públicas donde no importa quién seas: prestan computadoras, enseñan a quien nunca ha tocado un teclado y te sientan al lado de gente que resuelve lo mismo que tú. Conocimiento, redes, infraestructura y cultura tecnológica, abiertos a cualquiera. Eso queremos para Venezuela. Empezamos pequeño; el norte es un espacio así en cada ciudad.',
       horizons: [
-        { label: 'Hoy', text: 'Hackatones, mentorías y Demo Nights, en grupos pequeños.' },
+        { label: 'Hoy', text: 'Hackatones, mentorías y demos abiertas, en grupos pequeños.' },
         { label: 'Después', text: 'Alianzas con universidades y organizaciones, al lado de la educación formal.' },
         { label: 'Norte', text: 'Un espacio abierto en cada ciudad, donde no importa quién eres o de dónde vienes, sino a dónde quieres llegar.' }
       ],
@@ -991,7 +991,7 @@ export const copy: Record<Locale, PageCopy> = {
     form: {
       eyebrow: 'Mantente al tanto',
       title: 'Únete',
-      lead: 'Te avisamos de la próxima hackatón y Demo Night. Nada más.',
+      lead: 'Te avisamos de la próxima hackatón y la próxima demo abierta. Nada más.',
       nameLabel: 'Nombre',
       namePlaceholder: 'Cómo te llamas',
       emailLabel: 'Correo',
@@ -1354,9 +1354,9 @@ export const copy: Record<Locale, PageCopy> = {
       lead: 'Come in through whichever one is closest to you. None of them asks you to know how to code.',
       doors: [
         {
-          id: 'demo-nights',
+          id: 'demos',
           n: '01',
-          title: 'Demo Nights',
+          title: 'Open Demos',
           body: 'Two to five minutes: you show the tool that has been useful in your work, what went wrong before it worked, and how you got there.',
           whoLabel: 'Who it’s for',
           who: 'Anyone who has built something and wants to show it, or to learn from someone else\u2019s attempt.',
@@ -1367,7 +1367,7 @@ export const copy: Record<Locale, PageCopy> = {
               'Questions after each demo.',
               'Open conversation to meet people solving similar problems.'
             ],
-            expect: 'One evening, open to anyone. You don’t need to sign up to watch; you do to present.'
+            expect: 'Open to anyone. You don’t need to sign up to watch; you do to present.'
           }
         },
         {
@@ -1425,8 +1425,8 @@ export const copy: Record<Locale, PageCopy> = {
       }
     },
     deepLinks: {
-      'demo-nights': {
-        headline: ['Demo', 'Nights'],
+      demos: {
+        headline: ['Open', 'Demos'],
         who: ['Anyone who has built something and wants to show it,', 'or to learn from someone else\u2019s attempt.']
       },
       talleres: {
@@ -1476,7 +1476,7 @@ export const copy: Record<Locale, PageCopy> = {
       lead:
         'There are public libraries where it doesn’t matter who you are: they lend computers, teach people who have never touched a keyboard, and sit you next to people working on the same problems as you. Knowledge, networks, infrastructure and a culture of technology, open to anyone. That’s what we want for Venezuela. We’re starting small; the horizon is a space like that in every city.',
       horizons: [
-        { label: 'Today', text: 'Hackathons, mentorships and Demo Nights, in small groups.' },
+        { label: 'Today', text: 'Hackathons, mentorships and open demos, in small groups.' },
         { label: 'Next', text: 'Partnerships with universities and organizations, alongside formal education.' },
         { label: 'Horizon', text: 'An open space in every city, where what matters isn’t who you are or where you come from, but where you want to go.' }
       ],
@@ -1526,7 +1526,7 @@ export const copy: Record<Locale, PageCopy> = {
     form: {
       eyebrow: 'Stay in the loop',
       title: 'Join',
-      lead: 'We’ll let you know about the next hackathon and Demo Night. Nothing else.',
+      lead: 'We’ll let you know about the next hackathon and open demo. Nothing else.',
       nameLabel: 'Name',
       namePlaceholder: 'What we should call you',
       emailLabel: 'Email',

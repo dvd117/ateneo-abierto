@@ -519,7 +519,7 @@ main [id] {
   scroll-margin-top: 4.5rem;
 }
 
-/* A door's own address (/hackaton, /talleres, /demo-nights) opens the page
+/* A door's own address (/hackaton, /talleres, /demos) opens the page
    with the door flush under the header: its margin is the header's height
    (53.8 px at every width: one row, 0.85rem padding, 1px rule). */
 main .door[id] {
@@ -2208,7 +2208,7 @@ main .door[id] {
 }
 
 /* The staircase as structure: on a wide screen the three doors climb, left
-   to right, the way someone actually arrives — a Demo Night to come and look,
+   to right, the way someone actually arrives — an open demo to come and look,
    a workshop that brings your team, then the hackathon where you build it
    yourself. Each step asks for more than the one before it. */
 @media (min-width: 861px) {

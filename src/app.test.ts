@@ -60,6 +60,12 @@ describe('static app routes', () => {
 });
 
 describe('door addresses', () => {
+  test('redirects the old demos address, preserving its query string', async () => {
+    const res = await app.request('/demo-nights?lang=en&ref=invite');
+    expect(res.status).toBe(301);
+    expect(res.headers.get('location')).toBe('/demos?lang=en&ref=invite');
+  });
+
   test('redirects the English spellings to the one address per door, keeping ?lang', async () => {
     for (const [from, to] of [['/hackathon', '/hackaton'], ['/workshops', '/talleres']]) {
       const bare = await app.request(from);
@@ -78,7 +84,7 @@ describe('door addresses', () => {
     expect(pageFile('es')).toBe('index.html');
     expect(pageFile('en')).toBe('index.en.html');
     expect(pageFile('es', 'hackaton')).toBe('hackaton.html');
-    expect(pageFile('en', 'demo-nights')).toBe('demo-nights.en.html');
+    expect(pageFile('en', 'demos')).toBe('demos.en.html');
   });
 
   test('knows the same routes the page does', () => {
