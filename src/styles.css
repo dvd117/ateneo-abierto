@@ -3220,6 +3220,10 @@ p > .link,
 }
 
 /* The partner page changes pace without changing the landing's vocabulary. */
+.sec[class*="aliados-"] {
+  padding-block: clamp(3rem, 6vw, 4.75rem);
+}
+
 .aliados-hero-grid {
   display: grid;
   gap: clamp(2rem, 5vw, 5rem);
@@ -3232,6 +3236,10 @@ p > .link,
 
 .aliados-hero .hero-line-in {
   animation: none;
+}
+
+.aliados-hero .hero-title {
+  font-size: clamp(2.6rem, 1.2rem + 3.6vw, 4.4rem);
 }
 
 .aliados-lead {
@@ -3278,7 +3286,7 @@ p > .link,
 
 .aliados-gap-thesis {
   max-width: 46ch;
-  margin-top: clamp(3rem, 7vw, 6rem);
+  margin-top: var(--gap-lg);
   font: 560 clamp(2rem, 1.3rem + 2.7vw, 3.6rem) / 1.12 var(--font-display);
   letter-spacing: var(--track-h1);
   color: var(--c-fg);
@@ -3341,14 +3349,10 @@ p > .link,
   height: 100%;
 }
 
-.aliados-format .door-title {
-  min-height: 3.5rem;
-}
-
 .aliados-format dl {
   display: grid;
+  align-content: start;
   gap: 0;
-  flex: 1;
   margin: 0;
 }
 
@@ -3398,7 +3402,7 @@ p > .link,
 
 .aliados-vision-near {
   max-width: 68ch;
-  margin-bottom: clamp(2.5rem, 6vw, 5rem);
+  margin-bottom: var(--gap-lg);
   font: var(--t-body);
   color: var(--c-fg-2);
 }
@@ -3419,15 +3423,16 @@ p > .link,
 
 .aliados-vision-grid {
   display: grid;
-  gap: var(--gap-md);
-  margin-block: clamp(3rem, 6vw, 5rem);
+  column-gap: clamp(2rem, 4vw, 3.5rem);
+  row-gap: 0;
+  margin-block: var(--gap-lg);
+  padding: 0;
   list-style: none;
 }
 
 .aliados-vision-grid li {
-  padding: var(--gap-md);
-  border: 1px solid var(--c-border);
-  background: var(--c-bg-panel);
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--c-border);
   font: var(--t-body);
   color: var(--c-fg-soft);
 }
@@ -3532,12 +3537,37 @@ p > .link,
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
+  /* Subgrid lines up title, the three fields and the link across the
+     cards, so each row is as tall as its longest text and no taller. */
+  .aliados-format-grid {
+    grid-template-rows: repeat(5, auto);
+  }
+
+  .aliados-format {
+    display: grid;
+    grid-row: span 5;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+
   .aliados-format dl {
-    grid-template-rows: 1fr 2.6fr 1.7fr;
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+  }
+
+  .aliados-format .door-title {
+    padding-bottom: 1rem;
+  }
+
+  .aliados-format-link {
+    margin-top: 1rem;
+    align-self: end;
+    justify-self: start;
   }
 
   .aliados-vision-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 62rem;
   }
 
   .aliados-role-grid {

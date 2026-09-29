@@ -190,11 +190,13 @@ describe('build-time prerender', () => {
     for (const old of ['La misión', 'Una comunidad abierta', 'Lo que hacemos', 'Cómo sumarte']) expect(html).not.toContain(old);
   });
 
-  test('keeps partner hero alignment without overriding the shared display scale', () => {
+  // David, 2026-09-29: each hero sentence fits two lines, so the partner hero
+  // sets its own, smaller size instead of the landing's display scale.
+  test('keeps partner hero alignment and its two-line title size', () => {
     const styles = readFileSync('src/styles.css', 'utf8');
 
     expect(styles).toMatch(/\.aliados-hero \.hero-line\s*\{[^}]*padding-left: 0\.12em;[^}]*margin-left: -0\.12em;/);
-    expect(styles).not.toMatch(/\.aliados-hero \.hero-title\s*\{[^}]*font-size:/);
+    expect(styles).toMatch(/\.aliados-hero \.hero-title\s*\{[^}]*font-size: clamp\(2\.6rem, 1\.2rem \+ 3\.6vw, 4\.4rem\);/);
   });
 
   test('keeps the W5 vision split, plain role titles and close approach copy', () => {
