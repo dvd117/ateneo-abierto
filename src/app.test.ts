@@ -695,7 +695,7 @@ describe('prerendered home page', () => {
     writeFileSync(join(dir, 'hackaton.en.html'), '<html lang="en"><body>Hackathon for non-technical people</body></html>');
     writeFileSync(join(dir, 'demos.html'), '<html lang="es"><body>Demos abiertas</body></html>');
     writeFileSync(join(dir, 'talleres.html'), '<html lang="es"><body>Talleres</body></html>');
-    writeFileSync(join(dir, 'aliados.html'), '<html lang="es"><head><meta name="robots" content="noindex"></head><body>Para aliados</body></html>');
+    writeFileSync(join(dir, 'aliados.html'), '<html lang="es"><head><meta name="robots" content="noindex"></head><body>La brecha</body></html>');
     writeFileSync(
       join(dir, 'csp.json'),
       JSON.stringify({ styleSrc: [esHash, "'unsafe-inline'", 'https://evil.example'] })
@@ -759,7 +759,10 @@ describe('prerendered home page', () => {
     ] as const) {
       const res = await pagesApp.request(path, { headers });
       expect(res.status).toBe(200);
-      expect(await res.text()).toContain('Para aliados');
+      const html = await res.text();
+      expect(html).toContain('La brecha');
+      expect(html).toContain('<html lang="es">');
+      expect(html).toContain('name="robots" content="noindex"');
       expect(res.headers.get('content-language')).toBe('es');
       expect(res.headers.get('cache-control')).toBe('no-cache');
     }
