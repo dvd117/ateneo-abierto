@@ -912,7 +912,7 @@ export const copy: Record<Locale, PageCopy> = {
         {
           icon: 'open',
           title: 'Abierto primero',
-          body: 'Empezamos por herramientas de código abierto, que puedes usar sin pagar. Si ya tienes una suscripción a ChatGPT o Claude, también te enseñamos a sacarles provecho.'
+          body: 'Empezamos por herramientas de código abierto, que puedes usar sin pagar y sin depender de una sola empresa.'
         },
         {
           icon: 'agency',
@@ -940,7 +940,7 @@ export const copy: Record<Locale, PageCopy> = {
       lead:
         'Hay bibliotecas públicas donde no importa quién seas: prestan computadoras, enseñan a quien nunca ha tocado un teclado y te sientan al lado de gente que resuelve lo mismo que tú. Conocimiento, redes, infraestructura y cultura tecnológica, abiertos a cualquiera. Eso queremos para Venezuela. Empezamos pequeño; el norte es un espacio así en cada ciudad.',
       horizons: [
-        { label: 'Hoy', text: 'Hackatones, mentorías y demos abiertas, en grupos pequeños.' },
+        { label: 'Hoy', text: 'Demos abiertas, talleres y hackatones, en grupos pequeños.' },
         { label: 'Después', text: 'Alianzas con universidades y organizaciones, al lado de la educación formal.' },
         { label: 'Norte', text: 'Un espacio abierto en cada ciudad, donde no importa quién eres o de dónde vienes, sino a dónde quieres llegar.' }
       ],
@@ -1446,7 +1446,7 @@ export const copy: Record<Locale, PageCopy> = {
         {
           icon: 'open',
           title: 'Open first',
-          body: 'We start with open-source tools you can use without paying. If you already pay for ChatGPT or Claude, we also teach you to get the most out of them.'
+          body: 'We start with open-source tools you can use without paying and without depending on a single company.'
         },
         {
           icon: 'agency',
@@ -1474,7 +1474,7 @@ export const copy: Record<Locale, PageCopy> = {
       lead:
         'There are public libraries where it doesn’t matter who you are: they lend computers, teach people who have never touched a keyboard, and sit you next to people working on the same problems as you. Knowledge, networks, infrastructure and a culture of technology, open to anyone. That’s what we want for Venezuela. We’re starting small; the horizon is a space like that in every city.',
       horizons: [
-        { label: 'Today', text: 'Hackathons, mentorships and open demos, in small groups.' },
+        { label: 'Today', text: 'Open demos, workshops and hackathons, in small groups.' },
         { label: 'Next', text: 'Partnerships with universities and organizations, alongside formal education.' },
         { label: 'Horizon', text: 'An open space in every city, where what matters isn’t who you are or where you come from, but where you want to go.' }
       ],
