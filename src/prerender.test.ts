@@ -1,5 +1,7 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { fillTemplate, inlineStylesheet, pageFileName, styleHashes } from '../scripts/vite-prerender';
+import { renderPage } from './render';
 
 /** The parts of index.html the prerender must find, in Vite's output shape. */
 const template = `<!doctype html>
@@ -24,6 +26,7 @@ const template = `<!doctype html>
     <link rel="alternate" hreflang="es" href="https://ateneo-abierto.org/" />
     <link rel="alternate" hreflang="en" href="https://ateneo-abierto.org/?lang=en" />
     <link rel="alternate" hreflang="x-default" href="https://ateneo-abierto.org/" />
+    <meta name="robots" content="index, follow, max-image-preview:large" />
     <title>Ateneo Abierto</title>
     <link rel="stylesheet" crossorigin href="/assets/index-abc123.css">
     <script type="application/ld+json">
@@ -37,6 +40,7 @@ const template = `<!doctype html>
   </head>
   <body>
     <div id="app" data-locale="es"><!--prerender--></div>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>`;
 
@@ -112,6 +116,36 @@ describe('build-time prerender', () => {
     expect(pageFileName('en')).toBe('index.en.html');
     expect(pageFileName('es', 'talleres')).toBe('talleres.html');
     expect(pageFileName('en', 'demos')).toBe('demos.en.html');
+  });
+
+  test('renders the Spanish-only unlisted partner page with no alternates or hydration', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+
+    expect(html).toContain('<html lang="es"');
+    expect(html).toContain('<title>Aliados · Ateneo Abierto</title>');
+    expect(html).toContain('name="robots" content="noindex"');
+    expect(html).toContain('rel="canonical" href="https://ateneo-abierto.org/aliados"');
+    expect(html).toContain('property="og:image" content="https://ateneo-abierto.org/og.png"');
+    expect(html).not.toContain('hreflang=');
+    expect(html).not.toContain('og:locale:alternate');
+    expect(html).not.toContain('src="/src/main.ts"');
+    expect(html).not.toMatch(/<a\b[^>]*href="https?:\/\//);
+    expect(html).toContain('Hagamos el puente');
+    expect(html).toContain('<em>juntos.</em>');
+    for (const path of ['/demos', '/talleres', '/hackaton']) {
+      expect(html).toContain(`href="${path}"`);
+    }
+    expect(html).toContain('href="mailto:ateneo@aragort.com"');
+  });
+
+  test('keeps the partner page unlisted from the sitemap and all ordinary pages', () => {
+    expect(readFileSync('public/sitemap.xml', 'utf8')).not.toContain('/aliados');
+    for (const locale of ['es', 'en'] as const) {
+      expect(renderPage(locale)).not.toContain('href="/aliados"');
+    }
+    for (const route of ['demos', 'talleres', 'hackaton'] as const) {
+      expect(fillTemplate(template, 'es', route)).not.toContain('href="/aliados"');
+    }
   });
 
   test('fails loudly rather than ship a page with stale metadata', () => {

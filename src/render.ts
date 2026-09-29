@@ -1,4 +1,4 @@
-import { copy, HERO_INPUT, LICENCE, REPO, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
+import { aliados, copy, HERO_INPUT, LICENCE, REPO, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
@@ -103,7 +103,7 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
  * tap away. The rail along its bottom edge fills as the visitor reads; it is
  * decoration for anyone who cannot see it, so it is hidden from the tree.
  */
-function renderHeader(page: PageCopy, locale: Locale): string {
+function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
   return `
     <header class="site-header">
       <div class="shell header-inner">
@@ -111,13 +111,13 @@ function renderHeader(page: PageCopy, locale: Locale): string {
           ${renderMark()}
           <span class="wordmark">Ateneo Abierto</span>
         </a>
-        <nav class="nav-links" aria-label="${page.sectionsLabel}">
+        ${partner ? '' : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
-        </nav>
-        <div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
+        </nav>`}
+        ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
-        </div>
+        </div>`}
       </div>
       <div class="progress-rail" data-progress aria-hidden="true"><span></span></div>
     </header>
@@ -944,7 +944,7 @@ function renderFooterMarks(page: PageCopy, locale: Locale): string {
         </ul>`;
 }
 
-function renderFooter(page: PageCopy, locale: Locale): string {
+function renderFooter(page: PageCopy, locale: Locale, partner = false): string {
   return `
     <footer class="site-footer">
       <div class="shell footer-grid">
@@ -952,16 +952,16 @@ function renderFooter(page: PageCopy, locale: Locale): string {
         <span class="footer-wordmark">${renderMark()}<span class="wordmark">Ateneo Abierto</span></span>
         <!-- The header's section links are hidden on a phone, where it keeps
              only the call to action. Same three destinations, same words. -->
-        <nav class="footer-nav" aria-label="${page.sectionsLabel}">
+        ${partner ? '' : `<nav class="footer-nav" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
-        </nav>
+        </nav>`}
       </div>
-${renderFooterMarks(page, locale)}
+${partner ? '' : renderFooterMarks(page, locale)}
       <div class="footer-meta">
-        <div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
+        ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
-        </div>
+        </div>`}
         <p>
           ${page.footer.contactLabel}:
           <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
@@ -1098,5 +1098,45 @@ export function renderPage(
     </main>
     ${renderFooter(page, locale)}
     ${renderToTop(page)}
+  `;
+}
+
+/** The partner briefing shares the site's frame, but is not a door or a locale variant. */
+export function renderAliadosPage(): string {
+  const page = copy.es;
+  const headline = aliados.titleLines.map((line) =>
+    `<span class="hero-line"><span class="hero-line-in">${line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)}</span></span>`
+  ).join(' ');
+
+  const sections = aliados.sections.map((section, index) => {
+    const id = `aliados-${index + 1}`;
+    const blocks = section.blocks.map((block) => {
+      if ('items' in block) {
+        return `<ul>${block.items.map((item) => `<li>${item.link ? `<a class="link" href="${item.link.href}">${inline(item.link.label)}</a>` : ''}${inline(item.text)}</li>`).join('')}</ul>`;
+      }
+      if ('link' in block) {
+        return `<p>${inline(block.before)}<a class="link" href="${block.link.href}">${inline(block.link.label)}</a>${inline(block.after)}</p>`;
+      }
+      return `<p>${inline(block.text)}</p>`;
+    }).join('');
+
+    return `<section class="sec aliados-section" aria-labelledby="${id}"><div class="shell">
+      <header class="sec-head"><div class="sec-head-main"><h2 class="section-title" id="${id}">${inline(section.title)}</h2></div></header>
+      <div class="prose aliados-prose">${blocks}</div>
+    </div></section>`;
+  }).join('');
+
+  return `
+    <a class="skip-link" href="#contenido">${page.skipToContent}</a>
+    ${renderHeader(page, 'es', true)}
+    <main id="contenido">
+      <section class="hero aliados-hero" aria-labelledby="hero-title"><div class="shell">
+        <p class="eyebrow">${inline(aliados.eyebrow)}</p>
+        <h1 class="display hero-title" id="hero-title">${headline}</h1>
+        <p class="lead aliados-lead">${inline(aliados.lead)}</p>
+      </div></section>
+      ${sections}
+    </main>
+    ${renderFooter(page, 'es', true)}
   `;
 }

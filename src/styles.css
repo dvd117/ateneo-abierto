@@ -3218,3 +3218,41 @@ p > .link,
     grid-template-columns: 5.25rem 1fr;
   }
 }
+
+/* The unlisted partner briefing uses the shared hero, section and type roles. */
+.aliados-hero .hero-title {
+  max-width: 13ch;
+}
+
+.aliados-lead {
+  max-width: 62ch;
+  margin-top: var(--gap-lg);
+}
+
+.aliados-section {
+  background-image: url("/grain.png");
+  background-size: 128px 128px;
+}
+
+.aliados-section .sec-head {
+  margin-bottom: var(--gap-md);
+}
+
+.aliados-prose {
+  display: grid;
+  gap: var(--gap-md);
+  color: var(--c-fg-soft);
+  font: var(--t-body);
+}
+
+.aliados-prose ul {
+  display: grid;
+  gap: var(--gap-sm);
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.aliados-prose li .link {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}

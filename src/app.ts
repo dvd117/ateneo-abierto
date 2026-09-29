@@ -181,6 +181,17 @@ for (const route of DEEP_LINK_ROUTES) {
   app.get(`/${route}`, servePage(route));
 }
 
+app.get('/aliados', (c, next) => {
+  const html = readPage('aliados.html');
+  if (html === null) {
+    return next();
+  }
+
+  c.header('Content-Language', 'es');
+  c.header('Cache-Control', 'no-cache');
+  return c.html(html);
+});
+
 /** A permanent redirect that keeps a supported ?lang= and drops anything else. */
 function redirectTo(path: string) {
   return (c: Context) => {
