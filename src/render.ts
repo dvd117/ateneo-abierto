@@ -1114,37 +1114,53 @@ export function renderAliadosPage(): string {
     `<span class="hero-line"><span class="hero-line-in">${line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)}</span></span>`
   ).join(' ');
 
-  const sections = aliados.sections.map((section, index) => {
-    const id = `aliados-${index + 1}`;
-    const blocks = section.blocks.map((block) => {
-      if ('talk' in block) {
-        return renderTalkFigure(page);
-      }
-      if ('items' in block) {
-        return `<ul>${block.items.map((item) => `<li>${item.link ? `<a class="link" href="${item.link.href}">${inline(item.link.label)}</a>` : ''}${inline(item.text)}</li>`).join('')}</ul>`;
-      }
-      if ('link' in block) {
-        return `<p>${inline(block.before)}<a class="link" href="${block.link.href}">${inline(block.link.label)}</a>${inline(block.after)}</p>`;
-      }
-      return `<p>${inline(block.text)}</p>`;
-    }).join('');
-
-    return `<section class="sec aliados-section" aria-labelledby="${id}"><div class="shell">
-      <header class="sec-head"><div class="sec-head-main"><h2 class="section-title" id="${id}">${inline(section.title)}</h2></div></header>
-      <div class="prose aliados-prose">${blocks}</div>
-    </div></section>`;
-  }).join('');
-
   return `
     <a class="skip-link" href="#contenido">${page.skipToContent}</a>
     ${renderHeader(page, 'es', true)}
     <main id="contenido">
-      <section class="hero aliados-hero" aria-labelledby="hero-title"><div class="shell">
-        <p class="eyebrow">${inline(aliados.eyebrow)}</p>
-        <h1 class="display hero-title" id="hero-title">${headline}</h1>
-        <p class="lead aliados-lead">${inline(aliados.lead)}</p>
+      <section class="hero aliados-hero" aria-labelledby="hero-title"><div class="shell aliados-hero-grid">
+        <div class="aliados-hero-copy">
+          <p class="eyebrow">${inline(aliados.eyebrow)}</p>
+          <h1 class="display hero-title" id="hero-title">${headline}</h1>
+          <p class="lead aliados-lead">${inline(aliados.lead)}</p>
+        </div>
+        <dl class="aliados-proposal door" data-reveal>
+          ${aliados.proposal.map((row) => `<div class="aliados-proposal-row"><dt>${inline(row.label)}</dt><dd>${inline(row.text)}</dd></div>`).join('')}
+        </dl>
       </div></section>
-      ${sections}
+      <section class="sec aliados-mission" aria-labelledby="aliados-mission-title"><div class="shell">
+        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-mission-title">${inline(aliados.mission.title)}</h2></div></header>
+        <div class="aliados-mission-grid">${aliados.mission.paragraphs.map((text) => `<p data-reveal>${inline(text)}</p>`).join('')}</div>
+      </div></section>
+      <section class="sec talk" aria-labelledby="aliados-community-title"><div class="shell talk-grid">
+        <div class="talk-copy" data-reveal>
+          <h2 class="section-title" id="aliados-community-title">${inline(aliados.community.title)}</h2>
+          <p class="lead talk-lead">${inline(aliados.community.body)}</p>
+          <p class="aliados-talk-line">${inline(aliados.community.talkLine)}</p>
+        </div>
+${renderTalkFigure(page)}
+      </div></section>
+      <section class="sec aliados-activities" aria-labelledby="aliados-activities-title"><div class="shell">
+        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-activities-title">${inline(aliados.activities.title)}</h2></div></header>
+        <div class="door-grid aliados-door-grid">
+          ${aliados.activities.cards.map((card) => `<a class="door aliados-activity" href="${card.href}" data-reveal><h3 class="door-title">${inline(card.title)}</h3><p class="door-body">${inline(card.body)}</p></a>`).join('')}
+        </div>
+      </div></section>
+      <section class="sec aliados-vision" aria-labelledby="aliados-vision-title"><div class="shell">
+        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-vision-title">${inline(aliados.vision.title)}</h2></div></header>
+        <div class="aliados-vision-intro" data-reveal><p>${inline(aliados.vision.near)}</p><p>${inline(aliados.vision.far)}</p></div>
+        <ul class="aliados-vision-grid">${aliados.vision.items.map((item) => `<li data-reveal>${inline(item)}</li>`).join('')}</ul>
+        <p class="aliados-vision-closing" data-reveal>${inline(aliados.vision.closing)}</p>
+      </div></section>
+      <section class="sec aliados-join" aria-labelledby="aliados-join-title"><div class="shell">
+        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-join-title">${inline(aliados.join.title)}</h2></div><p class="lead sec-head-lead">${inline(aliados.join.intro)}</p></header>
+        <div class="aliados-join-grid">${aliados.join.cards.map((card) => `<div class="door" data-reveal><h3 class="door-title">${inline(card.title)}</h3><p class="door-body">${inline(card.body)}</p></div>`).join('')}</div>
+        <div class="aliados-join-close" data-reveal><p>${inline(aliados.join.give)}</p><p>${inline(aliados.join.closing)}</p></div>
+      </div></section>
+      <section class="sec aliados-contact" aria-labelledby="aliados-contact-title"><div class="shell aliados-contact-grid">
+        <div data-reveal><h2 class="display join-title" id="aliados-contact-title">${inline(aliados.contact.title)}</h2><p class="lead join-lead">${inline(aliados.contact.line)}</p></div>
+        <a class="button button--fill" href="mailto:ateneo@aragort.com">${inline(aliados.contact.button)}</a>
+      </div></section>
     </main>
     ${renderFooter(page, 'es', true)}
   `;

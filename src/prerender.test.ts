@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { fillTemplate, inlineStylesheet, pageFileName, styleHashes } from '../scripts/vite-prerender';
+import { aliados } from './content';
 import { renderPage } from './render';
 
 /** The parts of index.html the prerender must find, in Vite's output shape. */
@@ -138,12 +139,55 @@ describe('build-time prerender', () => {
     expect(html.match(/<a\b[^>]*href="https?:\/\/[^>]*>/g)).toEqual([
       expect.stringMatching(/^<a class="talk-watch link" href="https:\/\/www\.youtube\.com\/watch\?v=[^"]+" target="_blank" rel="noopener noreferrer">$/)
     ]);
-    expect(html).toContain('Hagamos el puente');
-    expect(html).toContain('<em>juntos.</em>');
+    expect(html).toContain('Abramos el conocimiento');
+    expect(html).toContain('<em>a todos.</em>');
+    expect(html).toContain(`content="${aliados.meta.description}"`);
     for (const path of ['/demos', '/talleres', '/hackaton']) {
       expect(html).toContain(`href="${path}"`);
     }
     expect(html).toContain('href="mailto:ateneo@aragort.com"');
+  });
+
+  test('renders the approved partner copy verbatim in the full-width invitation layout', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const copyFile = readFileSync('.w/aliados-copy.md', 'utf8');
+    const strings = [
+      aliados.meta.title, aliados.meta.description, aliados.eyebrow,
+      ...aliados.titleLines.map((line) => line.text), aliados.lead,
+      ...aliados.proposal.flatMap((row) => [row.label, row.text]),
+      aliados.mission.title, ...aliados.mission.paragraphs,
+      aliados.community.title, aliados.community.body, aliados.community.talkLine,
+      aliados.activities.title, ...aliados.activities.cards.flatMap((card) => [card.title, card.body]),
+      aliados.vision.title, aliados.vision.near, aliados.vision.far,
+      ...aliados.vision.items, aliados.vision.closing,
+      aliados.join.title, aliados.join.intro,
+      ...aliados.join.cards.flatMap((card) => [card.title, card.body]),
+      aliados.join.give, aliados.join.closing,
+      aliados.contact.title, aliados.contact.line, aliados.contact.button
+    ];
+    for (const value of strings) {
+      expect(copyFile).toContain(value);
+      expect(html).toContain(value);
+      expect(value).not.toMatch(/[—–]/);
+    }
+    expect(html).toContain('class="shell aliados-hero-grid"');
+    expect(html).toContain('class="door-grid aliados-door-grid"');
+    expect(html).toContain('class="shell talk-grid"');
+    expect(html).toContain('class="aliados-join-grid"');
+    expect(html).toContain('class="shell aliados-contact-grid"');
+    expect(html.match(/class="door aliados-activity"/g)).toHaveLength(3);
+    expect(html.match(/class="aliados-proposal-row"/g)).toHaveLength(3);
+    expect(html.match(/class="door" data-reveal/g)).toHaveLength(4);
+  });
+
+  test('keeps partner-only fixes for title alignment, equal cards and the closing band', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+
+    expect(styles).toMatch(/\.aliados-hero \.hero-line\s*\{[^}]*padding-left: 0\.12em;[^}]*margin-left: -0\.12em;/);
+    expect(styles).not.toMatch(/\.aliados-hero \.hero-title\s*\{[^}]*font-size:/);
+    expect(styles).toMatch(/\.aliados-join-grid \.door\s*\{[^}]*margin: 0;/);
+    expect(styles).toMatch(/\.aliados-join \.sec-head-lead\s*\{[^}]*grid-column: 1 \/ -1;/);
+    expect(styles).not.toMatch(/\.aliados-contact-grid\s*\{[^}]*grid-template-columns:/);
   });
 
   test('keeps the partner page unlisted from the sitemap and all ordinary pages', () => {

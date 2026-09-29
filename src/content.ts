@@ -1559,83 +1559,69 @@ export const copy: Record<Locale, PageCopy> = {
 };
 
 /** The unlisted, Spanish-only partner briefing. It is not a programme door. */
-export type AliadosSection = {
-  title: string;
-  /** `talk` places the home page's Ignite Talk figure, unchanged. */
-  blocks: ({ text: string } | { talk: true } | { before: string; link: { label: string; href: string }; after: string } | { items: { text: string; link?: { label: string; href: string } }[] })[];
-};
-
 export const aliados = {
   meta: {
     title: 'Aliados · Ateneo Abierto',
-    description: 'Qué es Ateneo Abierto, cómo funciona hoy y hacia dónde va. Y cómo puedes sumarte con un espacio, difusión, contactos o mentores.'
+    description: 'Ateneo Abierto acerca la tecnología y el conocimiento a personas sin formación técnica. Así puedes sumarte como aliado.'
   },
   eyebrow: 'Para aliados',
-  titleLines: [{ text: 'Hagamos el puente' }, { text: 'juntos.', em: true }],
-  lead: 'Lo que conversamos en persona, por escrito. Para que lo leas con calma y lo compartas con tu equipo.',
-  sections: [
-    {
-      title: 'Qué es Ateneo Abierto',
-      blocks: [
-        { text: 'Queremos que la formación tecnológica sea accesible para personas sin un contexto técnico. Acercarlas a la tecnología y que la puedan implementar de mejor forma en sus labores diarias y en su trabajo.' },
-        { text: 'Hoy eso es aprender a usar agentes de IA. Le das una tarea al agente, tú lo diriges y revisas lo que entrega. No buscamos formar programadores. Buscamos gente con autonomía frente a la tecnología.' },
-        { text: 'Queremos hacer un puente entre la comunidad técnica y la comunidad no técnica.' }
-      ]
-    },
-    {
-      title: 'Cómo funciona hoy',
-      blocks: [
-        { text: 'Estamos haciendo esto sin recursos. Hoy lo impulsa una persona, David Aragort, pero la idea es que sea una iniciativa de comunidad.' },
-        { text: 'Una comunidad abierta de verdad. Cualquiera que comparta nuestra visión puede entrar, proponer y sumar.' },
-        { text: 'Si quieres saber de dónde viene esto, David lo cuenta en su Ignite Talk del Oslo Freedom Forum.' },
-        { talk: true }
-      ]
-    },
-    {
-      title: 'Lo que hacemos',
-      blocks: [
-        { text: 'Tres actividades, cada una con su página:' },
-        { items: [
-          { link: { label: 'Demos abiertas', href: '/demos' }, text: '. Entre 2 y 5 minutos, alguien muestra la herramienta que le ha sido útil en su trabajo, qué salió mal antes de que funcionara y cómo llegó ahí. Para mirar no hace falta inscribirse.' },
-          { link: { label: 'Talleres', href: '/talleres' }, text: '. Una sesión práctica para un equipo u organización, armada sobre el trabajo que ya hacen: sus archivos, sus informes, sus tareas de cada semana.' },
-          { link: { label: 'Hackatón para no técnicos', href: '/hackaton' }, text: '. En un fin de semana, cada persona aprende a usar su primer agente y sale con él funcionando, aunque nunca haya escrito una línea de código. Un mentor acompaña a cada equipo de principio a fin.' }
-        ] }
-      ]
-    },
-    {
-      title: 'Hacia dónde vamos',
-      blocks: [
-        { text: 'Cuando más gente ya use agentes, queremos probar hackatones más técnicas. Cada una resolvería el problema concreto de una comunidad, en alianza con organizaciones o medios. Esto todavía lo estamos pensando. No hay nada decidido.' },
-        { text: 'A cinco o diez años, imaginamos una red de espacios públicos de conocimiento en Venezuela. La biblioteca pública del siglo XXI. Abierta a cualquiera, sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encuentres:' },
-        { items: [
-          { text: 'formación continua, digital, financiera y profesional' },
-          { text: 'computadoras e internet rápido' },
-          { text: 'muchos libros y conocimiento, escogidos con cuidado' },
-          { text: 'espacios para trabajar y para reunirte' },
-          { text: 'espacios donde se encuentran comunidades distintas' }
-        ] },
-        { text: 'Lugares para llegar a oportunidades. El conocimiento como algo de todos, igual que el transporte público o la salud.' }
-      ]
-    },
-    {
-      title: 'Cómo sumarte',
-      blocks: [
-        { text: 'Si compartes nuestra visión, puedes aportar:' },
-        { items: [
-          { text: 'un espacio para los eventos' },
-          { text: 'difusión, para que lleguen a más gente' },
-          { text: 'apoyo y contactos' },
-          { text: 'mentores para las hackatones' }
-        ] },
-        { text: 'Nosotros organizamos y llevamos cada evento de principio a fin. Y te conectamos con otras comunidades, como periodistas y ONG.' },
-        { text: 'Si lo tuyo es la cultura digital más que la tecnología en sí, también hay lugar para ti.' }
-      ]
-    },
-    {
-      title: 'Contacto',
-      blocks: [
-        { before: 'Escríbenos a ', link: { label: 'ateneo@aragort.com', href: 'mailto:ateneo@aragort.com' }, after: '. Cuéntanos quién eres y qué te gustaría aportar.' }
-      ]
-    }
-  ] as AliadosSection[]
+  titleLines: [{ text: 'Abramos el conocimiento' }, { text: 'a todos.', em: true }],
+  lead: 'Ateneo Abierto es una comunidad abierta que acerca la tecnología y el conocimiento a personas sin formación técnica, para que los usen en su trabajo y en su vida. Buscamos aliados que compartan esa misión.',
+  proposal: [
+    { label: 'Qué somos', text: 'Una comunidad abierta, sin financiamiento, que acerca la tecnología a quien nunca la aprendió.' },
+    { label: 'Qué buscamos', text: 'Espacios, difusión, contactos y mentores.' },
+    { label: 'Qué ponemos', text: 'Organizamos cada actividad de principio a fin y te conectamos con otras comunidades.' }
+  ],
+  mission: {
+    title: 'La misión',
+    paragraphs: [
+      'Mucha gente se queda fuera de las oportunidades porque nadie le enseñó a usar las herramientas que hoy mueven el trabajo. Ateneo Abierto existe para cerrar esa brecha.',
+      'Organizamos encuentros donde personas sin contexto técnico aprenden con ejemplos de su propio trabajo, y donde la comunidad técnica comparte lo que sabe.',
+      'Hoy empezamos por los agentes de IA: les das una tarea y tú diriges el resultado. No formamos programadores. Formamos personas con autonomía, capaces de usar lo que aprenden y de enseñarlo.'
+    ]
+  },
+  community: {
+    title: 'Una comunidad abierta',
+    body: 'Funcionamos sin financiamiento, con el tiempo y los espacios que aporta la gente que cree en la idea. Cualquiera que comparta la misión puede sumarse, proponer actividades y ayudar a organizarlas.',
+    talkLine: 'Así presentamos la idea en el Oslo Freedom Forum.'
+  },
+  activities: {
+    title: 'Lo que hacemos',
+    cards: [
+      { title: 'Demos abiertas', href: '/demos', body: 'Personas que ya usan estas herramientas muestran en pocos minutos qué les funcionó y qué salió mal en el camino. Son abiertas a cualquiera, y también son la puerta para que personas con más experiencia técnica se sumen como mentores.' },
+      { title: 'Talleres', href: '/talleres', body: 'Sesiones prácticas para equipos, organizaciones o grupos de personas, armadas sobre lo que ya hacen: sus archivos, sus informes, sus tareas de cada semana.' },
+      { title: 'Hackatón para no técnicos', href: '/hackaton', body: 'En un fin de semana, cada persona aprende a usar su primer agente y sale con él funcionando, aunque nunca haya escrito una línea de código. Un mentor acompaña a cada equipo de principio a fin.' }
+    ]
+  },
+  vision: {
+    title: 'Hacia dónde vamos',
+    near: 'Cuando más gente ya use agentes, queremos probar hackatones más técnicas. Cada una resolvería el problema concreto de una comunidad, en alianza con organizaciones o medios. Esto todavía lo estamos pensando. No hay nada decidido.',
+    far: 'A cinco o diez años, imaginamos una red de espacios públicos de conocimiento en Venezuela. La biblioteca pública del siglo XXI. Abierta a cualquiera, sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encuentres:',
+    items: [
+      'Préstamo de computadoras y equipos, para usarlos ahí si no tienes los tuyos.',
+      'Internet rápido.',
+      'Talleres y formación continua: digital, financiera y profesional.',
+      'Libros y acceso a conocimiento.',
+      'Espacios para trabajar, reunirte y conocer gente.',
+      'Encuentro entre comunidades distintas.'
+    ],
+    closing: 'Lugares para llegar a oportunidades. El conocimiento como algo de todos, igual que el transporte público o la salud.'
+  },
+  join: {
+    title: 'Cómo sumarte',
+    intro: 'Si compartes nuestra misión, puedes aportar:',
+    cards: [
+      { title: 'Un espacio', body: 'para una demo, un taller o una hackatón.' },
+      { title: 'Difusión', body: 'para que la próxima actividad llegue a más gente.' },
+      { title: 'Contactos y apoyo', body: 'presentarnos a personas y organizaciones que deberían conocernos.' },
+      { title: 'Mentoría', body: 'acompañar a un equipo durante una hackatón.' }
+    ],
+    give: 'Nosotros diseñamos y llevamos cada actividad de principio a fin, y conectamos a tu comunidad con otras: periodistas, ONG, gente técnica.',
+    closing: 'Si trabajas en la cultura del conocimiento, aunque la tecnología no sea lo tuyo, también hay lugar para ti.'
+  },
+  contact: {
+    title: 'Conversemos',
+    line: 'Cuéntanos quién eres y qué te gustaría aportar.',
+    button: 'Escríbenos a ateneo@aragort.com'
+  }
 };

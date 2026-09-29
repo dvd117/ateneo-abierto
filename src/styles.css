@@ -3219,40 +3219,166 @@ p > .link,
   }
 }
 
-/* The unlisted partner briefing uses the shared hero, section and type roles. */
-.aliados-hero .hero-title {
-  max-width: 13ch;
+/* The unlisted invitation keeps the landing's grid, card, talk and type roles. */
+.aliados-hero-grid,
+.aliados-mission-grid,
+.aliados-vision-intro,
+.aliados-contact-grid {
+  display: grid;
+  gap: var(--gap-lg);
+}
+
+.aliados-hero .hero-line {
+  padding-left: 0.12em;
+  margin-left: -0.12em;
 }
 
 .aliados-lead {
-  max-width: 62ch;
-  margin-top: var(--gap-lg);
+  margin-top: var(--gap-md);
 }
 
-.aliados-section {
-  background-image: url("/grain.png");
-  background-size: 128px 128px;
+.aliados-proposal {
+  margin: 0;
+  gap: 0;
 }
 
-.aliados-section .sec-head {
-  margin-bottom: var(--gap-md);
+.aliados-proposal-row {
+  padding-block: 1rem;
 }
 
-.aliados-prose {
+.aliados-proposal-row + .aliados-proposal-row {
+  border-top: 1px solid var(--c-border);
+}
+
+.aliados-proposal dt {
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+.aliados-proposal dd {
+  margin: 0.5rem 0 0;
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
+.aliados-mission-grid p,
+.aliados-vision-intro p,
+.aliados-vision-closing,
+.aliados-join-close p {
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
+.aliados-mission-grid p {
+  padding-top: var(--gap-md);
+  border-top: 1px solid var(--c-border);
+}
+
+.aliados-talk-line {
+  margin-top: var(--gap-md);
+  color: var(--c-fg-2);
+}
+
+.aliados-activity {
+  color: inherit;
+  text-decoration: none;
+}
+
+.aliados-activity:focus-visible {
+  border-color: var(--c-accent);
+}
+
+.aliados-door-grid .door {
+  margin-block: 0;
+}
+
+.aliados-door-grid {
+  padding-top: 0;
+}
+
+.aliados-hero .hero-line-in {
+  animation: none;
+}
+
+.aliados-vision {
+  background-color: var(--c-bg-deep);
+}
+
+.aliados-vision-grid,
+.aliados-join-grid {
   display: grid;
   gap: var(--gap-md);
+}
+
+.aliados-vision-grid {
+  margin-block: var(--gap-lg);
+  list-style: none;
+}
+
+.aliados-vision-grid li {
+  padding-top: var(--gap-sm);
+  border-top: 1px solid var(--c-border);
   color: var(--c-fg-soft);
-  font: var(--t-body);
 }
 
-.aliados-prose ul {
+.aliados-join-close {
   display: grid;
-  gap: var(--gap-sm);
-  padding-left: 1.25rem;
-  list-style: disc;
+  gap: var(--gap-md);
+  margin-top: var(--gap-lg);
+  padding-top: var(--gap-md);
+  border-top: 1px solid var(--c-border);
 }
 
-.aliados-prose li .link {
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
+.aliados-join-grid .door {
+  margin: 0;
+  align-self: stretch;
+}
+
+.aliados-contact {
+  background-color: var(--c-bg-deep);
+}
+
+.aliados-contact .button {
+  justify-self: start;
+}
+
+@media (min-width: 561px) {
+  .aliados-vision-grid,
+  .aliados-join-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 861px) {
+  .aliados-hero-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: center;
+  }
+
+  .aliados-mission-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .aliados-vision-intro {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    align-items: center;
+  }
+
+  .aliados-join .sec-head-lead {
+    grid-column: 1 / -1;
+  }
+
+  .aliados-vision-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .aliados-join-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .aliados-join-close {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
