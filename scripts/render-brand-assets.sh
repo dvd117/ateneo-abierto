@@ -74,7 +74,7 @@ render "$ROOT/public/og-en.png" 1200 630 "file://$ROOT/public/og-en.svg"
 
 # The doors' own cards: written from src/content.ts, then rendered like the home card.
 (cd "$ROOT" && npx tsx scripts/build-og-cards.ts)
-for route in hackaton talleres demo-nights; do
+for route in hackaton talleres demos; do
   for suffix in "" "-en"; do
     render "$ROOT/public/og-$route$suffix.png" 1200 630 "file://$ROOT/public/og-$route$suffix.svg"
   done

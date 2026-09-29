@@ -75,7 +75,7 @@ the server imports.
 
 ### Addresses
 
-`/` is the page. `/demo-nights`, `/talleres` and `/hackaton` are the same page
+`/` is the page. `/demos`, `/talleres` and `/hackaton` are the same page
 opened at one door, each with its own title and link preview. `/hackathon` and
 `/workshops` redirect to the Spanish spellings; `/manifesto` is retired and
 redirects home. `?lang=es` and `?lang=en` override everything.

@@ -86,7 +86,7 @@ export function pickLocale(query: string | undefined, acceptLanguage: string | u
  * content.ts: the runtime image ships only the server files (see Dockerfile).
  * Each must match a prerendered {route}.html and {route}.en.html.
  */
-export const DEEP_LINK_ROUTES = ['demo-nights', 'talleres', 'hackaton'] as const;
+export const DEEP_LINK_ROUTES = ['demos', 'talleres', 'hackaton'] as const;
 type DeepLinkRoute = (typeof DEEP_LINK_ROUTES)[number];
 
 /**
@@ -181,6 +181,17 @@ for (const route of DEEP_LINK_ROUTES) {
   app.get(`/${route}`, servePage(route));
 }
 
+app.get('/aliados', (c, next) => {
+  const html = readPage('aliados.html');
+  if (html === null) {
+    return next();
+  }
+
+  c.header('Content-Language', 'es');
+  c.header('Cache-Control', 'no-cache');
+  return c.html(html);
+});
+
 /** A permanent redirect that keeps a supported ?lang= and drops anything else. */
 function redirectTo(path: string) {
   return (c: Context) => {
@@ -191,6 +202,8 @@ function redirectTo(path: string) {
 }
 
 app.get('/manifesto', redirectTo('/'));
+// The event's old name: keeps the whole query, so shared links land intact.
+app.get('/demo-nights', (c) => c.redirect(`/demos${new URL(c.req.url).search}`, 301));
 // The English spellings people will guess, onto the one address per door.
 app.get('/hackathon', redirectTo('/hackaton'));
 app.get('/workshops', redirectTo('/talleres'));

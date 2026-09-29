@@ -1,4 +1,4 @@
-import { copy, HERO_INPUT, LICENCE, REPO, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
+import { aliados, copy, HERO_INPUT, LICENCE, REPO, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
@@ -103,7 +103,7 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
  * tap away. The rail along its bottom edge fills as the visitor reads; it is
  * decoration for anyone who cannot see it, so it is hidden from the tree.
  */
-function renderHeader(page: PageCopy, locale: Locale): string {
+function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
   return `
     <header class="site-header">
       <div class="shell header-inner">
@@ -111,13 +111,13 @@ function renderHeader(page: PageCopy, locale: Locale): string {
           ${renderMark()}
           <span class="wordmark">Ateneo Abierto</span>
         </a>
-        <nav class="nav-links" aria-label="${page.sectionsLabel}">
+        ${partner ? '' : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
-        </nav>
-        <div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
+        </nav>`}
+        ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
-        </div>
+        </div>`}
       </div>
       <div class="progress-rail" data-progress aria-hidden="true"><span></span></div>
     </header>
@@ -793,18 +793,10 @@ function renderNorth(page: PageCopy): string {
 // grid's 7fr column, so a screen that cannot show 1280 pixels takes the 960.
 const TALK_POSTER_SIZES = '(min-width: 861px) 58vw, 100vw';
 
-function renderTalk(page: PageCopy): string {
+function renderTalkFigure(page: PageCopy): string {
   const { talk } = page;
 
-  return `
-    <section class="sec talk" id="charla" aria-labelledby="charla-title">
-      <div class="shell talk-grid">
-        <div class="talk-copy" data-reveal>
-          <p class="eyebrow">${inline(talk.eyebrow)}</p>
-          <h2 class="section-title" id="charla-title">${inline(talk.title)}</h2>
-          <p class="lead talk-lead">${inline(talk.body)}</p>
-        </div>
-        <figure class="talk-figure" data-reveal>
+  return `        <figure class="talk-figure" data-reveal>
           <div class="talk-frame" data-talk>
             <button class="talk-play" type="button" data-talk-play aria-label="${inline(talk.play)}">
               <picture>
@@ -823,7 +815,21 @@ function renderTalk(page: PageCopy): string {
             <span class="talk-privacy">${inline(talk.privacy)}</span>
             <a class="talk-watch link" href="https://www.youtube.com/watch?v=${TALK_VIDEO_ID}" target="_blank" rel="noopener noreferrer">${inline(talk.watch)} <span aria-hidden="true">&nearr;</span></a>
           </figcaption>
-        </figure>
+        </figure>`;
+}
+
+function renderTalk(page: PageCopy): string {
+  const { talk } = page;
+
+  return `
+    <section class="sec talk" id="charla" aria-labelledby="charla-title">
+      <div class="shell talk-grid">
+        <div class="talk-copy" data-reveal>
+          <p class="eyebrow">${inline(talk.eyebrow)}</p>
+          <h2 class="section-title" id="charla-title">${inline(talk.title)}</h2>
+          <p class="lead talk-lead">${inline(talk.body)}</p>
+        </div>
+${renderTalkFigure(page)}
       </div>
     </section>
   `;
@@ -944,7 +950,7 @@ function renderFooterMarks(page: PageCopy, locale: Locale): string {
         </ul>`;
 }
 
-function renderFooter(page: PageCopy, locale: Locale): string {
+function renderFooter(page: PageCopy, locale: Locale, partner = false): string {
   return `
     <footer class="site-footer">
       <div class="shell footer-grid">
@@ -952,16 +958,16 @@ function renderFooter(page: PageCopy, locale: Locale): string {
         <span class="footer-wordmark">${renderMark()}<span class="wordmark">Ateneo Abierto</span></span>
         <!-- The header's section links are hidden on a phone, where it keeps
              only the call to action. Same three destinations, same words. -->
-        <nav class="footer-nav" aria-label="${page.sectionsLabel}">
+        ${partner ? '' : `<nav class="footer-nav" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
-        </nav>
+        </nav>`}
       </div>
-${renderFooterMarks(page, locale)}
+${partner ? '' : renderFooterMarks(page, locale)}
       <div class="footer-meta">
-        <div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
+        ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
-        </div>
+        </div>`}
         <p>
           ${page.footer.contactLabel}:
           <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
@@ -1098,5 +1104,71 @@ export function renderPage(
     </main>
     ${renderFooter(page, locale)}
     ${renderToTop(page)}
+  `;
+}
+
+/** The partner briefing shares the site's frame, but is not a door or a locale variant. */
+export function renderAliadosPage(): string {
+  const page = copy.es;
+  const headline = aliados.titleLines.map((line) =>
+    `<span class="hero-line"><span class="hero-line-in">${line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)}</span></span>`
+  ).join(' ');
+
+  return `
+    <a class="skip-link" href="#contenido">${page.skipToContent}</a>
+    ${renderHeader(page, 'es', true)}
+    <main id="contenido">
+      <section class="hero aliados-hero" aria-labelledby="hero-title"><div class="shell aliados-hero-grid">
+        <div class="aliados-hero-copy">
+          <p class="eyebrow">${inline(aliados.eyebrow)}</p>
+          <h1 class="display hero-title" id="hero-title">${headline}</h1>
+          <p class="lead aliados-lead">${inline(aliados.lead)}</p>
+        </div>
+        <dl class="aliados-proposal door" data-reveal>
+          ${aliados.proposal.map((row) => `<div class="aliados-proposal-row"><dt>${inline(row.label)}</dt><dd>${inline(row.text)}</dd></div>`).join('')}
+        </dl>
+      </div></section>
+      <section class="sec aliados-gap" aria-labelledby="aliados-gap-title"><div class="shell">
+        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-gap-title">${inline(aliados.gap.title)}</h2></div></header>
+        <div class="aliados-gap-copy">${aliados.gap.paragraphs.map((text) => `<p class="lead" data-reveal>${inline(text)}</p>`).join('')}</div>
+        <p class="aliados-gap-thesis" data-reveal>${inline(aliados.gap.thesis)}</p>
+      </div></section>
+      <section class="sec aliados-approach" aria-labelledby="aliados-approach-title"><div class="shell">
+        <div class="aliados-approach-copy"><header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-approach-title">${inline(aliados.approach.title)}</h2></div></header>
+          <p class="lead aliados-approach-intro" data-reveal>${inline(aliados.approach.intro)}</p></div>
+        <div class="aliados-pillar-grid">${aliados.approach.pillars.map((pillar) => `<div class="door aliados-pillar" data-reveal><h3>${inline(pillar.title)}</h3><p>${inline(pillar.body)}</p></div>`).join('')}</div>
+      </div></section>
+      <section class="sec aliados-formats" aria-labelledby="aliados-formats-title"><div class="shell">
+        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-formats-title">${inline(aliados.formats.title)}</h2></div><p class="lead sec-head-lead">${inline(aliados.formats.intro)}</p></header>
+        <div class="door-grid aliados-format-grid">
+          ${aliados.formats.cards.map((card) => `<article class="door aliados-format" data-reveal><h3 class="door-title">${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">Ver el formato <span aria-hidden="true">&nearr;</span></a></article>`).join('')}
+        </div>
+      </div></section>
+      <section class="sec talk aliados-respaldo" aria-labelledby="aliados-respaldo-title"><div class="shell talk-grid">
+        <div class="talk-copy" data-reveal>
+          <h2 class="section-title" id="aliados-respaldo-title">${inline(aliados.respaldo.title)}</h2>
+          <p class="lead talk-lead">${inline(aliados.respaldo.body)}</p>
+        </div>
+        <div class="aliados-talk-column">${renderTalkFigure(page)}<p class="aliados-talk-caption">${inline(aliados.respaldo.caption)}</p></div>
+      </div></section>
+      ${renderBand('aliados', 5)}
+      <section class="sec aliados-vision" aria-labelledby="aliados-vision-title"><div class="shell">
+        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-vision-title">${inline(aliados.vision.title)}</h2></div></header>
+        <div class="aliados-vision-intro" data-reveal><p class="aliados-vision-near">${inline(aliados.vision.near)}</p><p class="aliados-vision-far">${inline(aliados.vision.far)}</p><p class="lead aliados-vision-far-detail">${inline(aliados.vision.farDetail)}</p></div>
+        <ul class="aliados-vision-grid">${aliados.vision.items.map((item) => `<li data-reveal>${inline(item)}</li>`).join('')}</ul>
+        <p class="aliados-vision-closing" data-reveal>${inline(aliados.vision.closing)}</p>
+      </div></section>
+      <section class="sec aliados-roles" aria-labelledby="aliados-roles-title"><div class="shell">
+        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-roles-title">${inline(aliados.roles.title)}</h2></div><p class="lead sec-head-lead">${inline(aliados.roles.intro)}</p></header>
+        <div class="aliados-role-grid">${aliados.roles.cards.map((card) => `<div class="door aliados-role" data-reveal><h3>${inline(card.title)}</h3><p>${inline(card.body)}</p></div>`).join('')}</div>
+        <div class="aliados-roles-give" data-reveal><p><strong>${inline(aliados.roles.give.label)}:</strong> ${inline(aliados.roles.give.text)}</p></div>
+        <p class="aliados-roles-closing" data-reveal>${inline(aliados.roles.closing)}</p>
+      </div></section>
+      <section class="sec aliados-contact" aria-labelledby="aliados-contact-title"><div class="shell aliados-contact-grid">
+        <div data-reveal><h2 class="display join-title" id="aliados-contact-title">${inline(aliados.contact.title)}</h2><p class="lead join-lead">${inline(aliados.contact.line)}</p></div>
+        <a class="button button--fill" href="mailto:ateneo@aragort.com">${inline(aliados.contact.button)}</a>
+      </div></section>
+    </main>
+    ${renderFooter(page, 'es', true)}
   `;
 }

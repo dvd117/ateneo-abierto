@@ -38,15 +38,15 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://ateneo-abierto.org/talleres" />
   </url>
   <url>
-    <loc>https://ateneo-abierto.org/demo-nights</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://ateneo-abierto.org/demo-nights" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://ateneo-abierto.org/demo-nights?lang=en" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ateneo-abierto.org/demo-nights" />
+    <loc>https://ateneo-abierto.org/demos</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ateneo-abierto.org/demos" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://ateneo-abierto.org/demos?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ateneo-abierto.org/demos" />
   </url>
   <url>
-    <loc>https://ateneo-abierto.org/demo-nights?lang=en</loc>
-    <xhtml:link rel="alternate" hreflang="es" href="https://ateneo-abierto.org/demo-nights" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://ateneo-abierto.org/demo-nights?lang=en" />
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://ateneo-abierto.org/demo-nights" />
+    <loc>https://ateneo-abierto.org/demos?lang=en</loc>
+    <xhtml:link rel="alternate" hreflang="es" href="https://ateneo-abierto.org/demos" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://ateneo-abierto.org/demos?lang=en" />
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://ateneo-abierto.org/demos" />
   </url>
 </urlset>

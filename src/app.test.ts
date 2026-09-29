@@ -60,6 +60,12 @@ describe('static app routes', () => {
 });
 
 describe('door addresses', () => {
+  test('redirects the old demos address, preserving its query string', async () => {
+    const res = await app.request('/demo-nights?lang=en&ref=invite');
+    expect(res.status).toBe(301);
+    expect(res.headers.get('location')).toBe('/demos?lang=en&ref=invite');
+  });
+
   test('redirects the English spellings to the one address per door, keeping ?lang', async () => {
     for (const [from, to] of [['/hackathon', '/hackaton'], ['/workshops', '/talleres']]) {
       const bare = await app.request(from);
@@ -78,7 +84,7 @@ describe('door addresses', () => {
     expect(pageFile('es')).toBe('index.html');
     expect(pageFile('en')).toBe('index.en.html');
     expect(pageFile('es', 'hackaton')).toBe('hackaton.html');
-    expect(pageFile('en', 'demo-nights')).toBe('demo-nights.en.html');
+    expect(pageFile('en', 'demos')).toBe('demos.en.html');
   });
 
   test('knows the same routes the page does', () => {
@@ -687,6 +693,9 @@ describe('prerendered home page', () => {
     writeFileSync(join(dir, 'index.en.html'), '<html lang="en"><body>Stop asking it things.</body></html>');
     writeFileSync(join(dir, 'hackaton.html'), '<html lang="es"><body>Hackatón para no técnicos</body></html>');
     writeFileSync(join(dir, 'hackaton.en.html'), '<html lang="en"><body>Hackathon for non-technical people</body></html>');
+    writeFileSync(join(dir, 'demos.html'), '<html lang="es"><body>Demos abiertas</body></html>');
+    writeFileSync(join(dir, 'talleres.html'), '<html lang="es"><body>Talleres</body></html>');
+    writeFileSync(join(dir, 'aliados.html'), '<html lang="es"><head><meta name="robots" content="noindex"></head><body>La brecha</body></html>');
     writeFileSync(
       join(dir, 'csp.json'),
       JSON.stringify({ styleSrc: [esHash, "'unsafe-inline'", 'https://evil.example'] })
@@ -740,6 +749,27 @@ describe('prerendered home page', () => {
     const byBrowser = await pagesApp.request('/hackaton', { headers: { 'Accept-Language': 'en-US,en;q=0.9' } });
     expect(await byBrowser.text()).toContain('Hackathon for non-technical people');
     expect(byBrowser.headers.get('vary')).toContain('Accept-Language');
+  });
+
+  test('serves /aliados in Spanish for every locale request and leaves the three doors working', async () => {
+    for (const [path, headers] of [
+      ['/aliados', {}],
+      ['/aliados?lang=en', {}],
+      ['/aliados', { 'Accept-Language': 'en-US,en;q=0.9' }]
+    ] as const) {
+      const res = await pagesApp.request(path, { headers });
+      expect(res.status).toBe(200);
+      const html = await res.text();
+      expect(html).toContain('La brecha');
+      expect(html).toContain('<html lang="es">');
+      expect(html).toContain('name="robots" content="noindex"');
+      expect(res.headers.get('content-language')).toBe('es');
+      expect(res.headers.get('cache-control')).toBe('no-cache');
+    }
+
+    for (const path of ['/demos', '/talleres', '/hackaton']) {
+      expect((await pagesApp.request(path)).status).toBe(200);
+    }
   });
 
   test('allows inline CSS by exact hash only, never by unsafe-inline', async () => {

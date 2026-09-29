@@ -519,7 +519,7 @@ main [id] {
   scroll-margin-top: 4.5rem;
 }
 
-/* A door's own address (/hackaton, /talleres, /demo-nights) opens the page
+/* A door's own address (/hackaton, /talleres, /demos) opens the page
    with the door flush under the header: its margin is the header's height
    (53.8 px at every width: one row, 0.85rem padding, 1px rule). */
 main .door[id] {
@@ -2208,7 +2208,7 @@ main .door[id] {
 }
 
 /* The staircase as structure: on a wide screen the three doors climb, left
-   to right, the way someone actually arrives — a Demo Night to come and look,
+   to right, the way someone actually arrives — an open demo to come and look,
    a workshop that brings your team, then the hackathon where you build it
    yourself. Each step asks for more than the one before it. */
 @media (min-width: 861px) {
@@ -3216,5 +3216,365 @@ p > .link,
 @media (max-width: 560px) {
   .hz-row {
     grid-template-columns: 5.25rem 1fr;
+  }
+}
+
+/* The partner page changes pace without changing the landing's vocabulary. */
+.sec[class*="aliados-"] {
+  padding-block: clamp(3rem, 6vw, 4.75rem);
+}
+
+.aliados-hero-grid {
+  display: grid;
+  gap: clamp(2rem, 5vw, 5rem);
+}
+
+.aliados-hero .hero-line {
+  padding-left: 0.12em;
+  margin-left: -0.12em;
+}
+
+.aliados-hero .hero-line-in {
+  animation: none;
+}
+
+.aliados-hero .hero-title {
+  font-size: clamp(2.6rem, 1.2rem + 3.6vw, 4.4rem);
+}
+
+.aliados-lead {
+  max-width: 68ch;
+  margin-top: var(--gap-lg);
+}
+
+.aliados-proposal {
+  margin: 0;
+  gap: 0;
+}
+
+.aliados-proposal-row {
+  padding-block: 1rem;
+}
+
+.aliados-proposal-row + .aliados-proposal-row {
+  border-top: 1px solid var(--c-border);
+}
+
+.aliados-proposal dt,
+.aliados-format dt {
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+.aliados-proposal dd {
+  margin: 0.5rem 0 0;
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
+.aliados-gap-copy {
+  display: grid;
+  gap: var(--gap-md);
+  max-width: 68ch;
+}
+
+.aliados-gap .sec-head {
+  margin-bottom: var(--gap-lg);
+}
+
+.aliados-gap-thesis {
+  max-width: 46ch;
+  margin-top: var(--gap-lg);
+  font: 560 clamp(2rem, 1.3rem + 2.7vw, 3.6rem) / 1.12 var(--font-display);
+  letter-spacing: var(--track-h1);
+  color: var(--c-fg);
+  text-wrap: balance;
+}
+
+.aliados-approach {
+  background-color: var(--c-bg-deep);
+}
+
+.aliados-approach .sec-head {
+  margin-bottom: var(--gap-md);
+}
+
+.aliados-approach-intro {
+  max-width: 68ch;
+  margin-bottom: var(--gap-lg);
+}
+
+.aliados-pillar-grid,
+.aliados-role-grid {
+  display: grid;
+  gap: var(--gap-md);
+}
+
+.aliados-pillar-grid .door,
+.aliados-role-grid .door {
+  margin: 0;
+}
+
+.aliados-pillar h3,
+.aliados-role h3 {
+  font: var(--t-h2);
+  color: var(--c-fg);
+}
+
+.aliados-pillar p,
+.aliados-role p {
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
+.aliados-approach-note {
+  max-width: 68ch;
+  margin-top: var(--gap-md);
+  font: var(--t-body);
+  color: var(--c-fg-2);
+}
+
+.aliados-format-grid {
+  padding-top: 0;
+}
+
+.aliados-format-grid .door {
+  margin: 0;
+}
+
+.aliados-format {
+  min-width: 0;
+  height: 100%;
+}
+
+.aliados-format dl {
+  display: grid;
+  align-content: start;
+  gap: 0;
+  margin: 0;
+}
+
+.aliados-format dl > div {
+  padding-block: 1rem;
+  border-top: 1px solid var(--c-border);
+}
+
+.aliados-format dd {
+  margin: 0.4rem 0 0;
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
+.aliados-format-link {
+  margin-top: auto;
+  text-decoration: none;
+}
+
+.aliados-format-link:focus-visible {
+  outline: 2px solid var(--c-accent);
+  outline-offset: 3px;
+}
+
+.aliados-talk-column {
+  min-width: 0;
+}
+
+.aliados-talk-caption {
+  max-width: 68ch;
+  margin-top: var(--gap-md);
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
+.aliados-respaldo .talk-name {
+  display: none;
+}
+
+.aliados-vision {
+  background-color: var(--c-bg-deep);
+}
+
+.aliados-vision .sec-head {
+  margin-bottom: var(--gap-lg);
+}
+
+.aliados-vision-near {
+  max-width: 68ch;
+  margin-bottom: var(--gap-lg);
+  font: var(--t-body);
+  color: var(--c-fg-2);
+}
+
+.aliados-vision-far {
+  max-width: 46ch;
+  font: 560 clamp(2.15rem, 1.3rem + 2.2vw, 3.4rem) / 1.1 var(--font-display);
+  letter-spacing: var(--track-h1);
+  color: var(--c-fg);
+  text-wrap: balance;
+}
+
+.aliados-vision-far-detail {
+  font: var(--t-lead);
+  max-width: 68ch;
+  margin-top: var(--gap-md);
+}
+
+.aliados-vision-grid {
+  display: grid;
+  column-gap: clamp(2rem, 4vw, 3.5rem);
+  row-gap: 0;
+  margin-block: var(--gap-lg);
+  padding: 0;
+  list-style: none;
+}
+
+.aliados-vision-grid li {
+  padding: 0.9rem 0;
+  border-top: 1px solid var(--c-border);
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
+.aliados-vision-closing {
+  max-width: 46ch;
+  font: 560 clamp(1.9rem, 1.35rem + 2vw, 3rem) / 1.17 var(--font-display);
+  color: var(--c-fg);
+  text-wrap: balance;
+}
+
+.aliados-roles .sec-head-lead {
+  max-width: 68ch;
+}
+
+.aliados-roles-give {
+  max-width: 68ch;
+  margin-top: var(--gap-lg);
+  padding: var(--gap-md);
+  border-left: 3px solid var(--c-accent);
+  background: var(--c-bg-panel);
+}
+
+.aliados-roles-give p {
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
+.aliados-roles-give strong {
+  color: var(--c-fg);
+}
+
+.aliados-roles-closing {
+  max-width: 46ch;
+  margin-top: var(--gap-lg);
+  font: 560 clamp(1.4rem, 1.15rem + 1vw, 2rem) / 1.3 var(--font-display);
+  color: var(--c-fg);
+}
+
+.aliados-contact {
+  background-color: var(--c-bg-deep);
+}
+
+.aliados-contact-grid {
+  display: grid;
+  gap: var(--gap-md);
+  justify-items: start;
+}
+
+.aliados-contact .join-title {
+  margin: 0;
+  font-size: clamp(2.6rem, 1.5rem + 3vw, 4.5rem);
+}
+
+.aliados-contact .join-lead {
+  max-width: 46ch;
+  margin-top: var(--gap-sm);
+}
+
+.aliados-contact .button {
+  justify-self: start;
+}
+
+@media (min-width: 561px) {
+  .aliados-vision-grid,
+  .aliados-role-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 861px) {
+  .aliados-hero-grid {
+    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    align-items: center;
+  }
+
+  .aliados-approach .shell {
+    display: grid;
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    grid-template-areas: "copy cards" ". note";
+    column-gap: clamp(2rem, 5vw, 5rem);
+    align-items: start;
+  }
+
+  .aliados-approach-copy {
+    grid-area: copy;
+  }
+
+  .aliados-approach-intro {
+    margin-bottom: 0;
+  }
+
+  .aliados-pillar-grid {
+    grid-area: cards;
+  }
+
+  .aliados-approach-note {
+    grid-area: note;
+  }
+
+  .aliados-format-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  /* Subgrid lines up title, the three fields and the link across the
+     cards, so each row is as tall as its longest text and no taller. */
+  .aliados-format-grid {
+    grid-template-rows: repeat(5, auto);
+  }
+
+  .aliados-format {
+    display: grid;
+    grid-row: span 5;
+    grid-template-rows: subgrid;
+    row-gap: 0;
+  }
+
+  .aliados-format dl {
+    grid-row: span 3;
+    grid-template-rows: subgrid;
+  }
+
+  .aliados-format .door-title {
+    padding-bottom: 1rem;
+  }
+
+  .aliados-format-link {
+    margin-top: 1rem;
+    align-self: end;
+    justify-self: start;
+  }
+
+  .aliados-vision-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    max-width: 62rem;
+  }
+
+  .aliados-role-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .aliados-roles .sec-head-lead {
+    grid-column: 1 / -1;
   }
 }

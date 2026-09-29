@@ -6,8 +6,8 @@ import type { Plugin, Rollup } from 'vite';
 type OutputAsset = Rollup.OutputAsset;
 type OutputBundle = Rollup.OutputBundle;
 import type { Locale } from '../src/locale';
-import { DEEP_LINK_ROUTES, type DeepLinkRoute } from '../src/content';
-import { pageMeta, renderPage } from '../src/render';
+import { aliados, DEEP_LINK_ROUTES, type DeepLinkRoute } from '../src/content';
+import { pageMeta, renderAliadosPage, renderPage } from '../src/render';
 
 /**
  * Build-time prerender.
@@ -19,7 +19,7 @@ import { pageMeta, renderPage } from '../src/render';
  *
  *   dist/index.html      Spanish (the default)
  *   dist/index.en.html   English
- *   dist/hackaton.html, hackaton.en.html, talleres…, demo-nights…
+ *   dist/hackaton.html, hackaton.en.html, talleres…, demos…
  *                        the same page opened at one door: its own head (title,
  *                        description, preview card, canonical) and a
  *                        data-deep-link on #app that main.ts scrolls to.
@@ -57,19 +57,25 @@ export function pageFileName(locale: Locale, route?: DeepLinkRoute): string {
   return `${route ?? 'index'}${locale === 'en' ? '.en' : ''}.html`;
 }
 
-export function fillTemplate(template: string, locale: Locale, route?: DeepLinkRoute): string {
+export function fillTemplate(template: string, locale: Locale, route?: DeepLinkRoute, partner = false): string {
   if (!template.includes(PLACEHOLDER)) {
     throw new Error('[prerender] index.html has no <!--prerender--> placeholder');
   }
 
-  const meta = pageMeta(locale, route);
-  let html = template.replace(PLACEHOLDER, () => renderPage(locale));
+  const meta = partner ? {
+    ...pageMeta('es'),
+    title: aliados.meta.title,
+    ogTitle: aliados.meta.title,
+    description: aliados.meta.description,
+    canonical: 'https://ateneo-abierto.org/aliados'
+  } : pageMeta(locale, route);
+  let html = template.replace(PLACEHOLDER, () => partner ? renderAliadosPage() : renderPage(locale));
 
   html = replaceOnce(html, /(<html lang=")[^"]*(")/, meta.lang, '<html lang>');
   html = replaceOnce(
     html,
     /(<div id="app" data-locale=")[^"]*(")/,
-    [locale, route ? `" data-deep-link="${route}` : ''].join(''),
+    [locale, route ? `" data-deep-link="${route}` : '', partner ? '" data-page="aliados' : ''].join(''),
     '#app data-locale'
   );
   html = replaceOnce(html, /(<title>)[^<]*(<\/title>)/, escapeAttr(meta.title), '<title>');
@@ -106,14 +112,20 @@ export function fillTemplate(template: string, locale: Locale, route?: DeepLinkR
   html = replaceOnce(html, /(<meta name="twitter:image:alt" content=")[^"]*(")/, escapeAttr(meta.ogImageAlt), 'twitter:image:alt');
   html = replaceOnce(html, /(<link rel="canonical" href=")[^"]*(")/, meta.canonical, 'canonical');
   html = replaceOnce(html, /(<meta property="og:url" content=")[^"]*(")/, meta.canonical, 'og:url');
-  html = replaceOnce(html, /(<link rel="alternate" hreflang="es" href=")[^"]*(")/, meta.alternates.es, 'hreflang es');
-  html = replaceOnce(html, /(<link rel="alternate" hreflang="en" href=")[^"]*(")/, meta.alternates.en, 'hreflang en');
-  html = replaceOnce(
-    html,
-    /(<link rel="alternate" hreflang="x-default" href=")[^"]*(")/,
-    meta.alternates.es,
-    'hreflang x-default'
-  );
+  if (partner) {
+    html = html.replace(/\s*<link rel="alternate" hreflang="[^"]+" href="[^"]*"\s*\/>/g, '');
+    html = html.replace(/\s*<meta property="og:locale:alternate" content="[^"]*"\s*\/>/, '');
+    html = replaceOnce(html, /(<meta name="robots" content=")[^"]*(")/, 'noindex', 'robots');
+  } else {
+    html = replaceOnce(html, /(<link rel="alternate" hreflang="es" href=")[^"]*(")/, meta.alternates.es, 'hreflang es');
+    html = replaceOnce(html, /(<link rel="alternate" hreflang="en" href=")[^"]*(")/, meta.alternates.en, 'hreflang en');
+    html = replaceOnce(
+      html,
+      /(<link rel="alternate" hreflang="x-default" href=")[^"]*(")/,
+      meta.alternates.es,
+      'hreflang x-default'
+    );
+  }
   // Only the WebSite node's description, which follows the page's language;
   // the Organization node carries no copy and stays as written. A door page
   // keeps the site's description and url: the node describes the site (one
@@ -197,10 +209,13 @@ export function prerender(): Plugin {
         this.emitFile({ type: 'asset', fileName, source });
       }
 
+      const partner = fillTemplate(template, 'es', undefined, true);
+      this.emitFile({ type: 'asset', fileName: 'aliados.html', source: partner });
+
       this.emitFile({
         type: 'asset',
         fileName: 'csp.json',
-        source: `${JSON.stringify({ styleSrc: styleHashes(spanish) }, null, 2)}\n`
+        source: `${JSON.stringify({ styleSrc: [...new Set([...styleHashes(spanish), ...styleHashes(partner)])] }, null, 2)}\n`
       });
 
       // Every page shares one stylesheet and one noscript block, so one set

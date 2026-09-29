@@ -234,14 +234,14 @@ describe('landing page copy', () => {
       // The doors run in the order someone arrives: come and look, bring your
       // team, then build it yourself (David, 2026-09-19). Talleres stays door
       // 02, and it is arranged by email, not through the form.
-      expect(doors.doors.map((door) => door.id)).toEqual(['demo-nights', 'talleres', 'hackaton']);
+      expect(doors.doors.map((door) => door.id)).toEqual(['demos', 'talleres', 'hackaton']);
       expect(doors.doors.map((door) => door.n)).toEqual(['01', '02', '03']);
       expect(doors.doors.map((door) => door.cta ?? 'join')).toEqual(['join', 'mail', 'join']);
     }
 
-    // Demo Nights is the settled name, in both locales.
-    expect(copy.es.doors.doors[0].title).toBe('Demo Nights');
-    expect(copy.en.doors.doors[0].title).toBe('Demo Nights');
+    // Each locale uses the settled name for the demos door.
+    expect(copy.es.doors.doors[0].title).toBe('Demos abiertas');
+    expect(copy.en.doors.doors[0].title).toBe('Open Demos');
   });
 
   test('gives each door its own address, with a card that only rearranges the door copy', () => {
@@ -284,7 +284,7 @@ describe('landing page copy', () => {
 
   test('says who each door is for, and places mentorships inside the hackathon', () => {
     // Nobody should have to guess which door is theirs.
-    expect(copy.es.doors.doors[2].who).toMatch(/docentes|oficina/);
+    expect(copy.es.doors.doors[2].who).toMatch(/taller|demos/);
     expect(copy.es.doors.doors[1].who).toMatch(/organizaciones/);
     expect(copy.en.doors.doors[1].who).toMatch(/organizations/);
     // David, 2026-09-11: mentors work inside each hackathon, not after it.
@@ -297,8 +297,8 @@ describe('landing page copy', () => {
 
     // Neither door may ask for code as a precondition.
     expect(copy.es.doors.lead).toMatch(/programar/);
-    expect(copy.es.doors.doors[2].body).toMatch(/línea de código/);
-    expect(copy.en.doors.doors[2].body).toMatch(/line of code/);
+    expect(copy.es.doors.doors[2].details.expect).toMatch(/No necesitas saber programar/);
+    expect(copy.en.doors.doors[2].details.expect).toMatch(/don’t need to know how to code/);
   });
 
   test('keeps prices and dates out of the program section', () => {

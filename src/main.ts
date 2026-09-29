@@ -18,7 +18,7 @@ const root = app;
 const heroParam = new URLSearchParams(window.location.search).get('hero');
 const heroInput: HeroInput = heroParam === 'typed' || heroParam === 'scripted' ? heroParam : HERO_INPUT;
 
-/** Set by the prerender on /hackaton, /talleres and /demo-nights: the door this page opens at. */
+/** Set by the prerender on /hackaton, /talleres and /demos: the door this page opens at. */
 const deepLink = DEEP_LINK_ROUTES.find((route) => route === root.dataset.deepLink);
 
 let currentLocale = detectLocale({
@@ -709,7 +709,13 @@ function openAtDoor(container: ParentNode, route: DeepLinkRoute): void {
 
 // The server already sent this page, rendered, in the locale it chose. Keep
 // that DOM and only wire it up — unless this visitor saved the other language.
-if (
+// The partner briefing is Spanish only and carries one live part, the talk:
+// never re-render it into the home page, whatever language was saved.
+if (root.dataset.page === 'aliados') {
+  bindTalk(copy.es);
+  initProgressRail(root.querySelector<HTMLElement>('[data-progress]'));
+  teardownReveal = initReveal(root, { animate: motionAllowed() });
+} else if (
   root.dataset.locale === currentLocale &&
   heroInput === HERO_INPUT &&
   root.childElementCount > 0
