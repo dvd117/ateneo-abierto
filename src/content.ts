@@ -1584,7 +1584,7 @@ export const aliados = {
     {
       title: 'Cómo funciona hoy',
       blocks: [
-        { text: 'Estamos haciendo esto sin recursos. En este momento es individual, pero la idea es que sea una iniciativa de comunidad.' },
+        { text: 'Estamos haciendo esto sin recursos. Hoy lo impulsa una persona, David Aragort, pero la idea es que sea una iniciativa de comunidad.' },
         { text: 'Una comunidad abierta de verdad. Cualquiera que comparta nuestra visión puede entrar, proponer y sumar.' }
       ]
     },
