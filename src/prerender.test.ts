@@ -160,14 +160,14 @@ describe('build-time prerender', () => {
       ...aliados.approach.pillars.flatMap((pillar) => [pillar.title, pillar.body]), aliados.approach.note,
       aliados.formats.title, ...aliados.formats.cards.flatMap((card) => [card.title, ...card.fields.flatMap((field) => [field.label, field.text])]),
       aliados.respaldo.title, aliados.respaldo.body, aliados.respaldo.caption,
-      aliados.vision.title, aliados.vision.near, aliados.vision.far,
+      aliados.vision.title, aliados.vision.near, aliados.vision.far, aliados.vision.farDetail,
       ...aliados.vision.items, aliados.vision.closing,
       aliados.roles.title, aliados.roles.intro,
       ...aliados.roles.cards.flatMap((card) => [card.title, card.body]),
       aliados.roles.give.label, aliados.roles.give.text, aliados.roles.closing,
       aliados.contact.title, aliados.contact.line, aliados.contact.button
     ];
-    expect(strings).toHaveLength(76);
+    expect(strings).toHaveLength(77);
     for (const value of strings) {
       expect(copyFile).toContain(value);
       expect(html).toContain(value.replace(/"/g, '&quot;'));
@@ -195,6 +195,24 @@ describe('build-time prerender', () => {
 
     expect(styles).toMatch(/\.aliados-hero \.hero-line\s*\{[^}]*padding-left: 0\.12em;[^}]*margin-left: -0\.12em;/);
     expect(styles).not.toMatch(/\.aliados-hero \.hero-title\s*\{[^}]*font-size:/);
+  });
+
+  test('keeps the W5 vision split, plain role titles and close approach copy', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    expect(aliados.vision.far).toBe('A largo plazo queremos una red de espacios públicos de conocimiento en Venezuela.');
+    expect(aliados.vision.farDetail).toBe('La biblioteca pública del siglo XXI, abierta a cualquiera sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encontrar:');
+    expect(html).toContain(`<p class="aliados-vision-far">${aliados.vision.far}</p><p class="lead aliados-vision-far-detail">${aliados.vision.farDetail}</p>`);
+    expect(html).toContain('class="aliados-approach-copy"');
+    expect(aliados.roles.cards.map((card) => card.title)).toEqual(['Espacio', 'Difusión', 'Conexiones', 'Mentoría']);
+  });
+
+  test('keeps W5 partner-only card, spacing and talk-credit fixes', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    expect(styles).toMatch(/\.aliados-vision-far-detail\s*\{[^}]*font: var\(--t-lead\);[^}]*max-width: 68ch;/);
+    expect(styles).toMatch(/\.aliados-vision-grid li\s*\{[^}]*font: var\(--t-body\);/);
+    expect(styles.match(/\.aliados-vision-grid li\s*\{[^}]*\}/)?.[0]).not.toMatch(/(?:min-|max-)?height:/);
+    expect(styles).toMatch(/\.aliados-respaldo \.talk-name\s*\{[^}]*display: none;/);
+    expect(styles).toMatch(/\.aliados-approach-copy\s*\{/);
   });
 
   test('keeps the partner page unlisted from the sitemap and all ordinary pages', () => {

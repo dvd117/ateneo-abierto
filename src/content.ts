@@ -1618,7 +1618,8 @@ export const aliados = {
   vision: {
     title: 'Hacia dónde vamos',
     near: 'Hoy son demos, talleres y hackatones. El próximo paso, en exploración, son hackatones técnicas que resuelvan el problema concreto de una comunidad, junto a organizaciones y medios aliados.',
-    far: 'A largo plazo queremos una red de espacios públicos de conocimiento en Venezuela. La biblioteca pública del siglo XXI, abierta a cualquiera sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encontrar:',
+    far: 'A largo plazo queremos una red de espacios públicos de conocimiento en Venezuela.',
+    farDetail: 'La biblioteca pública del siglo XXI, abierta a cualquiera sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encontrar:',
     items: [
       'Computadoras y equipos en préstamo, para quien no tiene los suyos.',
       'Internet rápido.',
@@ -1633,10 +1634,10 @@ export const aliados = {
     title: 'Tu lugar en esto',
     intro: 'Si compartes esta misión, hay cuatro formas de sumarte:',
     cards: [
-      { title: 'Espacio.', body: 'Presta tu sede para una demo, un taller o una hackatón. Se convierte en punto de encuentro y recibe un público nuevo.' },
-      { title: 'Difusión.', body: 'Comparte nuestras convocatorias y le das a tu comunidad acceso a una formación que no encuentra en otro lado.' },
-      { title: 'Conexiones.', body: 'Preséntanos a personas y organizaciones que deberían conocernos, y acercas comunidades que se necesitan.' },
-      { title: 'Mentoría.', body: 'Acompaña a un equipo durante una hackatón, desde la tarea que elige hasta su presentación final. Pones tu experiencia al servicio de alguien que empieza y aprendes a enseñarla.' }
+      { title: 'Espacio', body: 'Presta tu sede para una demo, un taller o una hackatón. Se convierte en punto de encuentro y recibe un público nuevo.' },
+      { title: 'Difusión', body: 'Comparte nuestras convocatorias y le das a tu comunidad acceso a una formación que no encuentra en otro lado.' },
+      { title: 'Conexiones', body: 'Preséntanos a personas y organizaciones que deberían conocernos, y acercas comunidades que se necesitan.' },
+      { title: 'Mentoría', body: 'Acompaña a un equipo durante una hackatón, desde la tarea que elige hasta su presentación final. Pones tu experiencia al servicio de alguien que empieza y aprendes a enseñarla.' }
     ],
     give: { label: 'Nosotros ponemos', text: 'el diseño de cada actividad, la convocatoria y el acompañamiento de principio a fin. Además conectamos a tu comunidad con otras: periodistas, organizaciones y la comunidad técnica.' },
     closing: 'Si trabajas en la cultura del conocimiento, aunque la tecnología no sea lo tuyo, este proyecto también es tuyo.'

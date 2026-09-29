@@ -3384,6 +3384,10 @@ p > .link,
   color: var(--c-fg-soft);
 }
 
+.aliados-respaldo .talk-name {
+  display: none;
+}
+
 .aliados-vision {
   background-color: var(--c-bg-deep);
 }
@@ -3401,10 +3405,16 @@ p > .link,
 
 .aliados-vision-far {
   max-width: 46ch;
-  font: 560 clamp(2.15rem, 1.3rem + 3.2vw, 4.2rem) / 1.1 var(--font-display);
+  font: 560 clamp(2.15rem, 1.3rem + 2.2vw, 3.4rem) / 1.1 var(--font-display);
   letter-spacing: var(--track-h1);
   color: var(--c-fg);
   text-wrap: balance;
+}
+
+.aliados-vision-far-detail {
+  font: var(--t-lead);
+  max-width: 68ch;
+  margin-top: var(--gap-md);
 }
 
 .aliados-vision-grid {
@@ -3415,7 +3425,6 @@ p > .link,
 }
 
 .aliados-vision-grid li {
-  min-height: 7rem;
   padding: var(--gap-md);
   border: 1px solid var(--c-border);
   background: var(--c-bg-panel);
@@ -3498,17 +3507,16 @@ p > .link,
   .aliados-approach .shell {
     display: grid;
     grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-    grid-template-areas: "head cards" "intro cards" ". note";
+    grid-template-areas: "copy cards" ". note";
     column-gap: clamp(2rem, 5vw, 5rem);
     align-items: start;
   }
 
-  .aliados-approach .sec-head {
-    grid-area: head;
+  .aliados-approach-copy {
+    grid-area: copy;
   }
 
   .aliados-approach-intro {
-    grid-area: intro;
     margin-bottom: 0;
   }
 

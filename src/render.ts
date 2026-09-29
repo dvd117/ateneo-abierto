@@ -1134,8 +1134,8 @@ export function renderAliadosPage(): string {
         <p class="aliados-gap-thesis" data-reveal>${inline(aliados.gap.thesis)}</p>
       </div></section>
       <section class="sec aliados-approach" aria-labelledby="aliados-approach-title"><div class="shell">
-        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-approach-title">${inline(aliados.approach.title)}</h2></div></header>
-        <p class="lead aliados-approach-intro" data-reveal>${inline(aliados.approach.intro)}</p>
+        <div class="aliados-approach-copy"><header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-approach-title">${inline(aliados.approach.title)}</h2></div></header>
+          <p class="lead aliados-approach-intro" data-reveal>${inline(aliados.approach.intro)}</p></div>
         <div class="aliados-pillar-grid">${aliados.approach.pillars.map((pillar) => `<div class="door aliados-pillar" data-reveal><h3>${inline(pillar.title)}</h3><p>${inline(pillar.body)}</p></div>`).join('')}</div>
         <p class="aliados-approach-note" data-reveal>${inline(aliados.approach.note)}</p>
       </div></section>
@@ -1155,7 +1155,7 @@ export function renderAliadosPage(): string {
       ${renderBand('aliados', 5)}
       <section class="sec aliados-vision" aria-labelledby="aliados-vision-title"><div class="shell">
         <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-vision-title">${inline(aliados.vision.title)}</h2></div></header>
-        <div class="aliados-vision-intro" data-reveal><p class="aliados-vision-near">${inline(aliados.vision.near)}</p><p class="aliados-vision-far">${inline(aliados.vision.far)}</p></div>
+        <div class="aliados-vision-intro" data-reveal><p class="aliados-vision-near">${inline(aliados.vision.near)}</p><p class="aliados-vision-far">${inline(aliados.vision.far)}</p><p class="lead aliados-vision-far-detail">${inline(aliados.vision.farDetail)}</p></div>
         <ul class="aliados-vision-grid">${aliados.vision.items.map((item) => `<li data-reveal>${inline(item)}</li>`).join('')}</ul>
         <p class="aliados-vision-closing" data-reveal>${inline(aliados.vision.closing)}</p>
       </div></section>
