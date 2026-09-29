@@ -75,7 +75,7 @@ export function fillTemplate(template: string, locale: Locale, route?: DeepLinkR
   html = replaceOnce(
     html,
     /(<div id="app" data-locale=")[^"]*(")/,
-    [locale, route ? `" data-deep-link="${route}` : ''].join(''),
+    [locale, route ? `" data-deep-link="${route}` : '', partner ? '" data-page="aliados' : ''].join(''),
     '#app data-locale'
   );
   html = replaceOnce(html, /(<title>)[^<]*(<\/title>)/, escapeAttr(meta.title), '<title>');
@@ -116,7 +116,6 @@ export function fillTemplate(template: string, locale: Locale, route?: DeepLinkR
     html = html.replace(/\s*<link rel="alternate" hreflang="[^"]+" href="[^"]*"\s*\/>/g, '');
     html = html.replace(/\s*<meta property="og:locale:alternate" content="[^"]*"\s*\/>/, '');
     html = replaceOnce(html, /(<meta name="robots" content=")[^"]*(")/, 'noindex', 'robots');
-    html = html.replace(/\s*<script type="module"[^>]*src="[^"]+"[^>]*><\/script>/, '');
   } else {
     html = replaceOnce(html, /(<link rel="alternate" hreflang="es" href=")[^"]*(")/, meta.alternates.es, 'hreflang es');
     html = replaceOnce(html, /(<link rel="alternate" hreflang="en" href=")[^"]*(")/, meta.alternates.en, 'hreflang en');

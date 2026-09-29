@@ -793,18 +793,10 @@ function renderNorth(page: PageCopy): string {
 // grid's 7fr column, so a screen that cannot show 1280 pixels takes the 960.
 const TALK_POSTER_SIZES = '(min-width: 861px) 58vw, 100vw';
 
-function renderTalk(page: PageCopy): string {
+function renderTalkFigure(page: PageCopy): string {
   const { talk } = page;
 
-  return `
-    <section class="sec talk" id="charla" aria-labelledby="charla-title">
-      <div class="shell talk-grid">
-        <div class="talk-copy" data-reveal>
-          <p class="eyebrow">${inline(talk.eyebrow)}</p>
-          <h2 class="section-title" id="charla-title">${inline(talk.title)}</h2>
-          <p class="lead talk-lead">${inline(talk.body)}</p>
-        </div>
-        <figure class="talk-figure" data-reveal>
+  return `        <figure class="talk-figure" data-reveal>
           <div class="talk-frame" data-talk>
             <button class="talk-play" type="button" data-talk-play aria-label="${inline(talk.play)}">
               <picture>
@@ -823,7 +815,21 @@ function renderTalk(page: PageCopy): string {
             <span class="talk-privacy">${inline(talk.privacy)}</span>
             <a class="talk-watch link" href="https://www.youtube.com/watch?v=${TALK_VIDEO_ID}" target="_blank" rel="noopener noreferrer">${inline(talk.watch)} <span aria-hidden="true">&nearr;</span></a>
           </figcaption>
-        </figure>
+        </figure>`;
+}
+
+function renderTalk(page: PageCopy): string {
+  const { talk } = page;
+
+  return `
+    <section class="sec talk" id="charla" aria-labelledby="charla-title">
+      <div class="shell talk-grid">
+        <div class="talk-copy" data-reveal>
+          <p class="eyebrow">${inline(talk.eyebrow)}</p>
+          <h2 class="section-title" id="charla-title">${inline(talk.title)}</h2>
+          <p class="lead talk-lead">${inline(talk.body)}</p>
+        </div>
+${renderTalkFigure(page)}
       </div>
     </section>
   `;
@@ -1111,6 +1117,9 @@ export function renderAliadosPage(): string {
   const sections = aliados.sections.map((section, index) => {
     const id = `aliados-${index + 1}`;
     const blocks = section.blocks.map((block) => {
+      if ('talk' in block) {
+        return renderTalkFigure(page);
+      }
       if ('items' in block) {
         return `<ul>${block.items.map((item) => `<li>${item.link ? `<a class="link" href="${item.link.href}">${inline(item.link.label)}</a>` : ''}${inline(item.text)}</li>`).join('')}</ul>`;
       }

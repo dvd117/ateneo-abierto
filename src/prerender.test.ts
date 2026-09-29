@@ -118,7 +118,7 @@ describe('build-time prerender', () => {
     expect(pageFileName('en', 'demos')).toBe('demos.en.html');
   });
 
-  test('renders the Spanish-only unlisted partner page with no alternates or hydration', () => {
+  test('renders the Spanish-only unlisted partner page with no alternates, wiring only the talk', () => {
     const html = fillTemplate(template, 'es', undefined, true);
 
     expect(html).toContain('<html lang="es"');
@@ -128,8 +128,16 @@ describe('build-time prerender', () => {
     expect(html).toContain('property="og:image" content="https://ateneo-abierto.org/og.png"');
     expect(html).not.toContain('hreflang=');
     expect(html).not.toContain('og:locale:alternate');
-    expect(html).not.toContain('src="/src/main.ts"');
-    expect(html).not.toMatch(/<a\b[^>]*href="https?:\/\//);
+    expect(html).toContain('src="/src/main.ts"');
+    expect(html).toContain('data-page="aliados"');
+    // The talk as the home page has it: vendored poster, no player until play is pressed.
+    expect(html).toContain('data-talk-play');
+    expect(html).toContain('src="/ignite-poster-1280.jpg"');
+    expect(html).not.toContain('<iframe');
+    // Its YouTube fallback is the only external link, with both rel values.
+    expect(html.match(/<a\b[^>]*href="https?:\/\/[^>]*>/g)).toEqual([
+      expect.stringMatching(/^<a class="talk-watch link" href="https:\/\/www\.youtube\.com\/watch\?v=[^"]+" target="_blank" rel="noopener noreferrer">$/)
+    ]);
     expect(html).toContain('Hagamos el puente');
     expect(html).toContain('<em>juntos.</em>');
     for (const path of ['/demos', '/talleres', '/hackaton']) {

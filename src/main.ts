@@ -709,7 +709,12 @@ function openAtDoor(container: ParentNode, route: DeepLinkRoute): void {
 
 // The server already sent this page, rendered, in the locale it chose. Keep
 // that DOM and only wire it up — unless this visitor saved the other language.
-if (
+// The partner briefing is Spanish only and carries one live part, the talk:
+// never re-render it into the home page, whatever language was saved.
+if (root.dataset.page === 'aliados') {
+  bindTalk(copy.es);
+  teardownReveal = initReveal(root, { animate: motionAllowed() });
+} else if (
   root.dataset.locale === currentLocale &&
   heroInput === HERO_INPUT &&
   root.childElementCount > 0

@@ -1561,7 +1561,8 @@ export const copy: Record<Locale, PageCopy> = {
 /** The unlisted, Spanish-only partner briefing. It is not a programme door. */
 export type AliadosSection = {
   title: string;
-  blocks: ({ text: string } | { before: string; link: { label: string; href: string }; after: string } | { items: { text: string; link?: { label: string; href: string } }[] })[];
+  /** `talk` places the home page's Ignite Talk figure, unchanged. */
+  blocks: ({ text: string } | { talk: true } | { before: string; link: { label: string; href: string }; after: string } | { items: { text: string; link?: { label: string; href: string } }[] })[];
 };
 
 export const aliados = {
@@ -1585,7 +1586,9 @@ export const aliados = {
       title: 'Cómo funciona hoy',
       blocks: [
         { text: 'Estamos haciendo esto sin recursos. Hoy lo impulsa una persona, David Aragort, pero la idea es que sea una iniciativa de comunidad.' },
-        { text: 'Una comunidad abierta de verdad. Cualquiera que comparta nuestra visión puede entrar, proponer y sumar.' }
+        { text: 'Una comunidad abierta de verdad. Cualquiera que comparta nuestra visión puede entrar, proponer y sumar.' },
+        { text: 'Si quieres saber de dónde viene esto, David lo cuenta en su Ignite Talk del Oslo Freedom Forum.' },
+        { talk: true }
       ]
     },
     {
