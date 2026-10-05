@@ -4,6 +4,8 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Sent by dependabot-auto-merge.yml after it merges; see the note there.
+  workflow_dispatch:
   # A new advisory lands on a day nobody commits. Without this, npm audit
   # only runs when something else happens to change.
   schedule:
@@ -91,7 +93,7 @@ jobs:
   # loudly rather than overwriting whatever is live.
   ship:
     needs: [verify, image]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || github.event_name == 'workflow_dispatch')
     runs-on: ubuntu-latest
     permissions:
       contents: write
