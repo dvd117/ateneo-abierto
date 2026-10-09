@@ -102,7 +102,7 @@ job fast-forward `production`, and that is what triggers the deploy. So a red
 build never reaches the site, and `production` never moves by hand — the push is
 fast-forward only and fails loudly rather than overwriting what is live.
 
-### Preview: `dev` → dev.aragort.com
+### Preview: `dev` → dev.ateneo-abierto.org
 
 A second Dokploy environment, `dev`, runs the same `docker-compose.yml` from the
 `dev` branch and deploys on every push to it. Work lands in `dev` by pull request;
@@ -112,8 +112,9 @@ these variables, and production sets none of them:
 | Variable | Preview value | Why |
 | --- | --- | --- |
 | `ROUTER_ID` | `ateneo-dev` | Traefik router, service and middleware names. Same-named services from two containers can be load-balanced together, which would send production visitors to the preview. |
-| `PUBLIC_HOST` | `dev.aragort.com` | The host both routers match. |
-| `SITE_ORIGIN` | `https://dev.aragort.com` | The subscribe endpoint's origin check. |
+| `PUBLIC_HOST` | `dev.ateneo-abierto.org` | The host the site and subscribe routers match. |
+| `WWW_HOST` | `dev.ateneo-abierto.org` | Production's `www` alias. The preview has none, so it points the alias router at its own host; Let's Encrypt is then only asked for hosts that exist. |
+| `SITE_ORIGIN` | `https://dev.ateneo-abierto.org` | The subscribe endpoint's origin check. |
 | `NOINDEX` | `1` | `X-Robots-Tag: noindex, nofollow` on every response and a disallow-all `robots.txt`. |
 | `MAILERLITE_DRY_RUN` | `1` | The form validates and answers ok; MailerLite is never called. |
 | `MAILERLITE_API_KEY`, `MAILERLITE_GROUP_ES_ID`, `MAILERLITE_GROUP_EN_ID` | any dummy value | The server refuses to boot without them. |

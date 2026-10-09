@@ -10,7 +10,7 @@ services:
       - MAILERLITE_PARTICIPATE_EN_ID=${MAILERLITE_PARTICIPATE_EN_ID}
       - SITE_ORIGIN=${SITE_ORIGIN}
       - PORT=3000
-      # Preview switches (dev.aragort.com): unset in production.
+      # Preview switches (dev.ateneo-abierto.org): unset in production.
       - NOINDEX=${NOINDEX:-}
       - MAILERLITE_DRY_RUN=${MAILERLITE_DRY_RUN:-}
     networks:
@@ -22,17 +22,27 @@ services:
       resources:
         limits:
           memory: 512M
-    # ROUTER_ID and PUBLIC_HOST let a second Dokploy environment run this file.
-    # Traefik can merge same-named routers and services across containers, so a
-    # preview that kept the defaults would join production's load balancer.
-    # Production sets neither and keeps these defaults.
+    # ROUTER_ID, PUBLIC_HOST and WWW_HOST let a second Dokploy environment run
+    # this file. Traefik can merge same-named routers and services across
+    # containers, so a preview that kept the defaults would join production's
+    # load balancer. Production sets none of them and keeps these defaults.
+    #
+    # The www alias is its own router so that each router asks Let's Encrypt
+    # for one host. A combined rule asks for one certificate covering both, and
+    # the whole request fails when the alias has no DNS. The preview has no
+    # alias: it sets WWW_HOST to its own host, a harmless duplicate route.
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}.rule=Host(`${PUBLIC_HOST:-ateneo-abierto.org}`) || Host(`www.${PUBLIC_HOST:-ateneo-abierto.org}`)"
+      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}.rule=Host(`${PUBLIC_HOST:-ateneo-abierto.org}`)"
       - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}.entrypoints=websecure"
       - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}.tls=true"
       - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}.tls.certresolver=letsencrypt"
       - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}.service=${ROUTER_ID:-ateneo-abierto}"
+      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-www.rule=Host(`${WWW_HOST:-www.ateneo-abierto.org}`)"
+      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-www.entrypoints=websecure"
+      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-www.tls=true"
+      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-www.tls.certresolver=letsencrypt"
+      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-www.service=${ROUTER_ID:-ateneo-abierto}"
       - "traefik.http.services.${ROUTER_ID:-ateneo-abierto}.loadbalancer.server.port=3000"
       - "traefik.docker.network=dokploy-network"
       # Second layer under the app's own limiter (src/rate-limit.ts): this one
@@ -46,10 +56,10 @@ services:
       # it. Traefik only keeps an incoming XFF when the peer is a Deflect edge
       # (forwardedHeaders.trustedIPs, re-rendered from the live edge list).
       - "traefik.http.middlewares.${ROUTER_ID:-ateneo-abierto}-subscribe-ratelimit.ratelimit.sourceCriterion.ipStrategy.depth=1"
-      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-subscribe.rule=(Host(`${PUBLIC_HOST:-ateneo-abierto.org}`) || Host(`www.${PUBLIC_HOST:-ateneo-abierto.org}`)) && Path(`/api/subscribe`)"
+      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-subscribe.rule=(Host(`${PUBLIC_HOST:-ateneo-abierto.org}`) || Host(`${WWW_HOST:-www.ateneo-abierto.org}`)) && Path(`/api/subscribe`)"
       - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-subscribe.entrypoints=websecure"
+      # No certresolver: served from the certificates the routers above obtain.
       - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-subscribe.tls=true"
-      - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-subscribe.tls.certresolver=letsencrypt"
       - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-subscribe.middlewares=${ROUTER_ID:-ateneo-abierto}-subscribe-ratelimit"
       - "traefik.http.routers.${ROUTER_ID:-ateneo-abierto}-subscribe.service=${ROUTER_ID:-ateneo-abierto}"
 

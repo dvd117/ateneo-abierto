@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    # dev is the preview lane: Dokploy deploys it straight to dev.aragort.com,
+    # dev is the preview lane: Dokploy deploys it straight to dev.ateneo-abierto.org,
     # so a red push there should at least be visible. ship stays main-only.
     branches: [main, dev]
   pull_request:
