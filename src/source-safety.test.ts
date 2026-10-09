@@ -129,6 +129,30 @@ describe('anti-slop rules hold in the stylesheet', () => {
   });
 });
 
+describe('foundation sketch motion stays progressive', () => {
+  test('keeps hero pin and chapter motion inside scroll-timeline support', () => {
+    const styles = css();
+    const support = styles.slice(styles.indexOf('@supports (animation-timeline: view())'));
+
+    expect(support).toContain('height: 200svh');
+    expect(support).toContain('height: 150svh');
+    expect(support).toContain('animation-timeline: --chapter');
+    expect(support).toContain('animation-timeline: --hero');
+  });
+
+  test('settles new motion and the pin under reduced motion', () => {
+    const styles = css();
+    const support = styles.slice(styles.indexOf('@supports (animation-timeline: view())'));
+    const reduced = support.slice(support.indexOf('@media (prefers-reduced-motion: reduce)'));
+
+    for (const selector of ['.chapter-n', '.chapter-title', '.hero-title', '.agent']) {
+      expect(reduced).toContain(selector);
+    }
+    expect(reduced).toContain('animation: none');
+    expect(reduced).toContain('position: static');
+  });
+});
+
 describe('form and honeypot handling', () => {
   test('does not hide the subscribe honeypot with inline styles', () => {
     const markup = readFileSync('src/render.ts', 'utf8') + readFileSync('src/main.ts', 'utf8');
