@@ -102,6 +102,26 @@ job fast-forward `production`, and that is what triggers the deploy. So a red
 build never reaches the site, and `production` never moves by hand — the push is
 fast-forward only and fails loudly rather than overwriting what is live.
 
+### Preview: `dev` → dev.aragort.com
+
+A second Dokploy environment, `dev`, runs the same `docker-compose.yml` from the
+`dev` branch and deploys on every push to it. Work lands in `dev` by pull request;
+`main`, and so production, moves only when `dev` is promoted. The preview sets
+these variables, and production sets none of them:
+
+| Variable | Preview value | Why |
+| --- | --- | --- |
+| `ROUTER_ID` | `ateneo-dev` | Traefik router, service and middleware names. Same-named services from two containers can be load-balanced together, which would send production visitors to the preview. |
+| `PUBLIC_HOST` | `dev.aragort.com` | The host both routers match. |
+| `SITE_ORIGIN` | `https://dev.aragort.com` | The subscribe endpoint's origin check. |
+| `NOINDEX` | `1` | `X-Robots-Tag: noindex, nofollow` on every response and a disallow-all `robots.txt`. |
+| `MAILERLITE_DRY_RUN` | `1` | The form validates and answers ok; MailerLite is never called. |
+| `MAILERLITE_API_KEY`, `MAILERLITE_GROUP_ES_ID`, `MAILERLITE_GROUP_EN_ID` | any dummy value | The server refuses to boot without them. |
+
+Fill the preview's variables only once its `dev` branch carries the
+`ROUTER_ID` labels: before that, a healthy preview container would share
+production's router names.
+
 ## Licence
 
 Code is [MIT](LICENSE). The words, the visual direction and the project's own
