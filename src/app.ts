@@ -119,7 +119,7 @@ function readPage(file: string): string | null {
 // difference is most of the wait. Fonts are already woff2 and are skipped.
 app.use('*', compress());
 
-// The preview at dev.aragort.com runs this same image with NOINDEX=1. A
+// The preview at dev.ateneo-abierto.org runs this same image with NOINDEX=1. A
 // search engine that finds it must not list a half-finished copy of the site.
 app.use('*', async (c, next) => {
   await next();
