@@ -58,7 +58,7 @@ typography:
     fontFamily: Fraunces, Iowan Old Style, Georgia, serif
     fontSize: 4.6
     fluidMin: 2.5
-    fontWeight: 560
+    fontWeight: 400
     lineHeight: 0.98
     letterSpacing: "-0.028em"
     variation: "opsz 144, SOFT 50, WONK 1"
@@ -66,13 +66,13 @@ typography:
     fontFamily: Fraunces, Iowan Old Style, Georgia, serif
     fontSize: 3.3
     fluidMin: 2.1
-    fontWeight: 560
+    fontWeight: 400
     lineHeight: 1.02
     letterSpacing: "-0.022em"
   h2:
     fontFamily: Fraunces, Iowan Old Style, Georgia, serif
     fontSize: 1.6
-    fontWeight: 560
+    fontWeight: 400
     lineHeight: 1.15
   h3:
     fontFamily: Figtree, Avenir Next, Segoe UI, system-ui, sans-serif
@@ -115,7 +115,7 @@ typography:
     lineHeight: 1.4
 spacing:
   page: 1.5
-  section: 6
+  section: "clamp(4rem, 9vw, 7.5rem)"
   stack: 1
   inline: 0.5
   gap-lg: 2.5
@@ -307,9 +307,9 @@ All above the 10 risk line. Re-run the table whenever a token changes.
 Two voices, deliberately split (pairing B, over Bricolage Grotesque and Figtree alone):
 
 - **Fraunces** (`display`, `h1`, `h2`) is the manifesto voice: the headline, section titles,
-  the title of the produced document. A soft, slightly irregular serif at weight 560, optical
-  size 144 for display and section titles. Warm and bold, closer to a cultural institution than
-  to a magazine. The emphasised phrase is italic at 400, never bold; in the hero headline it
+  the title of the produced document. A soft, slightly irregular serif at weight 400, optical
+  size 144 for display and section titles. Light and editorial, closer to a cultural institution
+  than to a magazine. The emphasised phrase is italic at 400, never bold; in the hero headline it
   also takes the signal colour.
 - **Figtree** is the interface voice and the reading voice: leads, body, buttons, labels, the
   agent window, the form and the wordmark. It is the open face closest to the Avenir Next the
@@ -357,16 +357,19 @@ still never loops:
 
 - **Functional**, as before: a step ticking, a file appearing, a map edge drawing, a node
   lighting. `duration-step` paces the agent window; `duration-draw` paces the map edges.
-- **Entrances**: the hero headline rises line by line on load; each section header's title and
-  lead rise a beat apart as they enter.
+- **Entrances**: the hero headline rises line by line on load. On the homepage, chapter numerals
+  drift and masked titles rise with the view timeline; the wide hero pins for 200svh, the phone
+  hero for 150svh, and the agent window joins the title on wide screens. The door row and dialog
+  share a view transition. These additions are guarded by `@supports (animation-timeline: view())`
+  and settle to a static page under reduced motion.
 - **Scroll-driven**: *la vibración*, the page's signature, after Carlos Cruz-Diez's
-  additive-colour method: one continuous field of vertical stripes (pitch 6) in which the
+  additive-colour method: one remaining continuous field of vertical stripes (pitch 6) in which the
   widths of ochre, dark ochre and bone drift on slow waves along the band, so the colour mixed
   in the eye changes gradually — one field, not a row of blocks — under a screen of diagonal
   dark lines (45°). The field is drawn in the browser (`drawBand`), so it costs nothing in the
-  first response; only bands near the viewport repaint (60 fps at 4× CPU throttling). Three
-  bands mark the chapters (after the hero, before El norte, before Únete), each with its own
-  wave phase, at `clamp(64px, 10vh, 140px)` so a phone does not read them as a barcode.
+  first response; only bands near the viewport repaint (60 fps at 4× CPU throttling). The
+  remaining band marks chapter VI before Únete, at `clamp(64px, 10vh, 140px)` so a phone does
+  not read it as a barcode.
   **The bands are instruments, not ornaments** (2026-09-14): they record where the reader is.
   - *Scroll.* As a band crosses the screen the screen slides one way and the field the other,
     eased towards the scroll position so a wheel notch reads as a sweep, not a flicker between
@@ -386,7 +389,7 @@ still never loops:
   The floor is quoted deliberately in words, once: a single line under band three, before Únete, the
   only moment the page speaks in the founder's voice. It is a real paragraph beside the
   `aria-hidden` band, Fraunces italic at the door "who" size, `bone-soft`, right-aligned on
-  desktop and centred on a phone, and unsigned. Bands one and two carry no line.
+  desktop and centred on a phone, and unsigned.
 
 Everything short-circuits under `prefers-reduced-motion` (bands stand still in resting ochre,
 still a moiré, and no orientation listener or permission prompt is ever attached), and
@@ -394,11 +397,10 @@ the interactive layer is not loaded at all under `saveData`.
 
 ## Texture, elevation and depth
 
-Grain (`/grain.png`, a 4.5 KB palette tile, alpha 9–14) is a background layer of the page
-and of each section's ground — never an overlay. Text, icons, buttons, the agent window, the
-video, the form and the bands sit above it and stay clean (David, 2026-09-11). Surfaces stay flat tonal layers with 1 px borders. The
-window shadow (`0 20px 40px -18px rgba(0,0,0,.6)`) is now shared by the four objects the page
-hands you: the agent window, the talk's frame, the form panel and the programme dialogs.
+Grain is removed from the page and section grounds for the foundation sketch. Surfaces stay
+flat tonal layers with 1 px borders. The window shadow (`0 20px 40px -18px rgba(0,0,0,.6)`)
+is kept only on the agent window and programme dialogs; the join form uses `graphite-raise`
+without a shadow.
 
 ## Layout system
 

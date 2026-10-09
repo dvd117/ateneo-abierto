@@ -420,6 +420,8 @@ export type PageCopy = {
   };
   skipToContent: string;
   sectionsLabel: string;
+  /** Provisional label for the editorial chapter index. */
+  indexLabel: string;
   /** The floating button that returns to the top of the page. */
   toTop: string;
   nav: NavLink[];
@@ -487,6 +489,7 @@ export const copy: Record<Locale, PageCopy> = {
     },
     skipToContent: 'Saltar al contenido',
     sectionsLabel: 'Secciones',
+    indexLabel: 'Contenido',
     toTop: 'Volver arriba',
     nav: [
       { label: 'Programa', href: '#programa' },
@@ -1028,6 +1031,7 @@ export const copy: Record<Locale, PageCopy> = {
     },
     skipToContent: 'Skip to content',
     sectionsLabel: 'Sections',
+    indexLabel: 'Contents',
     toTop: 'Back to top',
     nav: [
       { label: 'Program', href: '#programa' },

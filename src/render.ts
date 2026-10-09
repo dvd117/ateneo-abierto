@@ -114,6 +114,7 @@ function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
         ${partner ? '' : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
         </nav>`}
+        ${partner ? '' : `<span class="running-head" data-running-head aria-hidden="true">${inline(chapterLabel('I', page.shift.eyebrow))}</span>`}
         ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
@@ -391,22 +392,89 @@ function renderHero(page: PageCopy, heroInput: HeroInput): string {
 
   return `
     <section class="hero" aria-labelledby="hero-title">
-      <div class="shell hero-grid">
-        <div class="hero-head">
-          <p class="eyebrow">${page.hero.eyebrow}</p>
-          <h1 class="display hero-title" id="hero-title">${headline}</h1>
-        </div>
-        <div class="hero-copy">
-          <p class="lead hero-manifesto">${inline(page.hero.manifesto)}</p>
-          <div class="hero-actions">
-            <a class="button button--fill" href="#unete">${page.hero.primaryCta}</a>
-            <p class="hero-byline">${inline(page.hero.byline)} · <a class="link" href="#charla">${inline(page.hero.bylineLink)} <span aria-hidden="true">&darr;</span></a></p>
+      <div class="hero-stage">
+        <div class="shell hero-grid">
+          <div class="hero-head">
+            <p class="eyebrow">${inline(page.hero.eyebrow)}</p>
+            <h1 class="display hero-title" id="hero-title">${headline}</h1>
           </div>
+          <div class="hero-copy">
+            <p class="lead hero-manifesto">${inline(page.hero.manifesto)}</p>
+            <div class="hero-actions">
+              <a class="button button--fill" href="#unete">${inline(page.hero.primaryCta)}</a>
+              <p class="hero-byline">${inline(page.hero.byline)} · <a class="link" href="#charla">${inline(page.hero.bylineLink)} <span aria-hidden="true">&darr;</span></a></p>
+            </div>
+          </div>
+          ${renderAgentWindow(page, heroInput)}
         </div>
-        ${renderAgentWindow(page, heroInput)}
+      </div>
+      <div class="shell hero-network">
         ${renderNetwork(page)}
       </div>
     </section>
+  `;
+}
+
+type ChapterOptions = {
+  number: string;
+  eyebrow: string;
+  title: string;
+  id: string;
+  lead?: string;
+};
+
+function chapterLabel(number: string, eyebrow: string): string {
+  return `${number} · ${eyebrow}`;
+}
+
+/** A numbered chapter opener. The numeral is a ground, not a second heading. */
+function renderChapter(options: ChapterOptions): string {
+  const short = options.lead !== undefined && options.lead.length <= 120;
+  const label = chapterLabel(options.number, options.eyebrow);
+
+  return `
+    <header class="chapter-head${short ? ' chapter-head--inline' : ''}">
+      <span class="chapter-n" aria-hidden="true">${options.number}</span>
+      <div class="chapter-main">
+        <p class="eyebrow">${inline(label)}</p>
+        <h2 class="section-title chapter-title" id="${options.id}"><span class="mask"><span>${options.title}</span></span></h2>
+      </div>
+      ${options.lead ? `<p class="lead chapter-lead">${inline(options.lead)}</p>` : ''}
+    </header>
+  `;
+}
+
+/** The six real destinations, gathered as a running contents index. */
+function renderIndex(page: PageCopy): string {
+  const chapters = [
+    { number: 'I', id: 'cambio', eyebrow: page.shift.eyebrow, title: titleFrom(page.shift.titleLines) },
+    { number: 'II', id: 'programa', eyebrow: page.doors.eyebrow, title: inline(page.doors.title) },
+    { number: 'III', id: 'norte', eyebrow: page.north.eyebrow, title: titleFrom(page.north.titleLines) },
+    { number: 'IV', id: 'principios', eyebrow: page.principles.eyebrow, title: inline(page.principles.title) },
+    { number: 'V', id: 'charla', eyebrow: page.talk.eyebrow, title: inline(page.talk.title) },
+    { number: 'VI', id: 'unete', eyebrow: page.form.eyebrow, title: inline(page.form.title) }
+  ];
+
+  return `
+    <nav class="chapter-index shell" aria-label="${inline(page.indexLabel)}">
+      <p class="eyebrow chapter-index-label">${inline(page.indexLabel)}</p>
+      <ol>
+        ${chapters
+          .map(
+            ({ number, id, eyebrow, title }) => `
+              <li>
+                <a class="chapter-index-row" href="#${id}">
+                  <span class="chapter-index-n" aria-hidden="true">${number}</span>
+                  <span class="chapter-index-title">${title}</span>
+                  <span class="chapter-index-eyebrow">${inline(eyebrow)}</span>
+                  <span class="chapter-index-arrow" aria-hidden="true">&rarr;</span>
+                </a>
+              </li>
+            `
+          )
+          .join('')}
+      </ol>
+    </nav>
   `;
 }
 
@@ -520,9 +588,9 @@ function renderShift(page: PageCopy): string {
   const { shift } = page;
 
   return `
-    <section class="sec shift" id="cambio" aria-labelledby="cambio-title">
+    <section class="sec chapter chapter--spread shift" id="cambio" data-chapter-label="${inline(chapterLabel('I', shift.eyebrow))}" aria-labelledby="cambio-title">
       <div class="shell">
-        ${renderSecHead({ eyebrow: shift.eyebrow, title: titleFrom(shift.titleLines), id: 'cambio-title', lead: shift.lead })}
+        ${renderChapter({ number: 'I', eyebrow: shift.eyebrow, title: titleFrom(shift.titleLines), id: 'cambio-title', lead: shift.lead })}
         <p class="shift-task">${inline(shift.task)}</p>
         <div class="shift-cmp">
           ${shift.columns.map((column) => renderShiftColumn(column)).join('')}
@@ -581,15 +649,17 @@ function renderGlossary(page: PageCopy): string {
 function renderDoor(page: PageCopy, door: Door, order: number): string {
   return `
     <article class="door" id="${door.id}" data-reveal data-reveal-delay="${order * 90}">
-      <p class="door-n" aria-hidden="true">${inline(door.n)}</p>
-      <h3 class="door-title">${inline(door.title)}</h3>
-      <p class="door-body">${inline(door.body)}</p>
-      <p class="door-who">
-        <span class="door-who-label">${inline(door.whoLabel)}</span>
-        ${inline(door.who)}
-      </p>
-      <button class="door-cta" type="button" data-dialog-open="door-${door.id}"
-              aria-haspopup="dialog">${inline(page.doors.dialog.open)} <span class="visually-hidden">· ${inline(door.title)}</span><span class="door-cta-arrow" aria-hidden="true">&rarr;</span></button>
+      <button class="door-row" type="button" data-dialog-open="door-${door.id}"
+              aria-haspopup="dialog" aria-label="${inline(page.doors.dialog.open)} · ${inline(door.title)}"
+              aria-describedby="door-${door.id}-body door-${door.id}-who">
+        <span class="door-n" aria-hidden="true">${inline(door.n)}</span>
+        <span class="door-info">
+          <span class="door-title" data-door-title role="heading" aria-level="3">${inline(door.title)}</span>
+          <span class="door-body" id="door-${door.id}-body">${inline(door.body)}</span>
+          <span class="door-who" id="door-${door.id}-who"><span class="door-who-label">${inline(door.whoLabel)}</span>${inline(door.who)}</span>
+        </span>
+        <span class="door-cta-arrow" aria-hidden="true">&rarr;</span>
+      </button>
     </article>
   `;
 }
@@ -609,7 +679,7 @@ function renderDoorDialog(page: PageCopy, door: Door): string {
           <svg viewBox="0 0 20 20" aria-hidden="true" focusable="false"><path d="M5 5l10 10M15 5L5 15" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
         </button>
         <p class="dlg-n" aria-hidden="true">${inline(door.n)}</p>
-        <h3 class="dlg-title" id="door-${door.id}-title">${inline(door.title)}</h3>
+        <h3 class="dlg-title" id="door-${door.id}-title" data-dialog-title>${inline(door.title)}</h3>
         <p class="dlg-goal"><span class="dlg-label">${inline(dialog.goalLabel)}</span>${inline(door.details.goal)}</p>
         <div class="dlg-block">
           <p class="dlg-label">${inline(dialog.activitiesLabel)}</p>
@@ -632,9 +702,9 @@ function renderDoors(page: PageCopy): string {
   const { doors } = page;
 
   return `
-    <section class="sec doors" id="programa" aria-labelledby="programa-title">
+    <section class="sec chapter chapter--index doors" id="programa" data-chapter-label="${inline(chapterLabel('II', doors.eyebrow))}" aria-labelledby="programa-title">
       <div class="shell">
-        ${renderSecHead({ eyebrow: doors.eyebrow, title: inline(doors.title), id: 'programa-title', lead: doors.lead })}
+        ${renderChapter({ number: 'II', eyebrow: doors.eyebrow, title: inline(doors.title), id: 'programa-title', lead: doors.lead })}
         <div class="door-grid">
           ${doors.doors.map((door, order) => renderDoor(page, door, order)).join('')}
         </div>
@@ -681,9 +751,9 @@ function renderPrinciples(page: PageCopy): string {
     .join('');
 
   return `
-    <section class="sec principles" id="principios" aria-labelledby="principios-title">
+    <section class="sec chapter chapter--list principles" id="principios" data-chapter-label="${inline(chapterLabel('IV', principles.eyebrow))}" aria-labelledby="principios-title">
       <div class="shell">
-        ${renderSecHead({ eyebrow: principles.eyebrow, title: inline(principles.title), id: 'principios-title', lead: principles.lead })}
+        ${renderChapter({ number: 'IV', eyebrow: principles.eyebrow, title: inline(principles.title), id: 'principios-title', lead: principles.lead })}
         <div class="pr-grid">${items}</div>
       </div>
     </section>
@@ -759,9 +829,9 @@ function renderNorth(page: PageCopy): string {
   const { north } = page;
 
   return `
-    <section class="sec north" id="norte" aria-labelledby="norte-title">
+    <section class="sec chapter chapter--map north" id="norte" data-chapter-label="${inline(chapterLabel('III', north.eyebrow))}" aria-labelledby="norte-title">
       <div class="shell">
-        ${renderSecHead({ eyebrow: north.eyebrow, title: titleFrom(north.titleLines), id: 'norte-title', lead: north.lead })}
+        ${renderChapter({ number: 'III', eyebrow: north.eyebrow, title: titleFrom(north.titleLines), id: 'norte-title', lead: north.lead })}
         <div class="north-body">
           <ol class="hz">
             ${north.horizons
@@ -793,6 +863,24 @@ function renderNorth(page: PageCopy): string {
 // grid's 7fr column, so a screen that cannot show 1280 pixels takes the 960.
 const TALK_POSTER_SIZES = '(min-width: 861px) 58vw, 100vw';
 
+/** Reuses the vendored talk poster as the sketch's two temporary plate images. */
+function renderPlate(page: PageCopy, name: 'north' | 'talk'): string {
+  const { talk } = page;
+
+  return `
+    <figure class="plate plate--${name}" data-plate>
+      <picture>
+        <source type="image/webp" sizes="100vw"
+                srcset="/ignite-poster.webp 960w, /ignite-poster-1280.webp 1280w" />
+        <img data-plate-image src="/ignite-poster-1280.jpg" alt="${inline(talk.posterAlt)}"
+             sizes="100vw" srcset="/ignite-poster.jpg 960w, /ignite-poster-1280.jpg 1280w"
+             width="1280" height="720" loading="lazy" decoding="async" />
+      </picture>
+      <figcaption class="plate-caption"><span class="shell">${inline(talk.label)}</span></figcaption>
+    </figure>
+  `;
+}
+
 function renderTalkFigure(page: PageCopy): string {
   const { talk } = page;
 
@@ -822,12 +910,10 @@ function renderTalk(page: PageCopy): string {
   const { talk } = page;
 
   return `
-    <section class="sec talk" id="charla" aria-labelledby="charla-title">
+    <section class="sec chapter chapter--cinema talk" id="charla" data-chapter-label="${inline(chapterLabel('V', talk.eyebrow))}" aria-labelledby="charla-title">
       <div class="shell talk-grid">
         <div class="talk-copy" data-reveal>
-          <p class="eyebrow">${inline(talk.eyebrow)}</p>
-          <h2 class="section-title" id="charla-title">${inline(talk.title)}</h2>
-          <p class="lead talk-lead">${inline(talk.body)}</p>
+          ${renderChapter({ number: 'V', eyebrow: talk.eyebrow, title: inline(talk.title), id: 'charla-title', lead: talk.body })}
         </div>
 ${renderTalkFigure(page)}
       </div>
@@ -850,12 +936,10 @@ function renderForm(page: PageCopy, locale: Locale): string {
   const { form } = page;
 
   return `
-    <section class="sec join" id="unete" aria-labelledby="unete-title">
+    <section class="sec chapter chapter--colophon join" id="unete" data-chapter-label="${inline(chapterLabel('VI', form.eyebrow))}" aria-labelledby="unete-title">
       <div class="shell join-grid">
       <div class="join-copy" data-reveal>
-        <p class="eyebrow">${inline(form.eyebrow)}</p>
-        <h2 class="display join-title" id="unete-title">${inline(form.title)}</h2>
-        <p class="lead join-lead">${inline(form.lead)}</p>
+        ${renderChapter({ number: 'VI', eyebrow: form.eyebrow, title: inline(form.title), id: 'unete-title', lead: form.lead })}
         <p class="join-allies">
           ${inline(form.allies)}
           <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
@@ -1092,12 +1176,13 @@ export function renderPage(
     ${renderHeader(page, locale)}
     <main id="contenido">
       ${renderHero(page, heroInput)}
-      ${renderBand('one', 0)}
+      ${renderIndex(page)}
       ${renderShift(page)}
       ${renderDoors(page)}
-      ${renderBand('two', 3)}
+      ${renderPlate(page, 'north')}
       ${renderNorth(page)}
       ${renderPrinciples(page)}
+      ${renderPlate(page, 'talk')}
       ${renderTalk(page)}
       ${renderBand('three', 5, page.voice)}
       ${renderForm(page, locale)}

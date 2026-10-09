@@ -47,9 +47,9 @@
   --font-sans: "Figtree", "Avenir Next", "Segoe UI", system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
-  --t-display: 560 clamp(2.5rem, 1.3rem + 3.8vw, 4.6rem) / 0.98 var(--font-display);
-  --t-h1: 560 clamp(2.1rem, 1.45rem + 2.1vw, 3.3rem) / 1.02 var(--font-display);
-  --t-h2: 560 1.6rem / 1.15 var(--font-display);
+  --t-display: 400 clamp(2.5rem, 1.3rem + 3.8vw, 4.6rem) / 0.98 var(--font-display);
+  --t-h1: 400 clamp(2.1rem, 1.45rem + 2.1vw, 3.3rem) / 1.02 var(--font-display);
+  --t-h2: 400 1.6rem / 1.15 var(--font-display);
   --t-h3: 600 1.15rem / 1.3 var(--font-sans);
   --t-lead: 400 1.18rem / 1.55 var(--font-sans);
   --t-body: 400 1rem / 1.6 var(--font-sans);
@@ -63,7 +63,7 @@
 
   /* spacing */
   --sp-page: 1.5rem;
-  --sp-section: 6rem;
+  --sp-section: clamp(4rem, 9vw, 7.5rem);
   --sp-stack: 1rem;
   --sp-inline: 0.5rem;
   --gap-lg: 2.5rem;
@@ -85,7 +85,7 @@
   --duration-step: 420ms;
   --duration-draw: 1200ms;
 
-  /* the one shadow on the page: the agent window */
+  /* the agent window and programme dialogs only */
   --shadow-window: 0 20px 40px -18px rgba(0, 0, 0, 0.6);
 }
 /* --- end generated from DESIGN.md --- */
@@ -255,7 +255,7 @@ button {
   font: var(--t-label);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
-  color: var(--c-accent);
+  color: var(--c-fg-2);
 }
 
 .small {
@@ -304,7 +304,7 @@ button {
 
 .sec {
   position: relative;
-  padding-block: clamp(4rem, 9vw, 7.5rem);
+  padding-block: var(--sp-section);
   border-top: 1px solid var(--c-border);
 }
 
@@ -345,6 +345,166 @@ button {
   }
 }
 
+/* ---------- chapters and their index ---------- */
+
+.chapter-head {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  gap: var(--gap-md);
+  align-items: end;
+  min-height: clamp(10rem, 24vw, 17rem);
+  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.chapter-n {
+  position: absolute;
+  z-index: 0;
+  right: 0;
+  bottom: -0.08em;
+  color: var(--graphite-land);
+  font: 400 clamp(8rem, 18vw, 16rem) / 0.75 var(--font-display);
+  font-variation-settings: "opsz" 144;
+  letter-spacing: -0.05em;
+  pointer-events: none;
+  user-select: none;
+}
+
+.chapter-main,
+.chapter-lead {
+  position: relative;
+  z-index: 1;
+}
+
+.chapter-main {
+  max-width: 62rem;
+}
+
+.chapter-title {
+  margin-top: 0.9rem;
+}
+
+.chapter-title .mask {
+  display: block;
+  overflow: clip;
+  padding: 0.05em 0.12em 0.12em 0;
+}
+
+.chapter-title .mask > span {
+  display: block;
+}
+
+.chapter-lead {
+  max-width: 58ch;
+}
+
+@media (min-width: 861px) {
+  .chapter-head {
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: var(--gap-md);
+  }
+
+  .chapter-head--inline .chapter-main {
+    grid-column: 1 / span 7;
+  }
+
+  .chapter-head--inline .chapter-lead {
+    grid-column: 8 / -1;
+  }
+
+  .chapter-head:not(.chapter-head--inline) .chapter-main {
+    grid-column: 1 / span 9;
+  }
+
+  .chapter-head:not(.chapter-head--inline) .chapter-lead {
+    grid-column: 1 / -1;
+  }
+}
+
+.chapter-index {
+  padding-block: var(--gap-lg);
+  border-top: 1px solid var(--c-border);
+  border-bottom: 1px solid var(--c-border);
+}
+
+.chapter-index-label {
+  margin-bottom: var(--gap-sm);
+}
+
+.chapter-index ol {
+  display: grid;
+  border-top: 1px solid var(--c-border);
+}
+
+.chapter-index li {
+  min-width: 0;
+  border-bottom: 1px solid var(--c-border);
+}
+
+.chapter-index-row {
+  display: grid;
+  grid-template-columns: 2.25rem minmax(0, 1fr) auto 1.25rem;
+  align-items: baseline;
+  gap: 0.5rem;
+  min-height: 3.5rem;
+  padding-block: var(--gap-sm);
+  text-decoration: none;
+}
+
+.chapter-index-n,
+.chapter-index-arrow {
+  color: var(--c-fg-2);
+}
+
+.chapter-index-n {
+  font: italic 400 1.1rem / 1 var(--font-display);
+}
+
+.chapter-index-title {
+  font: var(--t-h2);
+  font-size: clamp(1.2rem, 1.1rem + 0.8vw, 1.65rem);
+}
+
+.chapter-index-eyebrow {
+  color: var(--c-fg-2);
+  font: var(--t-small);
+  text-align: right;
+}
+
+.chapter-index-arrow {
+  justify-self: end;
+}
+
+.chapter-index-row:hover .chapter-index-title,
+.chapter-index-row:hover .chapter-index-arrow {
+  color: var(--c-accent);
+}
+
+@media (min-width: 861px) {
+  .chapter-index ol {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--gap-lg);
+  }
+}
+
+@media (max-width: 640px) {
+  .chapter-index-row {
+    grid-template-columns: 2rem minmax(0, 1fr) 1rem;
+    column-gap: 0.5rem;
+  }
+
+  .chapter-index-eyebrow {
+    grid-column: 2;
+    text-align: left;
+  }
+
+  .chapter-index-arrow {
+    grid-column: 3;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+}
+
 .sec-head .section-title {
   margin-top: 0.9rem;
 }
@@ -355,7 +515,7 @@ button {
   transform: none;
 }
 
-.sec-head[data-reveal] > * {
+html.motion-ok .sec-head[data-reveal] > * {
   opacity: 0;
   transform: translateY(1.25rem);
   transition:
@@ -363,11 +523,11 @@ button {
     transform 900ms var(--ease-out);
 }
 
-.sec-head[data-reveal] > :nth-child(2) {
+html.motion-ok .sec-head[data-reveal] > :nth-child(2) {
   transition-delay: 140ms;
 }
 
-.sec-head[data-reveal].is-revealed > * {
+html.motion-ok .sec-head[data-reveal].is-revealed > * {
   opacity: 1;
   transform: none;
 }
@@ -464,28 +624,13 @@ button {
   transform: translateX(calc(var(--band-shift, 0) * 1px));
 }
 
-/* ---------- grain ----------
-   Noise on the ground, never on the things placed on it. The tile is a
-   background layer of the page and of each section's own ground, so text,
-   icons, buttons, the agent window, the video, the form and the bands — all
-   of which paint their own surface or sit above the ground — stay clean
-   (David, 2026-09-11). A static 4.5 KB tile, one request, no script. */
-
-body,
-.hero,
-.sec,
-.site-footer {
-  background-image: url("/grain.png");
-  background-size: 128px 128px;
-}
-
 /* ---------- header ---------- */
 
 .site-header {
   position: sticky;
   top: 0;
   z-index: 20;
-  background: color-mix(in srgb, var(--c-bg) 96%, transparent);
+  background: var(--c-bg);
   border-bottom: 1px solid var(--c-border);
 }
 
@@ -546,7 +691,6 @@ main .door[id] {
   background: var(--c-bg-panel);
   border: 1px solid var(--c-border);
   color: var(--c-fg);
-  box-shadow: 0 12px 28px -14px rgba(0, 0, 0, 0.7);
   opacity: 0;
   transform: translateY(0.75rem);
   pointer-events: none;
@@ -625,6 +769,13 @@ main .door[id] {
   color: var(--c-fg);
 }
 
+.running-head {
+  min-width: 0;
+  color: var(--c-fg-2);
+  font: var(--t-small);
+  white-space: nowrap;
+}
+
 .locale-toggle {
   display: inline-flex;
   align-items: center;
@@ -647,6 +798,34 @@ main .door[id] {
 /* On a phone the header keeps only the call to action; the footer carries
    the rest. */
 @media (max-width: 640px) {
+  .header-inner {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "brand locale" "running nav";
+    column-gap: var(--gap-md);
+    row-gap: 0.3rem;
+  }
+
+  .nav-wordmark {
+    grid-area: brand;
+    margin-right: 0;
+  }
+
+  .running-head {
+    grid-area: running;
+    font-size: 0.72rem;
+  }
+
+  .locale-toggle {
+    grid-area: locale;
+    justify-self: end;
+  }
+
+  .nav-links {
+    grid-area: nav;
+    justify-self: end;
+  }
+
   .nav-links a:not(:last-child) {
     display: none;
   }
@@ -717,6 +896,10 @@ main .door[id] {
   padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3.5rem, 8vw, 6.5rem);
 }
 
+.hero-stage {
+  position: relative;
+}
+
 .hero-grid {
   display: grid;
   gap: var(--gap-lg);
@@ -727,9 +910,8 @@ main .door[id] {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     grid-template-areas:
       "head   head"
-      "copy   window"
-      "net    window";
-    grid-template-rows: auto auto 1fr;
+      "copy   window";
+    grid-template-rows: auto 1fr;
     column-gap: clamp(2rem, 4.5vw, 4.5rem);
     row-gap: clamp(1.75rem, 3vw, 2.75rem);
     align-items: start;
@@ -741,10 +923,6 @@ main .door[id] {
 
   .hero-copy {
     grid-area: copy;
-  }
-
-  .hero .net {
-    grid-area: net;
   }
 
   .hero .agent-figure {
@@ -771,19 +949,12 @@ main .door[id] {
   display: inline-block;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .hero-line-in {
-    animation: line-rise 1100ms var(--ease-out) both;
-  }
+.motion-ok .hero-line-in {
+  animation: line-rise 1100ms var(--ease-out) both;
+}
 
-  .hero-line:nth-child(2) .hero-line-in {
-    animation-delay: 140ms;
-  }
-
-  .hero-copy,
-  .hero .agent-figure {
-    animation: fade-rise 900ms var(--ease-out) 360ms both;
-  }
+.motion-ok .hero-line:nth-child(2) .hero-line-in {
+  animation-delay: 140ms;
 }
 
 @keyframes line-rise {
@@ -799,8 +970,221 @@ main .door[id] {
   }
 }
 
+/* The sketch opts into scroll motion only when the browser supports view
+   timelines and the visitor has not asked for less motion or data. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    html.motion-ok .hero {
+      height: 200svh;
+      padding-block: 0;
+      view-timeline-name: --hero;
+      view-timeline-axis: block;
+    }
+
+    html.motion-ok .hero-stage {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      height: 100svh;
+    }
+
+    html.motion-ok .hero-grid {
+      position: relative;
+      height: 100%;
+      display: block;
+    }
+
+    html.motion-ok .hero-network {
+      position: absolute;
+      inset-inline: 0;
+      bottom: 0;
+      z-index: 0;
+      margin-top: 0;
+    }
+
+    @media (max-width: 860px) {
+      html.motion-ok:not(.hero-stacked) .hero {
+        height: 150svh;
+      }
+
+      html.motion-ok.hero-stacked .hero {
+        height: auto;
+        padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3.5rem, 8vw, 6.5rem);
+      }
+
+      html.motion-ok.hero-stacked .hero-stage,
+      html.motion-ok.hero-stacked .hero-grid {
+        position: static;
+        height: auto;
+      }
+
+      html.motion-ok.hero-stacked .hero-network {
+        position: static;
+        margin-top: var(--gap-lg);
+      }
+    }
+
+    @media (min-width: 861px) {
+      html.motion-ok .hero-head {
+        position: absolute;
+        left: 50%;
+        top: 50%;
+        width: min(72vw, 62rem);
+        transform: translate(-50%, -50%);
+        transform-origin: left top;
+        animation: hero-title-frame 1s linear both;
+        animation-timeline: --hero;
+        animation-range: cover 35% cover 47%;
+      }
+
+      html.motion-ok .hero-copy,
+      html.motion-ok .hero .agent-figure {
+        position: absolute;
+        bottom: clamp(2rem, 5vh, 4rem);
+        opacity: 0;
+        animation: hero-supporting-in 1s linear both;
+        animation-timeline: --hero;
+        animation-range: cover 36% cover 48%;
+      }
+
+      html.motion-ok .hero-copy {
+        left: 0;
+        width: 40%;
+      }
+
+      html.motion-ok .hero .agent-figure {
+        right: 0;
+        width: 56%;
+        transform: translateX(2rem);
+      }
+    }
+
+    html.motion-ok .chapter {
+      view-timeline-name: --chapter;
+      view-timeline-axis: block;
+    }
+
+    html.motion-ok .chapter-n {
+      animation: chapter-drift 1s linear both;
+      animation-timeline: --chapter;
+      animation-range: cover 0% cover 100%;
+    }
+
+    html.motion-ok .chapter-title .mask > span {
+      animation: chapter-title-rise 1s linear both;
+      animation-timeline: --chapter;
+      animation-range: entry 20% cover 35%;
+    }
+
+    html.motion-ok .map-edge {
+      stroke-dasharray: 1;
+      stroke-dashoffset: 1;
+      animation: map-edge-draw 1s linear both;
+      animation-timeline: --chapter;
+      animation-range: entry 10% exit 45%;
+    }
+
+    @media (min-width: 861px) {
+      html.motion-ok .north-body {
+        min-height: 100svh;
+        align-items: start;
+      }
+
+      html.motion-ok .map {
+        position: sticky;
+        top: 5rem;
+        align-self: start;
+      }
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero {
+      height: auto;
+      padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3.5rem, 8vw, 6.5rem);
+    }
+
+    .hero-stage,
+    .hero-grid,
+    .hero-network {
+      position: static;
+      height: auto;
+      min-height: 0;
+    }
+
+    .hero-network {
+      margin-top: var(--gap-lg);
+    }
+
+    .hero-head,
+    .hero-title,
+    .hero-copy,
+    .hero .agent-figure,
+    .agent,
+    .hero-line-in,
+    .chapter-n,
+    .chapter-title .mask > span,
+    .map-edge {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    .north-body {
+      min-height: 0;
+    }
+
+    .map {
+      position: static;
+    }
+  }
+}
+
+@keyframes hero-title-frame {
+  to {
+    transform: translate(-58%, -105%) scale(0.62);
+  }
+}
+
+@keyframes hero-supporting-in {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes chapter-drift {
+  from {
+    transform: translateY(18%);
+  }
+
+  to {
+    transform: translateY(-18%);
+  }
+}
+
+@keyframes chapter-title-rise {
+  from {
+    transform: translateY(105%);
+  }
+
+  to {
+    transform: none;
+  }
+}
+
+@keyframes map-edge-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
 .hero-manifesto {
   font-size: clamp(1.1rem, 1rem + 0.35vw, 1.3rem);
+}
+
+.hero-network {
+  margin-top: var(--gap-lg);
 }
 
 .hero-actions {
@@ -825,8 +1209,8 @@ main .door[id] {
 }
 
 /* ---------- the agent window ----------
-   The one object on the page, and the only element allowed a shadow. Sizes
-   inside it are in `em` so a single font-size on `.agent` scales the whole
+   The page's one object; it and the programme dialogs are the only shadowed
+   surfaces. Sizes inside it are in `em` so one font-size scales the whole
    window between breakpoints, the way a real application scales. */
 
 .agent-figure {
@@ -2044,7 +2428,7 @@ main .door[id] {
    .is-revealed; under reduced motion it adds it to everything at once and
    never observes, and these transitions are cancelled below. */
 
-[data-reveal] {
+.motion-ok [data-reveal] {
   opacity: 0;
   transform: translateY(0.6rem);
   transition:
@@ -2052,7 +2436,7 @@ main .door[id] {
     transform var(--duration-step) var(--ease-out);
 }
 
-[data-reveal].is-revealed {
+.motion-ok [data-reveal].is-revealed {
   opacity: 1;
   transform: none;
 }
@@ -2317,6 +2701,103 @@ main .door[id] {
 
 .door-cta:hover .door-cta-arrow {
   translate: 3px 0;
+}
+
+/* Home doors are a table of contents, not three more cards. The shared
+   `.door` treatment stays intact for the partner page. */
+.doors .door-grid {
+  gap: 0;
+  border-top: 1px solid var(--c-border);
+}
+
+.doors .door {
+  display: block;
+  padding: 0;
+  background: none;
+  border: 0;
+  border-bottom: 1px solid var(--c-border);
+  border-radius: 0;
+  transition: none;
+}
+
+.doors .door:hover {
+  translate: none;
+  border-color: var(--c-border);
+}
+
+.doors .door-row {
+  display: grid;
+  width: 100%;
+  grid-template-columns: clamp(3.5rem, 9vw, 7rem) minmax(0, 1fr) 2rem;
+  align-items: center;
+  gap: var(--gap-md);
+  padding-block: clamp(1.5rem, 3vw, 2.5rem);
+  text-align: left;
+}
+
+.doors .door-n {
+  margin: 0;
+  font-size: clamp(3.5rem, 7vw, 6rem);
+  color: var(--c-fg-2);
+}
+
+.doors .door-info {
+  min-width: 0;
+}
+
+.doors .door-title {
+  display: block;
+  font-size: clamp(1.6rem, 1.4rem + 1.2vw, 2.5rem);
+}
+
+.doors .door-body {
+  display: block;
+  max-width: 62ch;
+  margin-top: var(--gap-sm);
+}
+
+.doors .door-who {
+  margin-top: var(--gap-sm);
+  padding-top: 0;
+}
+
+.doors .door-who-label {
+  display: inline;
+  margin: 0 0.45rem 0 0;
+}
+
+.doors .door-cta-arrow {
+  justify-self: end;
+  color: var(--c-fg-2);
+  font-size: 1.5rem;
+}
+
+.doors .door-row:hover .door-title,
+.doors .door-row:hover .door-cta-arrow {
+  color: var(--c-accent);
+}
+
+@media (min-width: 861px) {
+  .doors .door-grid {
+    grid-template-columns: 1fr;
+    padding-top: 0;
+  }
+
+  .doors .door:nth-child(2),
+  .doors .door:nth-child(3) {
+    margin: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .doors .door-row {
+    grid-template-columns: 3rem minmax(0, 1fr) 1rem;
+    gap: var(--gap-sm);
+  }
+
+  .doors .door-n {
+    font-size: 2.7rem;
+  }
 }
 
 /* ---------- the door, opened ---------- */
@@ -2868,6 +3349,36 @@ main .door[id] {
   color: var(--c-fg-3);
 }
 
+/* The sketch reuses the local Ignite still until David supplies photographs. */
+.plate {
+  margin: 0;
+  background: var(--c-paper);
+}
+
+.plate picture {
+  display: block;
+}
+
+.plate img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 16 / 9;
+  object-fit: cover;
+  filter: grayscale(1);
+  mix-blend-mode: multiply;
+}
+
+.plate-caption {
+  background: var(--c-bg);
+  color: var(--c-fg-soft);
+  font: var(--t-small);
+}
+
+.plate-caption .shell {
+  padding-block: var(--gap-sm);
+}
+
 /* The runner adds .is-lighting; until then the whole network stands lit, and
    that is also what anyone without the runner sees. */
 .map.is-lighting .map-edge {
@@ -2931,7 +3442,6 @@ main .door[id] {
   aspect-ratio: 16 / 9;
   border: 1px solid var(--c-border);
   border-radius: var(--r-window);
-  box-shadow: var(--shadow-window);
   overflow: hidden;
   background: var(--c-bg-panel);
 }
@@ -3059,10 +3569,9 @@ main .door[id] {
   display: grid;
   gap: var(--gap-md);
   padding: clamp(1.25rem, 3vw, 2.5rem);
-  background: var(--c-bg-panel);
+  background: var(--c-bg-raise);
   border: 1px solid var(--c-border);
   border-radius: var(--r-window);
-  box-shadow: var(--shadow-window);
 }
 
 @media (min-width: 561px) {

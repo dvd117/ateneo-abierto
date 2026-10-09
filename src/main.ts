@@ -1,6 +1,6 @@
 import { copy, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
-import { drawBand, initBands, initProgressRail, initReveal } from './reveal';
+import { drawBand, initBands, initProgressRail, initReveal, initRunningHead } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
 import { pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
 import type { ScenePlayer } from './scene';
@@ -17,6 +17,9 @@ const root = app;
 /** The hero input variant: the build's HERO_INPUT, unless ?hero= asks for the other one to review it. */
 const heroParam = new URLSearchParams(window.location.search).get('hero');
 const heroInput: HeroInput = heroParam === 'typed' || heroParam === 'scripted' ? heroParam : HERO_INPUT;
+if (heroParam === 'stacked') {
+  document.documentElement.classList.add('hero-stacked');
+}
 
 /** Set by the prerender on /hackaton, /talleres and /demos: the door this page opens at. */
 const deepLink = DEEP_LINK_ROUTES.find((route) => route === root.dataset.deepLink);
@@ -64,6 +67,8 @@ function render(): void {
   agentObserver = undefined;
   teardownReveal?.();
   teardownReveal = undefined;
+  teardownRunningHead?.();
+  teardownRunningHead = undefined;
   teardownChrome?.();
   teardownChrome = undefined;
   lightingPlayers.forEach((player) => player.cancel());
@@ -83,6 +88,23 @@ function motionAllowed(): boolean {
 
   const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   return connection?.saveData !== true;
+}
+
+if (motionAllowed()) {
+  document.documentElement.classList.add('motion-ok');
+}
+
+function skipPlateImagesOnSaveData(): void {
+  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
+  if (connection?.saveData !== true) {
+    return;
+  }
+
+  root.querySelectorAll<HTMLImageElement>('[data-plate-image]').forEach((image) => {
+    image.removeAttribute('src');
+    image.removeAttribute('srcset');
+    image.parentElement?.querySelectorAll('source').forEach((source) => source.removeAttribute('srcset'));
+  });
 }
 
 let scenePlayer: ScenePlayer | undefined;
@@ -128,7 +150,9 @@ function bindLighting(): void {
         lightingPlayers.push(playShiftColumn(column));
       }
 
-      if (map?.isConnected) {
+      // CSS owns the map's scroll-scrubbed edge on browsers with view
+      // timelines. Keep the existing reveal runner as the static fallback.
+      if (map?.isConnected && !CSS.supports('animation-timeline', 'view()')) {
         lightingPlayers.push(playMap(map));
       }
     })
@@ -566,6 +590,7 @@ function bindForm(page: PageCopy): void {
 }
 
 let teardownReveal: (() => void) | undefined;
+let teardownRunningHead: (() => void) | undefined;
 let teardownChrome: (() => void) | undefined;
 
 /**
@@ -629,14 +654,35 @@ function bindChrome(): () => void {
  * dialog before the page scrolls to the form.
  */
 function bindDialogs(): void {
+  const viewTransitionDocument = document as Document & {
+    startViewTransition?: (callback: () => void) => { finished: Promise<void> };
+  };
+
   root.querySelectorAll<HTMLButtonElement>('[data-dialog-open]').forEach((button) => {
     const dialog = root.querySelector<HTMLDialogElement>(`#${button.dataset.dialogOpen}`);
+    const rowTitle = button.querySelector<HTMLElement>('[data-door-title]');
+    const dialogTitle = dialog?.querySelector<HTMLElement>('[data-dialog-title]');
 
     if (!dialog || typeof dialog.showModal !== 'function') {
       return;
     }
 
-    button.addEventListener('click', () => dialog.showModal());
+    button.addEventListener('click', () => {
+      const startViewTransition = viewTransitionDocument.startViewTransition;
+      if (!startViewTransition || !motionAllowed() || !rowTitle || !dialogTitle) {
+        dialog.showModal();
+        return;
+      }
+
+      rowTitle.style.setProperty('view-transition-name', 'door-title');
+      dialogTitle.style.setProperty('view-transition-name', 'door-title');
+      const clearNames = () => {
+        rowTitle.style.removeProperty('view-transition-name');
+        dialogTitle.style.removeProperty('view-transition-name');
+      };
+      const transition = startViewTransition.call(viewTransitionDocument, () => dialog.showModal());
+      void transition.finished.then(clearNames, clearNames);
+    });
 
     dialog.querySelector('[data-dialog-close]')?.addEventListener('click', () => dialog.close());
     dialog.querySelector('[data-dialog-join]')?.addEventListener('click', () => dialog.close());
@@ -651,6 +697,8 @@ function bindDialogs(): void {
 }
 
 function bindEvents(page: PageCopy): void {
+  skipPlateImagesOnSaveData();
+
   root.querySelectorAll<HTMLButtonElement>('[data-locale]').forEach((button) => {
     button.addEventListener('click', () => {
       const locale = button.dataset.locale;
@@ -667,6 +715,7 @@ function bindEvents(page: PageCopy): void {
   bindForm(page);
   bindLighting();
   teardownReveal = initReveal(root, { animate: motionAllowed() });
+  teardownRunningHead = initRunningHead(root);
   teardownChrome = bindChrome();
 
   // PROTOTYPE, shelved: the tap-to-run terminal. It asks visitors to learn
