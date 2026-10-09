@@ -2,7 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    # dev is the preview lane: Dokploy deploys it straight to dev.aragort.com,
+    # so a red push there should at least be visible. ship stays main-only.
+    branches: [main, dev]
   pull_request:
   # Sent by dependabot-auto-merge.yml after it merges; see the note there.
   workflow_dispatch:
