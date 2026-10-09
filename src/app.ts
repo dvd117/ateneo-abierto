@@ -119,6 +119,22 @@ function readPage(file: string): string | null {
 // difference is most of the wait. Fonts are already woff2 and are skipped.
 app.use('*', compress());
 
+// The preview at dev.aragort.com runs this same image with NOINDEX=1. A
+// search engine that finds it must not list a half-finished copy of the site.
+app.use('*', async (c, next) => {
+  await next();
+  if (process.env.NOINDEX === '1') {
+    c.header('X-Robots-Tag', 'noindex, nofollow');
+  }
+});
+
+app.get('/robots.txt', (c, next) => {
+  if (process.env.NOINDEX !== '1') {
+    return next();
+  }
+  return c.text('User-agent: *\nDisallow: /\n');
+});
+
 app.use(
   '*',
   secureHeaders({
@@ -329,6 +345,13 @@ app.post(
 
     if (!isNewsletterLocale(newsletterLocale)) {
       return c.json({ ok: false, reason: 'invalid-newsletter-locale' }, 400);
+    }
+
+    // Preview deploys run with dummy MailerLite values: validate everything
+    // above, then stop before anything could reach a real subscriber list.
+    if (process.env.MAILERLITE_DRY_RUN === '1') {
+      console.log('[subscribe] dry run, MailerLite not called');
+      return c.json({ ok: true });
     }
 
     const apiKey = process.env.MAILERLITE_API_KEY ?? '';

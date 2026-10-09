@@ -812,3 +812,63 @@ describe('prerendered home page', () => {
     expect(loadStyleHashes(dir)).toEqual([esHash]);
   });
 });
+
+describe('preview deploy switches', () => {
+  afterEach(() => {
+    delete process.env.NOINDEX;
+    delete process.env.MAILERLITE_DRY_RUN;
+    delete process.env.MAILERLITE_GROUP_ES_ID;
+  });
+
+  test('NOINDEX=1 tells crawlers to stay out of every response', async () => {
+    process.env.NOINDEX = '1';
+
+    const res = await app.request('/api/health');
+
+    expect(res.headers.get('x-robots-tag')).toBe('noindex, nofollow');
+  });
+
+  test('NOINDEX=1 serves a robots.txt that disallows everything', async () => {
+    process.env.NOINDEX = '1';
+
+    const res = await app.request('/robots.txt');
+
+    expect(res.status).toBe(200);
+    expect(await res.text()).toBe('User-agent: *\nDisallow: /\n');
+  });
+
+  test('without NOINDEX, production stays indexable', async () => {
+    const res = await app.request('/api/health');
+
+    expect(res.headers.get('x-robots-tag')).toBeNull();
+  });
+
+  test('MAILERLITE_DRY_RUN=1 answers ok and never calls MailerLite', async () => {
+    process.env.MAILERLITE_DRY_RUN = '1';
+    process.env.MAILERLITE_GROUP_ES_ID = 'group-es';
+    const mockFetch = vi.fn();
+    vi.stubGlobal('fetch', mockFetch);
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'user@example.com', newsletterLocale: 'es', website: '' }),
+    });
+
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ ok: true });
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  test('MAILERLITE_DRY_RUN=1 still rejects invalid input', async () => {
+    process.env.MAILERLITE_DRY_RUN = '1';
+
+    const res = await app.request('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: 'not-an-email', newsletterLocale: 'es', website: '' }),
+    });
+
+    expect(res.status).toBe(400);
+  });
+});
