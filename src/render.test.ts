@@ -31,19 +31,25 @@ describe('foundation sketch publication structure', () => {
     expect(page).not.toContain('class="sec-head');
   });
 
-  test.each(locales)('uses the existing Ignite poster and copy for both plates in %s', (locale) => {
+  test.each(locales)('keeps the existing Ignite poster once in chapter V in %s', (locale) => {
     const page = renderPage(locale);
-    const plates = [...page.matchAll(/<figure class="plate[^>]*>[\s\S]*?<\/figure>/g)].map(([html]) => html);
+    const poster = page.match(/<img class="talk-poster"[^>]*>/)?.[0];
+    const talk = page.slice(page.indexOf('id="charla"'), page.indexOf('id="unete"'));
 
-    expect(plates).toHaveLength(2);
-    for (const plate of plates) {
-      expect(plate).toContain('/ignite-poster-1280.webp');
-      expect(plate).toContain('/ignite-poster-1280.jpg');
-      expect(plate).toContain(`alt="${copy[locale].talk.posterAlt}"`);
-      expect(plate).toContain(copy[locale].talk.label);
-      expect(plate).toContain('width="1280" height="720"');
-      expect(plate).toContain('loading="lazy" decoding="async"');
-      expect(plate).not.toMatch(/biblioteca|library/i);
-    }
+    expect(page).not.toContain('data-plate');
+    expect(page.match(/class="talk-poster"/g)).toHaveLength(1);
+    expect(page.slice(0, page.indexOf('id="charla"'))).not.toContain('ignite-poster');
+    expect(page.slice(page.indexOf('id="unete"'))).not.toContain('ignite-poster');
+    expect(talk).toContain(poster);
+    expect(poster).not.toBeNull();
+    expect(poster).toContain(`alt="${copy[locale].talk.posterAlt}"`);
+    expect(poster).toContain('width="1280" height="720"');
+    expect(poster).toContain('loading="lazy" decoding="async"');
+  });
+
+  test('marks chapter II so its numeral can stay clear of the existing lead', () => {
+    const page = renderPage('en');
+
+    expect(page).toMatch(/class="chapter-head(?: chapter-head--inline)? chapter-head--ii"/);
   });
 });
