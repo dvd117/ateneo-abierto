@@ -99,9 +99,8 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
 }
 
 /**
- * The header follows the scroll, so the way to every section is always one
- * tap away. The rail along its bottom edge fills as the visitor reads; it is
- * decoration for anyone who cannot see it, so it is hidden from the tree.
+ * The sticky header keeps navigation and language controls in view. Its rail
+ * fills as the visitor reads and is hidden from the tree.
  */
 function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
   return `
@@ -114,7 +113,6 @@ function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
         ${partner ? '' : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
         </nav>`}
-        ${partner ? '' : `<span class="running-head" data-running-head aria-hidden="true">${inline(chapterLabel('I', page.shift.eyebrow))}</span>`}
         ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
@@ -589,7 +587,7 @@ function renderShift(page: PageCopy): string {
   const { shift } = page;
 
   return `
-    <section class="sec chapter chapter--spread shift" id="cambio" data-chapter-label="${inline(chapterLabel('I', shift.eyebrow))}" aria-labelledby="cambio-title">
+    <section class="sec chapter chapter--spread shift" id="cambio" aria-labelledby="cambio-title">
       <div class="shell">
         ${renderChapter({ number: 'I', eyebrow: shift.eyebrow, title: titleFrom(shift.titleLines), id: 'cambio-title', lead: shift.lead })}
         <p class="shift-task">${inline(shift.task)}</p>
@@ -703,7 +701,7 @@ function renderDoors(page: PageCopy): string {
   const { doors } = page;
 
   return `
-    <section class="sec chapter chapter--index doors" id="programa" data-chapter-label="${inline(chapterLabel('II', doors.eyebrow))}" aria-labelledby="programa-title">
+    <section class="sec chapter chapter--index doors" id="programa" aria-labelledby="programa-title">
       <div class="shell">
         ${renderChapter({ number: 'II', eyebrow: doors.eyebrow, title: inline(doors.title), id: 'programa-title', lead: doors.lead })}
         <div class="door-grid">
@@ -752,7 +750,7 @@ function renderPrinciples(page: PageCopy): string {
     .join('');
 
   return `
-    <section class="sec chapter chapter--list principles" id="principios" data-chapter-label="${inline(chapterLabel('IV', principles.eyebrow))}" aria-labelledby="principios-title">
+    <section class="sec chapter chapter--list principles" id="principios" aria-labelledby="principios-title">
       <div class="shell">
         ${renderChapter({ number: 'IV', eyebrow: principles.eyebrow, title: inline(principles.title), id: 'principios-title', lead: principles.lead })}
         <div class="pr-grid">${items}</div>
@@ -830,7 +828,7 @@ function renderNorth(page: PageCopy): string {
   const { north } = page;
 
   return `
-    <section class="sec chapter chapter--map north" id="norte" data-chapter-label="${inline(chapterLabel('III', north.eyebrow))}" aria-labelledby="norte-title">
+    <section class="sec chapter chapter--map north" id="norte" aria-labelledby="norte-title">
       <div class="shell">
         ${renderChapter({ number: 'III', eyebrow: north.eyebrow, title: titleFrom(north.titleLines), id: 'norte-title', lead: north.lead })}
         <div class="north-body">
@@ -893,7 +891,7 @@ function renderTalk(page: PageCopy): string {
   const { talk } = page;
 
   return `
-    <section class="sec chapter chapter--cinema talk" id="charla" data-chapter-label="${inline(chapterLabel('V', talk.eyebrow))}" aria-labelledby="charla-title">
+    <section class="sec chapter chapter--cinema talk" id="charla" aria-labelledby="charla-title">
       <div class="shell talk-grid">
         <div class="talk-copy" data-reveal>
           ${renderChapter({ number: 'V', eyebrow: talk.eyebrow, title: inline(talk.title), id: 'charla-title', lead: talk.body })}
@@ -919,7 +917,7 @@ function renderForm(page: PageCopy, locale: Locale): string {
   const { form } = page;
 
   return `
-    <section class="sec chapter chapter--colophon join" id="unete" data-chapter-label="${inline(chapterLabel('VI', form.eyebrow))}" aria-labelledby="unete-title">
+    <section class="sec chapter chapter--colophon join" id="unete" aria-labelledby="unete-title">
       <div class="shell join-grid">
       <div class="join-copy" data-reveal>
         ${renderChapter({ number: 'VI', eyebrow: form.eyebrow, title: inline(form.title), id: 'unete-title', lead: form.lead })}

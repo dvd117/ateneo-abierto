@@ -1,6 +1,6 @@
 import { copy, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
-import { drawBand, initBands, initProgressRail, initReveal, initRunningHead } from './reveal';
+import { drawBand, initBands, initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
 import { pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
 import type { ScenePlayer } from './scene';
@@ -59,8 +59,7 @@ function render(): void {
   root.innerHTML = renderPage(currentLocale, { heroInput });
   root.dataset.locale = currentLocale;
 
-  // A locale switch replaces the whole tree; drop the running sequence and the
-  // observer watching the old nodes with it.
+  // A locale switch replaces the whole tree; drop its running sequence too.
   scenePlayer?.cancel();
   scenePlayer = undefined;
   agentObserver?.disconnect();
@@ -71,8 +70,6 @@ function render(): void {
   }
   teardownReveal?.();
   teardownReveal = undefined;
-  teardownRunningHead?.();
-  teardownRunningHead = undefined;
   teardownChrome?.();
   teardownChrome = undefined;
   lightingPlayers.forEach((player) => player.cancel());
@@ -613,7 +610,6 @@ function bindForm(page: PageCopy): void {
 }
 
 let teardownReveal: (() => void) | undefined;
-let teardownRunningHead: (() => void) | undefined;
 let teardownChrome: (() => void) | undefined;
 
 /**
@@ -748,7 +744,6 @@ function bindEvents(page: PageCopy): void {
   bindForm(page);
   bindLighting();
   teardownReveal = initReveal(root, { animate: motionAllowed() });
-  teardownRunningHead = initRunningHead(root);
   teardownChrome = bindChrome();
 
   // PROTOTYPE, shelved: the tap-to-run terminal. It asks visitors to learn
