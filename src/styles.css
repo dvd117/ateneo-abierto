@@ -774,13 +774,6 @@ main .door[id] {
   color: var(--c-fg);
 }
 
-.running-head {
-  min-width: 0;
-  color: var(--c-fg-2);
-  font: var(--t-small);
-  white-space: nowrap;
-}
-
 .locale-toggle {
   display: inline-flex;
   align-items: center;
@@ -806,7 +799,7 @@ main .door[id] {
   .header-inner {
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: "brand locale" "running nav";
+    grid-template-areas: "brand locale" "nav nav";
     column-gap: var(--gap-md);
     row-gap: 0.3rem;
   }
@@ -814,11 +807,6 @@ main .door[id] {
   .nav-wordmark {
     grid-area: brand;
     margin-right: 0;
-  }
-
-  .running-head {
-    grid-area: running;
-    font-size: 0.72rem;
   }
 
   .locale-toggle {
@@ -2375,6 +2363,16 @@ main .door[id] {
   margin: var(--gap-md) 0 0;
   padding-top: var(--gap-sm);
   border-top: 1px solid var(--c-border);
+}
+
+@media (min-width: 861px) {
+  .shift-rows {
+    flex: 0 0 auto;
+  }
+
+  .shift-tally {
+    margin-top: auto;
+  }
 }
 
 @media (min-width: 861px) {

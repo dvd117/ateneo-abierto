@@ -88,47 +88,6 @@ export function initProgressRail(rail: HTMLElement | null): () => void {
   };
 }
 
-/** Keep the sticky masthead's running chapter in step with the page. */
-export function initRunningHead(scope: ParentNode = document): () => void {
-  const header = scope.querySelector<HTMLElement>('.site-header');
-  const label = header?.querySelector<HTMLElement>('[data-running-head]');
-  const chapters = Array.from(scope.querySelectorAll<HTMLElement>('[data-chapter-label]'));
-
-  if (!header || !label || chapters.length === 0) {
-    return () => {};
-  }
-
-  const setChapter = (value: string | undefined) => {
-    if (!value) {
-      return;
-    }
-    header.dataset.chapter = value;
-    label.textContent = value;
-  };
-
-  setChapter(chapters[0].dataset.chapterLabel);
-  if (typeof IntersectionObserver === 'undefined') {
-    return () => {};
-  }
-
-  const observer = new IntersectionObserver(
-    (entries) => {
-      const anchor = window.innerHeight * 0.25;
-      const current = entries
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => Math.abs(a.boundingClientRect.top - anchor) - Math.abs(b.boundingClientRect.top - anchor))[0];
-
-      if (current) {
-        setChapter((current.target as HTMLElement).dataset.chapterLabel);
-      }
-    },
-    { rootMargin: '-25% 0px -70% 0px', threshold: 0 }
-  );
-
-  chapters.forEach((chapter) => observer.observe(chapter));
-  return () => observer.disconnect();
-}
-
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 /** 0..1, one smooth wave: the stripe proportions drift, they never jump. */

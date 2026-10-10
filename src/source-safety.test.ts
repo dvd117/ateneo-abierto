@@ -76,6 +76,21 @@ describe('CSP-safe source markup', () => {
   });
 });
 
+describe('the header has no current-section indicator', () => {
+  test('removes its initializer and styles while keeping the progress rail', () => {
+    const main = readFileSync('src/main.ts', 'utf8');
+    const reveal = readFileSync('src/reveal.ts', 'utf8');
+    const styles = css();
+
+    expect(main).not.toContain('initRunningHead');
+    expect(main).not.toContain('teardownRunningHead');
+    expect(reveal).not.toContain('initRunningHead');
+    expect(styles).not.toMatch(/\.running-head\b/);
+    expect(styles).toContain('.progress-rail {');
+    expect(styles).toContain('.progress-rail span {');
+  });
+});
+
 describe('DESIGN.md is the source of truth for colour', () => {
   test('emits every DESIGN.md colour token into the generated fence', () => {
     const tokens = [...design().matchAll(/^ {2}([a-z0-9-]+): "(#[0-9a-f]{6})"$/gim)].map(
