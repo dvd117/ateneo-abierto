@@ -312,6 +312,10 @@ button {
   padding-block: clamp(1rem, 2vw, 1.5rem);
 }
 
+.chapter--colophon {
+  padding-top: 0.75rem;
+}
+
 .sec-head {
   display: grid;
   gap: 1.25rem;
