@@ -175,12 +175,17 @@ describe('door and map motion', () => {
     expect(doorMotion).not.toContain('.door-dialog[open] {');
   });
 
-  test('scrubs map edges on the map visibility timeline and completes before its center', () => {
+  test('draws map edges once on reveal, without a scroll timeline', () => {
+    const main = readFileSync('src/main.ts', 'utf8');
     const styles = css();
     const support = styles.slice(styles.indexOf('@supports (animation-timeline: view())'));
 
-    expect(support).toMatch(/html\.motion-ok \.map-svg\s*\{[^}]*view-timeline-name: --map;/s);
-    expect(support).toMatch(/html\.motion-ok \.map-edge\s*\{[^}]*animation-timeline: --map;[^}]*animation-range: entry 0% cover 20%;/s);
+    expect(support).not.toContain('view-timeline-name: --map;');
+    expect(support).not.toContain('animation-timeline: --map;');
+    expect(styles).toMatch(/\.map\.is-lighting \.map-edge\s*\{[^}]*stroke-dashoffset: 1;/s);
+    expect(styles).toMatch(/\.map\.is-drawing \.map-edge\.is-lit\s*\{[^}]*animation: map-edge-draw var\(--duration-draw\) var\(--ease-out\) both;/s);
+    expect(styles).toMatch(/@keyframes map-edge-draw\s*\{\s*from\s*\{\s*stroke-dashoffset: 1;/s);
+    expect(main).toMatch(/if \(map\?\.isConnected\) \{\s*lightingPlayers\.push\(playMap\(map\)\);\s*\}/);
   });
 });
 

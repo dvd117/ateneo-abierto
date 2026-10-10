@@ -111,8 +111,8 @@ function loadSceneRunner(): Promise<typeof import('./scene')> {
 }
 
 /**
- * The network under the call to action and the agent column in section two.
- * Both rest in their finished state, so this only ever adds motion: it is
+ * The network under the call to action, agent column in section two, and map.
+ * They rest in their finished state, so this only ever adds motion: it is
  * never loaded under reduced motion or saveData, and a failed chunk changes
  * nothing the visitor can see.
  */
@@ -142,9 +142,7 @@ function bindLighting(): void {
         lightingPlayers.push(playShiftColumn(column));
       }
 
-      // CSS owns the map's scroll-scrubbed edge on browsers with view
-      // timelines. Keep the existing reveal runner as the static fallback.
-      if (map?.isConnected && !CSS.supports('animation-timeline', 'view()')) {
+      if (map?.isConnected) {
         lightingPlayers.push(playMap(map));
       }
     })

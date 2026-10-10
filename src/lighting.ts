@@ -1,9 +1,8 @@
 /**
- * The two scroll-triggered sequences outside the agent window: the city
- * network under the call to action, and the agent column in "De preguntar a
- * delegar". Both are lazy-loaded and both are skipped entirely under reduced
- * motion or saveData — the resting markup is already the finished state, so
- * nothing is lost by never running them.
+ * The two replayable sequences outside the agent window: the city network
+ * under the call to action, and the agent column in "De preguntar a delegar".
+ * The map draws once on reveal. All are lazy-loaded and skipped under reduced
+ * motion or saveData — the resting markup is already the finished state.
  *
  * Neither touches content: they add and remove classes, nothing else.
  */
@@ -151,29 +150,37 @@ export function playShiftColumn(column: HTMLElement): Player {
   );
 }
 
-/**
- * Lights the map one library at a time and draws the edge that reaches it.
- * Planned nodes are not in the sequence: they stay outlined, because nothing
- * on this map is a confirmed site and the two kinds of node have to stay
- * visibly different. The caption never changes — it says so in words.
- */
+/** Draws the map once when it enters the reading area; scrolling never replays it. */
 export function playMap(map: HTMLElement): Player {
   const lit = Array.from(map.querySelectorAll<SVGElement>('.map-node:not(.is-planned)'));
   const edges = Array.from(map.querySelectorAll<SVGElement>('.map-edge'));
   const cities = Array.from(map.querySelectorAll<HTMLElement>('.map-city:not(.is-planned)'));
 
+  if (typeof IntersectionObserver === 'undefined') {
+    return { cancel: () => undefined };
+  }
+
   map.classList.add('is-lighting');
 
-  return onScreen(
-    map,
-    lit.length,
-    (k) => {
-      for (const group of [...lit, ...edges, ...cities]) {
-        const index = Number(group.dataset.node);
-        group.classList.toggle('is-lit', k >= 0 && index <= k - 1);
-        group.classList.toggle('is-now', k >= 1 && index === k - 1);
-      }
-    },
-    { period: 700 }
-  );
+  let started = false;
+  const height = map.getBoundingClientRect().height;
+  const threshold = height > 0 ? Math.min(0.4, (window.innerHeight * 0.7) / height) : 0.4;
+  const observer = new IntersectionObserver((entries) => {
+    if (started || !entries.some((entry) => entry.isIntersecting)) {
+      return;
+    }
+
+    started = true;
+    observer.disconnect();
+    map.classList.remove('is-lighting');
+    map.classList.add('is-drawing');
+
+    for (const group of [...lit, ...edges, ...cities]) {
+      group.classList.add('is-lit');
+    }
+  }, { threshold });
+
+  observer.observe(map);
+
+  return { cancel: () => observer.disconnect() };
 }
