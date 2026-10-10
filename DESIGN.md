@@ -358,10 +358,12 @@ still never loops:
 - **Functional**, as before: a step ticking, a file appearing, a map edge drawing, a node
   lighting. `duration-step` paces the agent window; `duration-draw` paces the map edges.
 - **Entrances**: the hero headline rises line by line on load. On the homepage, chapter numerals
-  drift and masked titles rise with the view timeline; the wide hero pins for 200svh, the phone
-  hero for 150svh, and the agent window joins the title on wide screens. The door row and dialog
-  share a view transition. These additions are guarded by `@supports (animation-timeline: view())`
-  and settle to a static page under reduced motion.
+  drift and masked titles rise with the view timeline; the wide hero pins for 200svh, while the
+  phone keeps a content-sized pinned stage before its network returns to normal flow. The agent
+  joins the title on wide screens and stages into the phone view. Keyboard focus settles the hero
+  into its readable grid. The north map stays in normal flow as its edges draw on entry. The door
+  row and dialog share a pointer-only view transition. These additions are guarded by
+  `@supports (animation-timeline: view())` and settle to a static page under reduced motion.
 - **Scroll-driven**: *la vibración*, the page's signature, after Carlos Cruz-Diez's
   additive-colour method: one remaining continuous field of vertical stripes (pitch 6) in which the
   widths of ochre, dark ochre and bone drift on slow waves along the band, so the colour mixed
