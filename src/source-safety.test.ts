@@ -158,6 +158,32 @@ describe('foundation sketch motion stays progressive', () => {
   });
 });
 
+describe('door and map motion', () => {
+  test('limits door entrance animations to pointer-opened dialogs', () => {
+    const main = readFileSync('src/main.ts', 'utf8');
+    const styles = css();
+    const doorMotion = styles.slice(styles.indexOf('/* ---------- the door, opened ---------- */'));
+    const clickHandlerStart = main.indexOf("button.addEventListener('click', (event) => {");
+    const clickHandlerEnd = main.indexOf("dialog.querySelector('[data-dialog-close]')", clickHandlerStart);
+    const clickHandler = main.slice(clickHandlerStart, clickHandlerEnd);
+
+    expect(clickHandler).toContain("dialog.dataset.openMotion = event.detail === 0 ? 'none' : 'pointer';");
+    expect(clickHandler.indexOf('dialog.dataset.openMotion')).toBeLessThan(clickHandler.indexOf('dialog.showModal()'));
+    expect(main).toContain("dialog.addEventListener('close', () => delete dialog.dataset.openMotion);");
+    expect(doorMotion).toContain('.door-dialog[data-open-motion="pointer"][open] {');
+    expect(doorMotion).toContain('.door-dialog[data-open-motion="pointer"][open]::backdrop {');
+    expect(doorMotion).not.toContain('.door-dialog[open] {');
+  });
+
+  test('scrubs map edges on the map visibility timeline and completes before its center', () => {
+    const styles = css();
+    const support = styles.slice(styles.indexOf('@supports (animation-timeline: view())'));
+
+    expect(support).toMatch(/html\.motion-ok \.map-svg\s*\{[^}]*view-timeline-name: --map;/s);
+    expect(support).toMatch(/html\.motion-ok \.map-edge\s*\{[^}]*animation-timeline: --map;[^}]*animation-range: entry 0% cover 20%;/s);
+  });
+});
+
 describe('form and honeypot handling', () => {
   test('does not hide the subscribe honeypot with inline styles', () => {
     const markup = readFileSync('src/render.ts', 'utf8') + readFileSync('src/main.ts', 'utf8');

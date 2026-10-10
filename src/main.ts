@@ -693,6 +693,8 @@ function bindDialogs(): void {
     }
 
     button.addEventListener('click', (event) => {
+      dialog.dataset.openMotion = event.detail === 0 ? 'none' : 'pointer';
+
       if (event.detail === 0) {
         dialog.showModal();
         return;
@@ -718,6 +720,7 @@ function bindDialogs(): void {
       void transition.finished.then(clearNames, clearNames);
     });
 
+    dialog.addEventListener('close', () => delete dialog.dataset.openMotion);
     dialog.querySelector('[data-dialog-close]')?.addEventListener('click', () => dialog.close());
     dialog.querySelector('[data-dialog-join]')?.addEventListener('click', () => dialog.close());
 

@@ -1208,12 +1208,17 @@ main .door[id] {
       animation-range: entry 0% cover 20%;
     }
 
+    html.motion-ok .map-svg {
+      view-timeline-name: --map;
+      view-timeline-axis: block;
+    }
+
     html.motion-ok .map-edge {
       stroke-dasharray: 1;
       stroke-dashoffset: 1;
       animation: map-edge-draw 1s linear both;
-      animation-timeline: --chapter;
-      animation-range: entry 10% exit 45%;
+      animation-timeline: --map;
+      animation-range: entry 0% cover 20%;
     }
 
   }
@@ -2963,11 +2968,11 @@ main .door[id] {
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .door-dialog[open] {
+  .door-dialog[data-open-motion="pointer"][open] {
     animation: fade-rise var(--duration-overlay) var(--ease-out);
   }
 
-  .door-dialog[open]::backdrop {
+  .door-dialog[data-open-motion="pointer"][open]::backdrop {
     animation: backdrop-in var(--duration-overlay) var(--ease-out);
   }
 }
