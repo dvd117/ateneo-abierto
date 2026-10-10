@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { bandMix, initBands, initProgressRail, initReveal, initRunningHead, screenTilt, tiltShift } from './reveal';
+import { bandMix, initBands, initProgressRail, initReveal, screenTilt, tiltShift } from './reveal';
 
 /**
  * These run in the default node environment (the project has no jsdom), so the
@@ -113,46 +113,6 @@ describe('initReveal', () => {
 describe('initProgressRail', () => {
   test('is a no-op without a rail element', () => {
     expect(() => initProgressRail(null)()).not.toThrow();
-  });
-});
-
-describe('initRunningHead', () => {
-  test('starts at chapter I and follows the chapter crossing the reading line', () => {
-    let notify: ((entries: IntersectionObserverEntry[]) => void) | undefined;
-    const observe = vi.fn();
-    const disconnect = vi.fn();
-    const runningLabel = { textContent: '' };
-    const header = { dataset: {}, querySelector: () => runningLabel };
-    const first = { dataset: { chapterLabel: 'I · El cambio' } };
-    const second = { dataset: { chapterLabel: 'II · Qué hacemos' } };
-
-    vi.stubGlobal('window', { innerHeight: 800 });
-    vi.stubGlobal('IntersectionObserver', class {
-      constructor(callback: IntersectionObserverCallback) {
-        notify = (entries) => callback(entries, {} as IntersectionObserver);
-      }
-      observe = observe;
-      disconnect = disconnect;
-    });
-
-    const scope = {
-      querySelector: () => header,
-      querySelectorAll: () => [first, second]
-    } as unknown as ParentNode;
-
-    const stop = initRunningHead(scope);
-    expect(header.dataset).toEqual({ chapter: 'I · El cambio' });
-    expect(runningLabel.textContent).toBe('I · El cambio');
-    expect(observe).toHaveBeenCalledTimes(2);
-
-    notify?.([
-      { isIntersecting: true, target: second, boundingClientRect: { top: 160 } } as unknown as IntersectionObserverEntry
-    ]);
-    expect(header.dataset).toEqual({ chapter: 'II · Qué hacemos' });
-    expect(runningLabel.textContent).toBe('II · Qué hacemos');
-
-    stop();
-    expect(disconnect).toHaveBeenCalledTimes(1);
   });
 });
 
