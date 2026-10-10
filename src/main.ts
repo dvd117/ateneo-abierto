@@ -412,6 +412,13 @@ function bindAgent(page: PageCopy): void {
    */
   const start = visibleEnough(window_);
   const figure = root.querySelector<HTMLElement>('.agent-figure') ?? window_;
+  // IO can run at any point during the hero's fade. Gate every start on the
+  // actual CSS animation lifecycle, including a bundle that initializes late.
+  getComputedStyle(figure).animationName;
+  const heroEntrance = figure.getAnimations().find(
+    (animation) => 'animationName' in animation && animation.animationName === 'hero-load-in'
+  );
+  let heroEntranceComplete = !heroEntrance || heroEntrance.playState === 'finished';
   let visibleRatio = 0;
 
   function currentVisibleRatio(element: HTMLElement): number {
@@ -419,16 +426,6 @@ function bindAgent(page: PageCopy): void {
     if (rect.height <= 0) return 0;
     const visible = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
     return visible / rect.height;
-  }
-
-  function visibleOpacity(element: HTMLElement): number {
-    let opacity = 1;
-    let current: HTMLElement | null = element;
-    while (current && current !== document.documentElement) {
-      opacity *= Number.parseFloat(getComputedStyle(current).opacity) || 0;
-      current = current.parentElement;
-    }
-    return opacity;
   }
 
   function maybePlay(): void {
@@ -441,7 +438,7 @@ function bindAgent(page: PageCopy): void {
       return;
     }
 
-    if (played || visibleRatio < start - 0.005 || visibleOpacity(figure) < 0.95) {
+    if (!heroEntranceComplete || played || visibleRatio < start - 0.005) {
       return;
     }
 
@@ -467,6 +464,13 @@ function bindAgent(page: PageCopy): void {
 
   figure.addEventListener('animationend', (event) => {
     if (event.animationName === 'hero-load-in') {
+      heroEntranceComplete = true;
+      refreshVisibility();
+    }
+  });
+  figure.addEventListener('animationcancel', (event) => {
+    if (event.animationName === 'hero-load-in') {
+      heroEntranceComplete = true;
       refreshVisibility();
     }
   });

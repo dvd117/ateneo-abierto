@@ -13,7 +13,7 @@
   }
 
   function showPrerender() {
-    if (!root.classList.contains('motion-ok') || root.classList.contains('motion-ready')) {
+    if (root.classList.contains('motion-ready')) {
       return;
     }
 
