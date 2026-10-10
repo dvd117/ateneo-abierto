@@ -308,6 +308,10 @@ button {
   border-top: 1px solid var(--c-border);
 }
 
+.chapter {
+  padding-block: clamp(1rem, 2vw, 1.5rem);
+}
+
 .sec-head {
   display: grid;
   gap: 1.25rem;
@@ -355,6 +359,10 @@ button {
   align-items: end;
   min-height: clamp(10rem, 24vw, 17rem);
   margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+.chapter-head--inline {
+  min-height: clamp(7.5rem, 9vw, 10rem);
 }
 
 .chapter-n {
