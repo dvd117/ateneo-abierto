@@ -1208,19 +1208,6 @@ main .door[id] {
       animation-range: entry 0% cover 20%;
     }
 
-    html.motion-ok .map-svg {
-      view-timeline-name: --map;
-      view-timeline-axis: block;
-    }
-
-    html.motion-ok .map-edge {
-      stroke-dasharray: 1;
-      stroke-dashoffset: 1;
-      animation: map-edge-draw 1s linear both;
-      animation-timeline: --map;
-      animation-range: entry 0% cover 20%;
-    }
-
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1312,6 +1299,10 @@ main .door[id] {
 }
 
 @keyframes map-edge-draw {
+  from {
+    stroke-dashoffset: 1;
+  }
+
   to {
     stroke-dashoffset: 0;
   }
@@ -3503,11 +3494,12 @@ main .door[id] {
 .map.is-lighting .map-edge {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
-  transition: stroke-dashoffset var(--duration-draw) var(--ease-out);
 }
 
-.map.is-lighting .map-edge.is-lit {
+.map.is-drawing .map-edge.is-lit {
+  stroke-dasharray: 1;
   stroke-dashoffset: 0;
+  animation: map-edge-draw var(--duration-draw) var(--ease-out) both;
 }
 
 .map.is-lighting .map-node:not(.is-planned):not(.is-lit) .map-dot {
