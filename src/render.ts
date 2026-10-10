@@ -431,9 +431,10 @@ function chapterLabel(number: string, eyebrow: string): string {
 function renderChapter(options: ChapterOptions): string {
   const short = options.lead !== undefined && options.lead.length <= 120;
   const label = chapterLabel(options.number, options.eyebrow);
+  const numberClass = options.number === 'II' ? ' chapter-head--ii' : '';
 
   return `
-    <header class="chapter-head${short ? ' chapter-head--inline' : ''}">
+    <header class="chapter-head${short ? ' chapter-head--inline' : ''}${numberClass}">
       <span class="chapter-n" aria-hidden="true">${options.number}</span>
       <div class="chapter-main">
         <p class="eyebrow">${inline(label)}</p>
@@ -863,24 +864,6 @@ function renderNorth(page: PageCopy): string {
 // grid's 7fr column, so a screen that cannot show 1280 pixels takes the 960.
 const TALK_POSTER_SIZES = '(min-width: 861px) 58vw, 100vw';
 
-/** Reuses the vendored talk poster as the sketch's two temporary plate images. */
-function renderPlate(page: PageCopy, name: 'north' | 'talk'): string {
-  const { talk } = page;
-
-  return `
-    <figure class="plate plate--${name}" data-plate>
-      <picture>
-        <source type="image/webp" sizes="100vw"
-                srcset="/ignite-poster.webp 960w, /ignite-poster-1280.webp 1280w" />
-        <img data-plate-image src="/ignite-poster-1280.jpg" alt="${inline(talk.posterAlt)}"
-             sizes="100vw" srcset="/ignite-poster.jpg 960w, /ignite-poster-1280.jpg 1280w"
-             width="1280" height="720" loading="lazy" decoding="async" />
-      </picture>
-      <figcaption class="plate-caption"><span class="shell">${inline(talk.label)}</span></figcaption>
-    </figure>
-  `;
-}
-
 function renderTalkFigure(page: PageCopy): string {
   const { talk } = page;
 
@@ -1179,10 +1162,8 @@ export function renderPage(
       ${renderIndex(page)}
       ${renderShift(page)}
       ${renderDoors(page)}
-      ${renderPlate(page, 'north')}
       ${renderNorth(page)}
       ${renderPrinciples(page)}
-      ${renderPlate(page, 'talk')}
       ${renderTalk(page)}
       ${renderBand('three', 5, page.voice)}
       ${renderForm(page, locale)}

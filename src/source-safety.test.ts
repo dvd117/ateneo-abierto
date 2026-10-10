@@ -130,12 +130,17 @@ describe('anti-slop rules hold in the stylesheet', () => {
 });
 
 describe('foundation sketch motion stays progressive', () => {
-  test('keeps hero pin and chapter motion inside scroll-timeline support', () => {
+  test('keeps the content-sized phone hero pin and chapter motion progressive', () => {
     const styles = css();
     const support = styles.slice(styles.indexOf('@supports (animation-timeline: view())'));
 
     expect(support).toContain('height: 200svh');
-    expect(support).toContain('height: 150svh');
+    expect(support).not.toContain('height: 150svh');
+    expect(support).toContain('height: calc(100svh - 3.375rem)');
+    expect(support).toContain('height: calc(100svh - 4.875rem)');
+    expect(support).toContain('display: grid');
+    expect(support).toContain('.hero.is-focus-stable');
+    expect(support).toContain('animation-range: entry 0% cover 20%');
     expect(support).toContain('animation-timeline: --chapter');
     expect(support).toContain('animation-timeline: --hero');
   });

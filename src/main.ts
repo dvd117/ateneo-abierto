@@ -65,6 +65,10 @@ function render(): void {
   scenePlayer = undefined;
   agentObserver?.disconnect();
   agentObserver = undefined;
+  if (agentScrollHandler) {
+    window.removeEventListener('scroll', agentScrollHandler);
+    agentScrollHandler = undefined;
+  }
   teardownReveal?.();
   teardownReveal = undefined;
   teardownRunningHead?.();
@@ -94,21 +98,9 @@ if (motionAllowed()) {
   document.documentElement.classList.add('motion-ok');
 }
 
-function skipPlateImagesOnSaveData(): void {
-  const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
-  if (connection?.saveData !== true) {
-    return;
-  }
-
-  root.querySelectorAll<HTMLImageElement>('[data-plate-image]').forEach((image) => {
-    image.removeAttribute('src');
-    image.removeAttribute('srcset');
-    image.parentElement?.querySelectorAll('source').forEach((source) => source.removeAttribute('srcset'));
-  });
-}
-
 let scenePlayer: ScenePlayer | undefined;
 let agentObserver: IntersectionObserver | undefined;
+let agentScrollHandler: (() => void) | undefined;
 let sceneModule: Promise<typeof import('./scene')> | undefined;
 let lightingPlayers: { cancel: () => void }[] = [];
 let lightingModule: Promise<typeof import('./lighting')> | undefined;
@@ -191,6 +183,7 @@ function bindAgent(page: PageCopy): void {
   const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>('.agent-session[data-scene]'));
   const barTitle = root.querySelector<HTMLElement>('[data-agent-title]');
   const liveStatus = root.querySelector<HTMLElement>('[data-agent-status]');
+  const hero = root.querySelector<HTMLElement>('.hero');
 
   if (!thread || tabs.length === 0) {
     return;
@@ -213,6 +206,8 @@ function bindAgent(page: PageCopy): void {
     insideToggle.setAttribute('aria-pressed', String(on));
     root.querySelector('.agent')?.classList.toggle('is-inside', on);
   });
+
+  hero?.addEventListener('focusin', () => hero.classList.add('is-focus-stable'), { once: true });
 
   /**
    * On a phone the session list is one scrolling row; bring the chosen task
@@ -412,7 +407,7 @@ function bindAgent(page: PageCopy): void {
   }
 
   if (typeof IntersectionObserver === 'undefined') {
-    select(page.scenes[0].id, { play: true });
+    thread.removeAttribute('data-autoplay');
     return;
   }
 
@@ -426,6 +421,55 @@ function bindAgent(page: PageCopy): void {
    * ratio, not isIntersecting, whose meaning under a threshold varies.
    */
   const start = visibleEnough(window_);
+  const figure = root.querySelector<HTMLElement>('.agent-figure') ?? window_;
+  let visibleRatio = 0;
+
+  function currentVisibleRatio(element: HTMLElement): number {
+    const rect = element.getBoundingClientRect();
+    if (rect.height <= 0) return 0;
+    const visible = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
+    return visible / rect.height;
+  }
+
+  function visibleOpacity(element: HTMLElement): number {
+    let opacity = 1;
+    let current: HTMLElement | null = element;
+    while (current && current !== document.documentElement) {
+      opacity *= Number.parseFloat(getComputedStyle(current).opacity) || 0;
+      current = current.parentElement;
+    }
+    return opacity;
+  }
+
+  function maybePlay(): void {
+    if (visibleRatio < GONE) {
+      if (played) {
+        played = false;
+        scenePlayer?.cancel();
+        scenePlayer = undefined;
+      }
+      return;
+    }
+
+    if (played || visibleRatio < start - 0.005 || visibleOpacity(figure) < 0.95) {
+      return;
+    }
+
+    played = true;
+    if (thread?.hasAttribute('data-autoplay')) {
+      playHeld();
+      return;
+    }
+
+    const current =
+      root.querySelector<HTMLElement>('.agent-session[aria-selected="true"]')?.dataset.scene ??
+      page.scenes[0].id;
+    select(current, {
+      play: true,
+      afterRender: typedTurn?.sceneId === current ? typedTurn.write : undefined
+    });
+  }
+
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
@@ -434,36 +478,8 @@ function bindAgent(page: PageCopy): void {
         if (entry.intersectionRatio > 0) {
           loadSceneRunner().catch(() => undefined);
         }
-
-        if (entry.intersectionRatio >= start - 0.005) {
-          if (!played) {
-            played = true;
-
-            if (thread.hasAttribute('data-autoplay')) {
-              playHeld();
-            } else {
-              const current =
-                root.querySelector<HTMLElement>('.agent-session[aria-selected="true"]')?.dataset
-                  .scene ?? page.scenes[0].id;
-              select(current, {
-                play: true,
-                afterRender: typedTurn?.sceneId === current ? typedTurn.write : undefined
-              });
-            }
-          }
-
-          continue;
-        }
-
-        if (entry.intersectionRatio >= GONE) {
-          continue;
-        }
-
-        // Gone from view: drop whatever was running and arm the next entrance,
-        // so nobody comes back to a conversation that started without them.
-        played = false;
-        scenePlayer?.cancel();
-        scenePlayer = undefined;
+        visibleRatio = entry.intersectionRatio;
+        maybePlay();
       }
     },
     { threshold: [0, GONE, start] }
@@ -471,6 +487,15 @@ function bindAgent(page: PageCopy): void {
 
   observer.observe(window_);
   agentObserver = observer;
+  agentScrollHandler = () => {
+    visibleRatio = currentVisibleRatio(window_);
+    window.requestAnimationFrame(maybePlay);
+  };
+  window.addEventListener('scroll', agentScrollHandler, { passive: true });
+  hero?.addEventListener('focusin', () => {
+    visibleRatio = currentVisibleRatio(window_);
+    window.requestAnimationFrame(maybePlay);
+  }, { once: true });
 }
 
 /**
@@ -655,7 +680,7 @@ function bindChrome(): () => void {
  */
 function bindDialogs(): void {
   const viewTransitionDocument = document as Document & {
-    startViewTransition?: (callback: () => void) => { finished: Promise<void> };
+    startViewTransition?: (callback: () => void) => { ready: Promise<void>; finished: Promise<void> };
   };
 
   root.querySelectorAll<HTMLButtonElement>('[data-dialog-open]').forEach((button) => {
@@ -667,7 +692,12 @@ function bindDialogs(): void {
       return;
     }
 
-    button.addEventListener('click', () => {
+    button.addEventListener('click', (event) => {
+      if (event.detail === 0) {
+        dialog.showModal();
+        return;
+      }
+
       const startViewTransition = viewTransitionDocument.startViewTransition;
       if (!startViewTransition || !motionAllowed() || !rowTitle || !dialogTitle) {
         dialog.showModal();
@@ -675,12 +705,16 @@ function bindDialogs(): void {
       }
 
       rowTitle.style.setProperty('view-transition-name', 'door-title');
-      dialogTitle.style.setProperty('view-transition-name', 'door-title');
       const clearNames = () => {
         rowTitle.style.removeProperty('view-transition-name');
         dialogTitle.style.removeProperty('view-transition-name');
       };
-      const transition = startViewTransition.call(viewTransitionDocument, () => dialog.showModal());
+      const transition = startViewTransition.call(viewTransitionDocument, () => {
+        rowTitle.style.removeProperty('view-transition-name');
+        dialogTitle.style.setProperty('view-transition-name', 'door-title');
+        dialog.showModal();
+      });
+      void transition.ready.catch(clearNames);
       void transition.finished.then(clearNames, clearNames);
     });
 
@@ -697,8 +731,6 @@ function bindDialogs(): void {
 }
 
 function bindEvents(page: PageCopy): void {
-  skipPlateImagesOnSaveData();
-
   root.querySelectorAll<HTMLButtonElement>('[data-locale]').forEach((button) => {
     button.addEventListener('click', () => {
       const locale = button.dataset.locale;

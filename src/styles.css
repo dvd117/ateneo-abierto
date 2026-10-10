@@ -387,7 +387,8 @@ button {
 .chapter-title .mask {
   display: block;
   overflow: clip;
-  padding: 0.05em 0.12em 0.12em 0;
+  padding: 0.05em 0.12em 0.24em 0;
+  margin-bottom: -0.12em;
 }
 
 .chapter-title .mask > span {
@@ -396,6 +397,10 @@ button {
 
 .chapter-lead {
   max-width: 58ch;
+}
+
+.chapter-head--ii .chapter-lead {
+  margin-right: clamp(5rem, 18vw, 14rem);
 }
 
 @media (min-width: 861px) {
@@ -941,8 +946,8 @@ main .door[id] {
 .hero-line {
   display: block;
   overflow: clip;
-  padding: 0.04em 0.12em 0.1em 0;
-  margin-bottom: -0.1em;
+  padding: 0.04em 0.12em 0.24em 0;
+  margin-bottom: -0.24em;
 }
 
 .hero-line-in {
@@ -986,6 +991,7 @@ main .door[id] {
       top: 0;
       z-index: 1;
       height: 100svh;
+      background: var(--c-bg);
     }
 
     html.motion-ok .hero-grid {
@@ -1004,7 +1010,67 @@ main .door[id] {
 
     @media (max-width: 860px) {
       html.motion-ok:not(.hero-stacked) .hero {
-        height: 150svh;
+        height: auto;
+        padding-block: 0 clamp(2rem, 5vh, 3rem);
+      }
+
+      html.motion-ok:not(.hero-stacked) .hero-stage {
+        top: 3.375rem;
+        height: calc(100svh - 3.375rem);
+        overflow: clip;
+        background: var(--c-bg);
+      }
+
+      html.motion-ok:not(.hero-stacked) .hero-grid {
+        height: 100%;
+        display: block;
+      }
+
+      html.motion-ok:not(.hero-stacked) .hero-head,
+      html.motion-ok:not(.hero-stacked) .hero-copy,
+      html.motion-ok:not(.hero-stacked) .hero .agent-figure {
+        position: absolute;
+        left: 0;
+        right: auto;
+        width: 100%;
+      }
+
+      html.motion-ok:not(.hero-stacked) .hero-head {
+        top: clamp(1rem, 4vh, 2rem);
+        transform-origin: left top;
+        animation: hero-mobile-title-frame 1s linear both;
+        animation-timeline: --hero;
+        animation-range: cover 42% cover 54%;
+      }
+
+      html.motion-ok:not(.hero-stacked) .hero-copy {
+        top: clamp(13rem, 31svh, 16rem);
+        opacity: 1;
+        transform: none;
+        animation: hero-copy-out 1s linear both;
+        animation-timeline: --hero;
+        animation-range: cover 42% cover 48%;
+      }
+
+      html.motion-ok:not(.hero-stacked) .hero .agent-figure {
+        bottom: 0;
+        opacity: 0;
+        transform: translateY(2rem);
+        animation: hero-supporting-in 1s linear both;
+        animation-timeline: --hero;
+        animation-range: cover 49% cover 54%;
+      }
+
+      html.motion-ok:not(.hero-stacked) .hero-network {
+        position: static;
+        margin-top: var(--gap-lg);
+      }
+
+      @media (max-width: 640px) {
+        html.motion-ok:not(.hero-stacked) .hero-stage {
+          top: 4.875rem;
+          height: calc(100svh - 4.875rem);
+        }
       }
 
       html.motion-ok.hero-stacked .hero {
@@ -1012,10 +1078,26 @@ main .door[id] {
         padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3.5rem, 8vw, 6.5rem);
       }
 
-      html.motion-ok.hero-stacked .hero-stage,
+      html.motion-ok.hero-stacked .hero-stage {
+        position: static;
+        height: auto;
+      }
+
       html.motion-ok.hero-stacked .hero-grid {
         position: static;
         height: auto;
+        display: grid;
+        gap: var(--gap-lg);
+      }
+
+      html.motion-ok.hero-stacked .hero-head,
+      html.motion-ok.hero-stacked .hero-copy,
+      html.motion-ok.hero-stacked .hero .agent-figure {
+        position: static;
+        width: auto;
+        opacity: 1;
+        transform: none;
+        animation: none;
       }
 
       html.motion-ok.hero-stacked .hero-network {
@@ -1059,6 +1141,56 @@ main .door[id] {
       }
     }
 
+    html.motion-ok .hero:focus-within,
+    html.motion-ok .hero.is-focus-stable {
+      height: auto;
+      padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3.5rem, 8vw, 6.5rem);
+    }
+
+    html.motion-ok .hero:focus-within .hero-stage,
+    html.motion-ok .hero.is-focus-stable .hero-stage,
+    html.motion-ok .hero:focus-within .hero-grid,
+    html.motion-ok .hero.is-focus-stable .hero-grid {
+      position: static;
+      height: auto;
+      min-height: 0;
+      overflow: visible;
+    }
+
+    html.motion-ok .hero:focus-within .hero-grid,
+    html.motion-ok .hero.is-focus-stable .hero-grid {
+      display: grid;
+      gap: var(--gap-lg);
+    }
+
+    html.motion-ok .hero:focus-within .hero-head,
+    html.motion-ok .hero.is-focus-stable .hero-head,
+    html.motion-ok .hero:focus-within .hero-copy,
+    html.motion-ok .hero.is-focus-stable .hero-copy,
+    html.motion-ok .hero:focus-within .agent-figure,
+    html.motion-ok .hero.is-focus-stable .agent-figure {
+      position: static;
+      left: auto;
+      right: auto;
+      bottom: auto;
+      width: auto;
+      opacity: 1;
+      transform: none;
+      animation: none;
+    }
+
+    html.motion-ok .hero:focus-within .hero-network,
+    html.motion-ok .hero.is-focus-stable .hero-network {
+      position: static;
+      margin-top: var(--gap-lg);
+    }
+
+    html.motion-ok .hero:focus-within .hero-line-in,
+    html.motion-ok .hero.is-focus-stable .hero-line-in {
+      animation: none;
+      transform: none;
+    }
+
     html.motion-ok .chapter {
       view-timeline-name: --chapter;
       view-timeline-axis: block;
@@ -1073,7 +1205,7 @@ main .door[id] {
     html.motion-ok .chapter-title .mask > span {
       animation: chapter-title-rise 1s linear both;
       animation-timeline: --chapter;
-      animation-range: entry 20% cover 35%;
+      animation-range: entry 0% cover 20%;
     }
 
     html.motion-ok .map-edge {
@@ -1084,18 +1216,6 @@ main .door[id] {
       animation-range: entry 10% exit 45%;
     }
 
-    @media (min-width: 861px) {
-      html.motion-ok .north-body {
-        min-height: 100svh;
-        align-items: start;
-      }
-
-      html.motion-ok .map {
-        position: sticky;
-        top: 5rem;
-        align-self: start;
-      }
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1150,6 +1270,19 @@ main .door[id] {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+@keyframes hero-mobile-title-frame {
+  to {
+    transform: scale(0.5);
+  }
+}
+
+@keyframes hero-copy-out {
+  to {
+    opacity: 0;
+    transform: translateY(-0.75rem);
   }
 }
 
@@ -2142,13 +2275,18 @@ main .door[id] {
   margin: 0.5rem 0 0;
 }
 
+@media (min-width: 861px) {
+  .shift-col-sub {
+    min-height: 3.2em;
+  }
+}
+
 .shift-rows {
   list-style: none;
-  /* The auto bottom margin absorbs the slack in the shorter column, so the
-     tally below it lands at the same height as its neighbour's. */
-  margin: var(--gap-md) 0 auto;
+  margin: var(--gap-md) 0 0;
   padding: 0;
   position: relative;
+  flex: 1 0 auto;
   /* One width for the pill column, the thread and the row grid, so the thread
      always runs through the middle of the pills. */
   --pill: 5.2rem;
@@ -2241,6 +2379,12 @@ main .door[id] {
   margin: var(--gap-md) 0 0;
   padding-top: var(--gap-sm);
   border-top: 1px solid var(--c-border);
+}
+
+@media (min-width: 861px) {
+  .shift-tally {
+    min-height: 7rem;
+  }
 }
 
 .shift-count {
@@ -3347,36 +3491,6 @@ main .door[id] {
 .map-caption {
   margin-top: var(--gap-sm);
   color: var(--c-fg-3);
-}
-
-/* The sketch reuses the local Ignite still until David supplies photographs. */
-.plate {
-  margin: 0;
-  background: var(--c-paper);
-}
-
-.plate picture {
-  display: block;
-}
-
-.plate img {
-  display: block;
-  width: 100%;
-  height: auto;
-  aspect-ratio: 16 / 9;
-  object-fit: cover;
-  filter: grayscale(1);
-  mix-blend-mode: multiply;
-}
-
-.plate-caption {
-  background: var(--c-bg);
-  color: var(--c-fg-soft);
-  font: var(--t-small);
-}
-
-.plate-caption .shell {
-  padding-block: var(--gap-sm);
 }
 
 /* The runner adds .is-lighting; until then the whole network stands lit, and
