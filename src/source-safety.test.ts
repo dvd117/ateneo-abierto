@@ -144,32 +144,74 @@ describe('anti-slop rules hold in the stylesheet', () => {
   });
 });
 
-describe('foundation sketch motion stays progressive', () => {
-  test('keeps the content-sized phone hero pin and chapter motion progressive', () => {
+describe('hero motion and first paint', () => {
+  test('keeps the hero in normal flow and independent of scroll timelines', () => {
     const styles = css();
-    const support = styles.slice(styles.indexOf('@supports (animation-timeline: view())'));
+    const hero = styles.slice(
+      styles.indexOf('/* ---------- hero ----------'),
+      styles.indexOf('/* ---------- the agent window ----------')
+    );
+    const main = readFileSync('src/main.ts', 'utf8');
 
-    expect(support).toContain('height: 200svh');
-    expect(support).not.toContain('height: 150svh');
-    expect(support).toContain('height: calc(100svh - 3.375rem)');
-    expect(support).toContain('height: calc(100svh - 4.875rem)');
-    expect(support).toContain('display: grid');
-    expect(support).toContain('.hero.is-focus-stable');
-    expect(support).toContain('animation-range: entry 0% cover 20%');
-    expect(support).toContain('animation-timeline: --chapter');
-    expect(support).toContain('animation-timeline: --hero');
+    expect(hero).not.toContain('position: sticky');
+    expect(hero).not.toContain('animation-timeline: --hero');
+    expect(hero).not.toContain('height: 200svh');
+    expect(hero).not.toContain('hero-stacked');
+    expect(hero).not.toContain('is-focus-stable');
+    expect(main).not.toContain('hero-stacked');
+    expect(main).not.toContain('is-focus-stable');
   });
 
-  test('settles new motion and the pin under reduced motion', () => {
-    const styles = css();
-    const support = styles.slice(styles.indexOf('@supports (animation-timeline: view())'));
-    const reduced = support.slice(support.indexOf('@media (prefers-reduced-motion: reduce)'));
+  test('uses a short desktop load entrance and keeps mobile content visible together', () => {
+    const hero = css().slice(
+      css().indexOf('/* ---------- hero ----------'),
+      css().indexOf('/* ---------- the agent window ----------')
+    );
 
-    for (const selector of ['.chapter-n', '.chapter-title', '.hero-title', '.agent']) {
-      expect(reduced).toContain(selector);
-    }
-    expect(reduced).toContain('animation: none');
-    expect(reduced).toContain('position: static');
+    expect(hero).toMatch(/@media \(min-width: 861px\)/);
+    expect(hero).toContain('visibility: hidden');
+    expect(hero).toContain('hero-load-in 220ms');
+    expect(hero).toContain('360ms');
+    expect(hero).toMatch(/\.hero:focus-within[\s\S]*visibility: visible/);
+    expect(hero).not.toContain('line-rise');
+    expect(hero).not.toContain('animation-timeline: --hero');
+  });
+
+  test('sets motion eligibility before page content can paint, with static JS-off fallback', () => {
+    const shell = html();
+    const bootstrapTag = '<script src="/motion.js"></script>';
+    const main = readFileSync('src/main.ts', 'utf8');
+    const bootstrap = readFileSync('public/motion.js', 'utf8');
+
+    expect(shell.indexOf(bootstrapTag)).toBeGreaterThan(-1);
+    expect(shell.indexOf(bootstrapTag)).toBeLessThan(shell.indexOf('</head>'));
+    expect(shell).not.toMatch(/<script[^>]+(?:async|defer|type="module")[^>]*src="\/motion\.js"/);
+    expect(bootstrap).toContain("prefers-reduced-motion: reduce");
+    expect(bootstrap).toContain('saveData');
+    expect(bootstrap).toContain("classList.add('motion-ok')");
+    expect(main).not.toContain("classList.add('motion-ok')");
+    expect(css()).toContain('.motion-ok [data-reveal]');
+  });
+
+  test('falls back to the complete prerender when the main bundle cannot initialize', () => {
+    const main = readFileSync('src/main.ts', 'utf8');
+    const bootstrap = readFileSync('public/motion.js', 'utf8');
+
+    expect(main).toContain("classList.add('motion-ready')");
+    expect(bootstrap).toContain("addEventListener('error'");
+    expect(bootstrap).toContain("addEventListener('load'");
+    expect(bootstrap).toContain("classList.contains('motion-ready')");
+    expect(bootstrap).toContain("classList.remove('motion-ok')");
+    expect(bootstrap).toContain("removeAttribute('data-autoplay')");
+  });
+
+  test('rechecks the visible agent after its desktop entrance and after late initialization', () => {
+    const main = readFileSync('src/main.ts', 'utf8');
+
+    expect(main).toContain("figure.addEventListener('animationend'");
+    expect(main).toContain("event.animationName === 'hero-load-in'");
+    expect(main).toContain('visibleRatio = currentVisibleRatio(window_);');
+    expect(main).toContain('refreshVisibility();');
   });
 });
 
