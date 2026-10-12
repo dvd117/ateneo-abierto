@@ -633,12 +633,14 @@ describe('build-time prerender', () => {
     expect(html.split(aliados.roles.closing)).toHaveLength(2);
   });
 
-  test('gives the partner chapters the landing padding and keeps every chapter lead under its title', () => {
+  test('opens partner chapters at the landing padding, closes them with room, and keeps every lead under its title', () => {
     const styles = readFileSync('src/styles.css', 'utf8');
 
     expect(styles).toMatch(/\.sec\[class\*="aliados-"\]:not\(\.chapter\)\s*\{\s*padding-block:/);
     expect(styles).not.toMatch(/\.sec\[class\*="aliados-"\]\s*\{/);
     expect(styles).toMatch(/\n\.chapter-head\s*\{[^}]*align-items: end;[^}]*align-content: end;/);
+    expect(styles).toMatch(/\.sec\.chapter\[class\*="aliados-"\]\s*\{\s*padding-bottom: clamp\(3rem, 6vw, 4\.75rem\);\s*\}/);
+    expect(styles).toMatch(/\.chapter-head--inline,\s*\.chapter-head:not\(:has\(\.chapter-lead\)\)\s*\{\s*min-height:/);
   });
 
   test('styles native FAQ markers without motion and retains the global summary focus ring', () => {
