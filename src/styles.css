@@ -4051,9 +4051,8 @@ p > .link,
 }
 
 .aliados-gap-thesis {
-  max-width: 46ch;
-  margin-top: var(--gap-lg);
-  font: 560 clamp(2rem, 1.3rem + 2.7vw, 3.6rem) / 1.12 var(--font-display);
+  font-weight: 560;
+  font-family: var(--font-display);
   letter-spacing: var(--track-h1);
   color: var(--c-fg);
   text-wrap: balance;
@@ -4063,24 +4062,43 @@ p > .link,
   background-color: var(--c-bg-deep);
 }
 
-.aliados-pillar-grid,
+/* Open columns keep the method in the same grammar as the landing's principles. */
+.aliados-pillar-grid {
+  display: grid;
+  gap: var(--gap-md);
+}
+
+.aliados-pillar {
+  padding-top: var(--gap-md);
+  border-top: 1px solid var(--c-border);
+}
+
+.aliados-pillar h3 {
+  margin: 0 0 0.6rem;
+  font: 400 1.6rem / 1.15 var(--font-display);
+  color: var(--c-fg);
+}
+
+.aliados-pillar p {
+  margin: 0;
+  font: var(--t-body);
+  color: var(--c-fg-2);
+}
+
 .aliados-role-grid {
   display: grid;
   gap: var(--gap-md);
 }
 
-.aliados-pillar-grid .door,
 .aliados-role-grid .door {
   margin: 0;
 }
 
-.aliados-pillar h3,
 .aliados-role h3 {
   font: var(--t-h2);
   color: var(--c-fg);
 }
 
-.aliados-pillar p,
 .aliados-role p {
   font: var(--t-body);
   color: var(--c-fg-soft);
@@ -4252,6 +4270,16 @@ p > .link,
   justify-self: start;
 }
 
+/* Phones keep the thesis's original scale and vertical spacing. */
+@media (max-width: 860px) {
+  .aliados-gap-thesis {
+    max-width: 46ch;
+    margin-top: var(--gap-lg);
+    font-size: clamp(2rem, 1.3rem + 2.7vw, 3.6rem);
+    line-height: 1.12;
+  }
+}
+
 @media (min-width: 561px) {
   .aliados-vision-grid,
   .aliados-role-grid {
@@ -4270,25 +4298,34 @@ p > .link,
     gap: var(--gap-lg);
   }
 
-  .aliados-approach .shell {
+  /* The thesis sits beside the copy instead of extending the reading column. */
+  .aliados-gap .shell {
     display: grid;
-    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
-    grid-template-areas: "head head" ". cards" ". note";
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
     column-gap: clamp(2rem, 5vw, 5rem);
     align-items: start;
   }
 
-  /* The shared chapter head needs the full measure and its own numeral lane. */
-  .aliados-approach .chapter-head {
-    grid-area: head;
+  .aliados-gap .chapter-head {
+    grid-column: 1 / -1;
+  }
+
+  .aliados-gap-copy {
+    grid-column: 1;
+  }
+
+  .aliados-gap-thesis {
+    grid-column: 2;
+    margin: 0;
+    font-size: clamp(1.4rem, 0.8rem + 1.1vw, 1.95rem);
+    line-height: 1.2;
+    max-width: none;
+    padding-left: var(--gap-md);
+    border-left: 2px solid var(--c-accent);
   }
 
   .aliados-pillar-grid {
-    grid-area: cards;
-  }
-
-  .aliados-approach-note {
-    grid-area: note;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .aliados-format-grid {
