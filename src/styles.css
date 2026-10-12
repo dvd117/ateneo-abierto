@@ -4136,9 +4136,25 @@ p > .link,
   margin: 0;
 }
 
+.aliados-format-labels {
+  display: none;
+}
+
 .aliados-format {
   min-width: 0;
   height: 100%;
+}
+
+.aliados-format-n {
+  display: block;
+  margin-bottom: 0.5rem;
+  font: italic 400 1.4rem/1 var(--font-display);
+  color: var(--c-fg-3);
+}
+
+/* The label column must not change which article carries the signal. */
+.aliados-format:nth-of-type(2) .aliados-format-n {
+  color: var(--c-accent);
 }
 
 .aliados-format dl {
@@ -4384,5 +4400,88 @@ p > .link,
 
   .aliados-role-grid {
     grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Shared labels and unboxed columns make the formats comparable row by row. */
+@media (min-width: 1024px) {
+  .aliados-format-grid {
+    display: grid;
+    grid-template-columns: 9rem repeat(3, minmax(0, 1fr));
+    grid-template-rows: repeat(5, auto);
+    column-gap: var(--gap-lg);
+    row-gap: 0;
+  }
+
+  .aliados-format-labels {
+    display: contents;
+  }
+
+  .aliados-format-labels span {
+    grid-column: 1;
+    padding-top: 1.1rem;
+    border-top: 1px solid var(--c-border);
+    font: var(--t-label);
+    letter-spacing: var(--track-label);
+    text-transform: uppercase;
+    color: var(--c-accent);
+  }
+
+  .aliados-format-labels span:nth-child(1) {
+    grid-row: 2;
+  }
+
+  .aliados-format-labels span:nth-child(2) {
+    grid-row: 3;
+  }
+
+  .aliados-format-labels span:nth-child(3) {
+    grid-row: 4;
+  }
+
+  .aliados-format {
+    grid-row: 1 / span 5;
+    display: grid;
+    grid-template-rows: subgrid;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    margin: 0;
+  }
+
+  .aliados-format dl {
+    display: contents;
+  }
+
+  .aliados-format dl > div {
+    padding: 1rem 0 1.5rem;
+    border-top: 1px solid var(--c-border);
+    margin: 0;
+  }
+
+  /* Keep each card's labels available to readers who cannot see the column. */
+  .aliados-format dt {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+
+  .aliados-format .door-title {
+    align-self: end;
+    margin: 0 0 1rem;
+    padding-bottom: 0;
+  }
+
+  .aliados-format-link {
+    align-self: start;
+    justify-self: start;
+    margin-top: 0.5rem;
   }
 }
