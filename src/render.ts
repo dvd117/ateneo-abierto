@@ -640,10 +640,10 @@ function renderGlossary(page: PageCopy): string {
 }
 
 /**
- * "Tres puertas": the three ways in, as in the approved mockup — a numbered
- * rail, the promise in the serif, and the line that lets someone recognise
- * themselves before they read the title. Every door leads to the same form,
- * so nobody has to decide which address to write to.
+ * "Tres puertas": the three ways in. The promise leads the row in the serif,
+ * then the body and the line that lets someone recognise themselves; the
+ * door's number is shown only in its dialog. Every door leads to the same
+ * form, so nobody has to decide which address to write to.
  */
 function renderDoor(page: PageCopy, door: Door, order: number): string {
   return `
@@ -651,7 +651,6 @@ function renderDoor(page: PageCopy, door: Door, order: number): string {
       <button class="door-row" type="button" data-dialog-open="door-${door.id}"
               aria-haspopup="dialog" aria-label="${inline(page.doors.dialog.open)} · ${inline(door.title)}"
               aria-describedby="door-${door.id}-body door-${door.id}-who">
-        <span class="door-n" aria-hidden="true">${inline(door.n)}</span>
         <span class="door-info">
           <span class="door-title" data-door-title role="heading" aria-level="3">${inline(door.title)}</span>
           <span class="door-body" id="door-${door.id}-body">${inline(door.body)}</span>

@@ -2650,15 +2650,6 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   }
 }
 
-/* The number, set large in the display italic: it counts the steps. */
-.door-n {
-  font: italic 400 clamp(3.2rem, 2.2rem + 3vw, 5rem) / 0.85 var(--font-display);
-  font-variation-settings: "opsz" 144;
-  letter-spacing: -0.04em;
-  color: var(--c-accent);
-  margin-bottom: 0.5rem;
-}
-
 .door-title {
   font: var(--t-h2);
   font-size: clamp(1.45rem, 1.25rem + 0.5vw, 1.8rem);
@@ -2742,17 +2733,11 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 .doors .door-row {
   display: grid;
   width: 100%;
-  grid-template-columns: clamp(3.5rem, 9vw, 7rem) minmax(0, 1fr) 2rem;
+  grid-template-columns: minmax(0, 1fr) 2rem;
   align-items: center;
   gap: var(--gap-md);
-  padding-block: clamp(1.5rem, 3vw, 2.5rem);
+  padding-block: clamp(1rem, 1.4vw, 1.2rem);
   text-align: left;
-}
-
-.doors .door-n {
-  margin: 0;
-  font-size: clamp(3.5rem, 7vw, 6rem);
-  color: var(--c-fg-2);
 }
 
 .doors .door-info {
@@ -2767,11 +2752,11 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 .doors .door-body {
   display: block;
   max-width: 62ch;
-  margin-top: var(--gap-sm);
+  margin-top: 0.5rem;
 }
 
 .doors .door-who {
-  margin-top: var(--gap-sm);
+  margin-top: 0.35rem;
   padding-top: 0;
 }
 
@@ -2784,11 +2769,34 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   justify-self: end;
   color: var(--c-fg-2);
   font-size: 1.5rem;
+  transition: transform var(--duration-ui) var(--ease-out);
 }
 
 .doors .door-row:hover .door-title,
 .doors .door-row:hover .door-cta-arrow {
   color: var(--c-accent);
+}
+
+/* The whole row is the button; the arrow leans towards the dialog it opens.
+   On keyboard focus it takes the same offset without moving there. */
+@media (hover: hover) {
+  .doors .door-row:hover .door-cta-arrow {
+    transform: translateX(0.35rem);
+  }
+}
+
+.doors .door-row:focus-visible .door-cta-arrow {
+  transform: translateX(0.35rem);
+  transition: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doors .door-row .door-cta-arrow,
+  .doors .door-row:hover .door-cta-arrow,
+  .doors .door-row:focus-visible .door-cta-arrow {
+    transform: none;
+    transition: none;
+  }
 }
 
 @media (min-width: 861px) {
@@ -2805,12 +2813,8 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 
 @media (max-width: 640px) {
   .doors .door-row {
-    grid-template-columns: 3rem minmax(0, 1fr) 1rem;
+    grid-template-columns: minmax(0, 1fr) 1rem;
     gap: var(--gap-sm);
-  }
-
-  .doors .door-n {
-    font-size: 2.7rem;
   }
 }
 
