@@ -1349,13 +1349,13 @@ main .door[id] {
 }
 
 /* Before the runner arrives. The server sends the finished thread so no-JS
-   readers get it whole (index.html un-holds it in a <noscript> style); with
+   readers get it whole; only with the motion bootstrap opt-in and
    motion allowed it waits here until the window is properly on screen.
    It waits holding the visitor's opening message and its files, not empty:
    on a phone the window's top edge is visible well before the sequence is
    allowed to start, and a blank panel there reads as broken. */
 @media (prefers-reduced-motion: no-preference) {
-  .agent-thread[data-autoplay] [data-beat]:not([data-beat="prompt"]):not([data-beat="files"]) {
+  html.motion-ok .agent-thread[data-autoplay] [data-beat]:not([data-beat="prompt"]):not([data-beat="files"]) {
     display: none;
   }
 }
@@ -1372,7 +1372,7 @@ main .door[id] {
   overflow-y: hidden;
 }
 
-.agent-thread.is-playing [data-beat]:not(.is-in) {
+html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   display: none;
 }
 

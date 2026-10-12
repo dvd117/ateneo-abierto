@@ -64,8 +64,24 @@ describe('CSP-safe source markup', () => {
     expect(og).not.toContain('fonts.googleapis.com');
   });
 
-  test('keeps a noscript fallback that shows the finished agent window', () => {
-    expect(html()).toMatch(/<noscript>\s*<style>[\s\S]*\.agent-thread\[data-autoplay\][\s\S]*display: revert;/);
+  test('leaves the finished agent window to its own layout when JavaScript is off', () => {
+    const noscript = html().match(/<noscript>([\s\S]*?)<\/noscript>/)?.[1] ?? '';
+
+    expect(noscript).toContain('[data-reveal]');
+    expect(noscript).not.toContain('[data-beat]');
+  });
+
+  test('only hides agent beats when the motion bootstrap has opted in', () => {
+    const styles = css().replace(/\/\*[\s\S]*?\*\//g, '');
+    const hidingRules = [...styles.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+      .filter(([, selectors, declarations]) => selectors.includes('[data-beat]') && /display:\s*none\s*;/.test(declarations));
+
+    expect(hidingRules.length).toBeGreaterThan(0);
+    for (const [, selectors] of hidingRules) {
+      for (const selector of selectors.split(',')) {
+        expect(selector.trim()).toMatch(/^html\.motion-ok\s/);
+      }
+    }
   });
 
   test('preloads the two faces the first paint needs', () => {
