@@ -810,11 +810,13 @@ function renderMap(page: PageCopy): string {
         ${labels}
         <span class="map-claim-label">${inline(map.claimLabel)}</span>
       </div>
-      <ul class="map-legend small">
-        <li><span class="map-legend-dot" aria-hidden="true"></span>${inline(map.legend.lit)}</li>
-        <li><span class="map-legend-dot is-planned" aria-hidden="true"></span>${inline(map.legend.planned)}</li>
-      </ul>
-      <figcaption class="map-caption small">${inline(map.caption)}</figcaption>
+      <figcaption class="map-key">
+        <ul class="map-legend small">
+          <li><span class="map-legend-dot" aria-hidden="true"></span>${inline(map.legend.lit)}</li>
+          <li><span class="map-legend-dot is-planned" aria-hidden="true"></span>${inline(map.legend.planned)}</li>
+        </ul>
+        <p class="map-caption small">${inline(map.caption)}</p>
+      </figcaption>
     </figure>
   `;
 }
