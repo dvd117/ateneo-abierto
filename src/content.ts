@@ -930,7 +930,7 @@ export const copy: Record<Locale, PageCopy> = {
       ],
       map: {
         alt: 'Mapa de Venezuela con una red de ocho ciudades: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná y Ciudad Guayana, y una más prevista en Puerto Ayacucho. La Zona en Reclamación aparece rayada. Son ciudades que queremos alcanzar, no sedes confirmadas.',
-        caption: 'Ciudades que queremos alcanzar, no sedes confirmadas.',
+        caption: 'No son sedes confirmadas.',
         legend: { lit: 'Ciudad que queremos alcanzar', planned: 'Prevista, más adelante' },
         claimLabel: 'Zona en Reclamación',
       // Eight cities, lit, and one further out that is only planned: the
@@ -1444,7 +1444,7 @@ export const copy: Record<Locale, PageCopy> = {
       ],
       map: {
         alt: 'A map of Venezuela with a network of eight cities: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná and Ciudad Guayana, and one more planned in Puerto Ayacucho. The Zona en Reclamación is drawn hatched. These are cities we want to reach, not confirmed sites.',
-        caption: 'Cities we want to reach, not confirmed sites.',
+        caption: 'These are not confirmed sites.',
         legend: { lit: 'A city we want to reach', planned: 'Planned, later' },
         claimLabel: 'Zona en Reclamación',
       // Eight cities, lit, and one further out that is only planned: the

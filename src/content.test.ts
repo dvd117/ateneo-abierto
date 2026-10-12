@@ -397,6 +397,13 @@ describe('landing page copy', () => {
     expect(figure).toContain(`<figcaption class="map-caption small">${copy[locale].north.map.caption}</figcaption>`);
   });
 
+  test.each(locales)('keeps the map caption to the site disclaimer in %s', (locale) => {
+    const caption = locale === 'es' ? 'No son sedes confirmadas.' : 'These are not confirmed sites.';
+
+    expect(copy[locale].north.map.caption).toBe(caption);
+    expect(renderPage(locale)).toContain(`<figcaption class="map-caption small">${caption}</figcaption>`);
+  });
+
   test('places the map nodes at real coordinates and claims no site', () => {
     for (const locale of locales) {
       const { map } = copy[locale].north;
@@ -423,7 +430,7 @@ describe('landing page copy', () => {
       // Some nodes are outlined rather than lit, and the caption says in words
       // that none of them is a venue.
       expect(map.nodes.some((node) => node.planned)).toBe(true);
-      expect(map.caption).toMatch(/no sedes confirmadas|not confirmed sites/i);
+      expect(map.caption).toMatch(/no son sedes confirmadas|not confirmed sites/i);
       expect(map.alt).toMatch(/no sedes confirmadas|not confirmed sites/i);
     }
 
