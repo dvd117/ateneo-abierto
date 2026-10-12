@@ -1244,7 +1244,10 @@ export function renderAliadosPage(): string {
       </div></section>
       <section class="sec chapter aliados-roles" id="${roles.id}" aria-labelledby="aliados-roles-title"><div class="shell">
         ${renderChapter({ ...roles, id: 'aliados-roles-title', title: inline(aliados.roles.title), lead: aliados.roles.intro })}
-        <div class="aliados-role-grid">${aliados.roles.cards.map((card) => `<div class="door aliados-role" data-reveal><h3>${inline(card.title)}</h3><p>${inline(card.body)}</p></div>`).join('')}</div>
+        <div class="aliados-role-table">
+          <div class="aliados-role-head" aria-hidden="true"><span></span><span class="aliados-pill">${inline(aliados.roles.columns.gives)}</span><span class="aliados-pill aliados-pill--fill">${inline(aliados.roles.columns.gets)}</span></div>
+          <ul class="aliados-role-list">${aliados.roles.rows.map((row) => `<li class="aliados-role-row"><h3>${inline(row.title)}<span class="aliados-role-effort">${inline(row.effort)}</span></h3><p class="aliados-role-gives"><span class="aliados-pill">${inline(aliados.roles.columns.gives)}</span> ${inline(row.gives)}</p><p class="aliados-role-gets"><span class="aliados-pill aliados-pill--fill">${inline(aliados.roles.columns.gets)}</span> ${inline(row.gets)}</p></li>`).join('')}</ul>
+        </div>
         <div class="aliados-roles-give" data-reveal><p><strong>${inline(aliados.roles.give.label)}:</strong> ${inline(aliados.roles.give.text)}</p></div>
         <p class="aliados-roles-closing" data-reveal>${inline(aliados.roles.closing)}</p>
       </div></section>
