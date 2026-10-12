@@ -637,7 +637,7 @@ html.motion-ok .sec-head[data-reveal].is-revealed > * {
    of varying width and colour, and a screen of fine dark lines that slides
    over them, so tones appear and travel. Our palette, our composition. The
    Maiquetía floor is referenced on purpose, in words only: the one line
-   under band three, before Únete (.band-voice, approved 2026-09-14; see
+   that closes the Únete column (.join-voice, approved 2026-09-14; see
    render.ts). The stripes never reproduce its image.
 
    The bands are instruments, not ornaments. The screen's travel records
@@ -653,26 +653,6 @@ html.motion-ok .sec-head[data-reveal].is-revealed > * {
   background: var(--c-bg);
   border-top: 1px solid var(--c-border);
   overflow: hidden;
-}
-
-/* The page's one line in the founder's voice, under band three: the door
-   "who" line's size, in the manifesto serif's italic, unsigned. Right-aligned
-   under the band on desktop, centred on a phone. */
-.band-voice {
-  margin-block: var(--gap-sm) 0;
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 400;
-  font-size: 0.8rem;
-  line-height: 1.5;
-  color: var(--c-fg-soft);
-  text-align: right;
-}
-
-@media (max-width: 860px) {
-  .band-voice {
-    text-align: center;
-  }
 }
 
 .band-svg {
@@ -3617,6 +3597,27 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   border-top: 1px solid var(--c-border);
   font: var(--t-body);
   color: var(--c-fg-soft);
+}
+
+/* The page's one line in the founder's voice closes the Únete column: the
+   manifesto serif's italic at display size, unsigned. */
+.join-voice {
+  max-width: 17ch;
+  margin: 2.5rem 0 0;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: clamp(1.7rem, 1.2rem + 1.6vw, 2.6rem);
+  line-height: 1.18;
+  color: var(--c-fg);
+  text-wrap: balance;
+}
+
+@media (max-width: 860px) {
+  .join-voice {
+    margin-top: 2rem;
+    font-size: 1.75rem;
+  }
 }
 
 /* A link inside a sentence needs more than colour to be a link: the underline
