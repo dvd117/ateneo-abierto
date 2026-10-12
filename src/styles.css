@@ -2669,6 +2669,12 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   .footer-marks {
     justify-content: center;
   }
+
+  /* The partner pages leave the marks out; the contact still belongs in the
+     last column, not in the empty middle one. */
+  .footer-brand + .footer-meta {
+    grid-column: 3;
+  }
 }
 
 /* Honeypot. Not display:none — bots read that as a trap; a clipped, untabbable
