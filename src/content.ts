@@ -1545,6 +1545,7 @@ export const aliados = {
   eyebrow: 'Para aliados',
   titleLines: [{ text: 'La tecnología ya está al alcance de todos.' }, { text: 'Saber usarla, todavía no.', em: true }],
   lead: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar estas herramientas en su trabajo y en su vida, y a enseñárselas a otras. Buscamos aliados para llegar a más personas.',
+  audience: { label: 'Para quién', text: 'Personas que trabajan en oficinas, docentes, comerciantes y equipos de organizaciones.' },
   steps: [
     { title: 'Nos escribes', text: 'Cuéntanos qué espacio, comunidad o experiencia tienes.' },
     { title: 'Conversamos', text: 'En 30 minutos vemos qué formato encaja.' },

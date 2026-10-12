@@ -332,7 +332,7 @@ describe('build-time prerender', () => {
     const copyFile = existsSync(copyPath) ? readFileSync(copyPath, 'utf8') : undefined;
     const strings = [
       aliados.meta.title, aliados.meta.description, aliados.eyebrow,
-      ...aliados.titleLines.map((line) => line.text), aliados.lead,
+      ...aliados.titleLines.map((line) => line.text), aliados.lead, aliados.audience.label, aliados.audience.text,
       aliados.gap.title, ...aliados.gap.paragraphs, aliados.gap.thesis,
       aliados.approach.title, aliados.approach.intro,
       ...aliados.approach.pillars.flatMap((pillar) => [pillar.title, pillar.body]),
@@ -345,7 +345,7 @@ describe('build-time prerender', () => {
       aliados.roles.give.label, aliados.roles.give.text, aliados.roles.closing,
       aliados.contact.title, aliados.contact.line, aliados.contact.button
     ];
-    expect(strings).toHaveLength(71);
+    expect(strings).toHaveLength(73);
     for (const value of strings) {
       if (copyFile) expect(copyFile).toContain(value);
       expect(html).toContain(value.replace(/"/g, '&quot;'));
@@ -378,6 +378,16 @@ describe('build-time prerender', () => {
     expect(html).not.toContain('aliados-respaldo');
     expect(html).not.toContain('La idea ya salió al mundo');
     expect(html).toMatch(/<section class="sec chapter aliados-formats" id="camino"[^>]*>(?:(?!<\/section>)[\s\S])*<\/section>\s*<div class="band band--aliados"/);
+  });
+
+  // David, 2026-10-12: hero D dropped the proposal card; who Ateneo teaches stays on the first screen.
+  test('names who Ateneo teaches in the partner hero, between the lead and the call to action', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const copy = html.match(/<div class="aliados-hero-copy">([\s\S]*?)<div class="hero-actions">/)?.[1] ?? '';
+
+    expect(aliados.audience).toEqual({ label: 'Para quién', text: 'Personas que trabajan en oficinas, docentes, comerciantes y equipos de organizaciones.' });
+    expect(copy).toContain('<p class="aliados-audience"><span class="aliados-audience-label">Para quién</span> Personas que trabajan en oficinas, docentes, comerciantes y equipos de organizaciones.</p>');
+    expect(copy.indexOf('aliados-lead')).toBeLessThan(copy.indexOf('aliados-audience'));
   });
 
   test('renders exactly three partner steps verbatim after the hero grid', () => {
