@@ -106,27 +106,6 @@ export type FollowUp = {
   };
 };
 
-/**
- * The node network under the hero's call to action: the cities the program
- * wants to reach, lighting one at a time. Nothing here is a confirmed site,
- * so the copy never says one has joined.
- */
-export type NetworkCopy = {
-  label: string;
-  /** Resting caption, shown whenever no node is lit. */
-  caption: string;
-  /** Read out to screen readers in place of the drawing. */
-  alt: string;
-  /**
-   * `x`/`y` place the node in the 480×110 viewBox; `lx`/`ly` place its label
-   * in the same space, because the labels have to dodge each other and the
-   * edges — they are set by eye, as in the approved mockup.
-   */
-  cities: { name: string; x: number; y: number; lx: number; ly: number }[];
-  /** Index pairs into `cities`, drawn in order as the nodes light. */
-  edges: [number, number][];
-};
-
 export type AgentChrome = {
   /** Accessible name for the whole window. */
   windowLabel: string;
@@ -446,7 +425,6 @@ export type PageCopy = {
     windowCaption: string;
   };
   agent: AgentChrome;
-  network: NetworkCopy;
   scenes: Scene[];
   shift: ShiftCopy;
   glossary: GlossaryCopy;
@@ -531,31 +509,6 @@ export const copy: Record<Locale, PageCopy> = {
         carry: 'Llevar esta tarea al formulario',
         send: 'Enviar'
       }
-    },
-    network: {
-      label: 'La red que estamos tejiendo',
-      caption: 'Gente, mentores y ciudades',
-      alt: 'Ocho ciudades venezolanas unidas por una red: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná y Ciudad Guayana. Son ciudades que queremos alcanzar, no sedes confirmadas.',
-      cities: [
-        { name: 'Caracas', x: 244, y: 16, lx: 244, ly: 30 },
-        { name: 'Valencia', x: 203, y: 26, lx: 197, ly: 44 },
-        { name: 'Barquisimeto', x: 155, y: 29, lx: 150, ly: 4 },
-        { name: 'Maracaibo', x: 70, y: 11, lx: 70, ly: 25 },
-        { name: 'Mérida', x: 88, y: 76, lx: 100, ly: 78 },
-        { name: 'San Cristóbal', x: 48, y: 101, lx: 62, ly: 103 },
-        { name: 'Cumaná', x: 344, y: 17, lx: 344, ly: 31 },
-        { name: 'Ciudad Guayana', x: 397, y: 85, lx: 397, ly: 99 }
-      ],
-      edges: [
-        [0, 1],
-        [1, 2],
-        [2, 3],
-        [2, 4],
-        [4, 5],
-        [0, 6],
-        [6, 7],
-        [0, 7]
-      ]
     },
     scenes: [
       {
@@ -951,10 +904,9 @@ export const copy: Record<Locale, PageCopy> = {
         alt: 'Mapa de Venezuela con la misma red de ocho ciudades: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná y Ciudad Guayana, y una más prevista en Puerto Ayacucho. La Zona en Reclamación aparece rayada. Son ciudades que queremos alcanzar, no sedes confirmadas.',
         caption: 'Ciudades que queremos alcanzar, no sedes confirmadas.',
         claimLabel: 'Zona en Reclamación',
-      // The hero network's eight cities, lit, and one further out that is only
-      // planned: the horizon reaches past today's network, never around it.
-      // Same order and links as the hero network, so the lighting grows the
-      // same way; the planned node goes last, where the sequence never reaches.
+      // Eight cities, lit, and one further out that is only planned: the
+      // horizon reaches past today's network, never around it. The planned
+      // node goes last, where the lighting sequence never reaches.
       nodes: [
         { name: 'Caracas', lon: -66.9, lat: 10.49, dy: 16 },
         { name: 'Valencia', lon: -68.0, lat: 10.16, dy: -12 },
@@ -1073,31 +1025,6 @@ export const copy: Record<Locale, PageCopy> = {
         carry: 'Carry this task to the form',
         send: 'Send'
       }
-    },
-    network: {
-      label: 'The network we’re weaving',
-      caption: 'People, mentors and cities',
-      alt: 'Eight Venezuelan cities joined in a network: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná and Ciudad Guayana. These are cities we want to reach, not confirmed sites.',
-      cities: [
-        { name: 'Caracas', x: 244, y: 16, lx: 244, ly: 30 },
-        { name: 'Valencia', x: 203, y: 26, lx: 197, ly: 44 },
-        { name: 'Barquisimeto', x: 155, y: 29, lx: 150, ly: 4 },
-        { name: 'Maracaibo', x: 70, y: 11, lx: 70, ly: 25 },
-        { name: 'Mérida', x: 88, y: 76, lx: 100, ly: 78 },
-        { name: 'San Cristóbal', x: 48, y: 101, lx: 62, ly: 103 },
-        { name: 'Cumaná', x: 344, y: 17, lx: 344, ly: 31 },
-        { name: 'Ciudad Guayana', x: 397, y: 85, lx: 397, ly: 99 }
-      ],
-      edges: [
-        [0, 1],
-        [1, 2],
-        [2, 3],
-        [2, 4],
-        [4, 5],
-        [0, 6],
-        [6, 7],
-        [0, 7]
-      ]
     },
     scenes: [
       {
@@ -1486,10 +1413,9 @@ export const copy: Record<Locale, PageCopy> = {
         alt: 'A map of Venezuela with the same network of eight cities: Caracas, Valencia, Barquisimeto, Maracaibo, Mérida, San Cristóbal, Cumaná and Ciudad Guayana, and one more planned in Puerto Ayacucho. The Zona en Reclamación is drawn hatched. These are cities we want to reach, not confirmed sites.',
         caption: 'Cities we want to reach, not confirmed sites.',
         claimLabel: 'Zona en Reclamación',
-      // The hero network's eight cities, lit, and one further out that is only
-      // planned: the horizon reaches past today's network, never around it.
-      // Same order and links as the hero network, so the lighting grows the
-      // same way; the planned node goes last, where the sequence never reaches.
+      // Eight cities, lit, and one further out that is only planned: the
+      // horizon reaches past today's network, never around it. The planned
+      // node goes last, where the lighting sequence never reaches.
       nodes: [
         { name: 'Caracas', lon: -66.9, lat: 10.49, dy: 16 },
         { name: 'Valencia', lon: -68.0, lat: 10.16, dy: -12 },

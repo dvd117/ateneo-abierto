@@ -1008,9 +1008,7 @@ main .door[id] {
 /* ---------- hero ----------
    The headline takes the whole measure, one line per sentence at desktop
    sizes; under it the manifesto and the window share the row. On a phone the
-   window comes straight after the call to action and the network follows it —
-   otherwise the network sits on screen at load and has finished lighting
-   before anyone looks at it. */
+   window comes straight after the call to action. */
 
 .hero {
   position: relative;
@@ -1154,15 +1152,10 @@ main .door[id] {
   }
 
   .hero-stage,
-  .hero-grid,
-  .hero-network {
+  .hero-grid {
     position: static;
     height: auto;
     min-height: 0;
-  }
-
-  .hero-network {
-    margin-top: var(--gap-lg);
   }
 
   .hero-head,
@@ -1221,10 +1214,6 @@ main .door[id] {
 
 .hero-manifesto {
   font-size: clamp(1.1rem, 1rem + 0.35vw, 1.3rem);
-}
-
-.hero-network {
-  margin-top: var(--gap-lg);
 }
 
 .hero-actions {
@@ -2353,134 +2342,6 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 @keyframes shift-spin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-/* ---------- the network under the call to action ----------
-   Eight cities the program wants to reach, lit one at a time. Nothing here is
-   a confirmed site, so a lit node never announces one. */
-
-.net {
-  margin-top: var(--gap-sm);
-  max-width: 34rem;
-}
-
-@media (min-width: 861px) {
-  .net {
-    margin-top: 0;
-  }
-}
-
-.net-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: var(--gap-sm);
-  margin: 0;
-  padding-top: var(--gap-sm);
-  border-top: 1px solid var(--c-border);
-}
-
-.net-label {
-  font: var(--t-label);
-  letter-spacing: var(--track-label);
-  text-transform: uppercase;
-  color: var(--c-fg-2);
-}
-
-.net-caption {
-  font: var(--t-small);
-  color: var(--c-fg-soft);
-}
-
-.net-caption .net-lit {
-  color: var(--c-accent);
-}
-
-.net-plot {
-  position: relative;
-  margin-top: var(--gap-sm);
-  /* The labels are placed in percentages of this box, so it has to keep the
-     viewBox's proportions at every width. */
-  aspect-ratio: 480 / 110;
-  margin-bottom: 1.4rem;
-}
-
-.net-svg {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  overflow: visible;
-}
-
-.net-edge {
-  stroke: var(--c-accent);
-  stroke-width: 1.2;
-  opacity: 0.7;
-  transition:
-    opacity var(--duration-step) var(--ease-out),
-    stroke var(--duration-step) var(--ease-out);
-}
-
-.net-node circle {
-  fill: var(--c-accent);
-  stroke: var(--c-accent);
-  stroke-width: 1.5;
-  transition:
-    fill var(--duration-step) var(--ease-out),
-    stroke var(--duration-step) var(--ease-out);
-}
-
-.net-halo {
-  fill: none;
-  stroke: var(--c-accent);
-  stroke-width: 1;
-  opacity: 0;
-}
-
-.net-city {
-  position: absolute;
-  transform: translate(-50%, 0);
-  white-space: nowrap;
-  font: var(--t-small);
-  font-size: clamp(0.62rem, 0.42rem + 0.55vw, 0.8rem);
-  color: var(--c-fg-soft);
-  transition: color var(--duration-step) var(--ease-out);
-}
-
-/* The runner adds .is-lighting; until then every node stands lit, which is
-   also what anyone without the runner sees. */
-/* At rest the network is drawn in bone, visible but quiet; lighting turns it
-   ochre. */
-.net.is-lighting .net-edge:not(.is-lit) {
-  stroke: var(--c-fg-3);
-  opacity: 0.5;
-}
-
-.net.is-lighting .net-node:not(.is-lit) circle {
-  fill: var(--c-bg);
-  stroke: var(--c-fg-2);
-}
-
-.net.is-lighting .net-city:not(.is-lit) {
-  color: var(--c-fg-3);
-}
-
-.net.is-lighting .net-node.is-now .net-halo {
-  animation: net-halo 1.2s var(--ease-out) 1;
-}
-
-@keyframes net-halo {
-  from {
-    opacity: 0.8;
-    r: 5;
-  }
-
-  to {
-    opacity: 0;
-    r: 14;
   }
 }
 
