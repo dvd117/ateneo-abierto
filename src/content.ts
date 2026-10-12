@@ -352,6 +352,13 @@ export type TalkCopy = {
   privacy: string;
   /** The way out when YouTube puts a sign-in wall in front of the embed. */
   watch: string;
+  /**
+   * Who stands with the project, as one line under the talk: a label and the
+   * names, both David's words, no logos and no links. Shown only with two or
+   * more names. Per locale, because the label is translated; the names are
+   * written the same in both.
+   */
+  allies: { label: string; names: string[] } | null;
 };
 
 /**
@@ -960,7 +967,9 @@ export const copy: Record<Locale, PageCopy> = {
       play: 'Ver la charla',
       posterAlt: 'David Aragort en el escenario del Oslo Freedom Forum, durante su Ignite Talk.',
       privacy: 'El video se carga desde YouTube solo cuando le das play.',
-      watch: '¿No carga? Míralo en YouTube'
+      watch: '¿No carga? Míralo en YouTube',
+      // David: for a line of allies under the talk, write { label, names: ['…', '…'] } here.
+      allies: null
     },
     form: {
       eyebrow: 'Mantente al tanto',
@@ -1471,7 +1480,9 @@ export const copy: Record<Locale, PageCopy> = {
       play: 'Play the talk',
       posterAlt: 'David Aragort on stage at the Oslo Freedom Forum, during his Ignite Talk.',
       privacy: 'The video loads from YouTube only when you press play.',
-      watch: 'Not loading? Watch it on YouTube'
+      watch: 'Not loading? Watch it on YouTube',
+      // David: the same in English, { label, names: ['…', '…'] }, or null.
+      allies: null
     },
     form: {
       eyebrow: 'Stay in the loop',
