@@ -2342,6 +2342,31 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   }
 }
 
+@supports (grid-template-rows: subgrid) {
+  @media (min-width: 861px) {
+    .shift-cmp {
+      grid-template-rows: repeat(8, auto);
+    }
+
+    .shift-col {
+      display: grid;
+      grid-row: 1 / -1;
+      grid-template-rows: subgrid;
+    }
+
+    .shift-rows {
+      display: grid;
+      grid-row: 3 / span 5;
+      grid-template-rows: subgrid;
+    }
+
+    .shift-tally {
+      grid-row: 8;
+      margin-top: 0;
+    }
+  }
+}
+
 .shift-count {
   font: var(--t-display);
   font-size: clamp(3rem, 2rem + 3.4vw, 5.4rem);
