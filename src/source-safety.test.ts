@@ -374,6 +374,31 @@ describe('identity', () => {
 });
 
 describe('the map is vendored, not fetched', () => {
+  test('anchors the map key from 1024px and stacks it below a hairline at narrower widths', () => {
+    const styles = css().replace(/\/\*[\s\S]*?\*\//g, '');
+    const base = styles.match(/\n\.map-key\s*\{([^}]*)\}/)?.[1] ?? '';
+    const narrowDesktop = styles.match(/@media \(min-width: 861px\)\s*\{\s*\.north-body\s*\{[\s\S]*?\n\}/)?.[0] ?? '';
+    const desktop = styles.match(/@media \(min-width: 1024px\)\s*\{\s*\.north-body \.map\s*\{[\s\S]*?\n\}/)?.[0] ?? '';
+    const key = desktop.match(/\.north-body \.map-key\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(base).toMatch(/display:\s*grid;/);
+    expect(base).toMatch(/gap:\s*0\.6rem;/);
+    expect(base).toMatch(/margin-top:\s*var\(--gap-sm\);/);
+    expect(base).toMatch(/padding-top:\s*var\(--gap-sm\);/);
+    expect(base).toMatch(/border-top:\s*1px solid var\(--c-border\);/);
+    expect(base).not.toMatch(/position:\s*absolute;/);
+    expect(narrowDesktop).not.toContain('.map-key');
+    expect(narrowDesktop).not.toMatch(/\.north-body \.map\s*\{[^}]*position:\s*relative;/);
+    expect(desktop).toMatch(/\.north-body \.map\s*\{[^}]*position:\s*relative;/);
+    expect(key).toMatch(/position:\s*absolute;/);
+    expect(key).toMatch(/left:\s*0;/);
+    expect(key).toMatch(/bottom:\s*4%;/);
+    expect(key).toMatch(/max-width:\s*15rem;/);
+    expect(key).toMatch(/margin:\s*0;/);
+    expect(desktop).toMatch(/\.map-key \.map-legend\s*\{[^}]*flex-direction:\s*column;[^}]*gap:\s*0\.45rem;/);
+    expect(styles).toMatch(/\.map-key \.map-legend,\s*\.map-key \.map-caption\s*\{\s*margin:\s*0;/);
+  });
+
   test('ships the boundary as GeoJSON in the repo, with the claim as its own feature', () => {
     const raw = readFileSync('src/data/venezuela.geo.json', 'utf8');
     const geo = JSON.parse(raw) as {

@@ -381,7 +381,7 @@ describe('landing page copy', () => {
       : { lit: 'A city we want to reach', planned: 'Planned, later' });
   });
 
-  test.each(locales)('renders one map legend between the plot and caption in %s', (locale) => {
+  test.each(locales)('renders one map key containing the legend and caption in %s', (locale) => {
     const html = renderPage(locale);
     const figure = html.match(/<figure class="map" data-map>[\s\S]*?<\/figure>/)?.[0] ?? '';
     const keys = locale === 'es'
@@ -392,17 +392,18 @@ describe('landing page copy', () => {
     for (const key of keys) {
       expect(html.split(key)).toHaveLength(2);
     }
-    expect(figure).toMatch(/<\/div>\s*<ul class="map-legend small">[\s\S]*?<\/ul>\s*<figcaption class="map-caption small">/);
+    expect(figure.match(/<figcaption\b/g)).toHaveLength(1);
+    expect(figure).toMatch(/<\/div>\s*<figcaption class="map-key">\s*<ul class="map-legend small">[\s\S]*?<\/ul>\s*<p class="map-caption small">[\s\S]*?<\/p>\s*<\/figcaption>\s*<\/figure>/);
     expect(figure).toContain('class="map-legend-dot" aria-hidden="true"');
     expect(figure).toContain('class="map-legend-dot is-planned" aria-hidden="true"');
-    expect(figure).toContain(`<figcaption class="map-caption small">${copy[locale].north.map.caption}</figcaption>`);
+    expect(figure).toContain(`<p class="map-caption small">${copy[locale].north.map.caption}</p>`);
   });
 
   test.each(locales)('keeps the map caption to the site disclaimer in %s', (locale) => {
     const caption = locale === 'es' ? 'No son sedes confirmadas.' : 'These are not confirmed sites.';
 
     expect(copy[locale].north.map.caption).toBe(caption);
-    expect(renderPage(locale)).toContain(`<figcaption class="map-caption small">${caption}</figcaption>`);
+    expect(renderPage(locale)).toContain(`<p class="map-caption small">${caption}</p>`);
   });
 
   test('places the map nodes at real coordinates and claims no site', () => {

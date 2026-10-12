@@ -3357,6 +3357,26 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   }
 }
 
+/* Below 1024px the map is too narrow for a corner key, so it stacks under the plot as on phones. */
+@media (min-width: 1024px) {
+  .north-body .map {
+    position: relative;
+  }
+
+  .north-body .map-key {
+    position: absolute;
+    left: 0;
+    bottom: 4%;
+    max-width: 15rem;
+    margin: 0;
+  }
+
+  .map-key .map-legend {
+    flex-direction: column;
+    gap: 0.45rem;
+  }
+}
+
 .map {
   margin: 0;
 }
@@ -3481,12 +3501,25 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   color: var(--c-fg-3);
 }
 
+/* Keep the legend and disclaimer together, under a hairline on phones. */
+.map-key {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: var(--gap-sm);
+  padding-top: var(--gap-sm);
+  border-top: 1px solid var(--c-border);
+}
+
+.map-key .map-legend,
+.map-key .map-caption {
+  margin: 0;
+}
+
 .map-legend {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem var(--gap-md);
   list-style: none;
-  margin: var(--gap-sm) 0 0;
   padding: 0;
   color: var(--c-fg-2);
 }
@@ -3512,7 +3545,6 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 }
 
 .map-caption {
-  margin-top: var(--gap-sm);
   color: var(--c-fg-3);
 }
 
