@@ -1197,11 +1197,11 @@ export function renderAliadosPage(): string {
           <p class="eyebrow">${inline(aliados.eyebrow)}</p>
           <h1 class="display hero-title" id="hero-title">${headline}</h1>
           <p class="lead aliados-lead">${inline(aliados.lead)}</p>
+          <div class="hero-actions"><a class="button button--fill" href="#conversemos">${inline(aliados.contact.title)}</a></div>
         </div>
-        <dl class="aliados-proposal door" data-reveal>
-          ${aliados.proposal.map((row) => `<div class="aliados-proposal-row"><dt>${inline(row.label)}</dt><dd>${inline(row.text)}</dd></div>`).join('')}
-        </dl>
-      </div></section>
+        <div class="aliados-talk-column">${renderTalkFigure(page)}<p class="aliados-talk-note">${inline(aliados.respaldo.body)}</p><p class="aliados-talk-caption">${inline(aliados.respaldo.caption)}</p></div>
+      </div>
+      <div class="shell aliados-steps-row"><ol class="aliados-steps">${aliados.steps.map((step, index) => `<li><span class="aliados-step-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span><span class="aliados-step-title">${inline(step.title)}</span><span class="aliados-step-text">${inline(step.text)}</span></li>`).join('')}</ol></div></section>
       <section class="sec aliados-gap" aria-labelledby="aliados-gap-title"><div class="shell">
         <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-gap-title">${inline(aliados.gap.title)}</h2></div></header>
         <div class="aliados-gap-copy">${aliados.gap.paragraphs.map((text) => `<p class="lead" data-reveal>${inline(text)}</p>`).join('')}</div>
@@ -1218,13 +1218,6 @@ export function renderAliadosPage(): string {
           ${aliados.formats.cards.map((card) => `<article class="door aliados-format" data-reveal><h3 class="door-title">${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">Ver el formato <span aria-hidden="true">&nearr;</span></a></article>`).join('')}
         </div>
       </div></section>
-      <section class="sec talk aliados-respaldo" aria-labelledby="aliados-respaldo-title"><div class="shell talk-grid">
-        <div class="talk-copy" data-reveal>
-          <h2 class="section-title" id="aliados-respaldo-title">${inline(aliados.respaldo.title)}</h2>
-          <p class="lead talk-lead">${inline(aliados.respaldo.body)}</p>
-        </div>
-        <div class="aliados-talk-column">${renderTalkFigure(page)}<p class="aliados-talk-caption">${inline(aliados.respaldo.caption)}</p></div>
-      </div></section>
       ${renderBand('aliados', 5)}
       <section class="sec aliados-vision" aria-labelledby="aliados-vision-title"><div class="shell">
         <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-vision-title">${inline(aliados.vision.title)}</h2></div></header>
@@ -1238,7 +1231,7 @@ export function renderAliadosPage(): string {
         <div class="aliados-roles-give" data-reveal><p><strong>${inline(aliados.roles.give.label)}:</strong> ${inline(aliados.roles.give.text)}</p></div>
         <p class="aliados-roles-closing" data-reveal>${inline(aliados.roles.closing)}</p>
       </div></section>
-      <section class="sec aliados-contact" aria-labelledby="aliados-contact-title"><div class="shell aliados-contact-grid">
+      <section class="sec aliados-contact" id="conversemos" aria-labelledby="aliados-contact-title"><div class="shell aliados-contact-grid">
         <div data-reveal><h2 class="display join-title" id="aliados-contact-title">${inline(aliados.contact.title)}</h2><p class="lead join-lead">${inline(aliados.contact.line)}</p></div>
         <a class="button button--fill" href="mailto:ateneo@aragort.com">${inline(aliados.contact.button)}</a>
       </div></section>
