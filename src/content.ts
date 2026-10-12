@@ -938,12 +938,12 @@ export const copy: Record<Locale, PageCopy> = {
       // node goes last, where the lighting sequence never reaches.
       nodes: [
         { name: 'Caracas', lon: -66.9, lat: 10.49, dy: 16 },
-        { name: 'Valencia', lon: -68.0, lat: 10.16, dy: -12 },
-        { name: 'Barquisimeto', lon: -69.35, lat: 10.07, dy: 18 },
-        { name: 'Maracaibo', lon: -71.64, lat: 10.65, dy: -12 },
-        { name: 'Mérida', lon: -71.14, lat: 8.6, dx: -6, dy: 20 },
-        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 4, dy: 18 },
-        { name: 'Cumaná', lon: -64.18, lat: 10.45, dy: -12 },
+        { name: 'Valencia', lon: -68.0, lat: 10.16, dy: -30 },
+        { name: 'Barquisimeto', lon: -69.35, lat: 10.07, dy: 32 },
+        { name: 'Maracaibo', lon: -71.64, lat: 10.65, dy: -30 },
+        { name: 'Mérida', lon: -71.14, lat: 8.6, dy: 20 },
+        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 16, dy: 22 },
+        { name: 'Cumaná', lon: -64.18, lat: 10.45, dy: -30 },
         { name: 'Ciudad Guayana', lon: -62.65, lat: 8.35, dy: 18 },
         { name: 'Puerto Ayacucho', lon: -67.62, lat: 5.66, dy: 18, planned: true }
       ],
@@ -1452,12 +1452,12 @@ export const copy: Record<Locale, PageCopy> = {
       // node goes last, where the lighting sequence never reaches.
       nodes: [
         { name: 'Caracas', lon: -66.9, lat: 10.49, dy: 16 },
-        { name: 'Valencia', lon: -68.0, lat: 10.16, dy: -12 },
-        { name: 'Barquisimeto', lon: -69.35, lat: 10.07, dy: 18 },
-        { name: 'Maracaibo', lon: -71.64, lat: 10.65, dy: -12 },
-        { name: 'Mérida', lon: -71.14, lat: 8.6, dx: -6, dy: 20 },
-        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 4, dy: 18 },
-        { name: 'Cumaná', lon: -64.18, lat: 10.45, dy: -12 },
+        { name: 'Valencia', lon: -68.0, lat: 10.16, dy: -30 },
+        { name: 'Barquisimeto', lon: -69.35, lat: 10.07, dy: 32 },
+        { name: 'Maracaibo', lon: -71.64, lat: 10.65, dy: -30 },
+        { name: 'Mérida', lon: -71.14, lat: 8.6, dy: 20 },
+        { name: 'San Cristóbal', lon: -72.23, lat: 7.77, dx: 16, dy: 22 },
+        { name: 'Cumaná', lon: -64.18, lat: 10.45, dy: -30 },
         { name: 'Ciudad Guayana', lon: -62.65, lat: 8.35, dy: 18 },
         { name: 'Puerto Ayacucho', lon: -67.62, lat: 5.66, dy: 18, planned: true }
       ],
