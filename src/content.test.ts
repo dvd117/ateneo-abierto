@@ -360,6 +360,18 @@ describe('landing page copy', () => {
     expect(copy.en.north.horizons[2].text).toMatch(/every city/);
   });
 
+  test.each(locales)('describes all eight map cities without a removed network antecedent in %s', (locale) => {
+    const { alt } = copy[locale].north.map;
+
+    expect(alt).not.toMatch(/misma red|same network/i);
+    for (const city of ['Caracas', 'Valencia', 'Barquisimeto', 'Maracaibo', 'Mérida', 'San Cristóbal', 'Cumaná', 'Ciudad Guayana']) {
+      expect(alt).toContain(city);
+    }
+    expect(alt).toContain(locale === 'es'
+      ? 'Son ciudades que queremos alcanzar, no sedes confirmadas.'
+      : 'These are cities we want to reach, not confirmed sites.');
+  });
+
   test('places the map nodes at real coordinates and claims no site', () => {
     for (const locale of locales) {
       const { map } = copy[locale].north;
