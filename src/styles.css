@@ -1131,10 +1131,30 @@ main .door[id] {
 
   .hero-copy {
     grid-area: copy;
+    align-self: stretch;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* The method preview fills the quiet space below the call to action. */
+  .hero-steps {
+    margin: auto 0 0;
+    padding: var(--gap-lg) 0 0;
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap-md);
   }
 
   .hero .agent-figure {
     grid-area: window;
+  }
+}
+
+/* Narrow screens have no room for three columns; El cambio follows directly. */
+@media (max-width: 1023px) {
+  .hero-steps {
+    display: none;
   }
 }
 
@@ -1285,6 +1305,36 @@ main .door[id] {
   align-items: center;
   gap: var(--gap-sm) var(--gap-md);
   margin-top: var(--gap-lg);
+}
+
+/* The agent's step carries the signal, leaving the visitor's steps quiet. */
+.hero-steps li {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+  padding-top: var(--gap-sm);
+  border-top: 1px solid var(--c-border);
+  font: var(--t-small);
+  color: var(--c-fg-2);
+}
+
+.hero-steps li:nth-child(2) {
+  border-top-color: var(--c-accent);
+}
+
+.hero-step-title {
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--c-fg);
+}
+
+.hero-step-n {
+  font: italic 400 1.15rem / 1 var(--font-display);
+  color: var(--c-fg-3);
+}
+
+.hero-steps li:nth-child(2) .hero-step-n {
+  color: var(--c-accent);
 }
 
 /* The next open date, when David has one: one quiet line under the call to

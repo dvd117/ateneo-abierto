@@ -393,6 +393,9 @@ function renderHero(page: PageCopy, heroInput: HeroInput, locale: Locale): strin
               <p class="hero-byline">${inline(page.hero.byline)} · <a class="link" href="#charla">${inline(page.hero.bylineLink)} <span aria-hidden="true">&darr;</span></a></p>
             </div>
             ${renderNextEvent(page.nextEvent, locale)}
+            <ol class="hero-steps">
+              ${page.hero.steps.map((step, index) => `<li><span class="hero-step-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span><span class="hero-step-title">${inline(step.title)}</span><span class="hero-step-text">${inline(step.text)}</span></li>`).join('')}
+            </ol>
           </div>
           ${renderAgentWindow(page, heroInput)}
         </div>

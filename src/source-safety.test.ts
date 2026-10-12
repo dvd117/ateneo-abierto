@@ -206,6 +206,12 @@ describe('anti-slop rules hold in the stylesheet', () => {
 });
 
 describe('hero motion and first paint', () => {
+  test('skips the hero steps below 1024px', () => {
+    const styles = css().replace(/\/\*[\s\S]*?\*\//g, '');
+
+    expect(styles).toMatch(/@media \(max-width: 1023px\)\s*\{\s*\.hero-steps\s*\{\s*display: none;\s*\}/);
+  });
+
   test('keeps the hero in normal flow and independent of scroll timelines', () => {
     const styles = css();
     const hero = styles.slice(
