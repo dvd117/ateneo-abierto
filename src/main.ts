@@ -1,4 +1,4 @@
-import { copy, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput, type PageCopy } from './content';
+import { aliados, copy, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput, type PageCopy } from './content';
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
 import { drawBand, initBands, initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
@@ -799,9 +799,24 @@ function openAtDoor(container: ParentNode, route: DeepLinkRoute): void {
 
 // The server already sent this page, rendered, in the locale it chose. Keep
 // that DOM and only wire it up — unless this visitor saved the other language.
-// The partner briefing is Spanish only and keeps its own talk and map:
+// The partner briefing is Spanish only and keeps its own talk, map and share link:
 // never re-render it into the home page, whatever language was saved.
 if (root.dataset.page === 'aliados') {
+  const share = root.querySelector<HTMLButtonElement>('[data-share]');
+  const shareStatus = root.querySelector<HTMLElement>('.aliados-share-status');
+  if (share && shareStatus) {
+    share.hidden = false;
+    share.addEventListener('click', async () => {
+      const url = location.origin + '/aliados';
+      try {
+        await navigator.clipboard.writeText(url);
+        shareStatus.textContent = aliados.contact.share.done;
+      } catch {
+        shareStatus.textContent = url;
+      }
+    });
+  }
+
   bindTalk(copy.es);
   bindLighting();
   initProgressRail(root.querySelector<HTMLElement>('[data-progress]'));
