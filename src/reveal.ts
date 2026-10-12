@@ -51,22 +51,55 @@ export function initReveal(
   return () => observer.disconnect();
 }
 
-/**
- * Drives the reading-progress rail under the sticky header. Ratio is written
- * to a custom property so the paint stays in CSS.
- */
+function chapterReadingLine(headerHeight: number, viewportHeight: number): number {
+  return headerHeight + viewportHeight * 0.25;
+}
+
+/** Section tops are viewport-relative; before the first chapter none is current. */
+export function currentChapterIndex(sectionTops: readonly number[], headerHeight: number, viewportHeight: number): number {
+  const line = chapterReadingLine(headerHeight, viewportHeight);
+  let current = -1;
+  sectionTops.forEach((top, index) => {
+    if (top <= line) current = index;
+  });
+  return current;
+}
+
+/** Drives the rail and desktop chapter state, with CSSOM-only tick positions. */
 export function initProgressRail(rail: HTMLElement | null): () => void {
   if (!rail) {
     return () => {};
   }
 
+  const header = rail.closest<HTMLElement>('.site-header');
+  const links = Array.from(header?.querySelectorAll<HTMLAnchorElement>('[data-chapter-link]') ?? []);
+  const chapters = links.map((link) => ({ link, section: document.getElementById(link.hash.slice(1))! }));
+  const ticks = chapters.map(() => {
+    const tick = document.createElement('i');
+    tick.className = 'progress-tick';
+    rail.append(tick);
+    return tick;
+  });
   let frame = 0;
 
   const update = () => {
     frame = 0;
-    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const height = window.innerHeight;
+    const scrollable = document.documentElement.scrollHeight - height;
     const ratio = scrollable > 0 ? Math.min(1, Math.max(0, window.scrollY / scrollable)) : 0;
+    const desktop = window.innerWidth >= 861;
+    const headerHeight = chapters.length > 0 ? header!.getBoundingClientRect().height : 0;
+    const tops = desktop ? chapters.map(({ section }) => section.getBoundingClientRect().top) : [];
+    const current = desktop ? currentChapterIndex(tops, headerHeight, height) : -1;
     rail.style.setProperty('--progress', String(ratio));
+    chapters.forEach(({ link }, index) => {
+      if (index === current) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+      if (desktop) {
+        const position = bandMix(tops[index] + window.scrollY - chapterReadingLine(headerHeight, height), scrollable);
+        ticks[index].style.setProperty('--chapter-position', `${position * 100}%`);
+      }
+    });
   };
 
   const onScroll = () => {
@@ -85,6 +118,8 @@ export function initProgressRail(rail: HTMLElement | null): () => void {
     }
     window.removeEventListener('scroll', onScroll);
     window.removeEventListener('resize', onScroll);
+    ticks.forEach((tick) => tick.remove());
+    links.forEach((link) => link.removeAttribute('aria-current'));
   };
 }
 
