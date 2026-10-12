@@ -829,15 +829,15 @@ main .door[id] {
   background: var(--c-bg-panel);
 }
 
-/* On a phone the header keeps only the call to action; the footer carries
-   the rest. */
+/* On a phone the header keeps only the call to action and the other
+   language, on one row; the footer carries the rest. */
 @media (max-width: 640px) {
   .header-inner {
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas: "brand locale" "nav nav";
-    column-gap: var(--gap-md);
-    row-gap: 0.3rem;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-areas: "brand nav locale";
+    align-items: center;
+    column-gap: 0.5rem;
   }
 
   .nav-wordmark {
@@ -859,9 +859,43 @@ main .door[id] {
     display: none;
   }
 
+  /* line-height 1 keeps the pill no taller than the locale button, so the
+     header stays the 53.8 px that main .door[id] reserves. */
   .nav-links a:last-child {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--c-accent);
+    border-radius: var(--r-pill);
     color: var(--c-accent);
     font-weight: 600;
+    line-height: 1;
+  }
+
+  .site-header .locale-button {
+    padding-inline: 0.35rem;
+  }
+
+  /* The language already showing is not drawn, but stays in the tree as the
+     pressed button of the group, and shows again when focused. */
+  .site-header .locale-button.is-active:not(:focus-visible) {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
+/* Under 360 px the wordmark gives up a little size and tracking so the row
+   still fits on one line at 320. */
+@media (max-width: 360px) {
+  .site-header .nav-wordmark .wordmark {
+    font-size: 0.875rem;
+    letter-spacing: 0.1em;
   }
 }
 
