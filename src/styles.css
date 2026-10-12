@@ -3267,27 +3267,37 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   color: var(--c-accent);
 }
 
-/* On a wide screen the map is the chapter's plate: wide and centred, with
-   the three horizons as three columns under it, each under its own rule. */
+/* On wide screens the map sits beside the horizons with a two-key legend. */
 @media (min-width: 861px) {
+  .north-body {
+    grid-template-columns: minmax(0, 4fr) minmax(0, 8fr);
+    column-gap: clamp(2rem, 4vw, 4rem);
+    align-items: center;
+  }
+
   .north-body .map {
-    order: -1;
     justify-self: center;
-    width: min(100%, 58rem);
+    width: min(100%, calc((100svh - 13rem) * 520 / 400));
+    max-height: calc(100svh - 7rem);
   }
 
   .hz {
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    column-gap: clamp(1.5rem, 3vw, 2.5rem);
     border-top: 0;
   }
 
   .hz-row {
-    grid-template-columns: minmax(0, 1fr);
-    align-content: start;
+    grid-template-columns: 6.5rem minmax(0, 1fr);
     border-top: 1px solid var(--c-border);
     border-bottom: 0;
+  }
+
+  .hz-row:nth-child(2) {
+    margin-left: 1.25rem;
+  }
+
+  .hz-row:nth-child(3) {
+    margin-left: 2.5rem;
   }
 }
 
@@ -3404,6 +3414,36 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 
 .map-city.is-planned {
   color: var(--c-fg-3);
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem var(--gap-md);
+  list-style: none;
+  margin: var(--gap-sm) 0 0;
+  padding: 0;
+  color: var(--c-fg-2);
+}
+
+.map-legend li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.map-legend-dot {
+  flex: none;
+  width: 0.625rem;
+  height: 0.625rem;
+  border: 1.5px solid var(--c-paper);
+  border-radius: 50%;
+  background: var(--c-paper);
+}
+
+.map-legend-dot.is-planned {
+  border-color: var(--c-fg-3);
+  background: none;
 }
 
 .map-caption {
