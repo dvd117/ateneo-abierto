@@ -1221,7 +1221,7 @@ export function renderAliadosPage(): string {
       </div></section>
       <section class="sec chapter aliados-approach" id="${approach.id}" aria-labelledby="aliados-approach-title"><div class="shell">
         ${renderChapter({ ...approach, id: 'aliados-approach-title', title: inline(aliados.approach.title), lead: aliados.approach.intro })}
-        <div class="aliados-pillar-grid">${aliados.approach.pillars.map((pillar) => `<div class="door aliados-pillar" data-reveal><h3>${inline(pillar.title)}</h3><p>${inline(pillar.body)}</p></div>`).join('')}</div>
+        <div class="aliados-pillar-grid">${aliados.approach.pillars.map((pillar) => `<div class="aliados-pillar" data-reveal><h3>${inline(pillar.title)}</h3><p>${inline(pillar.body)}</p></div>`).join('')}</div>
       </div></section>
       <section class="sec chapter aliados-formats" id="${formats.id}" aria-labelledby="aliados-formats-title"><div class="shell">
         ${renderChapter({ ...formats, id: 'aliados-formats-title', title: inline(aliados.formats.title), lead: aliados.formats.intro })}
