@@ -321,6 +321,8 @@ the page: about 123 KB.
 
 ## Layout
 
+The desktop header is a running head: six chapter numerals, the current chapter named, ticks on the reading rail, and Únete as an outline pill.
+
 Page order (revised 2026-09-14): hero → El cambio → Programa (the three doors, the
 mentorías row, and the glossary as a closed strip) → El norte (map) → Cómo trabajamos →
 Ignite Talk → Únete → footer with the security line and ES/EN. Three bands: after the

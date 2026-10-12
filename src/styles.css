@@ -862,6 +862,77 @@ main .door[id] {
   color: var(--c-fg);
 }
 
+.chapter-nav,
+.progress-tick {
+  display: none;
+}
+
+@media (min-width: 861px) {
+  .header-inner > .nav-links:not(.chapter-nav) {
+    display: none;
+  }
+
+  .chapter-nav {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    white-space: nowrap;
+  }
+
+  .chapter-nav-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    border-bottom: 1px solid transparent;
+    transition: none;
+    animation: none;
+  }
+
+  .chapter-nav-n {
+    font: italic 400 1rem / 1 var(--font-display);
+    color: var(--c-fg-3);
+  }
+
+  .chapter-nav-link[aria-current="location"] {
+    border-bottom-color: var(--c-accent);
+  }
+
+  .chapter-nav-link[aria-current="location"] .chapter-nav-n {
+    color: var(--c-accent);
+  }
+
+  .chapter-nav-link[aria-current="location"] .chapter-nav-name {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 0;
+    overflow: visible;
+    clip-path: none;
+    color: var(--c-fg);
+  }
+
+  .chapter-nav .chapter-join {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.6rem;
+    border: 1px solid var(--c-accent);
+    border-radius: var(--r-pill);
+    color: var(--c-accent);
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .progress-tick {
+    display: block;
+    position: absolute;
+    left: clamp(0px, var(--chapter-position), calc(100% - 1px));
+    bottom: 0;
+    width: 1px;
+    height: 7px;
+    background: var(--c-fg-3);
+  }
+}
+
 .locale-toggle {
   display: inline-flex;
   align-items: center;

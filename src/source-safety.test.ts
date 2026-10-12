@@ -140,16 +140,13 @@ describe('inline chapter heads respect their available width', () => {
   });
 });
 
-describe('the header has no current-section indicator', () => {
-  test('removes its initializer and styles while keeping the progress rail', () => {
-    const main = readFileSync('src/main.ts', 'utf8');
-    const reveal = readFileSync('src/reveal.ts', 'utf8');
+describe('the desktop running head', () => {
+  test('reveals the current name without animating layout and keeps the progress rail', () => {
     const styles = css();
 
-    expect(main).not.toContain('initRunningHead');
-    expect(main).not.toContain('teardownRunningHead');
-    expect(reveal).not.toContain('initRunningHead');
-    expect(styles).not.toMatch(/\.running-head\b/);
+    expect(styles).toMatch(/\.chapter-nav,\s*\.progress-tick\s*\{\s*display: none;/);
+    expect(styles).toMatch(/\.chapter-nav-link\s*\{[^}]*transition: none;[^}]*animation: none;/);
+    expect(styles).toMatch(/\.chapter-nav-link\[aria-current="location"\] \.chapter-nav-name\s*\{[^}]*position: static;/);
     expect(styles).toContain('.progress-rail {');
     expect(styles).toContain('.progress-rail span {');
   });
