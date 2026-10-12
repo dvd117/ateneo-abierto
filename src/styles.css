@@ -1011,8 +1011,11 @@ main .door[id] {
    window comes straight after the call to action. */
 
 .hero {
+  --hero-pad-top: clamp(2.5rem, 6vw, 5rem);
+  --hero-title-size: clamp(2.6rem, 0.8rem + 6.3vw, 6.4rem);
+  --hero-row-gap: clamp(1.75rem, 3vw, 2.75rem);
   position: relative;
-  padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3.5rem, 8vw, 6.5rem);
+  padding-block: var(--hero-pad-top) clamp(3.5rem, 8vw, 6.5rem);
 }
 
 .hero-stage {
@@ -1032,7 +1035,7 @@ main .door[id] {
       "copy   window";
     grid-template-rows: auto 1fr;
     column-gap: clamp(2rem, 4.5vw, 4.5rem);
-    row-gap: clamp(1.75rem, 3vw, 2.75rem);
+    row-gap: var(--hero-row-gap);
     align-items: start;
   }
 
@@ -1051,7 +1054,7 @@ main .door[id] {
 
 .hero-title {
   margin-top: 1rem;
-  font-size: clamp(2.6rem, 0.8rem + 6.3vw, 6.4rem);
+  font-size: var(--hero-title-size);
   line-height: 0.96;
 }
 
@@ -1259,6 +1262,19 @@ main .door[id] {
   border-radius: var(--r-window);
   box-shadow: var(--shadow-window);
   overflow: hidden;
+}
+
+/* On a wide screen the window fits the room under the headline, so it is
+   whole on the first screen and its sequence starts on load. Its top is the
+   hero's own geometry: header (3.375rem), padding, eyebrow and title margin
+   (1.75rem), two headline lines (2em, the slot padding nets out) and the row
+   gap. A headline that wraps to a third line pushes it below the fold, and the
+   sequence waits for the scroll, as before. */
+@media (min-width: 861px) {
+  .hero .agent {
+    height: max(340px, min(clamp(460px, 72vh, 600px),
+      calc(100svh - 3.375rem - var(--hero-pad-top) - 1.75rem - 2 * var(--hero-title-size) - var(--hero-row-gap) - 1rem)));
+  }
 }
 
 .agent-bar {
@@ -2031,7 +2047,7 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 @media (max-width: 860px) {
   .agent {
     font-size: 0.84rem;
-    height: min(78vh, 560px);
+    height: min(62vh, 470px);
   }
 
   .agent-cols {
