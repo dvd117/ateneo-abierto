@@ -60,10 +60,4 @@ describe('foundation sketch publication structure', () => {
     expect(poster).toContain('width="1280" height="720"');
     expect(poster).toContain('loading="lazy" decoding="async"');
   });
-
-  test('marks chapter II so its numeral can stay clear of the existing lead', () => {
-    const page = renderPage('en');
-
-    expect(page).toMatch(/class="chapter-head(?: chapter-head--inline)? chapter-head--ii"/);
-  });
 });

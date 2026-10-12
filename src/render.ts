@@ -429,10 +429,9 @@ function chapterLabel(number: string, eyebrow: string): string {
 function renderChapter(options: ChapterOptions): string {
   const short = options.lead !== undefined && options.lead.length <= 120;
   const label = chapterLabel(options.number, options.eyebrow);
-  const numberClass = options.number === 'II' ? ' chapter-head--ii' : '';
 
   return `
-    <header class="chapter-head${short ? ' chapter-head--inline' : ''}${numberClass}">
+    <header class="chapter-head${short ? ' chapter-head--inline' : ''}">
       <span class="chapter-n" aria-hidden="true">${options.number}</span>
       <div class="chapter-main">
         <p class="eyebrow">${inline(label)}</p>
