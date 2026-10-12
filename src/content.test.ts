@@ -446,6 +446,42 @@ describe('landing page copy', () => {
     expect(copy.en.north.map.claimLabel).toBe('Zona en Reclamación');
   });
 
+  test.each(locales)('clears the three upper labels from their dots at readable sizes in %s', (locale) => {
+    const html = renderPage(locale);
+
+    for (const width of [360, 390, 430, 735]) {
+      const scale = width / 520;
+      const fontSize = Math.max(11.52, Math.min(width * 0.024, 12.48));
+      for (const index of [1, 3, 6]) {
+        const top = Number(html.match(new RegExp(`\\.map-city\\[data-node="${index}"\\]\\{left:[^;]+;top:([\\d.]+)%`))?.[1]);
+        const node = html.match(new RegExp(`<g class="map-node" data-node="${index}">[\\s\\S]*?<circle class="map-dot" cx="[^"]+" cy="([\\d.]+)"`));
+        expect(node).not.toBeNull();
+        // 1.5em line box translated up by 0.5em: its bottom is 1em below
+        // the anchor. Include the dot's 0.75-unit half-stroke and a 2px gap.
+        const labelBottom = top / 100 * 400 * scale + fontSize;
+        const dotTop = (Number(node?.[1]) - 5.75) * scale;
+        expect(labelBottom + 2).toBeLessThan(dotTop);
+      }
+    }
+  });
+
+  test.each(locales)('separates Caracas and Valencia vertically at phone label sizes in %s', (locale) => {
+    const html = renderPage(locale);
+    const top = (index: number) => Number(html.match(new RegExp(`\\.map-city\\[data-node="${index}"\\]\\{left:[^;]+;top:([\\d.]+)%`))?.[1]);
+
+    for (const width of [360, 390, 430]) {
+      const distance = Math.abs(top(0) - top(1)) / 100 * 400 * width / 520;
+      expect(distance).toBeGreaterThan(11.52 * 1.5 + 2);
+    }
+  });
+
+  test('keeps map node and label positions identical across locales', () => {
+    expect(copy.en.north.map.nodes).toEqual(copy.es.north.map.nodes);
+    const positions = (locale: typeof locales[number]) => renderPage(locale).match(/<style>[\s\S]*?<\/style>/)?.[0];
+    expect(positions('es')).toBeDefined();
+    expect(positions('en')).toBe(positions('es'));
+  });
+
 
   test('frames the talk as the whole idea, and says what pressing play costs', () => {
     for (const locale of locales) {

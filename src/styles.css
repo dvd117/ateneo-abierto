@@ -3308,6 +3308,15 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 .map-plot {
   position: relative;
   width: 100%;
+  container-type: inline-size;
+}
+
+/* Only the plot breaks out; the legend and caption keep the shell padding. */
+@media (max-width: 860px) {
+  .map-plot {
+    width: calc(100% + 2 * var(--sp-page));
+    margin-inline: calc(-1 * var(--sp-page));
+  }
 }
 
 .map-svg {
@@ -3362,10 +3371,10 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   left: 88%;
   top: 56%;
   transform: translate(-50%, 0);
-  max-width: 6rem;
+  max-width: min(6rem, 24%);
   text-align: center;
   font: var(--t-small);
-  font-size: clamp(0.56rem, 0.4rem + 0.45vw, 0.7rem);
+  font-size: clamp(0.72rem, 2.4cqi, 0.78rem);
   line-height: 1.25;
   color: var(--c-fg-2);
 }
@@ -3407,7 +3416,7 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   transform: translate(-50%, -0.5em);
   white-space: nowrap;
   font: var(--t-small);
-  font-size: clamp(0.6rem, 0.44rem + 0.45vw, 0.78rem);
+  font-size: clamp(0.72rem, 2.4cqi, 0.78rem);
   color: var(--c-fg-soft);
   transition: color var(--duration-step) var(--ease-out);
 }
