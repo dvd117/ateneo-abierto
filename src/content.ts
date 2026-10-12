@@ -1551,6 +1551,7 @@ export const aliados = {
     { title: 'Lo hacemos juntos', text: 'Nosotros diseñamos, convocamos y acompañamos.' }
   ],
   gap: {
+    eyebrow: 'El problema',
     title: 'La brecha',
     paragraphs: [
       'Hoy buena parte del trabajo pasa por herramientas digitales, y muchas de las mejores son abiertas. Nadie tiene que depender de una sola empresa para usarlas.',
@@ -1559,6 +1560,7 @@ export const aliados = {
     thesis: 'Creemos que cualquier persona que sepa lo básico de una computadora puede aprender a usarlas.'
   },
   approach: {
+    eyebrow: 'El método',
     title: 'Cómo cerramos esa brecha',
     intro: 'Hoy empezamos por los agentes de IA, herramientas a las que les das una tarea y trabajan contigo. Con ellas formamos personas con autonomía, capaces de usar la tecnología en su trabajo y en su vida, y de enseñarla. No formamos programadores.',
     pillars: [
@@ -1568,6 +1570,7 @@ export const aliados = {
     ]
   },
   formats: {
+    eyebrow: 'El camino',
     title: 'Un camino en tres pasos',
     intro: 'Cada formato lleva al siguiente. Primero ves lo que otras personas ya hacen, luego aprendes a hacerlo, y después lo llevas más lejos en equipo.',
     cards: [
@@ -1593,6 +1596,7 @@ export const aliados = {
     caption: '"What They Can\'t Take", Ignite Talk de David Aragort, fundador de Ateneo Abierto. Más de siete años en seguridad digital y derechos humanos; Freedom Fellow de HRF (2025-2026).'
   },
   vision: {
+    eyebrow: 'El norte',
     title: 'Hacia dónde vamos',
     near: 'Hoy son demos, talleres y hackatones. El próximo paso, en exploración, son hackatones técnicas que resuelvan el problema concreto de una comunidad, junto a organizaciones y medios aliados.',
     far: 'A largo plazo queremos una red de espacios públicos de conocimiento en Venezuela.',
@@ -1609,6 +1613,7 @@ export const aliados = {
     closing: 'El conocimiento como un servicio público, igual que el transporte o la salud.'
   },
   roles: {
+    eyebrow: 'Tu lugar',
     title: 'Tu lugar en esto',
     intro: 'Si compartes esta misión, hay cuatro formas de sumarte:',
     cards: [
