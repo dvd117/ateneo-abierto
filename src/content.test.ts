@@ -247,7 +247,7 @@ describe('landing page copy', () => {
     }
   });
 
-  test('closes the Únete column on the one line in the founder\'s voice, unsigned and outside the hidden band', () => {
+  test('closes the Únete section after the form on the one line in the founder\'s voice, unsigned and outside the hidden band', () => {
     // Drafts until David approves the final wording (2026-09-14).
     expect(copy.es.voice).toBe('Este piso lo conoces. Esta vez no es para irte.');
     expect(copy.en.voice).toBe('You know this floor. This time it is not for leaving.');
@@ -258,9 +258,11 @@ describe('landing page copy', () => {
 
       expect(voices).toEqual([`<p class="join-voice">${copy[locale].voice}</p>`]);
       expect(html).not.toContain('band-voice');
-      // The last thing in the Únete copy column, after the contact line.
-      expect(html).toMatch(/<p class="join-allies">[\s\S]*?<\/p>\s*<p class="join-voice">[^<]*<\/p>\s*<\/div>\s*<form class="join-form"/);
-      expect(html.indexOf('join-voice')).toBeGreaterThan(html.indexOf('id="unete"'));
+      const join = html.match(/<section[^>]*id="unete"[\s\S]*?<\/section>/)?.[0] ?? '';
+      // The contact line closes the copy; the voice closes the grid after
+      // the form and its status, so it is last in reading order everywhere.
+      expect(join).toMatch(/<p class="join-allies">[\s\S]*?<\/p>\s*<\/div>\s*<form class="join-form"/);
+      expect(join).toMatch(/<p class="join-status"[^>]*><\/p>\s*<\/form>\s*<p class="join-voice">[^<]*<\/p>\s*<\/div>\s*<\/section>/);
     }
   });
 
