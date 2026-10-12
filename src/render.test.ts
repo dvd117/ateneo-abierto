@@ -6,6 +6,16 @@ const locales = ['es', 'en'] as const;
 const chapterIds = ['cambio', 'programa', 'norte', 'principios', 'charla', 'unete'];
 
 describe('foundation sketch publication structure', () => {
+  test.each(locales)('distinguishes chapter navigation from section navigation in %s', (locale) => {
+    const page = renderPage(locale);
+    const contents = locale === 'es' ? 'Contenido' : 'Contents';
+    const sections = locale === 'es' ? 'Secciones' : 'Sections';
+
+    expect(page).toContain(`<nav class="nav-links chapter-nav" aria-label="${contents}">`);
+    expect(page).toContain(`<nav class="nav-links" aria-label="${sections}">`);
+    expect(page).toContain(`<nav class="footer-nav" aria-label="${sections}">`);
+  });
+
   test.each(locales)('renders six chapters and index links in %s', (locale) => {
     const page = renderPage(locale);
     const sections = [...page.matchAll(/<section class="[^"]*chapter[^"]*" id="([^"]+)"/g)];
