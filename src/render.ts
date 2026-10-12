@@ -548,13 +548,10 @@ function titleFrom(lines: { text: string; em?: boolean }[]): string {
  * palette: a row of zones, each a stripe recipe (pitch, colours, widths), and
  * over them a screen that slides as the band crosses the screen.
  *
- * The image is still never the Maiquetía floor or its colour modules: in
- * September 2026 the artist's family publicly objected to unauthorised
- * imitations of that pattern, and David chose the method over the image
- * (2026-09-11). The floor is referenced deliberately in words, and in one
- * place only: the line that closes the Únete column (`voice` in content.ts),
- * approved by David on 2026-09-14. The band itself is hidden from the tree:
- * it says nothing.
+ * The image is never the Maiquetía floor or its colour modules: the method,
+ * not the image. The floor is referenced in words, and in one place only:
+ * the line that closes the Únete column (`voice` in content.ts). The band
+ * itself is hidden from the tree: it says nothing.
  */
 function renderBand(name: string, seed: number): string {
   // The stripes are drawn in the browser (reveal.ts, drawBand): three bands
