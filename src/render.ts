@@ -1202,6 +1202,7 @@ export function renderAliadosPage(): string {
 
   return `
     <a class="skip-link" href="#contenido">${page.skipToContent}</a>
+    ${renderPositions(page)}
     ${renderHeader(page, 'es', true)}
     <main id="contenido">
       <section class="hero aliados-hero" aria-labelledby="hero-title"><div class="shell aliados-hero-grid">
@@ -1235,7 +1236,10 @@ export function renderAliadosPage(): string {
       <section class="sec chapter aliados-vision" id="${vision.id}" aria-labelledby="aliados-vision-title"><div class="shell">
         ${renderChapter({ ...vision, id: 'aliados-vision-title', title: inline(aliados.vision.title) })}
         <div class="aliados-vision-intro" data-reveal><p class="aliados-vision-near">${inline(aliados.vision.near)}</p><p class="aliados-vision-far">${inline(aliados.vision.far)}</p><p class="lead aliados-vision-far-detail">${inline(aliados.vision.farDetail)}</p></div>
-        <ul class="aliados-vision-grid">${aliados.vision.items.map((item) => `<li data-reveal>${inline(item)}</li>`).join('')}</ul>
+        <div class="aliados-vision-body">
+          <ul class="aliados-vision-grid">${aliados.vision.items.map((item) => `<li data-reveal>${inline(item)}</li>`).join('')}</ul>
+          ${renderMap(page)}
+        </div>
         <p class="aliados-vision-closing" data-reveal>${inline(aliados.vision.closing)}</p>
       </div></section>
       <section class="sec chapter aliados-roles" id="${roles.id}" aria-labelledby="aliados-roles-title"><div class="shell">
