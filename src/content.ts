@@ -1545,10 +1545,10 @@ export const aliados = {
   eyebrow: 'Para aliados',
   titleLines: [{ text: 'La tecnología ya está al alcance de todos.' }, { text: 'Saber usarla, todavía no.', em: true }],
   lead: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar estas herramientas en su trabajo y en su vida, y a enseñárselas a otras. Buscamos aliados para llegar a más personas.',
-  proposal: [
-    { label: 'Qué hacemos', text: 'Demos, talleres y hackatones donde personas sin conocimientos técnicos aprenden a usar herramientas abiertas en tareas reales.' },
-    { label: 'Para quién', text: 'Personas que trabajan en oficinas, docentes, comerciantes y equipos de organizaciones.' },
-    { label: 'Qué te proponemos', text: 'Que tu espacio, tu comunidad o tu experiencia nos ayuden a llegar a más personas. Nosotros ponemos la organización.' }
+  steps: [
+    { title: 'Nos escribes', text: 'Cuéntanos qué espacio, comunidad o experiencia tienes.' },
+    { title: 'Conversamos', text: 'En 30 minutos vemos qué formato encaja.' },
+    { title: 'Lo hacemos juntos', text: 'Nosotros diseñamos, convocamos y acompañamos.' }
   ],
   gap: {
     title: 'La brecha',
@@ -1589,7 +1589,6 @@ export const aliados = {
     ]
   },
   respaldo: {
-    title: 'La idea ya salió al mundo',
     body: 'Ateneo Abierto se presentó en el Oslo Freedom Forum, el encuentro anual de la Human Rights Foundation que reúne en Noruega a defensores de derechos humanos de todo el mundo. Todo lo hecho hasta hoy se ha hecho con trabajo voluntario.',
     caption: '"What They Can\'t Take", Ignite Talk de David Aragort, fundador de Ateneo Abierto. Más de siete años en seguridad digital y derechos humanos; Freedom Fellow de HRF (2025-2026).'
   },

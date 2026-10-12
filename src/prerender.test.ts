@@ -210,7 +210,7 @@ describe('build-time prerender', () => {
     expect(html).toContain('href="mailto:ateneo@aragort.com"');
   });
 
-  test('renders every v3 partner string verbatim in the eight-section layout', () => {
+  test('renders every v3 partner string verbatim in the seven-section layout', () => {
     const html = fillTemplate(template, 'es', undefined, true);
     // The approved copy lives in the coordinator's untracked `.w/` notes, so
     // the verbatim check against it only runs where that file exists.
@@ -219,12 +219,11 @@ describe('build-time prerender', () => {
     const strings = [
       aliados.meta.title, aliados.meta.description, aliados.eyebrow,
       ...aliados.titleLines.map((line) => line.text), aliados.lead,
-      ...aliados.proposal.flatMap((row) => [row.label, row.text]),
       aliados.gap.title, ...aliados.gap.paragraphs, aliados.gap.thesis,
       aliados.approach.title, aliados.approach.intro,
       ...aliados.approach.pillars.flatMap((pillar) => [pillar.title, pillar.body]),
       aliados.formats.title, aliados.formats.intro, ...aliados.formats.cards.flatMap((card) => [card.title, ...card.fields.flatMap((field) => [field.label, field.text])]),
-      aliados.respaldo.title, aliados.respaldo.body, aliados.respaldo.caption,
+      aliados.respaldo.body, aliados.respaldo.caption,
       aliados.vision.title, aliados.vision.near, aliados.vision.far, aliados.vision.farDetail,
       ...aliados.vision.items, aliados.vision.closing,
       aliados.roles.title, aliados.roles.intro,
@@ -232,27 +231,93 @@ describe('build-time prerender', () => {
       aliados.roles.give.label, aliados.roles.give.text, aliados.roles.closing,
       aliados.contact.title, aliados.contact.line, aliados.contact.button
     ];
-    expect(strings).toHaveLength(78);
+    expect(strings).toHaveLength(71);
     for (const value of strings) {
       if (copyFile) expect(copyFile).toContain(value);
       expect(html).toContain(value.replace(/"/g, '&quot;'));
       expect(value).not.toMatch(/[—–]/);
     }
-    for (const title of ['La brecha', 'Cómo cerramos esa brecha', 'Un camino en tres pasos', 'La idea ya salió al mundo', 'Hacia dónde vamos', 'Tu lugar en esto', 'Conversemos']) {
+    for (const title of ['La brecha', 'Cómo cerramos esa brecha', 'Un camino en tres pasos', 'Hacia dónde vamos', 'Tu lugar en esto', 'Conversemos']) {
       expect(html).toContain(`<h2 class="section-title" id="aliados-`);
       expect(html).toContain(`>${title}</h2>`);
     }
     expect(html).toContain('class="shell aliados-hero-grid"');
     expect(html).toContain('class="door-grid aliados-format-grid"');
-    expect(html).toContain('class="shell talk-grid"');
     expect(html).toContain('class="aliados-role-grid"');
     expect(html).toContain('class="shell aliados-contact-grid"');
     expect(html.match(/class="door aliados-format"/g)).toHaveLength(3);
     expect(html.match(/<dl>/g)).toHaveLength(3);
-    expect(html.match(/class="aliados-proposal-row"/g)).toHaveLength(3);
     expect(html.match(/class="door aliados-role"/g)).toHaveLength(4);
     for (const href of ['/demos', '/talleres', '/hackaton']) expect(html).toContain(`href="${href}"`);
     for (const old of ['La misión', 'Una comunidad abierta', 'Lo que hacemos', 'Cómo sumarte']) expect(html).not.toContain(old);
+  });
+
+  test('puts the talk and its context in the partner hero without a proposal or respaldo section', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const hero = html.match(/<section class="hero aliados-hero"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+
+    expect(hero).toContain('class="aliados-talk-column"');
+    expect(hero).toContain('data-talk-play');
+    expect(hero).toContain(`<p class="aliados-talk-note">${aliados.respaldo.body}</p>`);
+    expect(hero).toContain(`<p class="aliados-talk-caption">${aliados.respaldo.caption.replace(/"/g, '&quot;')}</p>`);
+    expect(html).not.toContain('aliados-proposal');
+    expect(html).not.toContain('aliados-respaldo');
+    expect(html).not.toContain('La idea ya salió al mundo');
+    expect(html).toMatch(/<section class="sec aliados-formats"[\s\S]*?<\/section>\s*<div class="band band--aliados"/);
+  });
+
+  test('renders exactly three partner steps verbatim after the hero grid', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const hero = html.match(/<section class="hero aliados-hero"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+    const steps = hero.match(/<ol class="aliados-steps">([\s\S]*?)<\/ol>/)?.[1] ?? '';
+    const expected = [
+      { title: 'Nos escribes', text: 'Cuéntanos qué espacio, comunidad o experiencia tienes.' },
+      { title: 'Conversamos', text: 'En 30 minutos vemos qué formato encaja.' },
+      { title: 'Lo hacemos juntos', text: 'Nosotros diseñamos, convocamos y acompañamos.' }
+    ];
+
+    expect(aliados.steps).toEqual(expected);
+    expect(html.match(/<ol class="aliados-steps">/g)).toHaveLength(1);
+    expect(steps.match(/<li>/g)).toHaveLength(3);
+    expected.forEach((step, index) => {
+      expect(steps).toContain(`<li><span class="aliados-step-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span><span class="aliados-step-title">${step.title}</span><span class="aliados-step-text">${step.text}</span></li>`);
+    });
+    expect(hero).toContain('</div>\n      <div class="shell aliados-steps-row"><ol class="aliados-steps">');
+    expect(hero).not.toContain('class="hero-steps"');
+  });
+
+  test('links the partner hero CTA to the unique contact anchor before the talk and steps', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const hero = html.match(/<section class="hero aliados-hero"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+
+    expect(hero).toMatch(/<div class="aliados-hero-copy">[\s\S]*?<div class="hero-actions"><a class="button button--fill" href="#conversemos">Conversemos<\/a><\/div>\s*<\/div>/);
+    expect(html.match(/id="conversemos"/g)).toHaveLength(1);
+    expect(html).toMatch(/<section class="sec aliados-contact" id="conversemos" aria-labelledby="aliados-contact-title">/);
+    expect(hero.indexOf('class="hero-actions"')).toBeLessThan(hero.indexOf('data-talk-play'));
+    expect(hero.indexOf('data-talk-play')).toBeLessThan(hero.indexOf('class="aliados-steps"'));
+  });
+
+  test('balances the partner hero columns and shows its own steps at every width', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
+    const desktop = partner.slice(partner.indexOf('@media (min-width: 861px)'));
+
+    expect(desktop).toMatch(/\.aliados-hero-grid\s*\{[^}]*grid-template-columns: minmax\(0, 6fr\) minmax\(0, 6fr\);[^}]*align-items: center;/);
+    expect(styles).toMatch(/\.hero-actions\s*\{[^}]*display: flex;[^}]*flex-wrap: wrap;[^}]*margin-top: var\(--gap-lg\);/);
+    expect(partner).toMatch(/\.aliados-steps-row\s*\{[^}]*margin-top: var\(--gap-lg\);/);
+    expect(partner).toMatch(/\.aliados-steps\s*\{[^}]*list-style: none;[^}]*margin: 0;[^}]*padding: var\(--gap-md\) 0 0;[^}]*border-top: 1px solid var\(--c-border\);[^}]*display: grid;[^}]*gap: var\(--gap-md\);/);
+    expect(desktop).toMatch(/\.aliados-steps\s*\{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);[^}]*gap: var\(--gap-lg\);/);
+    expect(partner).toMatch(/\.aliados-steps li\s*\{[^}]*display: grid;[^}]*align-content: start;[^}]*gap: 0\.35rem;/);
+    expect(partner).toMatch(/\.aliados-step-n\s*\{[^}]*font: italic 400 1\.15rem\s*\/\s*1 var\(--font-display\);[^}]*color: var\(--c-fg-3\);/);
+    expect(partner).toMatch(/\.aliados-steps li:first-child \.aliados-step-n\s*\{[^}]*color: var\(--c-accent\);/);
+    expect(partner).toMatch(/\.aliados-step-title\s*\{[^}]*font-weight: 500;[^}]*font-size: 1rem;[^}]*color: var\(--c-fg\);/);
+    expect(partner).toMatch(/\.aliados-step-text\s*\{[^}]*font: var\(--t-body\);[^}]*color: var\(--c-fg-2\);/);
+    expect(partner).toMatch(/\.aliados-talk-note\s*\{[^}]*font: var\(--t-body\);/);
+    expect(partner).not.toMatch(/aliados-(?:proposal|respaldo)/);
+    const stepRules = [...styles.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(([, selector]) => selector.includes('.aliados-step'));
+    for (const [, , declarations] of stepRules) {
+      expect(declarations).not.toMatch(/display:\s*none|visibility:\s*hidden|(?:animation|transition)(?:-[\w-]+)?:/);
+    }
   });
 
   // David, 2026-09-29: each hero sentence fits two lines, so the partner hero
@@ -278,7 +343,7 @@ describe('build-time prerender', () => {
     expect(styles).toMatch(/\.aliados-vision-far-detail\s*\{[^}]*font: var\(--t-lead\);[^}]*max-width: 68ch;/);
     expect(styles).toMatch(/\.aliados-vision-grid li\s*\{[^}]*font: var\(--t-body\);/);
     expect(styles.match(/\.aliados-vision-grid li\s*\{[^}]*\}/)?.[0]).not.toMatch(/(?:min-|max-)?height:/);
-    expect(styles).toMatch(/\.aliados-respaldo \.talk-name\s*\{[^}]*display: none;/);
+    expect(styles).toMatch(/\.aliados-hero \.talk-name\s*\{[^}]*display: none;/);
     expect(styles).toMatch(/\.aliados-approach-copy\s*\{/);
   });
 
