@@ -3239,7 +3239,7 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 }
 
 /* ---------- el norte ----------
-   The three horizons read as the staircase; the map beside them is the real
+   The three horizons read as the staircase; the map with them is the real
    country, projected from the vendored Natural Earth boundary. The Zona en
    Reclamación is hatched and named, as on maps published in Venezuela. Lit
    nodes are paper — the same paper as the document the agent produces, which
@@ -3248,14 +3248,6 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 .north-body {
   display: grid;
   gap: var(--gap-lg);
-}
-
-@media (min-width: 861px) {
-  .north-body {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
-    column-gap: clamp(2rem, 5vw, 5rem);
-    align-items: center;
-  }
 }
 
 .hz {
@@ -3292,6 +3284,30 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 
 .hz-row:last-child .hz-label {
   color: var(--c-accent);
+}
+
+/* On a wide screen the map is the chapter's plate: wide and centred, with
+   the three horizons as three columns under it, each under its own rule. */
+@media (min-width: 861px) {
+  .north-body .map {
+    order: -1;
+    justify-self: center;
+    width: min(100%, 58rem);
+  }
+
+  .hz {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: clamp(1.5rem, 3vw, 2.5rem);
+    border-top: 0;
+  }
+
+  .hz-row {
+    grid-template-columns: minmax(0, 1fr);
+    align-content: start;
+    border-top: 1px solid var(--c-border);
+    border-bottom: 0;
+  }
 }
 
 .map {
