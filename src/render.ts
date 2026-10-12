@@ -113,10 +113,10 @@ function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
         ${partner ? '' : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
         </nav>`}
-        ${partner ? '' : `<nav class="nav-links chapter-nav" aria-label="${page.indexLabel}">
-          ${chaptersFor(page).map(({ number, id, eyebrow }) => `<a class="chapter-nav-link" data-chapter-link href="#${id}" aria-label="${inline(`${number} ${eyebrow}`)}"><span class="chapter-nav-n" aria-hidden="true">${number}</span><span class="chapter-nav-name visually-hidden">${inline(eyebrow)}</span></a>`).join('')}
-          <a class="chapter-join" href="#unete">${inline(page.hero.primaryCta)}</a>
-        </nav>`}
+        <nav class="nav-links chapter-nav" aria-label="${partner ? copy.es.indexLabel : page.indexLabel}">
+          ${(partner ? chaptersForAliados() : chaptersFor(page)).map(({ number, id, eyebrow }) => `<a class="chapter-nav-link" data-chapter-link href="#${id}" aria-label="${inline(`${number} ${eyebrow}`)}"><span class="chapter-nav-n" aria-hidden="true">${number}</span><span class="chapter-nav-name visually-hidden">${inline(eyebrow)}</span></a>`).join('')}
+          <a class="chapter-join" href="${partner ? '#conversemos' : '#unete'}">${inline(partner ? aliados.contact.title : page.hero.primaryCta)}</a>
+        </nav>
         ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
@@ -442,6 +442,17 @@ function chaptersFor(page: PageCopy) {
     { number: 'IV', id: 'principios', eyebrow: page.principles.eyebrow, title: inline(page.principles.title) },
     { number: 'V', id: 'charla', eyebrow: page.talk.eyebrow, title: inline(page.talk.title) },
     { number: 'VI', id: 'unete', eyebrow: page.form.eyebrow, title: inline(page.form.title) }
+  ];
+}
+
+/** The partner's header and chapter heads share one ordered set of destinations. */
+function chaptersForAliados() {
+  return [
+    { number: 'I', id: 'problema', eyebrow: aliados.gap.eyebrow },
+    { number: 'II', id: 'metodo', eyebrow: aliados.approach.eyebrow },
+    { number: 'III', id: 'camino', eyebrow: aliados.formats.eyebrow },
+    { number: 'IV', id: 'norte', eyebrow: aliados.vision.eyebrow },
+    { number: 'V', id: 'tu-lugar', eyebrow: aliados.roles.eyebrow }
   ];
 }
 
@@ -1184,6 +1195,7 @@ export function renderPage(
 /** The partner briefing shares the site's frame, but is not a door or a locale variant. */
 export function renderAliadosPage(): string {
   const page = copy.es;
+  const [gap, approach, formats, vision, roles] = chaptersForAliados();
   const headline = aliados.titleLines.map((line) =>
     `<span class="hero-line"><span class="hero-line-in">${line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)}</span></span>`
   ).join(' ');
@@ -1202,31 +1214,30 @@ export function renderAliadosPage(): string {
         <div class="aliados-talk-column">${renderTalkFigure(page)}<p class="aliados-talk-note">${inline(aliados.respaldo.body)}</p><p class="aliados-talk-caption">${inline(aliados.respaldo.caption)}</p></div>
       </div>
       <div class="shell aliados-steps-row"><ol class="aliados-steps">${aliados.steps.map((step, index) => `<li><span class="aliados-step-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span><span class="aliados-step-title">${inline(step.title)}</span><span class="aliados-step-text">${inline(step.text)}</span></li>`).join('')}</ol></div></section>
-      <section class="sec aliados-gap" aria-labelledby="aliados-gap-title"><div class="shell">
-        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-gap-title">${inline(aliados.gap.title)}</h2></div></header>
+      <section class="sec chapter aliados-gap" id="${gap.id}" aria-labelledby="aliados-gap-title"><div class="shell">
+        ${renderChapter({ ...gap, id: 'aliados-gap-title', title: inline(aliados.gap.title) })}
         <div class="aliados-gap-copy">${aliados.gap.paragraphs.map((text) => `<p class="lead" data-reveal>${inline(text)}</p>`).join('')}</div>
         <p class="aliados-gap-thesis" data-reveal>${inline(aliados.gap.thesis)}</p>
       </div></section>
-      <section class="sec aliados-approach" aria-labelledby="aliados-approach-title"><div class="shell">
-        <div class="aliados-approach-copy"><header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-approach-title">${inline(aliados.approach.title)}</h2></div></header>
-          <p class="lead aliados-approach-intro" data-reveal>${inline(aliados.approach.intro)}</p></div>
+      <section class="sec chapter aliados-approach" id="${approach.id}" aria-labelledby="aliados-approach-title"><div class="shell">
+        ${renderChapter({ ...approach, id: 'aliados-approach-title', title: inline(aliados.approach.title), lead: aliados.approach.intro })}
         <div class="aliados-pillar-grid">${aliados.approach.pillars.map((pillar) => `<div class="door aliados-pillar" data-reveal><h3>${inline(pillar.title)}</h3><p>${inline(pillar.body)}</p></div>`).join('')}</div>
       </div></section>
-      <section class="sec aliados-formats" aria-labelledby="aliados-formats-title"><div class="shell">
-        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-formats-title">${inline(aliados.formats.title)}</h2></div><p class="lead sec-head-lead">${inline(aliados.formats.intro)}</p></header>
+      <section class="sec chapter aliados-formats" id="${formats.id}" aria-labelledby="aliados-formats-title"><div class="shell">
+        ${renderChapter({ ...formats, id: 'aliados-formats-title', title: inline(aliados.formats.title), lead: aliados.formats.intro })}
         <div class="door-grid aliados-format-grid">
           ${aliados.formats.cards.map((card) => `<article class="door aliados-format" data-reveal><h3 class="door-title">${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">Ver el formato <span aria-hidden="true">&nearr;</span></a></article>`).join('')}
         </div>
       </div></section>
       ${renderBand('aliados', 5)}
-      <section class="sec aliados-vision" aria-labelledby="aliados-vision-title"><div class="shell">
-        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-vision-title">${inline(aliados.vision.title)}</h2></div></header>
+      <section class="sec chapter aliados-vision" id="${vision.id}" aria-labelledby="aliados-vision-title"><div class="shell">
+        ${renderChapter({ ...vision, id: 'aliados-vision-title', title: inline(aliados.vision.title) })}
         <div class="aliados-vision-intro" data-reveal><p class="aliados-vision-near">${inline(aliados.vision.near)}</p><p class="aliados-vision-far">${inline(aliados.vision.far)}</p><p class="lead aliados-vision-far-detail">${inline(aliados.vision.farDetail)}</p></div>
         <ul class="aliados-vision-grid">${aliados.vision.items.map((item) => `<li data-reveal>${inline(item)}</li>`).join('')}</ul>
         <p class="aliados-vision-closing" data-reveal>${inline(aliados.vision.closing)}</p>
       </div></section>
-      <section class="sec aliados-roles" aria-labelledby="aliados-roles-title"><div class="shell">
-        <header class="sec-head" data-reveal><div class="sec-head-main"><h2 class="section-title" id="aliados-roles-title">${inline(aliados.roles.title)}</h2></div><p class="lead sec-head-lead">${inline(aliados.roles.intro)}</p></header>
+      <section class="sec chapter aliados-roles" id="${roles.id}" aria-labelledby="aliados-roles-title"><div class="shell">
+        ${renderChapter({ ...roles, id: 'aliados-roles-title', title: inline(aliados.roles.title), lead: aliados.roles.intro })}
         <div class="aliados-role-grid">${aliados.roles.cards.map((card) => `<div class="door aliados-role" data-reveal><h3>${inline(card.title)}</h3><p>${inline(card.body)}</p></div>`).join('')}</div>
         <div class="aliados-roles-give" data-reveal><p><strong>${inline(aliados.roles.give.label)}:</strong> ${inline(aliados.roles.give.text)}</p></div>
         <p class="aliados-roles-closing" data-reveal>${inline(aliados.roles.closing)}</p>
