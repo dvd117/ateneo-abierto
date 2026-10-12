@@ -355,6 +355,7 @@ button {
 /* ---------- chapters and their index ---------- */
 
 .chapter-head {
+  --chapter-n-size: clamp(8rem, 18vw, 16rem);
   position: relative;
   isolation: isolate;
   display: grid;
@@ -374,7 +375,7 @@ button {
   right: 0;
   bottom: -0.08em;
   color: var(--graphite-land);
-  font: 400 clamp(8rem, 18vw, 16rem) / 0.75 var(--font-display);
+  font: 400 var(--chapter-n-size) / 0.75 var(--font-display);
   font-variation-settings: "opsz" 144;
   letter-spacing: -0.05em;
   pointer-events: none;
@@ -410,8 +411,21 @@ button {
   max-width: 58ch;
 }
 
-.chapter-head--ii .chapter-lead {
-  margin-right: clamp(5rem, 18vw, 14rem);
+/* The numeral never sits under text. On a phone, and beside the talk and the
+   form where the head shares the row, it takes its own line above the
+   eyebrow, smaller and still. */
+@media (max-width: 860px) {
+  .chapter-head,
+  .chapter-head--inline {
+    min-height: 0;
+  }
+
+  .chapter-n {
+    position: static;
+    justify-self: start;
+    font-size: 4.5rem;
+    line-height: 0.8;
+  }
 }
 
 @media (min-width: 861px) {
@@ -438,8 +452,20 @@ button {
     grid-column: 1 / -1;
   }
 
-  /* Five tracks need 36.25rem for a 12em lead; chapter II also reserves
-     up to 14rem for its numeral, so its safe inline measure is 70rem. */
+  /* A wide head keeps its numeral at the right, in a lane of its own: the
+     padding is the widest numeral (IV, 0.83em) and a gap, so the eyebrow,
+     title and lead all stop before it. The head is at least as tall as the
+     numeral, which would otherwise rise through the section's top rule. */
+  .chapter-head {
+    padding-right: calc(var(--chapter-n-size) * 0.85 + var(--gap-md));
+  }
+
+  .chapter-head--inline {
+    min-height: max(clamp(7.5rem, 9vw, 10rem), calc(var(--chapter-n-size) * 0.75 + 1rem));
+  }
+
+  /* Five tracks need 36.25rem for a 12em lead. The container is measured
+     inside the numeral's lane, so this holds for every inline head. */
   @container chapter-head (width < 36.25rem) {
     .chapter-head--inline .chapter-main,
     .chapter-head--inline .chapter-lead {
@@ -447,11 +473,19 @@ button {
     }
   }
 
-  @container chapter-head (width < 70rem) {
-    .chapter-head--inline.chapter-head--ii .chapter-main,
-    .chapter-head--inline.chapter-head--ii .chapter-lead {
-      grid-column: 1 / -1;
-    }
+  .talk-copy .chapter-head,
+  .join-copy .chapter-head {
+    min-height: 0;
+    padding-right: 0;
+  }
+
+  .talk-copy .chapter-n,
+  .join-copy .chapter-n {
+    position: static;
+    grid-column: 1 / -1;
+    justify-self: start;
+    font-size: clamp(5rem, 8vw, 8rem);
+    line-height: 0.8;
   }
 }
 
@@ -1089,6 +1123,19 @@ main .door[id] {
       animation: chapter-drift 1s linear both;
       animation-timeline: --chapter;
       animation-range: cover 0% cover 100%;
+    }
+
+    /* A numeral on its own line stays put: drifting, it would meet the
+       eyebrow under it. */
+    html.motion-ok .talk-copy .chapter-n,
+    html.motion-ok .join-copy .chapter-n {
+      animation: none;
+    }
+
+    @media (max-width: 860px) {
+      html.motion-ok .chapter-n {
+        animation: none;
+      }
     }
 
     html.motion-ok .chapter-title .mask > span {

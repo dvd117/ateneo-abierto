@@ -131,11 +131,12 @@ describe('inline chapter heads respect their available width', () => {
     expect(desktop).toMatch(/container-name:\s*chapter-head;/);
   });
 
-  test('stacks inline children with extra width reserved for the Programa numeral', () => {
+  test('stacks inline children inside a lane reserved for the numeral', () => {
     const styles = css().replace(/\/\*[\s\S]*?\*\//g, '');
 
     expect(styles).toMatch(/@container chapter-head \(width < 36\.25rem\)\s*\{\s*\.chapter-head--inline \.chapter-main,\s*\.chapter-head--inline \.chapter-lead\s*\{\s*grid-column:\s*1 \/ -1;\s*\}/);
-    expect(styles).toMatch(/@container chapter-head \(width < 70rem\)\s*\{\s*\.chapter-head--inline\.chapter-head--ii \.chapter-main,\s*\.chapter-head--inline\.chapter-head--ii \.chapter-lead\s*\{\s*grid-column:\s*1 \/ -1;\s*\}/);
+    // Wide heads keep the numeral at the right, in padding as wide as the widest numeral.
+    expect(styles).toMatch(/\.chapter-head\s*\{\s*padding-right:\s*calc\(var\(--chapter-n-size\) \* 0\.85 \+ var\(--gap-md\)\);\s*\}/);
   });
 });
 
