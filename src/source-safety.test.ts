@@ -152,6 +152,17 @@ describe('the desktop running head', () => {
   });
 });
 
+describe('the shift actor pills', () => {
+  test('fills machine pills with design tokens rather than hex colours', () => {
+    const rule = css().match(/\.shift-row:not\(\.is-mine\) \.shift-who\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(rule).toMatch(/background:\s*color-mix\(in oklab, var\(--c-fg\) 9%, var\(--c-bg\)\);/);
+    expect(rule).toMatch(/border-color:\s*transparent;/);
+    expect(rule).toMatch(/color:\s*var\(--c-fg-soft\);/);
+    expect(rule).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
+  });
+});
+
 describe('DESIGN.md is the source of truth for colour', () => {
   test('emits every DESIGN.md colour token into the generated fence', () => {
     const tokens = [...design().matchAll(/^ {2}([a-z0-9-]+): "(#[0-9a-f]{6})"$/gim)].map(
