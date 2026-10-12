@@ -696,6 +696,7 @@ describe('prerendered home page', () => {
     writeFileSync(join(dir, 'demos.html'), '<html lang="es"><body>Demos abiertas</body></html>');
     writeFileSync(join(dir, 'talleres.html'), '<html lang="es"><body>Talleres</body></html>');
     writeFileSync(join(dir, 'aliados.html'), '<html lang="es"><head><meta name="robots" content="noindex"></head><body>La brecha</body></html>');
+    writeFileSync(join(dir, 'funders.html'), '<html lang="en"><head><meta name="robots" content="noindex"></head><body>The gap</body></html>');
     writeFileSync(
       join(dir, 'csp.json'),
       JSON.stringify({ styleSrc: [esHash, "'unsafe-inline'", 'https://evil.example'] })
@@ -769,6 +770,17 @@ describe('prerendered home page', () => {
 
     for (const path of ['/demos', '/talleres', '/hackaton']) {
       expect((await pagesApp.request(path)).status).toBe(200);
+    }
+  });
+
+  test('serves /funders only in English even for Spanish locale requests', async () => {
+    for (const path of ['/funders', '/funders?lang=es']) {
+      const res = await pagesApp.request(path, { headers: { 'Accept-Language': 'es-VE' } });
+
+      expect(res.status).toBe(200);
+      expect(await res.text()).toContain('<html lang="en">');
+      expect(res.headers.get('content-language')).toBe('en');
+      expect(res.headers.get('cache-control')).toBe('no-cache');
     }
   });
 

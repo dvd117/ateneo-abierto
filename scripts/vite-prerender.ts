@@ -6,8 +6,8 @@ import type { Plugin, Rollup } from 'vite';
 type OutputAsset = Rollup.OutputAsset;
 type OutputBundle = Rollup.OutputBundle;
 import type { Locale } from '../src/locale';
-import { aliados, DEEP_LINK_ROUTES, type DeepLinkRoute } from '../src/content';
-import { pageMeta, renderAliadosPage, renderPage } from '../src/render';
+import { DEEP_LINK_ROUTES, type DeepLinkRoute } from '../src/content';
+import { pageMeta, PARTNER_PAGES, renderPartnerPage, renderPage, type PartnerPage } from '../src/render';
 
 /**
  * Build-time prerender.
@@ -57,25 +57,26 @@ export function pageFileName(locale: Locale, route?: DeepLinkRoute): string {
   return `${route ?? 'index'}${locale === 'en' ? '.en' : ''}.html`;
 }
 
-export function fillTemplate(template: string, locale: Locale, route?: DeepLinkRoute, partner = false): string {
+export function fillTemplate(template: string, locale: Locale, route?: DeepLinkRoute, partnerName?: PartnerPage): string {
   if (!template.includes(PLACEHOLDER)) {
     throw new Error('[prerender] index.html has no <!--prerender--> placeholder');
   }
 
+  const partner = partnerName ? PARTNER_PAGES[partnerName] : undefined;
   const meta = partner ? {
-    ...pageMeta('es'),
-    title: aliados.meta.title,
-    ogTitle: aliados.meta.title,
-    description: aliados.meta.description,
-    canonical: 'https://ateneo-abierto.org/aliados'
+    ...pageMeta(partner.locale),
+    title: partner.content.meta.title,
+    ogTitle: partner.content.meta.title,
+    description: partner.content.meta.description,
+    canonical: `https://ateneo-abierto.org/${partnerName}`
   } : pageMeta(locale, route);
-  let html = template.replace(PLACEHOLDER, () => partner ? renderAliadosPage() : renderPage(locale));
+  let html = template.replace(PLACEHOLDER, () => partnerName ? renderPartnerPage(partnerName) : renderPage(locale));
 
   html = replaceOnce(html, /(<html lang=")[^"]*(")/, meta.lang, '<html lang>');
   html = replaceOnce(
     html,
     /(<div id="app" data-locale=")[^"]*(")/,
-    [locale, route ? `" data-deep-link="${route}` : '', partner ? '" data-page="aliados' : ''].join(''),
+    [locale, route ? `" data-deep-link="${route}` : '', partnerName ? `" data-page="${partnerName}` : ''].join(''),
     '#app data-locale'
   );
   html = replaceOnce(html, /(<title>)[^<]*(<\/title>)/, escapeAttr(meta.title), '<title>');
@@ -209,13 +210,16 @@ export function prerender(): Plugin {
         this.emitFile({ type: 'asset', fileName, source });
       }
 
-      const partner = fillTemplate(template, 'es', undefined, true);
-      this.emitFile({ type: 'asset', fileName: 'aliados.html', source: partner });
+      const partners = Object.entries(PARTNER_PAGES).map(([name, partner]) => {
+        const source = fillTemplate(template, partner.locale, undefined, name as PartnerPage);
+        this.emitFile({ type: 'asset', fileName: `${name}.html`, source });
+        return source;
+      });
 
       this.emitFile({
         type: 'asset',
         fileName: 'csp.json',
-        source: `${JSON.stringify({ styleSrc: [...new Set([...styleHashes(spanish), ...styleHashes(partner)])] }, null, 2)}\n`
+        source: `${JSON.stringify({ styleSrc: [...new Set([...styleHashes(spanish), ...partners.flatMap(styleHashes)])] }, null, 2)}\n`
       });
 
       // Every page shares one stylesheet and one noscript block, so one set
