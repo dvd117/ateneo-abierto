@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { fillTemplate, inlineStylesheet, pageFileName, styleHashes } from '../scripts/vite-prerender';
@@ -100,12 +101,87 @@ describe('build-time prerender', () => {
     for (const link of copy[locale].nav) expect(legacy).toContain(`<a href="${link.href}">${link.label}</a>`);
   });
 
-  test('keeps the partner header free of chapter links', () => {
+  test('runs five partner chapters and the contact pill without legacy nav or locale controls', () => {
     const html = fillTemplate(template, 'es', undefined, true);
     const header = html.match(/<header class="site-header">([\s\S]*?)<\/header>/)?.[1] ?? '';
-    expect(header).not.toContain('chapter-nav');
+    const nav = header.match(/<nav class="nav-links chapter-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
+    const chapters = [...nav.matchAll(/<a class="chapter-nav-link" data-chapter-link href="#([^"]+)" aria-label="([^"]+)">([\s\S]*?)<\/a>/g)];
+    const ids = ['problema', 'metodo', 'camino', 'norte', 'tu-lugar'];
+    const names = ['El problema', 'El método', 'El camino', 'El norte', 'Tu lugar'];
+    const numerals = ['I', 'II', 'III', 'IV', 'V'];
+
+    expect(chapters).toHaveLength(5);
+    expect(header.match(/data-chapter-link/g)).toHaveLength(5);
+    expect(header).toContain(`<nav class="nav-links chapter-nav" aria-label="${copy.es.indexLabel}">`);
+    chapters.forEach((chapter, index) => {
+      expect(chapter[1]).toBe(ids[index]);
+      expect(chapter[2]).toBe(`${numerals[index]} ${names[index]}`);
+      expect(chapter[3]).toBe(`<span class="chapter-nav-n" aria-hidden="true">${numerals[index]}</span><span class="chapter-nav-name visually-hidden">${names[index]}</span>`);
+      expect(html.match(new RegExp(`id="${ids[index]}"`, 'g'))).toHaveLength(1);
+    });
+    expect(nav.match(/<a\b/g)).toHaveLength(6);
+    expect(nav).toContain('<a class="chapter-join" href="#conversemos">Conversemos</a>');
+    expect(header).not.toContain('<nav class="nav-links"');
     expect(header).not.toContain('locale-toggle');
+    expect(header).not.toContain('data-locale');
+    expect(header).not.toContain('aria-current');
     expect(header).toContain('data-progress');
+  });
+
+  // Captured on a950b3f: adding partner navigation must not alter either landing header.
+  test.each(['es', 'en'] as const)('preserves the landing header byte for byte in %s', (locale) => {
+    const header = renderPage(locale).match(/<header class="site-header">[\s\S]*?<\/header>/)?.[0] ?? '';
+    const hashes = {
+      es: '6f1122ab8b6c02f82cf41d4ee495090f17e6121e32685688acf4ff7269ddc035',
+      en: '96762656daa63cbfd08c0a0891fa767602f502de350a9dfdfb510a886d2c8283'
+    };
+
+    expect(createHash('sha256').update(header).digest('hex')).toBe(hashes[locale]);
+  });
+
+  test('opens each partner chapter with the shared numeral, eyebrow, preserved title id and intro', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const chapters = [
+      { key: 'gap', id: 'problema', number: 'I', eyebrow: 'El problema' },
+      { key: 'approach', id: 'metodo', number: 'II', eyebrow: 'El método' },
+      { key: 'formats', id: 'camino', number: 'III', eyebrow: 'El camino' },
+      { key: 'vision', id: 'norte', number: 'IV', eyebrow: 'El norte' },
+      { key: 'roles', id: 'tu-lugar', number: 'V', eyebrow: 'Tu lugar' }
+    ] as const;
+
+    expect(html.match(/<header class="chapter-head/g)).toHaveLength(5);
+    for (const { key, id, number, eyebrow } of chapters) {
+      const content = aliados[key];
+      const titleId = `aliados-${key}-title`;
+      const section = html.match(new RegExp(`<section class="sec chapter aliados-${key}" id="${id}" aria-labelledby="${titleId}">([\\s\\S]*?)</section>`))?.[1] ?? '';
+      const head = section.match(/<header class="chapter-head[^" ]*(?: chapter-head--inline)?">([\s\S]*?)<\/header>/)?.[1] ?? '';
+
+      expect(content.eyebrow).toBe(eyebrow);
+      expect(head).toContain(`<span class="chapter-n" aria-hidden="true">${number}</span>`);
+      expect(head).toContain(`<p class="eyebrow">${number} · ${eyebrow}</p>`);
+      expect(head).toContain(`<h2 class="section-title chapter-title" id="${titleId}"><span class="mask"><span>${content.title}</span></span></h2>`);
+      expect(html.match(new RegExp(`id="${titleId}"`, 'g'))).toHaveLength(1);
+      if ('intro' in content) {
+        expect(head).toContain(`<p class="lead chapter-lead">${content.intro}</p>`);
+        expect(section.split(content.intro)).toHaveLength(2);
+      } else {
+        expect(head).not.toContain('chapter-lead');
+      }
+    }
+    expect(html).not.toContain('class="sec-head"');
+    expect(html).not.toContain('aliados-approach-copy');
+    expect(html).not.toContain('aliados-approach-intro');
+  });
+
+  test('removes replaced partner-head styles and reserves a full row for the approach chapter head', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
+    const desktop = partner.slice(partner.indexOf('@media (min-width: 861px)'));
+
+    expect(partner).not.toMatch(/\.aliados-(?:gap|approach|vision|roles) \.sec-head/);
+    expect(partner).not.toMatch(/\.aliados-approach-(?:copy|intro)\s*\{/);
+    expect(desktop).toMatch(/\.aliados-approach \.shell\s*\{[^}]*grid-template-areas: "head head" "\. cards" "\. note";/);
+    expect(desktop).toMatch(/\.aliados-approach \.chapter-head\s*\{[^}]*grid-area: head;/);
   });
 
   test('writes the finished Spanish page into the first response', () => {
@@ -237,10 +313,10 @@ describe('build-time prerender', () => {
       expect(html).toContain(value.replace(/"/g, '&quot;'));
       expect(value).not.toMatch(/[—–]/);
     }
-    for (const title of ['La brecha', 'Cómo cerramos esa brecha', 'Un camino en tres pasos', 'Hacia dónde vamos', 'Tu lugar en esto', 'Conversemos']) {
-      expect(html).toContain(`<h2 class="section-title" id="aliados-`);
-      expect(html).toContain(`>${title}</h2>`);
+    for (const key of ['gap', 'approach', 'formats', 'vision', 'roles'] as const) {
+      expect(html).toContain(`<h2 class="section-title chapter-title" id="aliados-${key}-title"><span class="mask"><span>${aliados[key].title}</span></span></h2>`);
     }
+    expect(html).toContain(`>${aliados.contact.title}</h2>`);
     expect(html).toContain('class="shell aliados-hero-grid"');
     expect(html).toContain('class="door-grid aliados-format-grid"');
     expect(html).toContain('class="aliados-role-grid"');
@@ -263,7 +339,7 @@ describe('build-time prerender', () => {
     expect(html).not.toContain('aliados-proposal');
     expect(html).not.toContain('aliados-respaldo');
     expect(html).not.toContain('La idea ya salió al mundo');
-    expect(html).toMatch(/<section class="sec aliados-formats"[\s\S]*?<\/section>\s*<div class="band band--aliados"/);
+    expect(html).toMatch(/<section class="sec chapter aliados-formats" id="camino"[^>]*>(?:(?!<\/section>)[\s\S])*<\/section>\s*<div class="band band--aliados"/);
   });
 
   test('renders exactly three partner steps verbatim after the hero grid', () => {
@@ -334,7 +410,7 @@ describe('build-time prerender', () => {
     expect(aliados.vision.far).toBe('A largo plazo queremos una red de espacios públicos de conocimiento en Venezuela.');
     expect(aliados.vision.farDetail).toBe('La biblioteca pública del siglo XXI, abierta a cualquiera sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encontrar:');
     expect(html).toContain(`<p class="aliados-vision-far">${aliados.vision.far}</p><p class="lead aliados-vision-far-detail">${aliados.vision.farDetail}</p>`);
-    expect(html).toContain('class="aliados-approach-copy"');
+    expect(html).not.toContain('class="aliados-approach-copy"');
     expect(aliados.roles.cards.map((card) => card.title)).toEqual(['Espacio', 'Difusión', 'Conexiones', 'Mentoría']);
   });
 
@@ -344,7 +420,7 @@ describe('build-time prerender', () => {
     expect(styles).toMatch(/\.aliados-vision-grid li\s*\{[^}]*font: var\(--t-body\);/);
     expect(styles.match(/\.aliados-vision-grid li\s*\{[^}]*\}/)?.[0]).not.toMatch(/(?:min-|max-)?height:/);
     expect(styles).toMatch(/\.aliados-hero \.talk-name\s*\{[^}]*display: none;/);
-    expect(styles).toMatch(/\.aliados-approach-copy\s*\{/);
+    expect(styles).not.toMatch(/\.aliados-approach-copy\s*\{/);
   });
 
   test('keeps the partner page unlisted from the sitemap and all ordinary pages', () => {
