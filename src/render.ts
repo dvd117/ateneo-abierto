@@ -1227,7 +1227,8 @@ export function renderAliadosPage(): string {
       <section class="sec chapter aliados-formats" id="${formats.id}" aria-labelledby="aliados-formats-title"><div class="shell">
         ${renderChapter({ ...formats, id: 'aliados-formats-title', title: inline(aliados.formats.title), lead: aliados.formats.intro })}
         <div class="door-grid aliados-format-grid">
-          ${aliados.formats.cards.map((card) => `<article class="door aliados-format" data-reveal><h3 class="door-title">${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">Ver el formato <span aria-hidden="true">&nearr;</span></a></article>`).join('')}
+          <div class="aliados-format-labels" aria-hidden="true">${aliados.formats.cards[0].fields.map((field) => `<span>${inline(field.label)}</span>`).join('')}</div>
+          ${aliados.formats.cards.map((card, index) => `<article class="door aliados-format" data-reveal><h3 class="door-title"><span class="aliados-format-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span>${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">Ver el formato <span aria-hidden="true">&nearr;</span></a></article>`).join('')}
         </div>
       </div></section>
       ${renderBand('aliados', 5)}
