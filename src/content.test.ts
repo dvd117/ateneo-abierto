@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { copy, DEEP_LINK_ROUTES, type DeepLinkRoute } from './content';
 import { renderPage } from './render';
@@ -453,6 +454,44 @@ describe('landing page copy', () => {
     // reader notices its absence immediately.
     expect(copy.es.north.map.claimLabel).toBe('Zona en Reclamación');
     expect(copy.en.north.map.claimLabel).toBe('Zona en Reclamación');
+  });
+
+  test('keeps the phone map plot full-width and sizes labels against its container', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const plot = styles.match(/^\.map-plot\s*\{([^}]*)\}/m)?.[1] ?? '';
+    const phone = styles.match(/@media \(max-width: 860px\)\s*\{\s*\.map-plot\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(plot).toContain('container-type: inline-size;');
+    expect(phone).toContain('width: calc(100% + 2 * var(--sp-page));');
+    expect(phone).toContain('margin-inline: calc(-1 * var(--sp-page));');
+  });
+
+  test.each(['map-city', 'map-claim-label'])('keeps .%s label sizing at the readable floor', (selector) => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const label = styles.match(new RegExp(`\\n\\n\\.${selector}\\s*\\{([^}]*)\\}`))?.[1] ?? '';
+
+    // At a 16px rem, the geometry tests assume 11.52–12.48px and 2.4% of plot width.
+    expect(label).toContain('font-size: clamp(0.72rem, 2.4cqi, 0.78rem);');
+  });
+
+  test('keeps the city line box and translation assumed by the label clearance tests', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const city = styles.match(/^\.map-city\s*\{([^}]*)\}/m)?.[1] ?? '';
+
+    // A single 1.5em line box shifted up 0.5em ends 1em below its anchor.
+    expect(city).toContain('transform: translate(-50%, -0.5em);');
+    expect(city).toContain('white-space: nowrap;');
+    expect(city).toContain('font: var(--t-small);');
+    expect(styles).toMatch(/--t-small:\s*400 0\.8rem\s*\/\s*1\.5 var\(--font-sans\);/);
+    expect(city).not.toMatch(/\bline-height\s*:/);
+  });
+
+  test('keeps the claim label centered with its compact line box', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const claim = styles.match(/\n\n\.map-claim-label\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(claim).toContain('transform: translate(-50%, 0);');
+    expect(claim).toContain('line-height: 1.25;');
   });
 
   test.each(locales)('clears the three upper labels from their dots at readable sizes in %s', (locale) => {
