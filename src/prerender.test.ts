@@ -173,15 +173,53 @@ describe('build-time prerender', () => {
     expect(html).not.toContain('aliados-approach-intro');
   });
 
-  test('removes replaced partner-head styles and reserves a full row for the approach chapter head', () => {
+  test('removes replaced partner-head styles and the old approach grid', () => {
     const styles = readFileSync('src/styles.css', 'utf8');
     const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
     const desktop = partner.slice(partner.indexOf('@media (min-width: 861px)'));
 
     expect(partner).not.toMatch(/\.aliados-(?:gap|approach|vision|roles) \.sec-head/);
     expect(partner).not.toMatch(/\.aliados-approach-(?:copy|intro)\s*\{/);
-    expect(desktop).toMatch(/\.aliados-approach \.shell\s*\{[^}]*grid-template-areas: "head head" "\. cards" "\. note";/);
-    expect(desktop).toMatch(/\.aliados-approach \.chapter-head\s*\{[^}]*grid-area: head;/);
+    expect(desktop).not.toMatch(/\.aliados-approach (?:\.shell|\.chapter-head)\s*\{/);
+    expect(desktop).not.toMatch(/grid-area: (?:head|cards|note);/);
+  });
+
+  test('puts the gap copy and thesis beside each other only on desktop, beneath the full-width head', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
+    const desktop = partner.slice(partner.indexOf('@media (min-width: 861px)'));
+    const phone = partner.match(/@media \(max-width: 860px\)\s*\{([\s\S]*?)\n\}/)?.[1] ?? '';
+    const base = partner.match(/\.aliados-gap-thesis\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(desktop).toMatch(/\.aliados-gap \.shell\s*\{[^}]*display: grid;[^}]*grid-template-columns: minmax\(0, 6fr\) minmax\(0, 6fr\);[^}]*column-gap: clamp\(2rem, 5vw, 5rem\);[^}]*align-items: start;/);
+    expect(desktop).toMatch(/\.aliados-gap \.chapter-head\s*\{[^}]*grid-column: 1 \/ -1;/);
+    expect(desktop).toMatch(/\.aliados-gap-copy\s*\{[^}]*grid-column: 1;/);
+    expect(desktop).toMatch(/\.aliados-gap-thesis\s*\{[^}]*grid-column: 2;[^}]*margin: 0;[^}]*font-size: clamp\(1\.4rem, 0\.8rem \+ 1\.1vw, 1\.95rem\);[^}]*line-height: 1\.2;[^}]*max-width: none;[^}]*padding-left: var\(--gap-md\);[^}]*border-left: 2px solid var\(--c-accent\);/);
+    expect(base).toMatch(/font-weight: 560;[^}]*font-family: var\(--font-display\);/);
+    expect(base).not.toMatch(/(?:font-size|line-height|max-width|margin|padding|border-left):/);
+    expect(phone).toMatch(/\.aliados-gap-thesis\s*\{[^}]*max-width: 46ch;[^}]*margin-top: var\(--gap-lg\);[^}]*font-size: clamp\(2rem, 1\.3rem \+ 2\.7vw, 3\.6rem\);[^}]*line-height: 1\.12;/);
+    expect(phone).not.toMatch(/grid-template-columns|grid-column|padding-left|border-left/);
+  });
+
+  test('opens three method pillars without doors, using one phone column and three desktop columns', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const section = html.match(/<section class="sec chapter aliados-approach"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+    const pillars = [...section.matchAll(/<div class="aliados-pillar" data-reveal><h3>([^<]+)<\/h3><p>([^<]+)<\/p><\/div>/g)];
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
+    const desktop = partner.slice(partner.indexOf('@media (min-width: 861px)'));
+    const baseGrid = partner.match(/\.aliados-pillar-grid\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(pillars).toHaveLength(3);
+    expect(pillars.map(([, title, body]) => ({ title, body }))).toEqual(aliados.approach.pillars);
+    expect(section).not.toMatch(/class="[^"]*\bdoor\b/);
+    expect(baseGrid).toMatch(/display: grid;[^}]*gap: var\(--gap-md\);/);
+    expect(baseGrid).not.toMatch(/grid-template-columns|grid-area/);
+    expect(desktop).toMatch(/\.aliados-pillar-grid\s*\{[^}]*grid-template-columns: repeat\(3, minmax\(0, 1fr\)\);/);
+    expect(partner).toMatch(/\.aliados-pillar\s*\{[^}]*padding-top: var\(--gap-md\);[^}]*border-top: 1px solid var\(--c-border\);/);
+    expect(partner).toMatch(/\.aliados-pillar h3\s*\{[^}]*margin: 0 0 0\.6rem;[^}]*font: 400 1\.6rem\s*\/\s*1\.15 var\(--font-display\);[^}]*color: var\(--c-fg\);/);
+    expect(partner).toMatch(/\.aliados-pillar p\s*\{[^}]*margin: 0;[^}]*font: var\(--t-body\);[^}]*color: var\(--c-fg-2\);/);
+    expect(partner).not.toContain('.aliados-pillar-grid .door');
   });
 
   test('writes the finished Spanish page into the first response', () => {
