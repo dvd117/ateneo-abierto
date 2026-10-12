@@ -92,6 +92,34 @@ describe('CSP-safe source markup', () => {
   });
 });
 
+describe('the skip link stays accessible above page chrome', () => {
+  test('has a higher z-index than the sticky header and back-to-top link', () => {
+    const styles = css();
+    const zIndex = (selector: string) => {
+      const start = styles.indexOf(`${selector} {`);
+      expect(start).toBeGreaterThan(-1);
+      const rule = styles.slice(start, styles.indexOf('}', start));
+      const value = rule.match(/z-index:\s*(\d+)\s*;/)?.[1];
+      expect(value).toBeDefined();
+      return Number(value);
+    };
+
+    expect(zIndex('.skip-link')).toBeGreaterThan(zIndex('.site-header'));
+    expect(zIndex('.skip-link')).toBeGreaterThan(zIndex('.to-top'));
+  });
+
+  test('shows its keyboard focus state without animation', () => {
+    const styles = css().replace(/\/\*[\s\S]*?\*\//g, '');
+    const rules = [...styles.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+      .filter(([, selectors]) => /\.skip-link\b/.test(selectors));
+
+    expect(rules.length).toBeGreaterThan(0);
+    for (const [, , declarations] of rules) {
+      expect(declarations).not.toMatch(/(?:transition|animation)(?:-[\w-]+)?:/);
+    }
+  });
+});
+
 describe('the header has no current-section indicator', () => {
   test('removes its initializer and styles while keeping the progress rail', () => {
     const main = readFileSync('src/main.ts', 'utf8');
