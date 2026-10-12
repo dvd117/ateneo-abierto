@@ -1177,7 +1177,7 @@ main .door[id] {
   }
 
   html.motion-ok .hero:focus-within .hero-copy,
-  html.motion-ok .hero:focus-within .hero .agent-figure {
+  html.motion-ok .hero:focus-within .agent-figure {
     opacity: 1;
     visibility: visible;
     transform: none;
