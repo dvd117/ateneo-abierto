@@ -551,9 +551,9 @@ function renderBand(name: string, seed: number): string {
 function renderShiftColumn(column: ShiftColumn): string {
   const steps = column.steps
     .map((step, order) => {
-      const mine = !step.done;
+      const mine = !step.done && !step.machine;
       return `
-        <li class="shift-row ${mine ? 'is-mine' : 'shift-run'}" ${step.done ? `data-run="${order}"` : ''}>
+        <li class="shift-row ${mine ? 'is-mine' : step.done ? 'shift-run' : ''}" ${step.done ? `data-run="${order}"` : ''}>
           <span class="shift-who">${inline(step.actor)}</span>
           <span class="shift-text">${inline(step.text)}</span>
           <span class="shift-tick" aria-hidden="true"></span>

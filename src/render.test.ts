@@ -72,6 +72,28 @@ describe('foundation sketch publication structure', () => {
   });
 });
 
+describe('the shift actor pills', () => {
+  test.each(locales)('outlines only visitor rows and ticks only agent rows in %s', (locale) => {
+    const page = renderPage(locale);
+    const chatbot = page.match(/<div class="shift-col shift-col--chatbot"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? '';
+    const agent = page.match(/<div class="shift-col shift-col--agent"[^>]*>([\s\S]*?)<\/div>/)?.[1] ?? '';
+
+    expect(chatbot.match(/class="shift-row is-mine"/g)).toHaveLength(4);
+    expect(agent.match(/class="shift-row is-mine"/g)).toHaveLength(2);
+    const machineRows = [...`${chatbot}${agent}`.matchAll(/<li\b[^>]*>[\s\S]*?<\/li>/g)]
+      .map(([row]) => row)
+      .filter((row) => /class="shift-who">(?:Chatbot|Agente|Agent)<\/span>/.test(row));
+    expect(machineRows).toHaveLength(4);
+    for (const row of machineRows) {
+      expect(row).not.toContain('is-mine');
+    }
+
+    expect(chatbot).not.toMatch(/shift-run|data-run=/);
+    expect([...agent.matchAll(/<li class="shift-row shift-run" data-run="(\d+)"/g)]
+      .map(([, order]) => order)).toEqual(['1', '2', '3']);
+  });
+});
+
 describe('the next date under the call to action', () => {
   const now = new Date('2026-10-12T16:00:00Z');
   const event = { label: 'Próxima demo abierta', date: '2026-11-05', time: '6:30 pm', city: 'Caracas', venue: 'La Biblioteca' };

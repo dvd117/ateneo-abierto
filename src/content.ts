@@ -158,6 +158,8 @@ export type ShiftStep = {
   text: string;
   /** The agent's own steps carry a tick, like the plan inside the window. */
   done?: boolean;
+  /** A machine's step that carries no tick, like the chatbot's. */
+  machine?: boolean;
 };
 
 export type ShiftColumn = {
@@ -743,7 +745,7 @@ export const copy: Record<Locale, PageCopy> = {
           sub: 'Hoy también lee tus archivos y te devuelve documentos. Pero cada corrección y cada archivo pasan por ti.',
           steps: [
             { actor: 'Tú', text: 'Subes las tres hojas y le pides el resumen.' },
-            { actor: 'Chatbot', text: 'Te devuelve un resumen y un archivo para descargar.' },
+            { actor: 'Chatbot', text: 'Te devuelve un resumen y un archivo para descargar.', machine: true },
             { actor: 'Tú', text: 'Lo revisas y ves que mezcló dos categorías.' },
             { actor: 'Tú', text: 'Se lo explicas, vuelves a subir, vuelves a descargar.' },
             { actor: 'Tú', text: 'Lo guardas en tu carpeta. El mes que viene, empiezas de cero.' }
@@ -1267,7 +1269,7 @@ export const copy: Record<Locale, PageCopy> = {
           sub: 'It reads your files and hands documents back now too. But every fix and every file still goes through you.',
           steps: [
             { actor: 'You', text: 'You upload the three sheets and ask for the summary.' },
-            { actor: 'Chatbot', text: 'It hands back a summary and a file to download.' },
+            { actor: 'Chatbot', text: 'It hands back a summary and a file to download.', machine: true },
             { actor: 'You', text: 'You check it and see it mixed up two categories.' },
             { actor: 'You', text: 'You explain, upload again, download again.' },
             { actor: 'You', text: 'You save it in your folder. Next month, you start from scratch.' }

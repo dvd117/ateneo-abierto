@@ -2379,11 +2379,17 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   border-radius: var(--r-pill);
 }
 
-/* The visitor's own rows carry the bright pill: at a glance, the left column
-   is almost all yours and the right one almost none. */
+/* Your steps are outlined, the machine's are filled: at a glance, the left
+   column is almost all yours and the right one almost none. */
 .shift-row.is-mine .shift-who {
   color: var(--c-fg);
   border-color: var(--c-fg);
+}
+
+.shift-row:not(.is-mine) .shift-who {
+  background: color-mix(in oklab, var(--c-fg) 9%, var(--c-bg));
+  border-color: transparent;
+  color: var(--c-fg-soft);
 }
 
 .shift-tick {
