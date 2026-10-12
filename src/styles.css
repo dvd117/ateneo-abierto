@@ -881,6 +881,7 @@ main .door[id] {
   .nav-wordmark {
     grid-area: brand;
     margin-right: 0;
+    white-space: nowrap;
   }
 
   .locale-toggle {
@@ -931,9 +932,24 @@ main .door[id] {
 /* Under 360 px the wordmark gives up a little size and tracking so the row
    still fits on one line at 320. */
 @media (max-width: 360px) {
+  .site-header .header-inner {
+    column-gap: 0.35rem;
+  }
+
+  .site-header .nav-wordmark {
+    gap: 0.5rem;
+  }
+
   .site-header .nav-wordmark .wordmark {
     font-size: 0.875rem;
     letter-spacing: 0.1em;
+  }
+
+  /* Only the narrowest phones need the wordmark to yield more width when the
+     focused language takes its normal place. No keyboard animation. */
+  .header-inner:has(.locale-button.is-active:focus-visible) .wordmark {
+    font-size: clamp(0.75rem, 3.5vw, 0.95rem);
+    letter-spacing: 0.04em;
   }
 }
 
