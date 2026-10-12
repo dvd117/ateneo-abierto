@@ -755,6 +755,13 @@ main .door[id] {
   }
 }
 
+/* Not on a phone: there it covered body text on almost every screen. */
+@media (max-width: 860px) {
+  .to-top {
+    display: none;
+  }
+}
+
 .nav-wordmark {
   display: inline-flex;
   align-items: center;
