@@ -101,17 +101,17 @@ describe('build-time prerender', () => {
     for (const link of copy[locale].nav) expect(legacy).toContain(`<a href="${link.href}">${link.label}</a>`);
   });
 
-  test('runs five partner chapters and the contact pill without legacy nav or locale controls', () => {
+  test('runs six partner chapters and the contact pill without legacy nav or locale controls', () => {
     const html = fillTemplate(template, 'es', undefined, true);
     const header = html.match(/<header class="site-header">([\s\S]*?)<\/header>/)?.[1] ?? '';
     const nav = header.match(/<nav class="nav-links chapter-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
     const chapters = [...nav.matchAll(/<a class="chapter-nav-link" data-chapter-link href="#([^"]+)" aria-label="([^"]+)">([\s\S]*?)<\/a>/g)];
-    const ids = ['problema', 'metodo', 'camino', 'norte', 'tu-lugar'];
-    const names = ['El problema', 'El método', 'El camino', 'El norte', 'Tu lugar'];
-    const numerals = ['I', 'II', 'III', 'IV', 'V'];
+    const ids = ['problema', 'metodo', 'camino', 'norte', 'tu-lugar', 'preguntas'];
+    const names = ['El problema', 'El método', 'El camino', 'El norte', 'Tu lugar', 'Preguntas'];
+    const numerals = ['I', 'II', 'III', 'IV', 'V', 'VI'];
 
-    expect(chapters).toHaveLength(5);
-    expect(header.match(/data-chapter-link/g)).toHaveLength(5);
+    expect(chapters).toHaveLength(6);
+    expect(header.match(/data-chapter-link/g)).toHaveLength(6);
     expect(header).toContain(`<nav class="nav-links chapter-nav" aria-label="${copy.es.indexLabel}">`);
     chapters.forEach((chapter, index) => {
       expect(chapter[1]).toBe(ids[index]);
@@ -119,7 +119,7 @@ describe('build-time prerender', () => {
       expect(chapter[3]).toBe(`<span class="chapter-nav-n" aria-hidden="true">${numerals[index]}</span><span class="chapter-nav-name visually-hidden">${names[index]}</span>`);
       expect(html.match(new RegExp(`id="${ids[index]}"`, 'g'))).toHaveLength(1);
     });
-    expect(nav.match(/<a\b/g)).toHaveLength(6);
+    expect(nav.match(/<a\b/g)).toHaveLength(7);
     expect(nav).toContain('<a class="chapter-join" href="#conversemos">Conversemos</a>');
     expect(header).not.toContain('<nav class="nav-links"');
     expect(header).not.toContain('locale-toggle');
@@ -146,10 +146,11 @@ describe('build-time prerender', () => {
       { key: 'approach', id: 'metodo', number: 'II', eyebrow: 'El método' },
       { key: 'formats', id: 'camino', number: 'III', eyebrow: 'El camino' },
       { key: 'vision', id: 'norte', number: 'IV', eyebrow: 'El norte' },
-      { key: 'roles', id: 'tu-lugar', number: 'V', eyebrow: 'Tu lugar' }
+      { key: 'roles', id: 'tu-lugar', number: 'V', eyebrow: 'Tu lugar' },
+      { key: 'faq', id: 'preguntas', number: 'VI', eyebrow: 'Preguntas' }
     ] as const;
 
-    expect(html.match(/<header class="chapter-head/g)).toHaveLength(5);
+    expect(html.match(/<header class="chapter-head/g)).toHaveLength(6);
     for (const { key, id, number, eyebrow } of chapters) {
       const content = aliados[key];
       const titleId = `aliados-${key}-title`;
@@ -324,7 +325,7 @@ describe('build-time prerender', () => {
     expect(html).toContain('href="mailto:ateneo@aragort.com"');
   });
 
-  test('renders every v3 partner string verbatim in the seven-section layout', () => {
+  test('renders every v3 partner string verbatim in the eight-section layout', () => {
     const html = fillTemplate(template, 'es', undefined, true);
     // The approved copy lives in the coordinator's untracked `.w/` notes, so
     // the verbatim check against it only runs where that file exists.
@@ -344,16 +345,17 @@ describe('build-time prerender', () => {
       aliados.roles.columns.gives, aliados.roles.columns.gets,
       ...aliados.roles.rows.flatMap((row) => [row.title, row.effort, row.gives, row.gets]),
       aliados.roles.give.label, aliados.roles.give.text, aliados.roles.closing,
+      aliados.faq.eyebrow, aliados.faq.title, ...aliados.faq.items.flatMap((item) => [item.q, item.a]),
       aliados.contact.title, aliados.contact.line, aliados.contact.button,
       aliados.contact.share.text, aliados.contact.share.button
     ];
-    expect(strings).toHaveLength(85);
+    expect(strings).toHaveLength(95);
     for (const value of strings) {
       if (copyFile) expect(copyFile).toContain(value);
       expect(html).toContain(value.replace(/"/g, '&quot;'));
       expect(value).not.toMatch(/[—–]/);
     }
-    for (const key of ['gap', 'approach', 'formats', 'vision', 'roles'] as const) {
+    for (const key of ['gap', 'approach', 'formats', 'vision', 'roles', 'faq'] as const) {
       expect(html).toContain(`<h2 class="section-title chapter-title" id="aliados-${key}-title"><span class="mask"><span>${aliados[key].title}</span></span></h2>`);
     }
     expect(html).toContain(`>${aliados.contact.title}</h2>`);
@@ -604,6 +606,48 @@ describe('build-time prerender', () => {
     expect(partner).toMatch(/\.aliados-share \.aliados-share-status\s*\{[^}]*font: var\(--t-small\);[^}]*color: var\(--c-fg-2\);[^}]*min-height: 1\.5em;/);
     expect(desktop).toMatch(/\.aliados-contact-grid\s*\{[^}]*grid-template-columns: minmax\(0, 7fr\) minmax\(0, 5fr\);[^}]*gap: clamp\(2rem, 5vw, 5rem\);[^}]*align-items: end;/);
     expect(desktop).toMatch(/\.aliados-share\s*\{[^}]*border-top: 0;[^}]*border-left: 1px solid var\(--c-border\);[^}]*padding: 0 0 0 var\(--gap-lg\);/);
+  });
+
+  test('places four native FAQs before contact with only the first two open and all approved answers', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const section = html.match(/<section class="sec chapter aliados-faq" id="preguntas" aria-labelledby="aliados-faq-title">([\s\S]*?)<\/section>/)?.[1] ?? '';
+    const items = [...section.matchAll(/<details class="aliados-faq-item"( open)?><summary>([^<]+)<\/summary><p>([^<]+)<\/p><\/details>/g)];
+
+    expect([...html.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map((match) => match[1])).toEqual(['problema', 'metodo', 'camino', 'norte', 'tu-lugar', 'preguntas', 'conversemos']);
+    expect(html.match(/<details class="aliados-faq-item"/g)).toHaveLength(4);
+    expect(items.map((item) => Boolean(item[1]))).toEqual([true, true, false, false]);
+    expect(items.map((item) => ({ q: item[2], a: item[3] }))).toEqual([
+      { q: '¿Hace falta saber de tecnología?', a: 'No. Empezamos por lo que ya haces en tu trabajo, sin tecnicismos.' },
+      { q: '¿Qué necesita mi espacio para un taller?', a: 'Un lugar para 8 a 15 personas durante dos horas y media, con una pantalla o un proyector. Cada persona trae su laptop, y nosotros llevamos energía de respaldo e internet propio.' },
+      { q: '¿Tiene algún costo para mi organización?', a: 'No. Solo lo tiene si tu organización quiere un taller o una actividad exclusiva para su equipo.' },
+      { q: '¿Quién está detrás de Ateneo Abierto?', a: 'Un proyecto independiente. Hasta hoy, todo se ha hecho con trabajo voluntario.' }
+    ]);
+    expect(section).toContain('class="aliados-faq-list"');
+    expect(section).not.toMatch(/aria-expanded|aria-controls|role=|<button|data-/);
+    expect(html.toLowerCase()).not.toContain('afiliación');
+  });
+
+  test('renders the roles closing sentence exactly once on the partner page', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+
+    expect(html.split(aliados.roles.closing)).toHaveLength(2);
+  });
+
+  test('styles native FAQ markers without motion and retains the global summary focus ring', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const rules = [...styles.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(([, selector]) => selector.includes('.aliados-faq'));
+    const faq = rules.map((rule) => rule[0]).join('\n');
+
+    expect(faq).toMatch(/\.aliados-faq-list\s*\{[^}]*display: grid;[^}]*max-width: 52rem;/);
+    expect(faq).toMatch(/\.aliados-faq-item\s*\{[^}]*padding: 1\.1rem 0;[^}]*border-top: 1px solid var\(--c-border\);/);
+    expect(faq).toMatch(/\.aliados-faq-item:last-child\s*\{[^}]*border-bottom: 1px solid var\(--c-border\);/);
+    expect(faq).toMatch(/\.aliados-faq-item summary\s*\{[^}]*display: flex;[^}]*justify-content: space-between;[^}]*gap: 1rem;[^}]*cursor: pointer;[^}]*list-style: none;[^}]*font: 400 1\.35rem\/1\.25 var\(--font-display\);[^}]*color: var\(--c-fg\);/);
+    expect(faq).toMatch(/\.aliados-faq-item summary::-webkit-details-marker\s*\{[^}]*display: none;/);
+    expect(faq).toMatch(/\.aliados-faq-item summary::after\s*\{[^}]*content: '\+';[^}]*color: var\(--c-accent\);[^}]*flex: none;/);
+    expect(faq).toMatch(/\.aliados-faq-item\[open\] > summary::after\s*\{[^}]*content: '−';/);
+    expect(faq).toMatch(/\.aliados-faq-item p\s*\{[^}]*margin: 0\.7rem 0 0;[^}]*max-width: 60ch;[^}]*font: var\(--t-body\);[^}]*color: var\(--c-fg-soft\);/);
+    expect(faq).not.toMatch(/transition:|animation:|outline:/);
+    expect(styles).toMatch(/\n:focus-visible\s*\{[^}]*outline: 2px solid var\(--c-accent\);[^}]*outline-offset: 3px;/);
   });
 
   // David, 2026-09-29: each hero sentence fits two lines, so the partner hero
