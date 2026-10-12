@@ -105,7 +105,7 @@ function loadSceneRunner(): Promise<typeof import('./scene')> {
 }
 
 /**
- * The network under the call to action, agent column in section two, and map.
+ * The agent column in section two, and the map.
  * They rest in their finished state, so this only ever adds motion: it is
  * never loaded under reduced motion or saveData, and a failed chunk changes
  * nothing the visitor can see.
@@ -115,23 +115,18 @@ function bindLighting(): void {
     return;
   }
 
-  const net = root.querySelector<HTMLElement>('[data-network]');
   const column = root.querySelector<HTMLElement>('[data-shift-run]');
   const map = root.querySelector<HTMLElement>('[data-map]');
 
-  if (!net && !column && !map) {
+  if (!column && !map) {
     return;
   }
 
   lightingModule ??= import('./lighting');
 
   void lightingModule
-    .then(({ playMap, playNetwork, playShiftColumn }) => {
+    .then(({ playMap, playShiftColumn }) => {
       // A locale switch may have replaced these nodes while the chunk loaded.
-      if (net?.isConnected) {
-        lightingPlayers.push(playNetwork(net));
-      }
-
       if (column?.isConnected) {
         lightingPlayers.push(playShiftColumn(column));
       }

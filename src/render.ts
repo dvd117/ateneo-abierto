@@ -333,51 +333,6 @@ function renderAgentWindow(page: PageCopy, heroInput: HeroInput): string {
   `;
 }
 
-/**
- * The node network under the call to action. Eight cities, lit one at a time
- * by the lazy runner; without it every node stands lit, which is the honest
- * resting state. Coordinates live in content.ts so the copy owns the map.
- */
-function renderNetwork(page: PageCopy): string {
-  const { network } = page;
-  const nodes = network.cities
-    .map(
-      (city, index) =>
-        `<g class="net-node" data-node="${index}"><circle class="net-halo" cx="${city.x}" cy="${city.y}" r="5"/><circle cx="${city.x}" cy="${city.y}" r="4"/></g>`
-    )
-    .join('');
-
-  const edges = network.edges
-    .map(([from, to]) => {
-      const a = network.cities[from];
-      const b = network.cities[to];
-      return `<line class="net-edge" data-node="${to}" x1="${a.x}" y1="${a.y}" x2="${b.x}" y2="${b.y}"/>`;
-    })
-    .join('');
-
-  const labels = network.cities
-    .map(
-      (city, index) =>
-        `<span class="net-city" data-node="${index}">${inline(city.name)}</span>`
-    )
-    .join('');
-
-  return `
-    <div class="net" data-network>
-      <p class="net-head">
-        <span class="net-label">${inline(network.label)}</span>
-        <span class="net-caption" data-net-caption>${inline(network.caption)}</span>
-      </p>
-      <div class="net-plot">
-        <svg class="net-svg" viewBox="0 0 480 110" role="img" aria-label="${inline(network.alt)}">
-          ${edges}${nodes}
-        </svg>
-        ${labels}
-      </div>
-    </div>
-  `;
-}
-
 function renderHero(page: PageCopy, heroInput: HeroInput): string {
   // Each line of the headline is its own block, so each sits on one line at
   // desktop sizes and rises on its own when the page opens.
@@ -405,9 +360,6 @@ function renderHero(page: PageCopy, heroInput: HeroInput): string {
           </div>
           ${renderAgentWindow(page, heroInput)}
         </div>
-      </div>
-      <div class="shell hero-network">
-        ${renderNetwork(page)}
       </div>
     </section>
   `;
@@ -1055,12 +1007,6 @@ ${partner ? '' : renderFooterMarks(page, locale)}
  */
 function renderPositions(page: PageCopy): string {
   const rules: string[] = [`.map-plot{aspect-ratio:${MAP_VIEWBOX.width}/${MAP_VIEWBOX.height}}`];
-
-  page.network.cities.forEach((city, index) => {
-    const left = ((city.lx / 480) * 100).toFixed(2);
-    const top = ((city.ly / 110) * 100).toFixed(2);
-    rules.push(`.net-city[data-node="${index}"]{left:${left}%;top:${top}%}`);
-  });
 
   page.north.map.nodes.forEach((node, index) => {
     const { x, y } = project(node.lon, node.lat);

@@ -1,8 +1,8 @@
 /**
- * The two replayable sequences outside the agent window: the city network
- * under the call to action, and the agent column in "De preguntar a delegar".
- * The map draws once on reveal. All are lazy-loaded and skipped under reduced
- * motion or saveData — the resting markup is already the finished state.
+ * The motion outside the agent window: the agent column in "De preguntar a
+ * delegar" replays, and the map draws once on reveal. Both are lazy-loaded and
+ * skipped under reduced motion or saveData — the resting markup is already the
+ * finished state.
  *
  * Neither touches content: they add and remove classes, nothing else.
  */
@@ -80,48 +80,6 @@ function onScreen(
       observer.disconnect();
     }
   };
-}
-
-/**
- * Lights the network one city at a time and names the lit one in the caption.
- * The caption never says a city has joined: none of these is a confirmed site.
- */
-export function playNetwork(net: HTMLElement): Player {
-  const nodes = Array.from(net.querySelectorAll<SVGElement>('[data-node]'));
-  const caption = net.querySelector<HTMLElement>('[data-net-caption]');
-  const resting = caption?.textContent ?? '';
-  const cities = Array.from(net.querySelectorAll<HTMLElement>('.net-city'));
-  const count = cities.length;
-
-  net.classList.add('is-lighting');
-
-  return onScreen(
-    net,
-    count,
-    (k) => {
-      for (const node of nodes) {
-        const index = Number(node.dataset.node);
-        node.classList.toggle('is-lit', k >= 0 && index <= k - 1);
-        node.classList.toggle('is-now', k >= 1 && index === k - 1);
-      }
-
-      if (!caption) {
-        return;
-      }
-
-      const city = k >= 1 ? cities[k - 1] : undefined;
-      if (city) {
-        caption.textContent = '';
-        const lit = document.createElement('span');
-        lit.className = 'net-lit';
-        lit.textContent = city.textContent ?? '';
-        caption.append(lit);
-      } else {
-        caption.textContent = resting;
-      }
-    },
-    { period: 1000 }
-  );
 }
 
 /** Ticks the agent column's own steps in order, one spinner at a time. */
