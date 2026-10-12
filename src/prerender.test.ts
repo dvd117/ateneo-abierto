@@ -633,12 +633,20 @@ describe('build-time prerender', () => {
     expect(html.split(aliados.roles.closing)).toHaveLength(2);
   });
 
+  test('gives the partner chapters the landing padding and keeps every chapter lead under its title', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+
+    expect(styles).toMatch(/\.sec\[class\*="aliados-"\]:not\(\.chapter\)\s*\{\s*padding-block:/);
+    expect(styles).not.toMatch(/\.sec\[class\*="aliados-"\]\s*\{/);
+    expect(styles).toMatch(/\n\.chapter-head\s*\{[^}]*align-items: end;[^}]*align-content: end;/);
+  });
+
   test('styles native FAQ markers without motion and retains the global summary focus ring', () => {
     const styles = readFileSync('src/styles.css', 'utf8');
     const rules = [...styles.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(([, selector]) => selector.includes('.aliados-faq'));
     const faq = rules.map((rule) => rule[0]).join('\n');
 
-    expect(faq).toMatch(/\.aliados-faq-list\s*\{[^}]*display: grid;[^}]*max-width: 52rem;/);
+    expect(faq).toMatch(/\.aliados-faq-list\s*\{\s*display: grid;\s*\}/);
     expect(faq).toMatch(/\.aliados-faq-item\s*\{[^}]*padding: 1\.1rem 0;[^}]*border-top: 1px solid var\(--c-border\);/);
     expect(faq).toMatch(/\.aliados-faq-item:last-child\s*\{[^}]*border-bottom: 1px solid var\(--c-border\);/);
     expect(faq).toMatch(/\.aliados-faq-item summary\s*\{[^}]*display: flex;[^}]*justify-content: space-between;[^}]*gap: 1rem;[^}]*cursor: pointer;[^}]*list-style: none;[^}]*font: 400 1\.35rem\/1\.25 var\(--font-display\);[^}]*color: var\(--c-fg\);/);
