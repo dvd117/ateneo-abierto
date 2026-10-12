@@ -171,25 +171,6 @@ describe('landing page copy', () => {
     expect(copy.en.shift.task).toContain('spending');
   });
 
-  test('names the network cities under the hero without claiming a confirmed site', () => {
-    for (const locale of locales) {
-      const { network } = copy[locale];
-
-      expect(network.cities).toHaveLength(8);
-      expect(network.cities.map((city) => city.name)).toContain('Caracas');
-      expect(network.edges.length).toBeGreaterThan(0);
-
-      for (const [from, to] of network.edges) {
-        expect(network.cities[from]).toBeDefined();
-        expect(network.cities[to]).toBeDefined();
-      }
-
-      // Nothing on the page may read as an announced venue.
-      expect(network.caption).not.toMatch(/se suma|joins|sede|venue/i);
-      expect(network.alt).toMatch(/no sedes confirmadas|not confirmed sites/i);
-    }
-  });
-
   test('never uses the program names another organisation owns', () => {
     for (const locale of locales) {
       const all = JSON.stringify(copy[locale]).toLowerCase();
@@ -407,13 +388,14 @@ describe('landing page copy', () => {
       expect(map.alt).toMatch(/no sedes confirmadas|not confirmed sites/i);
     }
 
-    // The hero network and the map tell one story: every city in the network
-    // is lit on the map, and the map adds only planned ones beyond it.
+    // Eight cities are lit on the map, the same in both languages, and the
+    // map adds only planned ones beyond them.
     for (const locale of locales) {
-      const { nodes, edges } = copy[locale].north.map;
+      const { nodes } = copy[locale].north.map;
       const lit = nodes.filter((node) => !node.planned).map((node) => node.name);
-      expect(lit).toEqual(copy[locale].network.cities.map((city) => city.name));
-      expect(edges).toEqual(copy[locale].network.edges);
+      expect(lit).toHaveLength(8);
+      expect(lit).toContain('Caracas');
+      expect(lit).toEqual(copy.es.north.map.nodes.filter((node) => !node.planned).map((node) => node.name));
       // The lighting walks nodes by index and stops at the lit count, so a
       // planned node before a lit one would leave that one dark.
       expect(nodes.slice(0, lit.length).every((node) => !node.planned)).toBe(true);
