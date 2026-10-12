@@ -1627,6 +1627,16 @@ export const aliados = {
     give: { label: 'Nosotros ponemos', text: 'el diseño de cada actividad, la convocatoria y el acompañamiento de principio a fin. Además conectamos a tu comunidad con otras: periodistas, organizaciones y la comunidad técnica.' },
     closing: 'Si trabajas en la cultura del conocimiento, aunque la tecnología no sea lo tuyo, este proyecto también es tuyo.'
   },
+  faq: {
+    eyebrow: 'Preguntas',
+    title: 'Antes de escribirnos',
+    items: [
+      { q: '¿Hace falta saber de tecnología?', a: 'No. Empezamos por lo que ya haces en tu trabajo, sin tecnicismos.' },
+      { q: '¿Qué necesita mi espacio para un taller?', a: 'Un lugar para 8 a 15 personas durante dos horas y media, con una pantalla o un proyector. Cada persona trae su laptop, y nosotros llevamos energía de respaldo e internet propio.' },
+      { q: '¿Tiene algún costo para mi organización?', a: 'No. Solo lo tiene si tu organización quiere un taller o una actividad exclusiva para su equipo.' },
+      { q: '¿Quién está detrás de Ateneo Abierto?', a: 'Un proyecto independiente. Hasta hoy, todo se ha hecho con trabajo voluntario.' }
+    ]
+  },
   contact: {
     title: 'Conversemos',
     line: 'Agendemos 30 minutos para conocernos y ver cómo encaja tu espacio o tu comunidad.',
