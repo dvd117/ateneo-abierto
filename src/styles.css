@@ -490,9 +490,17 @@ button {
 }
 
 .chapter-index {
+  position: relative;
   padding-block: var(--gap-lg);
-  border-top: 1px solid var(--c-border);
-  border-bottom: 1px solid var(--c-border);
+}
+
+.chapter-index::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  inset-inline: var(--sp-page);
+  border-block: 1px solid var(--c-border);
+  pointer-events: none;
 }
 
 .chapter-index-label {
@@ -549,8 +557,14 @@ button {
 }
 
 @media (min-width: 861px) {
+  .chapter-index::before {
+    inset-inline: clamp(1.5rem, 4vw, 2.5rem);
+  }
+
   .chapter-index ol {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: repeat(3, auto);
+    grid-auto-flow: column;
     column-gap: var(--gap-lg);
   }
 }
