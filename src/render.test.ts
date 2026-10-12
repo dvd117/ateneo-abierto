@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { copy } from './content';
-import { renderAllies, renderNextEvent, renderPage } from './render';
+import { caracasIsoDate, renderAllies, renderNextEvent, renderPage } from './render';
 
 const locales = ['es', 'en'] as const;
 const chapterIds = ['cambio', 'programa', 'norte', 'principios', 'charla', 'unete'];
@@ -63,7 +63,7 @@ describe('foundation sketch publication structure', () => {
 });
 
 describe('the next date under the call to action', () => {
-  const now = new Date(2026, 9, 12, 12);
+  const now = new Date('2026-10-12T16:00:00Z');
   const event = { label: 'Próxima demo abierta', date: '2026-11-05', time: '6:30 pm', city: 'Caracas', venue: 'La Biblioteca' };
 
   test.each(locales)('renders a future date as one line of the given fields in %s', (locale) => {
@@ -79,6 +79,23 @@ describe('the next date under the call to action', () => {
   test.each(locales)('keeps the line on the day itself and drops it the day after in %s', (locale) => {
     expect(renderNextEvent({ ...event, date: '2026-10-12' }, locale, now)).toContain('data-date="2026-10-12"');
     expect(renderNextEvent({ ...event, date: '2026-10-11' }, locale, now)).toBe('');
+  });
+
+  test.each(locales)('keeps today\'s event until Caracas midnight in %s', (locale) => {
+    const line = renderNextEvent({ ...event, date: '2026-10-12' }, locale, new Date('2026-10-13T03:59:59Z'));
+
+    expect(line).toContain('data-date="2026-10-12"');
+  });
+
+  test.each(locales)('drops yesterday\'s event at Caracas midnight in %s', (locale) => {
+    expect(renderNextEvent({ ...event, date: '2026-10-12' }, locale, new Date('2026-10-13T04:00:00Z'))).toBe('');
+  });
+
+  test.each([
+    ['2026-10-13T03:59:59Z', '2026-10-12'],
+    ['2026-10-13T04:00:00Z', '2026-10-13']
+  ])('uses the Caracas calendar at %s for the shared expiry comparison', (instant, expected) => {
+    expect(caracasIsoDate(new Date(instant))).toBe(expected);
   });
 
   test.each(locales)('renders nothing without an event in %s', (locale) => {
