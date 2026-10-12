@@ -697,6 +697,7 @@ describe('prerendered home page', () => {
     writeFileSync(join(dir, 'talleres.html'), '<html lang="es"><body>Talleres</body></html>');
     writeFileSync(join(dir, 'aliados.html'), '<html lang="es"><head><meta name="robots" content="noindex"></head><body>La brecha</body></html>');
     writeFileSync(join(dir, 'funders.html'), '<html lang="en"><head><meta name="robots" content="noindex"></head><body>The gap</body></html>');
+    writeFileSync(join(dir, 'funders.es.html'), '<html lang="es"><head><meta name="robots" content="noindex"></head><body>Lo que el apoyo hace posible</body></html>');
     writeFileSync(
       join(dir, 'csp.json'),
       JSON.stringify({ styleSrc: [esHash, "'unsafe-inline'", 'https://evil.example'] })
@@ -773,15 +774,22 @@ describe('prerendered home page', () => {
     }
   });
 
-  test('serves /funders only in English even for Spanish locale requests', async () => {
-    for (const path of ['/funders', '/funders?lang=es']) {
-      const res = await pagesApp.request(path, { headers: { 'Accept-Language': 'es-VE' } });
+  test.each([
+    ['/funders', undefined, 'en'],
+    ['/funders?lang=es', 'en-US', 'es'],
+    ['/funders', 'es-VE', 'es'],
+    ['/funders?lang=en', 'es-VE', 'en'],
+    ['/funders', 'fr-FR', 'en'],
+    ['/funders?lang=fr', 'es-VE', 'es'],
+    ['/funders', 'es;q=0', 'en']
+  ])('serves %s with Accept-Language %s in %s', async (path, acceptLanguage, locale) => {
+    const res = await pagesApp.request(path!, { headers: acceptLanguage ? { 'Accept-Language': acceptLanguage } : {} });
 
-      expect(res.status).toBe(200);
-      expect(await res.text()).toContain('<html lang="en">');
-      expect(res.headers.get('content-language')).toBe('en');
-      expect(res.headers.get('cache-control')).toBe('no-cache');
-    }
+    expect(res.status).toBe(200);
+    expect(await res.text()).toContain(`<html lang="${locale}">`);
+    expect(res.headers.get('content-language')).toBe(locale);
+    expect(res.headers.get('cache-control')).toBe('no-cache');
+    expect(res.headers.get('vary')).toContain('Accept-Language');
   });
 
   test('allows inline CSS by exact hash only, never by unsafe-inline', async () => {
