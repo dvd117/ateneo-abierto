@@ -342,6 +342,7 @@ hero, before El norte, before Únete.
 - **The staircase as structure.** The three-horizon pillars sit at ascending offsets; the
   "Cómo trabajamos" principles read as steps. The mark itself is not repeated.
 - **El norte.** Venezuela from GeoJSON, the Zona en Reclamación hatched as on Venezuelan maps.
+  The map sits beside the horizons with a two-key legend.
   Library nodes are paper-lit with a soft paper halo; active edges are ochre and draw on
   scroll; planned nodes are outlined in `bone-dim`. The boundary is Natural Earth (public
   domain, 10 m admin-0, simplified), vendored into the repo at `src/data/venezuela.geo.json`
