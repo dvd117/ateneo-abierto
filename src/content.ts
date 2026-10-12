@@ -1663,7 +1663,7 @@ export const funders = {
     steps: [
       { title: 'Write to us', text: 'Tell us what you’d like to support.' },
       { title: 'We talk', text: 'In 30 minutes we see where your support fits best.' },
-      { title: 'We report back', text: 'You see what your support made possible.' }
+      { title: 'We keep you posted', text: 'You hear how the work is going.' }
     ],
     gap: {
       eyebrow: 'The problem',
@@ -1771,7 +1771,7 @@ export const funders = {
     steps: [
       { title: 'Nos escribes', text: 'Cuéntanos qué te gustaría apoyar.' },
       { title: 'Conversamos', text: 'En 30 minutos vemos dónde encaja mejor tu apoyo.' },
-      { title: 'Te contamos', text: 'Te mostramos lo que tu apoyo hizo posible.' }
+      { title: 'Te mantenemos al tanto', text: 'Sabrás cómo avanza el trabajo.' }
     ],
     gap: {
       eyebrow: 'El problema',
