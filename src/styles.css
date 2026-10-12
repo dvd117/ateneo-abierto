@@ -4335,6 +4335,52 @@ p > .link,
   color: var(--c-fg);
 }
 
+/* Native disclosures answer the first questions without another script. */
+.aliados-faq-list {
+  display: grid;
+  max-width: 52rem;
+}
+
+.aliados-faq-item {
+  padding: 1.1rem 0;
+  border-top: 1px solid var(--c-border);
+}
+
+.aliados-faq-item:last-child {
+  border-bottom: 1px solid var(--c-border);
+}
+
+.aliados-faq-item summary {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  cursor: pointer;
+  list-style: none;
+  font: 400 1.35rem/1.25 var(--font-display);
+  color: var(--c-fg);
+}
+
+.aliados-faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.aliados-faq-item summary::after {
+  content: '+';
+  color: var(--c-accent);
+  flex: none;
+}
+
+.aliados-faq-item[open] > summary::after {
+  content: '−';
+}
+
+.aliados-faq-item p {
+  margin: 0.7rem 0 0;
+  max-width: 60ch;
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
 .aliados-contact {
   background-color: var(--c-bg-deep);
 }

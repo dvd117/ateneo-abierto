@@ -452,7 +452,8 @@ function chaptersForAliados() {
     { number: 'II', id: 'metodo', eyebrow: aliados.approach.eyebrow },
     { number: 'III', id: 'camino', eyebrow: aliados.formats.eyebrow },
     { number: 'IV', id: 'norte', eyebrow: aliados.vision.eyebrow },
-    { number: 'V', id: 'tu-lugar', eyebrow: aliados.roles.eyebrow }
+    { number: 'V', id: 'tu-lugar', eyebrow: aliados.roles.eyebrow },
+    { number: 'VI', id: 'preguntas', eyebrow: aliados.faq.eyebrow }
   ];
 }
 
@@ -1195,7 +1196,7 @@ export function renderPage(
 /** The partner briefing shares the site's frame, but is not a door or a locale variant. */
 export function renderAliadosPage(): string {
   const page = copy.es;
-  const [gap, approach, formats, vision, roles] = chaptersForAliados();
+  const [gap, approach, formats, vision, roles, faq] = chaptersForAliados();
   const headline = aliados.titleLines.map((line) =>
     `<span class="hero-line"><span class="hero-line-in">${line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)}</span></span>`
   ).join(' ');
@@ -1250,6 +1251,10 @@ export function renderAliadosPage(): string {
         </div>
         <div class="aliados-roles-give" data-reveal><p><strong>${inline(aliados.roles.give.label)}:</strong> ${inline(aliados.roles.give.text)}</p></div>
         <p class="aliados-roles-closing" data-reveal>${inline(aliados.roles.closing)}</p>
+      </div></section>
+      <section class="sec chapter aliados-faq" id="${faq.id}" aria-labelledby="aliados-faq-title"><div class="shell">
+        ${renderChapter({ ...faq, id: 'aliados-faq-title', title: inline(aliados.faq.title) })}
+        <div class="aliados-faq-list">${aliados.faq.items.map((item, index) => `<details class="aliados-faq-item"${index < 2 ? ' open' : ''}><summary>${inline(item.q)}</summary><p>${inline(item.a)}</p></details>`).join('')}</div>
       </div></section>
       <section class="sec aliados-contact" id="conversemos" aria-labelledby="aliados-contact-title"><div class="shell aliados-contact-grid">
         <div data-reveal><h2 class="display join-title" id="aliados-contact-title">${inline(aliados.contact.title)}</h2><p class="lead join-lead">${inline(aliados.contact.line)}</p><a class="button button--fill" href="mailto:ateneo@aragort.com">${inline(aliados.contact.button)}</a></div>
