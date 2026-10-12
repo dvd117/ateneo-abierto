@@ -4104,25 +4104,6 @@ p > .link,
   color: var(--c-fg-2);
 }
 
-.aliados-role-grid {
-  display: grid;
-  gap: var(--gap-md);
-}
-
-.aliados-role-grid .door {
-  margin: 0;
-}
-
-.aliados-role h3 {
-  font: var(--t-h2);
-  color: var(--c-fg);
-}
-
-.aliados-role p {
-  font: var(--t-body);
-  color: var(--c-fg-soft);
-}
-
 .aliados-approach-note {
   max-width: 68ch;
   margin-top: var(--gap-md);
@@ -4264,6 +4245,72 @@ p > .link,
   text-wrap: balance;
 }
 
+/* Each ally can compare the effort, what they give and what comes back. */
+.aliados-role-head {
+  display: none;
+}
+
+.aliados-role-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.aliados-role-row {
+  display: grid;
+  gap: 0.5rem;
+  padding: var(--gap-md) 0;
+  border-top: 1px solid var(--c-border);
+}
+
+.aliados-role-row h3 {
+  margin: 0;
+  font: 400 1.6rem/1.1 var(--font-display);
+  color: var(--c-fg);
+}
+
+.aliados-role-effort {
+  display: block;
+  margin-top: 0.45rem;
+  font: var(--t-small);
+  color: var(--c-fg-3);
+}
+
+.aliados-role-gives,
+.aliados-role-gets {
+  margin: 0;
+}
+
+.aliados-role-gives {
+  color: var(--c-fg-soft);
+}
+
+.aliados-role-gets {
+  color: var(--c-fg);
+}
+
+.aliados-pill {
+  display: inline-block;
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  padding: 0.35rem 0.7rem;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--c-fg);
+  color: var(--c-fg);
+}
+
+.aliados-pill--fill {
+  background: var(--c-fg-soft);
+  border-color: var(--c-fg-soft);
+  color: var(--c-bg);
+}
+
+.aliados-role-row .aliados-pill {
+  margin-right: 0.5rem;
+  vertical-align: 0.1em;
+}
+
 .aliados-roles-give {
   max-width: 68ch;
   margin-top: var(--gap-lg);
@@ -4323,8 +4370,7 @@ p > .link,
 }
 
 @media (min-width: 561px) {
-  .aliados-vision-grid,
-  .aliados-role-grid {
+  .aliados-vision-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -4412,8 +4458,43 @@ p > .link,
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .aliados-role-grid {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+  .aliados-role-table {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 4.5fr) minmax(0, 4.5fr);
+    column-gap: var(--gap-lg);
+  }
+
+  .aliados-role-head,
+  .aliados-role-row {
+    display: grid;
+    grid-column: 1 / -1;
+    grid-template-columns: subgrid;
+    align-items: baseline;
+    column-gap: var(--gap-lg);
+  }
+
+  .aliados-role-list {
+    display: contents;
+  }
+
+  .aliados-role-head {
+    padding-bottom: var(--gap-sm);
+  }
+
+  .aliados-role-head .aliados-pill {
+    justify-self: start;
+  }
+
+  /* The head labels are enough visually, but every row keeps its own meaning. */
+  .aliados-role-row .aliados-pill {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 }
 
