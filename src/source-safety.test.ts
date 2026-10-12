@@ -233,7 +233,13 @@ describe('hero motion and first paint', () => {
     expect(hero).toContain('visibility: hidden');
     expect(hero).toContain('hero-load-in 220ms');
     expect(hero).toContain('360ms');
-    expect(hero).toMatch(/\.hero:focus-within[\s\S]*visibility: visible/);
+    const focusRule = hero.match(/([^{}]*\.hero:focus-within[^{}]*)\{([^{}]*)\}/);
+    expect(focusRule?.[1].trim().split(/,\s*/)).toEqual([
+      'html.motion-ok .hero:focus-within .hero-copy',
+      'html.motion-ok .hero:focus-within .agent-figure'
+    ]);
+    expect(focusRule?.[2]).toContain('visibility: visible');
+    expect(hero).not.toContain('.hero:focus-within .hero ');
     expect(hero).not.toContain('line-rise');
     expect(hero).not.toContain('animation-timeline: --hero');
   });
