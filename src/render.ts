@@ -333,10 +333,13 @@ function renderAgentWindow(page: PageCopy, heroInput: HeroInput): string {
   `;
 }
 
-/** A date as `YYYY-MM-DD` in the local calendar, to compare with an event's ISO date. */
-export function localIsoDate(now: Date): string {
-  const pad = (n: number) => String(n).padStart(2, '0');
-  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+/** A date as `YYYY-MM-DD` on the Caracas calendar, for build and browser expiry. */
+export function caracasIsoDate(now: Date): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'America/Caracas', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).formatToParts(now);
+
+  return ['year', 'month', 'day'].map((type) => parts.find((part) => part.type === type)!.value).join('-');
 }
 
 /**
@@ -345,7 +348,7 @@ export function localIsoDate(now: Date): string {
  * passed. `data-date` lets main.ts drop a line that went stale after the build.
  */
 export function renderNextEvent(event: NextEvent | null, locale: Locale, now: Date = new Date()): string {
-  if (!event || !/^\d{4}-\d{2}-\d{2}$/.test(event.date) || event.date < localIsoDate(now)) {
+  if (!event || !/^\d{4}-\d{2}-\d{2}$/.test(event.date) || event.date < caracasIsoDate(now)) {
     return '';
   }
 
