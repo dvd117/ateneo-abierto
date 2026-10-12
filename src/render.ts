@@ -935,7 +935,6 @@ function renderForm(page: PageCopy, locale: Locale): string {
           ${inline(form.allies)}
           <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
         </p>
-        <p class="join-voice">${inline(page.voice)}</p>
       </div>
 
       <form class="join-form" data-join novalidate>
@@ -994,6 +993,7 @@ function renderForm(page: PageCopy, locale: Locale): string {
 
         <p class="join-status" role="status" data-join-status></p>
       </form>
+      <p class="join-voice">${inline(page.voice)}</p>
       </div>
     </section>
   `;
