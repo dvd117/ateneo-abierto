@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { copy } from './content';
-import { renderNextEvent, renderPage } from './render';
+import { renderAllies, renderNextEvent, renderPage } from './render';
 
 const locales = ['es', 'en'] as const;
 const chapterIds = ['cambio', 'programa', 'norte', 'principios', 'charla', 'unete'];
@@ -85,5 +85,26 @@ describe('the next date under the call to action', () => {
     expect(renderNextEvent(null, locale, now)).toBe('');
     expect(copy[locale].nextEvent).toBeNull();
     expect(renderPage(locale)).not.toContain('next-date');
+  });
+});
+
+describe('the allies line under the talk', () => {
+  test('renders two or more names, without links, as one list', () => {
+    const line = renderAllies({ label: 'Con el apoyo de', names: ['Uno', 'Dos & Tres'] });
+
+    expect(line).toContain('<p class="talk-allies-label">Con el apoyo de</p>');
+    expect(line).toContain('<ul class="talk-allies-names"><li>Uno</li><li>Dos &amp; Tres</li></ul>');
+    expect(line).not.toContain('<a ');
+  });
+
+  test('renders nothing with fewer than two names or none at all', () => {
+    expect(renderAllies(null)).toBe('');
+    expect(renderAllies({ label: 'Con el apoyo de', names: [] })).toBe('');
+    expect(renderAllies({ label: 'Con el apoyo de', names: ['Uno'] })).toBe('');
+  });
+
+  test.each(locales)('ships empty, so the talk carries no allies line in %s', (locale) => {
+    expect(copy[locale].talk.allies).toBeNull();
+    expect(renderPage(locale)).not.toContain('talk-allies');
   });
 });

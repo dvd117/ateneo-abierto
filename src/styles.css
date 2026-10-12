@@ -3468,6 +3468,39 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   margin-top: 0.2rem;
 }
 
+/* Who stands with the project, when David names them: one ruled line under
+   the talk, the names in the serif with room between them. */
+.talk-side {
+  min-width: 0;
+}
+
+.talk-allies {
+  margin-top: var(--gap-md);
+  padding-top: var(--gap-sm);
+  border-top: 1px solid var(--c-border);
+}
+
+.talk-allies-label {
+  margin: 0;
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-fg-3);
+}
+
+.talk-allies-names {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 2rem;
+  margin: 0.6rem 0 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  line-height: 1.3;
+  color: var(--c-fg);
+}
+
 /* ---------- únete ----------
    One door, four fields. The form is the page's one place that asks for
    something, so it stays narrow and quiet: labels in the interface voice,
