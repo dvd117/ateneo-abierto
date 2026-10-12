@@ -365,6 +365,7 @@ describe('landing page copy', () => {
       const { map } = copy[locale].north;
 
       expect(map.nodes.length).toBeGreaterThanOrEqual(6);
+      expect(map.edges.length).toBeGreaterThan(0);
 
       for (const node of map.nodes) {
         // Inside the country's bounding box, so a node can never land at sea.
@@ -388,6 +389,8 @@ describe('landing page copy', () => {
       expect(map.caption).toMatch(/no sedes confirmadas|not confirmed sites/i);
       expect(map.alt).toMatch(/no sedes confirmadas|not confirmed sites/i);
     }
+
+    expect(copy.en.north.map.edges).toEqual(copy.es.north.map.edges);
 
     // Eight cities are lit on the map, the same in both languages, and the
     // map adds only planned ones beyond them.
