@@ -355,13 +355,16 @@ still never loops:
 
 - **Functional**, as before: a step ticking, a file appearing, a map edge drawing, a node
   lighting. `duration-step` paces the agent window; `duration-draw` paces the map edges.
-- **Entrances**: the hero headline rises line by line on load. On the homepage, chapter numerals
-  drift and masked titles rise with the view timeline; the wide hero pins for 200svh, while the
-  phone keeps a content-sized pinned stage before its network returns to normal flow. The agent
-  joins the title on wide screens and stages into the phone view. Keyboard focus settles the hero
-  into its readable grid. The north map stays in normal flow as its edges draw on entry. The door
-  row and dialog share a pointer-only view transition. These additions are guarded by
-  `@supports (animation-timeline: view())` and settle to a static page under reduced motion.
+- **Entrances**: the hero headline is static. On desktop, the copy and agent window come in
+  after it with a 220 ms `hero-load-in` after a 360 ms delay; keyboard focus settles both
+  immediately. The hero stays in normal flow, with its content visible together on phones.
+  Chapter titles stay static. On the homepage, chapter numerals drift with the view timeline
+  on desktop, never on phones or when a numeral sits on its own line. Only that drift is guarded
+  by `@supports (animation-timeline: view())`. The north map stays in normal flow as its edges
+  draw once on entry. The door row and dialog titles share a pointer-only view transition when
+  the API is available; keyboard activation opens the dialog without animation. Under reduced
+  motion, the hero and numerals stay static, the map is already drawn, and dialogs open without
+  entrance animations or view transitions.
 - **Scroll-driven**: *la vibración*, the page's signature, after Carlos Cruz-Diez's
   additive-colour method: one remaining continuous field of vertical stripes (pitch 6) in which the
   widths of ochre, dark ochre and bone drift on slow waves along the band, so the colour mixed
