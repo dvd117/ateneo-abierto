@@ -1209,6 +1209,7 @@ export function renderAliadosPage(): string {
           <p class="eyebrow">${inline(aliados.eyebrow)}</p>
           <h1 class="display hero-title" id="hero-title">${headline}</h1>
           <p class="lead aliados-lead">${inline(aliados.lead)}</p>
+          <p class="aliados-audience"><span class="aliados-audience-label">${inline(aliados.audience.label)}</span> ${inline(aliados.audience.text)}</p>
           <div class="hero-actions"><a class="button button--fill" href="#conversemos">${inline(aliados.contact.title)}</a></div>
         </div>
         <div class="aliados-talk-column">${renderTalkFigure(page)}<p class="aliados-talk-note">${inline(aliados.respaldo.body)}</p><p class="aliados-talk-caption">${inline(aliados.respaldo.caption)}</p></div>
