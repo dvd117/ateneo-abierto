@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'vitest';
 import { copy } from './content';
-import { renderPage } from './render';
+import { renderNextEvent, renderPage } from './render';
 
 const locales = ['es', 'en'] as const;
 const chapterIds = ['cambio', 'programa', 'norte', 'principios', 'charla', 'unete'];
@@ -59,5 +59,31 @@ describe('foundation sketch publication structure', () => {
     expect(poster).toContain(`alt="${copy[locale].talk.posterAlt}"`);
     expect(poster).toContain('width="1280" height="720"');
     expect(poster).toContain('loading="lazy" decoding="async"');
+  });
+});
+
+describe('the next date under the call to action', () => {
+  const now = new Date(2026, 9, 12, 12);
+  const event = { label: 'Próxima demo abierta', date: '2026-11-05', time: '6:30 pm', city: 'Caracas', venue: 'La Biblioteca' };
+
+  test.each(locales)('renders a future date as one line of the given fields in %s', (locale) => {
+    const line = renderNextEvent(event, locale, now);
+    const when = new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })
+      .format(new Date(Date.UTC(2026, 10, 5)));
+
+    expect(line).toBe(
+      `<p class="next-date" data-next-date data-date="2026-11-05"><span class="next-date-label">Próxima demo abierta</span> · <span class="next-date-when">${when}</span> · Caracas · La Biblioteca · 6:30 pm</p>`
+    );
+  });
+
+  test.each(locales)('keeps the line on the day itself and drops it the day after in %s', (locale) => {
+    expect(renderNextEvent({ ...event, date: '2026-10-12' }, locale, now)).toContain('data-date="2026-10-12"');
+    expect(renderNextEvent({ ...event, date: '2026-10-11' }, locale, now)).toBe('');
+  });
+
+  test.each(locales)('renders nothing without an event in %s', (locale) => {
+    expect(renderNextEvent(null, locale, now)).toBe('');
+    expect(copy[locale].nextEvent).toBeNull();
+    expect(renderPage(locale)).not.toContain('next-date');
   });
 });
