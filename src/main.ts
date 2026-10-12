@@ -2,7 +2,7 @@ import { copy, DEEP_LINK_ROUTES, HERO_INPUT, type DeepLinkRoute, type HeroInput,
 import { detectLocale, readSavedLocale, saveLocale, updateUrlLocale, type Locale } from './locale';
 import { drawBand, initBands, initProgressRail, initReveal } from './reveal';
 import { createSubscribeHandler, mailerliteProvider } from './subscribe';
-import { pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
+import { localIsoDate, pageMeta, renderPage, renderThread, TALK_VIDEO_ID } from './render';
 import type { ScenePlayer } from './scene';
 import './styles.css';
 
@@ -734,6 +734,13 @@ function bindDialogs(): void {
 }
 
 function bindEvents(page: PageCopy): void {
+  // The page is prerendered: a next date that has passed since the build goes.
+  root.querySelectorAll<HTMLElement>('[data-next-date]').forEach((line) => {
+    if ((line.dataset.date ?? '') < localIsoDate(new Date())) {
+      line.remove();
+    }
+  });
+
   root.querySelectorAll<HTMLButtonElement>('[data-locale]').forEach((button) => {
     button.addEventListener('click', () => {
       const locale = button.dataset.locale;

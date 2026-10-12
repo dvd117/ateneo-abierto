@@ -391,6 +391,22 @@ export type FormCopy = {
   };
 };
 
+/**
+ * The next open date, as one line under the hero's call to action. Every
+ * field is David's own words; the page adds only the date's formatting and
+ * the separators. A date that has passed is not shown.
+ */
+export type NextEvent = {
+  /** e.g. "Próxima demo abierta". */
+  label: string;
+  /** ISO `YYYY-MM-DD`. */
+  date: string;
+  /** Free text, e.g. "6:30 pm". */
+  time: string;
+  city: string;
+  venue: string;
+};
+
 export type PageCopy = {
   languageLabel: string;
   languageSwitchTo: {
@@ -424,6 +440,8 @@ export type PageCopy = {
      */
     windowCaption: string;
   };
+  /** The next open date under the call to action, or null for none. */
+  nextEvent: NextEvent | null;
   agent: AgentChrome;
   scenes: Scene[];
   shift: ShiftCopy;
@@ -489,6 +507,8 @@ export const copy: Record<Locale, PageCopy> = {
       windowCaption:
         'Elige otra tarea en la lista, o toca «Ver por dentro» para ver lo que el agente hace en tu computadora. Es una demostración local: no se conecta a nada y las cifras son de ejemplo.'
     },
+    // David: for a date under the hero, write { label, date: 'YYYY-MM-DD', time, city, venue } here.
+    nextEvent: null,
     agent: {
       windowLabel: 'Ejemplo de un agente trabajando',
       newTask: 'Nueva tarea',
@@ -1005,6 +1025,8 @@ export const copy: Record<Locale, PageCopy> = {
       windowCaption:
         'Pick another task from the list, or press “Show what it runs” to see what the agent does on your computer. This is a local demo: it connects to nothing, and the figures are examples.'
     },
+    // David: the same in English, { label, date: 'YYYY-MM-DD', time, city, venue }, or null.
+    nextEvent: null,
     agent: {
       windowLabel: 'An example of an agent at work',
       newTask: 'New task',
