@@ -1,4 +1,4 @@
-import { aliados, copy, HERO_INPUT, LICENCE, REPO, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
+import { aliados, copy, HERO_INPUT, LICENCE, REPO, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type NextEvent, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
@@ -333,7 +333,35 @@ function renderAgentWindow(page: PageCopy, heroInput: HeroInput): string {
   `;
 }
 
-function renderHero(page: PageCopy, heroInput: HeroInput): string {
+/** A date as `YYYY-MM-DD` in the local calendar, to compare with an event's ISO date. */
+export function localIsoDate(now: Date): string {
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+}
+
+/**
+ * The next open date, one quiet line under the call to action: only David's
+ * fields and the separators. Nothing when there is no event or its date has
+ * passed. `data-date` lets main.ts drop a line that went stale after the build.
+ */
+export function renderNextEvent(event: NextEvent | null, locale: Locale, now: Date = new Date()): string {
+  if (!event || !/^\d{4}-\d{2}-\d{2}$/.test(event.date) || event.date < localIsoDate(now)) {
+    return '';
+  }
+
+  const [year, month, day] = event.date.split('-').map(Number);
+  const when = new Intl.DateTimeFormat(locale, { weekday: 'short', day: 'numeric', month: 'short', timeZone: 'UTC' })
+    .format(new Date(Date.UTC(year, month - 1, day)));
+  const parts = [
+    `<span class="next-date-label">${inline(event.label)}</span>`,
+    `<span class="next-date-when">${inline(when)}</span>`,
+    ...[event.city, event.venue, event.time].filter((text) => text.trim() !== '').map((text) => inline(text))
+  ];
+
+  return `<p class="next-date" data-next-date data-date="${event.date}">${parts.join(' · ')}</p>`;
+}
+
+function renderHero(page: PageCopy, heroInput: HeroInput, locale: Locale): string {
   // Each line of the headline is its own block, so each sits on one line at
   // desktop sizes and rises on its own when the page opens.
   const headline = page.hero.titleLines
@@ -357,6 +385,7 @@ function renderHero(page: PageCopy, heroInput: HeroInput): string {
               <a class="button button--fill" href="#unete">${inline(page.hero.primaryCta)}</a>
               <p class="hero-byline">${inline(page.hero.byline)} · <a class="link" href="#charla">${inline(page.hero.bylineLink)} <span aria-hidden="true">&darr;</span></a></p>
             </div>
+            ${renderNextEvent(page.nextEvent, locale)}
           </div>
           ${renderAgentWindow(page, heroInput)}
         </div>
@@ -1100,7 +1129,7 @@ export function renderPage(
     ${renderPositions(page)}
     ${renderHeader(page, locale)}
     <main id="contenido">
-      ${renderHero(page, heroInput)}
+      ${renderHero(page, heroInput, locale)}
       ${renderIndex(page)}
       ${renderShift(page)}
       ${renderDoors(page)}
