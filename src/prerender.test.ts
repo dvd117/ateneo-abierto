@@ -52,16 +52,15 @@ function stringLeaves(value: unknown): string[] {
 }
 
 describe('funders prerender', () => {
-  test('renders every F1 string verbatim, reserving later chapters and confirmation for their own turn', () => {
+  test('renders every static funder string verbatim, keeping the confirmation click-only', () => {
     const html = fillTemplate(template, 'en', undefined, 'funders');
-    const { now, support, ...first } = funders;
-    const strings = [...new Set(stringLeaves(first))].filter((text) => text !== funders.contact.share.done);
+    const visible = [...new Set(stringLeaves(funders))].filter((text) => !text.startsWith('/'));
+    const strings = visible.filter((text) => text !== funders.contact.share.done);
 
-    expect(strings).toHaveLength(69);
+    expect(visible).toHaveLength(85);
+    expect(strings).toHaveLength(84);
     for (const text of strings) expect(html).toContain(text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'));
     expect(html).not.toContain(funders.contact.share.done);
-    expect(html).not.toContain(now.title);
-    expect(html).not.toContain(support.title);
     expect(stringLeaves(funders).join('')).not.toMatch(/[–—]/);
   });
 
@@ -94,18 +93,82 @@ describe('funders prerender', () => {
     expect(html).toContain(copy.en.north.map.alt);
   });
 
-  test('orders four chapter destinations and joins at the English contact block', () => {
+  test('orders six chapter destinations and joins at the English contact block', () => {
     const html = fillTemplate(template, 'en', undefined, 'funders');
     const links = [...html.matchAll(/data-chapter-link href="#([^" ]+)"/g)];
 
-    expect(links.map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon']);
-    expect([...html.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon', 'talk']);
+    expect(links.map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon', 'now', 'support']);
+    expect([...html.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon', 'now', 'support', 'talk']);
     expect(html).toContain(`<a class="chapter-join" href="#talk">${funders.contact.title}</a>`);
-    expect(html.match(/<header class="chapter-head/g)).toHaveLength(4);
+    expect(html.match(/<header class="chapter-head/g)).toHaveLength(6);
     expect(html.match(/data-map/g)).toHaveLength(1);
     expect(html.match(/class="door aliados-format"/g)).toHaveLength(3);
     expect(readFileSync('public/sitemap.xml', 'utf8')).not.toContain('/funders');
     for (const locale of ['es', 'en'] as const) expect(renderPage(locale)).not.toContain('href="/funders"');
+  });
+
+  test('renders all twenty now and support string leaves verbatim', () => {
+    const html = fillTemplate(template, 'en', undefined, 'funders');
+    const strings = stringLeaves({ now: funders.now, support: funders.support });
+
+    expect(strings).toHaveLength(20);
+    for (const text of strings) expect(html).toContain(text);
+  });
+
+  test('keeps the landing ledger rows and reveal attributes directly in the current-status shell', () => {
+    const html = fillTemplate(template, 'en', undefined, 'funders');
+    const section = html.match(/<section class="sec chapter aliados-now" id="now" aria-labelledby="funders-now-title">([\s\S]*?)<\/section>/)?.[1] ?? '';
+    const rows = [...section.matchAll(/<li class="hz-row" data-reveal data-reveal-delay="(\d+)">\s*<span class="hz-label">([^<]+)<\/span>\s*<span class="hz-text">([^<]+)<\/span>\s*<\/li>/g)];
+
+    expect(section).not.toContain('north-body');
+    expect(section).toMatch(/<\/header>\s*<ol class="hz">/);
+    expect(section).toContain('<ol class="hz">');
+    expect(rows).toHaveLength(4);
+    expect(rows.map((row) => ({ label: row[2], text: row[3] }))).toEqual(funders.now.rows);
+    expect(rows.map((row) => row[1])).toEqual(['0', '120', '240', '360']);
+    expect(section).toContain('<span class="chapter-n" aria-hidden="true">V</span>');
+    expect(section).toContain(`<h2 class="section-title chapter-title" id="funders-now-title"><span class="mask"><span>${funders.now.title}</span></span></h2>`);
+  });
+
+  test('flattens all four status rows on desktop without changing the landing staircase', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
+    const desktop = partner.slice(partner.indexOf('@media (min-width: 861px)'));
+
+    expect(desktop).toMatch(/\.aliados-now \.hz-row:nth-child\(n\)\s*\{\s*margin-left: 0;\s*\}/);
+    expect(styles).toMatch(/\n  \.hz-row:nth-child\(2\)\s*\{\s*margin-left: 1\.25rem;/);
+    expect(styles).toMatch(/\n  \.hz-row:nth-child\(3\)\s*\{\s*margin-left: 2\.5rem;/);
+  });
+
+  test('renders four support items in content order under the sixth chapter', () => {
+    const html = fillTemplate(template, 'en', undefined, 'funders');
+    const section = html.match(/<section class="sec chapter aliados-support" id="support" aria-labelledby="funders-support-title">([\s\S]*?)<\/section>/)?.[1] ?? '';
+    const items = [...section.matchAll(/<li class="aliados-support-item"><h3>([^<]+)<\/h3><p>([^<]+)<\/p><\/li>/g)];
+
+    expect(section).toContain('<ol class="aliados-support-list">');
+    expect(items).toHaveLength(4);
+    expect(items.map((item) => ({ title: item[1], body: item[2] }))).toEqual(funders.support.items);
+    expect(section).toContain('<span class="chapter-n" aria-hidden="true">VI</span>');
+    expect(section).toContain(`<h2 class="section-title chapter-title" id="funders-support-title"><span class="mask"><span>${funders.support.title}</span></span></h2>`);
+  });
+
+  test('gives support rows the FAQ grammar and a two-column desktop layout without motion', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
+    const desktop = partner.slice(partner.indexOf('@media (min-width: 861px)'));
+    const support = [...partner.matchAll(/([^{}]+)\{([^{}]*)\}/g)]
+      .filter(([, selector]) => selector.includes('.aliados-support'))
+      .map((rule) => rule[0]).join('\n');
+
+    expect(partner).toMatch(/\.aliados-support-list\s*\{[^}]*margin: 0;[^}]*padding: 0;[^}]*list-style: none;/);
+    expect(partner).toMatch(/\.aliados-support-item\s*\{[^}]*padding: 1\.1rem 0;[^}]*border-top: 1px solid var\(--c-border\);/);
+    expect(partner).toMatch(/\.aliados-support-item:last-child\s*\{[^}]*border-bottom: 1px solid var\(--c-border\);/);
+    expect(partner).toMatch(/\.aliados-support-item h3\s*\{[^}]*margin: 0;[^}]*font: 400 1\.35rem\/1\.25 var\(--font-display\);[^}]*color: var\(--c-fg\);/);
+    expect(partner).toMatch(/\.aliados-support-item p\s*\{[^}]*margin: 0\.5rem 0 0;[^}]*max-width: 60ch;[^}]*font: var\(--t-body\);[^}]*color: var\(--c-fg-soft\);/);
+    expect(desktop).toMatch(/\.aliados-support-item\s*\{[^}]*display: grid;[^}]*grid-template-columns: minmax\(0, 5fr\) minmax\(0, 7fr\);[^}]*column-gap: var\(--gap-md\);[^}]*align-items: baseline;/);
+    expect(desktop).toMatch(/\.aliados-support-item p\s*\{[^}]*margin-top: 0;/);
+    expect(support).not.toMatch(/transition|animation|counter|::before|::after/);
+    expect(styles).toMatch(/\.hz-row:last-child \.hz-label\s*\{\s*color: var\(--c-accent\);/);
   });
 
   test('emits funders.html and covers every one of its inline styles in csp.json', async () => {
