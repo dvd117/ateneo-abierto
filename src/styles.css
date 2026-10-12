@@ -461,7 +461,8 @@ button {
     padding-right: calc(var(--chapter-n-size) * 0.85 + var(--gap-md));
   }
 
-  .chapter-head--inline {
+  .chapter-head--inline,
+  .chapter-head:not(:has(.chapter-lead)) {
     min-height: max(clamp(7.5rem, 9vw, 10rem), calc(var(--chapter-n-size) * 0.75 + 1rem));
   }
 
@@ -3971,9 +3972,13 @@ p > .link,
   }
 }
 
-/* The partner page changes pace only at its open and close; its chapters keep the landing's padding. */
+/* The partner page changes pace: its chapters open at the landing's padding and close with room before the next rule. */
 .sec[class*="aliados-"]:not(.chapter) {
   padding-block: clamp(3rem, 6vw, 4.75rem);
+}
+
+.sec.chapter[class*="aliados-"] {
+  padding-bottom: clamp(3rem, 6vw, 4.75rem);
 }
 
 .aliados-hero-grid {
