@@ -1244,6 +1244,7 @@ main .door[id] {
 .hero-byline {
   margin: 0;
   font: var(--t-small);
+  font-size: 0.98rem;
   color: var(--c-fg-2);
 }
 
