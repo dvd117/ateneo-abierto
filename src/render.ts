@@ -98,6 +98,14 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
   return `<button class="locale-button ${isActive ? 'is-active' : ''}" type="button" data-locale="${locale}" aria-pressed="${isActive}">${label}${describe}</button>`;
 }
 
+/** Partner locales navigate to prerendered pages instead of replacing their DOM. */
+function renderLocaleLink(page: PageCopy, current: Locale, locale: Locale): string {
+  const isActive = current === locale;
+  const describe = isActive ? '' : `<span class="visually-hidden"> · ${page.languageSwitchTo[locale]}</span>`;
+
+  return `<a class="locale-button${isActive ? ' is-active' : ''}" href="/funders?lang=${locale}"${isActive ? ' aria-current="true"' : ''}>${locale.toUpperCase()}${describe}</a>`;
+}
+
 /**
  * The sticky header keeps navigation and language controls in view. Its rail
  * fills as the visitor reads and is hidden from the tree.
@@ -117,9 +125,9 @@ function renderHeader(page: PageCopy, locale: Locale, partner?: PartnerDescripto
           ${(partner ? chaptersForPartner(partner) : chaptersFor(page)).map(({ number, id, eyebrow }) => `<a class="chapter-nav-link" data-chapter-link href="#${id}" aria-label="${inline(`${number} ${eyebrow}`)}"><span class="chapter-nav-n" aria-hidden="true">${number}</span><span class="chapter-nav-name visually-hidden">${inline(eyebrow)}</span></a>`).join('')}
           <a class="chapter-join" href="${partner ? `#${partner.contactId}` : '#unete'}">${inline(partner ? partner.content.contact.title : page.hero.primaryCta)}</a>
         </nav>
-        ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
-          ${renderLocaleButton(page, locale, 'es', 'ES')}
-          ${renderLocaleButton(page, locale, 'en', 'EN')}
+        ${partner && !partner.localeToggle ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
+          ${partner ? renderLocaleLink(page, locale, 'es') : renderLocaleButton(page, locale, 'es', 'ES')}
+          ${partner ? renderLocaleLink(page, locale, 'en') : renderLocaleButton(page, locale, 'en', 'EN')}
         </div>`}
       </div>
       <div class="progress-rail" data-progress aria-hidden="true"><span></span></div>
@@ -447,11 +455,18 @@ function chaptersFor(page: PageCopy) {
 
 /** Each unlisted briefing supplies only the parts that differ from the landing frame. */
 export const PARTNER_PAGES = {
-  aliados: { content: aliados, locale: 'es', ids: ['problema', 'metodo', 'camino', 'norte', 'tu-lugar', 'preguntas'], contactId: 'conversemos' },
-  funders: { content: funders, locale: 'en', ids: ['gap', 'method', 'path', 'horizon', 'now', 'support'], contactId: 'talk' }
+  aliados: { content: aliados, locale: 'es', locales: ['es'], localeToggle: false, ids: ['problema', 'metodo', 'camino', 'norte', 'tu-lugar', 'preguntas'], contactId: 'conversemos' },
+  funders: { content: funders.en, locale: 'en', locales: ['en', 'es'], localeToggle: true, ids: ['gap', 'method', 'path', 'horizon', 'now', 'support'], contactId: 'talk' }
 } as const;
 export type PartnerPage = keyof typeof PARTNER_PAGES;
-type PartnerDescriptor = (typeof PARTNER_PAGES)[PartnerPage];
+type PartnerDescriptor = ReturnType<typeof partnerFor>;
+
+/** The URL locale changes only the bilingual funder briefing. */
+export function partnerFor(name: PartnerPage, locale: Locale) {
+  return name === 'funders'
+    ? { ...PARTNER_PAGES.funders, content: funders[locale], locale }
+    : PARTNER_PAGES.aliados;
+}
 
 /** The partner's header and chapter heads share one ordered set of destinations. */
 function chaptersForPartner(partner: PartnerDescriptor) {
@@ -1067,9 +1082,9 @@ function renderFooter(page: PageCopy, locale: Locale, partner?: PartnerDescripto
       </div>
 ${partner ? '' : renderFooterMarks(page, locale)}
       <div class="footer-meta">
-        ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
-          ${renderLocaleButton(page, locale, 'es', 'ES')}
-          ${renderLocaleButton(page, locale, 'en', 'EN')}
+        ${partner && !partner.localeToggle ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
+          ${partner ? renderLocaleLink(page, locale, 'es') : renderLocaleButton(page, locale, 'es', 'ES')}
+          ${partner ? renderLocaleLink(page, locale, 'en') : renderLocaleButton(page, locale, 'en', 'EN')}
         </div>`}
         <p>
           ${page.footer.contactLabel}:
@@ -1204,8 +1219,8 @@ export function renderPage(
 }
 
 /** The partner briefing shares the site's frame, but is not a door or a locale variant. */
-export function renderPartnerPage(name: PartnerPage): string {
-  const partner = PARTNER_PAGES[name];
+export function renderPartnerPage(name: PartnerPage, locale: Locale): string {
+  const partner = partnerFor(name, locale);
   const briefing = partner.content;
   const page = copy[partner.locale];
   const [gap, approach, formats, vision, fifth, sixth] = chaptersForPartner(partner);

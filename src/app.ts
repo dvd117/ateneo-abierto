@@ -49,9 +49,9 @@ export function loadStyleHashes(dir: string): string[] {
 
 /**
  * The same order the browser uses in src/locale.ts: an explicit ?lang= wins,
- * then the visitor's language preferences, then Spanish.
+ * then the visitor's language preferences, then the page's default.
  */
-export function pickLocale(query: string | undefined, acceptLanguage: string | undefined): PageLocale {
+export function pickLocale(query: string | undefined, acceptLanguage: string | undefined, fallback: PageLocale = 'es'): PageLocale {
   if (query === 'es' || query === 'en') {
     return query;
   }
@@ -78,7 +78,7 @@ export function pickLocale(query: string | undefined, acceptLanguage: string | u
     }
   }
 
-  return 'es';
+  return fallback;
 }
 
 /**
@@ -209,12 +209,14 @@ app.get('/aliados', (c, next) => {
 });
 
 app.get('/funders', (c, next) => {
-  const html = readPage('funders.html');
+  const locale = pickLocale(c.req.query('lang'), c.req.header('accept-language'), 'en');
+  const html = readPage(locale === 'es' ? 'funders.es.html' : 'funders.html');
   if (html === null) {
     return next();
   }
 
-  c.header('Content-Language', 'en');
+  c.header('Content-Language', locale);
+  c.header('Vary', 'Accept-Language');
   c.header('Cache-Control', 'no-cache');
   return c.html(html);
 });
