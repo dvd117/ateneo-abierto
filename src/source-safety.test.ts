@@ -378,8 +378,8 @@ describe('the map is vendored, not fetched', () => {
     const styles = css().replace(/\/\*[\s\S]*?\*\//g, '');
     const base = styles.match(/\n\.map-key\s*\{([^}]*)\}/)?.[1] ?? '';
     const narrowDesktop = styles.match(/@media \(min-width: 861px\)\s*\{\s*\.north-body\s*\{[\s\S]*?\n\}/)?.[0] ?? '';
-    const desktop = styles.match(/@media \(min-width: 1024px\)\s*\{\s*\.north-body \.map\s*\{[\s\S]*?\n\}/)?.[0] ?? '';
-    const key = desktop.match(/\.north-body \.map-key\s*\{([^}]*)\}/)?.[1] ?? '';
+    const desktop = styles.match(/@media \(min-width: 1024px\)\s*\{\s*\.north-body \.map(?:,\s*\.aliados-vision-body \.map)?\s*\{[\s\S]*?\n\}/)?.[0] ?? '';
+    const key = desktop.match(/\.north-body \.map-key(?:,\s*\.aliados-vision-body \.map-key)?\s*\{([^}]*)\}/)?.[1] ?? '';
 
     expect(base).toMatch(/display:\s*grid;/);
     expect(base).toMatch(/gap:\s*0\.6rem;/);
@@ -389,7 +389,7 @@ describe('the map is vendored, not fetched', () => {
     expect(base).not.toMatch(/position:\s*absolute;/);
     expect(narrowDesktop).not.toContain('.map-key');
     expect(narrowDesktop).not.toMatch(/\.north-body \.map\s*\{[^}]*position:\s*relative;/);
-    expect(desktop).toMatch(/\.north-body \.map\s*\{[^}]*position:\s*relative;/);
+    expect(desktop).toMatch(/\.north-body \.map(?:,\s*\.aliados-vision-body \.map)?\s*\{[^}]*position:\s*relative;/);
     expect(key).toMatch(/position:\s*absolute;/);
     expect(key).toMatch(/left:\s*0;/);
     expect(key).toMatch(/bottom:\s*4%;/);
@@ -397,6 +397,31 @@ describe('the map is vendored, not fetched', () => {
     expect(key).toMatch(/margin:\s*0;/);
     expect(desktop).toMatch(/\.map-key \.map-legend\s*\{[^}]*flex-direction:\s*column;[^}]*gap:\s*0\.45rem;/);
     expect(styles).toMatch(/\.map-key \.map-legend,\s*\.map-key \.map-caption\s*\{\s*margin:\s*0;/);
+  });
+
+  test('pairs the partner vision list with the map while sharing the wide corner-key rules', () => {
+    const styles = css().replace(/\/\*[\s\S]*?\*\//g, '');
+    const partner = styles.slice(styles.indexOf('.sec[class*="aliados-"]'));
+
+    expect(partner).toMatch(/\.aliados-vision-body\s*\{[^}]*display: grid;[^}]*gap: var\(--gap-lg\);/);
+    expect(partner).toMatch(/@media \(min-width: 861px\)[\s\S]*?\.aliados-vision-body\s*\{[^}]*grid-template-columns: minmax\(0, 5fr\) minmax\(0, 7fr\);[^}]*gap: clamp\(2rem, 5vw, 4\.5rem\);[^}]*align-items: center;/);
+    expect(partner).toMatch(/@media \(min-width: 861px\)[\s\S]*?\.aliados-vision-grid\s*\{[^}]*grid-template-columns: minmax\(0, 1fr\);/);
+    expect(styles).toMatch(/@media \(min-width: 1024px\)\s*\{\s*\.north-body \.map,\s*\.aliados-vision-body \.map\s*\{[^}]*position: relative;/);
+    expect(styles).toMatch(/\.north-body \.map-key,\s*\.aliados-vision-body \.map-key\s*\{[^}]*position: absolute;/);
+  });
+
+  test('wires the partner map through the existing guarded lazy lighting runner', () => {
+    const main = readFileSync('src/main.ts', 'utf8');
+    const branch = main.match(/if \(root.dataset.page === 'aliados'\) \{([\s\S]*?)\} else if/)?.[1] ?? '';
+    const runner = main.match(/function bindLighting\(\): void \{([\s\S]*?)\n\}/)?.[1] ?? '';
+    const eligibility = main.match(/function motionAllowed\(\): boolean \{([\s\S]*?)\n\}/)?.[1] ?? '';
+
+    expect(branch).toContain('bindLighting();');
+    expect(runner).toMatch(/^\s*if \(!motionAllowed\(\)\) \{\s*return;/);
+    expect(runner).toContain("lightingModule ??= import('./lighting');");
+    expect(runner).toContain('playMap(map)');
+    expect(eligibility).toContain("window.matchMedia('(prefers-reduced-motion: reduce)').matches");
+    expect(eligibility).toContain('return connection?.saveData !== true;');
   });
 
   test('ships the boundary as GeoJSON in the repo, with the claim as its own feature', () => {
