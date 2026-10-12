@@ -1617,11 +1617,12 @@ export const aliados = {
     eyebrow: 'Tu lugar',
     title: 'Tu lugar en esto',
     intro: 'Si compartes esta misión, hay cuatro formas de sumarte:',
-    cards: [
-      { title: 'Espacio', body: 'Presta tu sede para una demo, un taller o una hackatón. Se convierte en punto de encuentro y recibe un público nuevo.' },
-      { title: 'Difusión', body: 'Comparte nuestras convocatorias y le das a tu comunidad acceso a una formación que no encuentra en otro lado.' },
-      { title: 'Conexiones', body: 'Preséntanos a personas y organizaciones que deberían conocernos, y acercas comunidades que se necesitan.' },
-      { title: 'Mentoría', body: 'Acompaña a un equipo durante la jornada de una hackatón, desde la tarea que elige hasta que la resuelve. Pones tu experiencia al servicio de alguien que empieza y aprendes a enseñarla.' }
+    columns: { gives: 'Pones', gets: 'Recibes' },
+    rows: [
+      { title: 'Difusión', effort: 'Unos minutos', gives: 'Compartes nuestras convocatorias con tu comunidad.', gets: 'Tu comunidad accede a una formación que no encuentra en otro lado.' },
+      { title: 'Conexiones', effort: 'Un correo', gives: 'Nos presentas a personas y organizaciones que deberían conocernos.', gets: 'Acercas comunidades que se necesitan.' },
+      { title: 'Espacio', effort: 'Dos horas y media por taller', gives: 'Prestas tu sede para una demo, un taller o una hackatón.', gets: 'Tu espacio se convierte en punto de encuentro y recibe un público nuevo.' },
+      { title: 'Mentoría', effort: 'Un día de hackatón', gives: 'Acompañas a un equipo desde la tarea que elige hasta que la resuelve.', gets: 'Pones tu experiencia al servicio de alguien que empieza y aprendes a enseñarla.' }
     ],
     give: { label: 'Nosotros ponemos', text: 'el diseño de cada actividad, la convocatoria y el acompañamiento de principio a fin. Además conectamos a tu comunidad con otras: periodistas, organizaciones y la comunidad técnica.' },
     closing: 'Si trabajas en la cultura del conocimiento, aunque la tecnología no sea lo tuyo, este proyecto también es tuyo.'
