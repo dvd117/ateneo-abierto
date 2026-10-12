@@ -3996,31 +3996,52 @@ p > .link,
   margin-top: var(--gap-lg);
 }
 
-.aliados-proposal {
+/* The partner's steps stay visible even when the landing's strip is hidden. */
+.aliados-steps-row {
+  margin-top: var(--gap-lg);
+}
+
+.aliados-steps {
+  list-style: none;
   margin: 0;
-  gap: 0;
-}
-
-.aliados-proposal-row {
-  padding-block: 1rem;
-}
-
-.aliados-proposal-row + .aliados-proposal-row {
+  padding: var(--gap-md) 0 0;
   border-top: 1px solid var(--c-border);
+  display: grid;
+  gap: var(--gap-md);
 }
 
-.aliados-proposal dt,
+.aliados-steps li {
+  display: grid;
+  align-content: start;
+  gap: 0.35rem;
+}
+
+.aliados-step-n {
+  font: italic 400 1.15rem / 1 var(--font-display);
+  color: var(--c-fg-3);
+}
+
+/* The visitor's own step carries the signal. */
+.aliados-steps li:first-child .aliados-step-n {
+  color: var(--c-accent);
+}
+
+.aliados-step-title {
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--c-fg);
+}
+
+.aliados-step-text {
+  font: var(--t-body);
+  color: var(--c-fg-2);
+}
+
 .aliados-format dt {
   font: var(--t-label);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--c-accent);
-}
-
-.aliados-proposal dd {
-  margin: 0.5rem 0 0;
-  font: var(--t-body);
-  color: var(--c-fg-soft);
 }
 
 .aliados-gap-copy {
@@ -4130,6 +4151,13 @@ p > .link,
   min-width: 0;
 }
 
+.aliados-talk-note {
+  max-width: 68ch;
+  margin-top: var(--gap-md);
+  font: var(--t-body);
+  color: var(--c-fg-2);
+}
+
 .aliados-talk-caption {
   max-width: 68ch;
   margin-top: var(--gap-md);
@@ -4137,7 +4165,7 @@ p > .link,
   color: var(--c-fg-soft);
 }
 
-.aliados-respaldo .talk-name {
+.aliados-hero .talk-name {
   display: none;
 }
 
@@ -4254,8 +4282,13 @@ p > .link,
 
 @media (min-width: 861px) {
   .aliados-hero-grid {
-    grid-template-columns: minmax(0, 7fr) minmax(0, 5fr);
+    grid-template-columns: minmax(0, 6fr) minmax(0, 6fr);
     align-items: center;
+  }
+
+  .aliados-steps {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--gap-lg);
   }
 
   .aliados-approach .shell {
