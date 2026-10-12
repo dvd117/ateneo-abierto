@@ -372,6 +372,29 @@ describe('landing page copy', () => {
       : 'These are cities we want to reach, not confirmed sites.');
   });
 
+  test.each(locales)('provides non-empty map legend keys in %s', (locale) => {
+    expect(copy[locale].north.map).toHaveProperty('legend', locale === 'es'
+      ? { lit: 'Ciudad que queremos alcanzar', planned: 'Prevista, más adelante' }
+      : { lit: 'A city we want to reach', planned: 'Planned, later' });
+  });
+
+  test.each(locales)('renders one map legend between the plot and caption in %s', (locale) => {
+    const html = renderPage(locale);
+    const figure = html.match(/<figure class="map" data-map>[\s\S]*?<\/figure>/)?.[0] ?? '';
+    const keys = locale === 'es'
+      ? ['Ciudad que queremos alcanzar', 'Prevista, más adelante']
+      : ['A city we want to reach', 'Planned, later'];
+
+    expect(html.match(/class="map-legend small"/g)).toHaveLength(1);
+    for (const key of keys) {
+      expect(html.split(key)).toHaveLength(2);
+    }
+    expect(figure).toMatch(/<\/div>\s*<ul class="map-legend small">[\s\S]*?<\/ul>\s*<figcaption class="map-caption small">/);
+    expect(figure).toContain('class="map-legend-dot" aria-hidden="true"');
+    expect(figure).toContain('class="map-legend-dot is-planned" aria-hidden="true"');
+    expect(figure).toContain(`<figcaption class="map-caption small">${copy[locale].north.map.caption}</figcaption>`);
+  });
+
   test('places the map nodes at real coordinates and claims no site', () => {
     for (const locale of locales) {
       const { map } = copy[locale].north;
