@@ -295,7 +295,7 @@ describe('build-time prerender', () => {
     expect(pageFileName('en', 'demos')).toBe('demos.en.html');
   });
 
-  test('renders the Spanish-only unlisted partner page with no alternates, wiring only the talk', () => {
+  test('renders the Spanish-only unlisted partner page with no alternates and a click-to-play talk', () => {
     const html = fillTemplate(template, 'es', undefined, true);
 
     expect(html).toContain('<html lang="es"');
@@ -495,6 +495,36 @@ describe('build-time prerender', () => {
     expect(partner).toMatch(/\.aliados-format-grid \.door\s*\{\s*margin: 0;/);
     expect(partner).toMatch(/\.aliados-format-n\s*\{[^}]*display: block;[^}]*margin-bottom: 0\.5rem;[^}]*font: italic 400 1\.4rem\/1 var\(--font-display\);[^}]*color: var\(--c-fg-3\);/);
     expect(partner).toMatch(/\.aliados-format:nth-of-type\(2\) \.aliados-format-n\s*\{[^}]*color: var\(--c-accent\);/);
+  });
+
+  test('places one finished network map after the partner vision list and before its closing', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const body = html.match(/<div class="aliados-vision-body">([\s\S]*?)<\/figure>\s*<\/div>/)?.[1] ?? '';
+
+    expect(body).toMatch(/^\s*<ul class="aliados-vision-grid">/);
+    expect(body).toMatch(/<\/ul>\s*<figure class="map" data-map>/);
+    expect(html.match(/data-map/g)).toHaveLength(1);
+    expect(body.match(/<li data-reveal>/g)).toHaveLength(7);
+    expect(body).toContain('<figcaption class="map-key">');
+    for (const text of ['Ciudad que queremos alcanzar', 'Prevista, más adelante', 'No son sedes confirmadas.', 'Zona en Reclamación']) {
+      expect(body).toContain(text);
+    }
+    expect(html).toMatch(/<\/figure>\s*<\/div>\s*<p class="aliados-vision-closing"/);
+    expect(body).not.toMatch(/is-lighting|is-drawing|style="/);
+  });
+
+  test('hashes the partner map positions once alongside the shared stylesheet', () => {
+    const inlined = inlineStylesheet(template, 'assets/index-abc123.css', readFileSync('src/styles.css', 'utf8'));
+    const partner = fillTemplate(inlined, 'es', undefined, true);
+    const blocks = [...partner.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((match) => match[1]);
+    const homePositions = renderPage('es').match(/<style>([\s\S]*?)<\/style>/)?.[1];
+
+    expect(blocks).toHaveLength(2);
+    expect(blocks[1]).toBe(homePositions);
+    expect(blocks[1]).toContain('.map-plot{aspect-ratio:520/400}');
+    expect(blocks[1].match(/\.map-city\[data-node=/g)).toHaveLength(9);
+    expect(styleHashes(partner)).toEqual(blocks.map((css) => `'sha256-${createHash('sha256').update(css, 'utf8').digest('base64')}'`));
+    expect(styleHashes(partner)).toEqual(styleHashes(fillTemplate(inlined, 'es')));
   });
 
   // David, 2026-09-29: each hero sentence fits two lines, so the partner hero
