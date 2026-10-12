@@ -3359,11 +3359,13 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 
 /* Below 1024px the map is too narrow for a corner key, so it stacks under the plot as on phones. */
 @media (min-width: 1024px) {
-  .north-body .map {
+  .north-body .map,
+  .aliados-vision-body .map {
     position: relative;
   }
 
-  .north-body .map-key {
+  .north-body .map-key,
+  .aliados-vision-body .map-key {
     position: absolute;
     left: 0;
     bottom: 4%;
@@ -4232,11 +4234,18 @@ p > .link,
   margin-top: var(--gap-md);
 }
 
+/* The list and map share the space before the section's closing statement. */
+.aliados-vision-body {
+  display: grid;
+  gap: var(--gap-lg);
+  margin-block: var(--gap-lg);
+}
+
 .aliados-vision-grid {
   display: grid;
   column-gap: clamp(2rem, 4vw, 3.5rem);
   row-gap: 0;
-  margin-block: var(--gap-lg);
+  margin: 0;
   padding: 0;
   list-style: none;
 }
@@ -4393,9 +4402,14 @@ p > .link,
     justify-self: start;
   }
 
+  .aliados-vision-body {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+
   .aliados-vision-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    max-width: 62rem;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .aliados-role-grid {
