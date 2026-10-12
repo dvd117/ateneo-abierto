@@ -1,7 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { fillTemplate, inlineStylesheet, pageFileName, styleHashes } from '../scripts/vite-prerender';
-import { aliados } from './content';
+import { aliados, copy } from './content';
 import { renderPage } from './render';
 
 /** The parts of index.html the prerender must find, in Vite's output shape. */
@@ -46,6 +46,39 @@ const template = `<!doctype html>
 </html>`;
 
 describe('build-time prerender', () => {
+  test.each(['es', 'en'] as const)('renders the six desktop chapter links without a current chapter in %s', (locale) => {
+    const html = fillTemplate(template, locale);
+    const nav = html.match(/<nav class="nav-links chapter-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
+    const links = [...nav.matchAll(/<a\b([^>]*)>([\s\S]*?)<\/a>/g)];
+    const names = locale === 'es'
+      ? ['El cambio', 'Qué hacemos', 'El norte', 'Principios', 'Escúchalo', 'Mantente al tanto']
+      : ['The shift', 'What we do', 'Where this goes', 'Principles', 'Hear it', 'Stay in the loop'];
+    const ids = ['cambio', 'programa', 'norte', 'principios', 'charla', 'unete'];
+    const numerals = ['I', 'II', 'III', 'IV', 'V', 'VI'];
+
+    expect(links).toHaveLength(7);
+    for (let index = 0; index < 6; index++) {
+      expect(links[index][1]).toContain(`href="#${ids[index]}"`);
+      expect(links[index][1]).toContain(`aria-label="${numerals[index]} ${names[index]}"`);
+      expect(links[index][2]).toContain(`aria-hidden="true">${numerals[index]}</span>`);
+      expect(links[index][2]).toContain(`>${names[index]}</span>`);
+    }
+    expect(links[6][1]).toContain('href="#unete"');
+    expect(links[6][2]).toBe(copy[locale].hero.primaryCta);
+    expect(nav).not.toContain('aria-current');
+    expect(html).not.toContain('class="progress-tick"');
+    const legacy = html.match(/<nav class="nav-links"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
+    for (const link of copy[locale].nav) expect(legacy).toContain(`<a href="${link.href}">${link.label}</a>`);
+  });
+
+  test('keeps the partner header free of chapter links', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const header = html.match(/<header class="site-header">([\s\S]*?)<\/header>/)?.[1] ?? '';
+    expect(header).not.toContain('chapter-nav');
+    expect(header).not.toContain('locale-toggle');
+    expect(header).toContain('data-progress');
+  });
+
   test('writes the finished Spanish page into the first response', () => {
     const html = fillTemplate(template, 'es');
 

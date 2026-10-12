@@ -113,6 +113,10 @@ function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
         ${partner ? '' : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
         </nav>`}
+        ${partner ? '' : `<nav class="nav-links chapter-nav" aria-label="${page.sectionsLabel}">
+          ${chaptersFor(page).map(({ number, id, eyebrow }) => `<a class="chapter-nav-link" data-chapter-link href="#${id}" aria-label="${inline(`${number} ${eyebrow}`)}"><span class="chapter-nav-n" aria-hidden="true">${number}</span><span class="chapter-nav-name visually-hidden">${inline(eyebrow)}</span></a>`).join('')}
+          <a class="chapter-join" href="#unete">${inline(page.hero.primaryCta)}</a>
+        </nav>`}
         ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
           ${renderLocaleButton(page, locale, 'en', 'EN')}
@@ -426,9 +430,9 @@ function renderChapter(options: ChapterOptions): string {
   `;
 }
 
-/** The six real destinations, gathered as a running contents index. */
-function renderIndex(page: PageCopy): string {
-  const chapters = [
+/** The same six destinations serve the header and the contents index. */
+function chaptersFor(page: PageCopy) {
+  return [
     { number: 'I', id: 'cambio', eyebrow: page.shift.eyebrow, title: titleFrom(page.shift.titleLines) },
     { number: 'II', id: 'programa', eyebrow: page.doors.eyebrow, title: inline(page.doors.title) },
     { number: 'III', id: 'norte', eyebrow: page.north.eyebrow, title: titleFrom(page.north.titleLines) },
@@ -436,12 +440,15 @@ function renderIndex(page: PageCopy): string {
     { number: 'V', id: 'charla', eyebrow: page.talk.eyebrow, title: inline(page.talk.title) },
     { number: 'VI', id: 'unete', eyebrow: page.form.eyebrow, title: inline(page.form.title) }
   ];
+}
 
+/** The six real destinations, gathered as a running contents index. */
+function renderIndex(page: PageCopy): string {
   return `
     <nav class="chapter-index shell" aria-label="${inline(page.indexLabel)}">
       <p class="eyebrow chapter-index-label">${inline(page.indexLabel)}</p>
       <ol>
-        ${chapters
+        ${chaptersFor(page)
           .map(
             ({ number, id, eyebrow, title }) => `
               <li>

@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { bandMix, initBands, initProgressRail, initReveal, screenTilt, tiltShift } from './reveal';
+import { bandMix, currentChapterIndex, initBands, initProgressRail, initReveal, screenTilt, tiltShift } from './reveal';
 
 /**
  * These run in the default node environment (the project has no jsdom), so the
@@ -113,6 +113,102 @@ describe('initReveal', () => {
 describe('initProgressRail', () => {
   test('is a no-op without a rail element', () => {
     expect(() => initProgressRail(null)()).not.toThrow();
+  });
+
+  function fixture(width = 1440, chapterCount = 6) {
+    const events = new Map<string, () => void>();
+    let frame: FrameRequestCallback | undefined;
+    const window_ = {
+      innerWidth: width, innerHeight: 800, scrollY: 0,
+      addEventListener: (name: string, callback: () => void) => events.set(name, callback),
+      removeEventListener: (name: string) => events.delete(name),
+      requestAnimationFrame: (callback: FrameRequestCallback) => { frame = callback; return 1; },
+      cancelAnimationFrame: () => { frame = undefined; }
+    };
+    const element = () => {
+      const attributes = new Map<string, string>();
+      const properties = new Map<string, string>();
+      return {
+        attributes, properties, className: '',
+        setAttribute: (key: string, value: string) => attributes.set(key, value),
+        removeAttribute: (key: string) => attributes.delete(key),
+        style: { setProperty: (key: string, value: string) => properties.set(key, value) }
+      };
+    };
+    const links = Array.from({ length: chapterCount }, (_, index) => ({ ...element(), hash: `#chapter-${index}` }));
+    const sections = links.map((_, index) => ({ getBoundingClientRect: () => ({ top: (index + 1) * 1000 - window_.scrollY }) }));
+    const ticks: ReturnType<typeof element>[] = [];
+    const header = { querySelectorAll: () => links, getBoundingClientRect: () => ({ height: 54 }) };
+    const rail = { ...element(), closest: () => header, append: (tick: ReturnType<typeof element>) => ticks.push(tick) };
+    vi.stubGlobal('window', window_);
+    vi.stubGlobal('document', {
+      documentElement: { scrollHeight: 9000 },
+      getElementById: (id: string) => sections[Number(id.replace('chapter-', ''))],
+      createElement: () => {
+        const tick = element();
+        return { ...tick, remove: () => ticks.splice(ticks.findIndex(item => item.properties === tick.properties), 1) };
+      }
+    });
+    const flush = (event: string) => {
+      events.get(event)?.();
+      const callback = frame;
+      frame = undefined;
+      callback?.(0);
+    };
+    return { rail, links, ticks, events, window_, flush };
+  }
+
+  test('aligns chapter ticks with the reading line, updates on resize and tears down', () => {
+    const { rail, links, ticks, events, window_, flush } = fixture();
+    const stop = initProgressRail(rail as unknown as HTMLElement);
+    expect(ticks).toHaveLength(6);
+    expect(links.every(link => !link.attributes.has('aria-current'))).toBe(true);
+    expect(parseFloat(ticks[0].properties.get('--chapter-position')!)).toBeCloseTo(9.09756, 4);
+
+    window_.scrollY = 2746;
+    flush('scroll');
+    expect(links.map(link => link.attributes.get('aria-current'))).toEqual([undefined, undefined, 'location', undefined, undefined, undefined]);
+    expect(Number(rail.properties.get('--progress'))).toBeCloseTo(0.334878, 5);
+    expect(parseFloat(ticks[2].properties.get('--chapter-position')!)).toBeCloseTo(33.4878, 4);
+
+    window_.innerHeight = 1000;
+    flush('resize');
+    expect(parseFloat(ticks[0].properties.get('--chapter-position')!)).toBeCloseTo(8.7, 4);
+    window_.innerWidth = 860;
+    flush('resize');
+    expect(links.every(link => !link.attributes.has('aria-current'))).toBe(true);
+    stop();
+    expect(events.size).toBe(0);
+    expect(ticks).toHaveLength(0);
+  });
+
+  test('keeps the original mobile and partner rails without chapter state', () => {
+    for (const [width, count] of [[640, 6], [860, 6], [1440, 0]]) {
+      const { rail, links, window_, flush } = fixture(width, count);
+      const stop = initProgressRail(rail as unknown as HTMLElement);
+      window_.scrollY = 4000;
+      flush('scroll');
+      expect(Number(rail.properties.get('--progress'))).toBeCloseTo(4000 / 8200);
+      expect(links.every(link => !link.attributes.has('aria-current'))).toBe(true);
+      stop();
+    }
+  });
+});
+
+describe('currentChapterIndex', () => {
+  test.each([
+    { tops: [300, 700, 1100, 1500, 1900, 2300], expected: -1 },
+    { tops: [-900, -500, 100, 600, 1000, 1400], expected: 2 },
+    { tops: [-2300, -1900, -1500, -1100, -700, 100], expected: 5 },
+    { tops: [254, 700, 1100, 1500, 1900, 2300], expected: 0 },
+    { tops: [], expected: -1 }
+  ])('selects $expected at the header-plus-quarter-viewport line', ({ tops, expected }) => {
+    expect(currentChapterIndex(tops, 54, 800)).toBe(expected);
+  });
+
+  test('uses the actual header and viewport heights', () => {
+    expect(currentChapterIndex([250, 500], 54, 600)).toBe(-1);
+    expect(currentChapterIndex([250, 500], 110, 600)).toBe(0);
   });
 });
 
