@@ -1,6 +1,6 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
-import { describe, expect, test } from 'vitest';
+import { afterEach, describe, expect, test, vi } from 'vitest';
 import { fillTemplate, inlineStylesheet, pageFileName, styleHashes } from '../scripts/vite-prerender';
 import { aliados, copy } from './content';
 import { renderPage } from './render';
@@ -344,9 +344,10 @@ describe('build-time prerender', () => {
       aliados.roles.columns.gives, aliados.roles.columns.gets,
       ...aliados.roles.rows.flatMap((row) => [row.title, row.effort, row.gives, row.gets]),
       aliados.roles.give.label, aliados.roles.give.text, aliados.roles.closing,
-      aliados.contact.title, aliados.contact.line, aliados.contact.button
+      aliados.contact.title, aliados.contact.line, aliados.contact.button,
+      aliados.contact.share.text, aliados.contact.share.button
     ];
-    expect(strings).toHaveLength(83);
+    expect(strings).toHaveLength(85);
     for (const value of strings) {
       if (copyFile) expect(copyFile).toContain(value);
       expect(html).toContain(value.replace(/"/g, '&quot;'));
@@ -580,6 +581,31 @@ describe('build-time prerender', () => {
     expect(partner).not.toMatch(/\.aliados-role(?:-grid|\s|\.)/);
   });
 
+  test('prerenders a hidden share button and empty live status after the mail invitation', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const contact = html.match(/<section class="sec aliados-contact" id="conversemos"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+
+    expect(contact).toMatch(/<div data-reveal><h2[\s\S]*?<p class="lead join-lead">[\s\S]*?<\/p><a class="button button--fill" href="mailto:ateneo@aragort.com">[\s\S]*?<\/a><\/div>\s*<div class="aliados-share">/);
+    expect(contact).toContain('<p>¿La decisión no es solo tuya? Comparte esta página con tu equipo.</p>');
+    expect(contact).toContain('<button class="button button--line aliados-share-button" type="button" data-share hidden>Copiar el enlace</button>');
+    expect(contact).toContain('<p class="aliados-share-status" role="status"></p>');
+    expect(contact).not.toContain('Enlace copiado');
+  });
+
+  test('uses the existing outline button and stacks the share block until 861px', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
+    const desktop = partner.slice(partner.indexOf('@media (min-width: 861px)'));
+
+    expect(styles).toMatch(/\.button--line\s*\{[^}]*border-color: var\(--c-border\);[^}]*color: var\(--c-fg\);/);
+    expect(partner).toMatch(/\.aliados-contact-grid \.button--fill\s*\{[^}]*margin-top: var\(--gap-md\);/);
+    expect(partner).toMatch(/\.aliados-share\s*\{[^}]*display: grid;[^}]*gap: var\(--gap-sm\);[^}]*justify-items: start;[^}]*padding-top: var\(--gap-md\);[^}]*border-top: 1px solid var\(--c-border\);/);
+    expect(partner).toMatch(/\.aliados-share-button\[hidden\]\s*\{\s*display: none;/);
+    expect(partner).toMatch(/\.aliados-share \.aliados-share-status\s*\{[^}]*font: var\(--t-small\);[^}]*color: var\(--c-fg-2\);[^}]*min-height: 1\.5em;/);
+    expect(desktop).toMatch(/\.aliados-contact-grid\s*\{[^}]*grid-template-columns: minmax\(0, 7fr\) minmax\(0, 5fr\);[^}]*gap: clamp\(2rem, 5vw, 5rem\);[^}]*align-items: end;/);
+    expect(desktop).toMatch(/\.aliados-share\s*\{[^}]*border-top: 0;[^}]*border-left: 1px solid var\(--c-border\);[^}]*padding: 0 0 0 var\(--gap-lg\);/);
+  });
+
   // David, 2026-09-29: each hero sentence fits two lines, so the partner hero
   // sets its own, smaller size instead of the landing's display scale.
   test('keeps partner hero alignment and its two-line title size', () => {
@@ -636,5 +662,72 @@ describe('build-time prerender', () => {
     const html = '<style>body{color:red}</style><noscript><style>body{color:red}</style></noscript>';
 
     expect(styleHashes(html)).toEqual(["'sha256-FcQqt3aNlV7AZnGV4zkQRVeCeJOxbMPnQSx258L803E='"]);
+  });
+});
+
+// Exercise main.ts's partner branch without adding a DOM dependency.
+describe('partner share click handler', () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  });
+
+  async function bindShare(writeText?: (text: string) => Promise<void>) {
+    vi.resetModules();
+    let onClick: (() => Promise<void>) | undefined;
+    const button = {
+      hidden: true,
+      addEventListener: (event: string, handler: () => Promise<void>) => {
+        if (event === 'click') onClick = handler;
+      }
+    };
+    const status = { textContent: '' };
+    const root = {
+      dataset: { page: 'aliados' },
+      innerHTML: 'partner content',
+      querySelector: (selector: string) => selector === '[data-share]' ? button : selector === '.aliados-share-status' ? status : null,
+      querySelectorAll: () => []
+    };
+    const location = { origin: 'https://dev.ateneo-abierto.org', search: '?lang=en', hash: '#conversemos' };
+    vi.stubGlobal('location', location);
+    vi.stubGlobal('window', { location, localStorage: { getItem: () => 'en' } });
+    vi.stubGlobal('navigator', { languages: ['en-US'], ...(writeText ? { clipboard: { writeText } } : {}) });
+    vi.stubGlobal('document', {
+      querySelector: (selector: string) => selector === '#app' ? root : null,
+      documentElement: { classList: { contains: () => false, add: () => undefined } }
+    });
+
+    await import('./main');
+    return { button, status, root, click: async () => {
+      expect(onClick).toBeDefined();
+      await onClick!();
+    } };
+  }
+
+  test('reveals the button and copies only the origin and partner path on click', async () => {
+    const written: string[] = [];
+    const { button, status, root, click } = await bindShare(async (text) => { written.push(text); });
+
+    expect(button.hidden).toBe(false);
+    expect(written).toEqual([]);
+    expect(status.textContent).toBe('');
+    expect(root.innerHTML).toBe('partner content');
+    await click();
+    expect(written).toEqual(['https://dev.ateneo-abierto.org/aliados']);
+    expect(status.textContent).toBe('Enlace copiado');
+  });
+
+  test('shows the URL for manual copying when clipboard permission is rejected', async () => {
+    const { status, click } = await bindShare(async () => { throw new Error('permission denied'); });
+
+    await click();
+    expect(status.textContent).toBe('https://dev.ateneo-abierto.org/aliados');
+  });
+
+  test('shows the URL for manual copying when clipboard is unavailable', async () => {
+    const { status, click } = await bindShare();
+
+    await click();
+    expect(status.textContent).toBe('https://dev.ateneo-abierto.org/aliados');
   });
 });

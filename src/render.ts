@@ -1252,8 +1252,8 @@ export function renderAliadosPage(): string {
         <p class="aliados-roles-closing" data-reveal>${inline(aliados.roles.closing)}</p>
       </div></section>
       <section class="sec aliados-contact" id="conversemos" aria-labelledby="aliados-contact-title"><div class="shell aliados-contact-grid">
-        <div data-reveal><h2 class="display join-title" id="aliados-contact-title">${inline(aliados.contact.title)}</h2><p class="lead join-lead">${inline(aliados.contact.line)}</p></div>
-        <a class="button button--fill" href="mailto:ateneo@aragort.com">${inline(aliados.contact.button)}</a>
+        <div data-reveal><h2 class="display join-title" id="aliados-contact-title">${inline(aliados.contact.title)}</h2><p class="lead join-lead">${inline(aliados.contact.line)}</p><a class="button button--fill" href="mailto:ateneo@aragort.com">${inline(aliados.contact.button)}</a></div>
+        <div class="aliados-share"><p>${inline(aliados.contact.share.text)}</p><button class="button button--line aliados-share-button" type="button" data-share hidden>${inline(aliados.contact.share.button)}</button><p class="aliados-share-status" role="status"></p></div>
       </div></section>
     </main>
     ${renderFooter(page, 'es', true)}

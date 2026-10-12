@@ -1630,6 +1630,11 @@ export const aliados = {
   contact: {
     title: 'Conversemos',
     line: 'Agendemos 30 minutos para conocernos y ver cómo encaja tu espacio o tu comunidad.',
-    button: 'Escríbenos a ateneo@aragort.com'
+    button: 'Escríbenos a ateneo@aragort.com',
+    share: {
+      text: '¿La decisión no es solo tuya? Comparte esta página con tu equipo.',
+      button: 'Copiar el enlace',
+      done: 'Enlace copiado'
+    }
   }
 };
