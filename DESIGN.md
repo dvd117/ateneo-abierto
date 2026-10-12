@@ -330,8 +330,10 @@ hero, before El norte, before Únete.
 
 - **Hero.** Two columns on desktop, headline left, agent window right. On mobile the window
   stacks under the headline, and the window's session list — its one control, as in the real
-  tools — becomes a swipeable row above the conversation; each sequence plays on tap. One call
-  to action in the hero (Únete), and it goes to the form.
+  tools — becomes a swipeable row above the conversation; each sequence plays on tap. From 1024 px wide,
+  a three-step strip (you direct, the agent works, you decide) closes the left column level with the
+  window; narrower screens skip it, since El cambio follows directly. One call to action in the hero
+  (Únete), and it goes to the form.
 - **Two rounds per sequence.** Each task settles in Markdown, rendered on paper, and then the
   visitor's follow-up is typed into the input, sent, and answered with the file they would
   actually send: Excel, PowerPoint, PDF or Word. The converted file arrives as a card with a
