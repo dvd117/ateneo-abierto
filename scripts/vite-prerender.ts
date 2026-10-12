@@ -7,7 +7,7 @@ type OutputAsset = Rollup.OutputAsset;
 type OutputBundle = Rollup.OutputBundle;
 import type { Locale } from '../src/locale';
 import { DEEP_LINK_ROUTES, type DeepLinkRoute } from '../src/content';
-import { pageMeta, PARTNER_PAGES, renderPartnerPage, renderPage, type PartnerPage } from '../src/render';
+import { pageMeta, partnerFor, PARTNER_PAGES, renderPartnerPage, renderPage, type PartnerPage } from '../src/render';
 
 /**
  * Build-time prerender.
@@ -62,15 +62,15 @@ export function fillTemplate(template: string, locale: Locale, route?: DeepLinkR
     throw new Error('[prerender] index.html has no <!--prerender--> placeholder');
   }
 
-  const partner = partnerName ? PARTNER_PAGES[partnerName] : undefined;
+  const partner = partnerName ? partnerFor(partnerName, locale) : undefined;
   const meta = partner ? {
     ...pageMeta(partner.locale),
     title: partner.content.meta.title,
     ogTitle: partner.content.meta.title,
     description: partner.content.meta.description,
-    canonical: `https://ateneo-abierto.org/${partnerName}`
+    canonical: `https://ateneo-abierto.org/${partnerName}${partnerName === 'funders' && locale === 'es' ? '?lang=es' : ''}`
   } : pageMeta(locale, route);
-  let html = template.replace(PLACEHOLDER, () => partnerName ? renderPartnerPage(partnerName) : renderPage(locale));
+  let html = template.replace(PLACEHOLDER, () => partnerName ? renderPartnerPage(partnerName, locale) : renderPage(locale));
 
   html = replaceOnce(html, /(<html lang=")[^"]*(")/, meta.lang, '<html lang>');
   html = replaceOnce(
@@ -210,11 +210,12 @@ export function prerender(): Plugin {
         this.emitFile({ type: 'asset', fileName, source });
       }
 
-      const partners = Object.entries(PARTNER_PAGES).map(([name, partner]) => {
-        const source = fillTemplate(template, partner.locale, undefined, name as PartnerPage);
-        this.emitFile({ type: 'asset', fileName: `${name}.html`, source });
+      const partners = Object.entries(PARTNER_PAGES).flatMap(([name, partner]) => partner.locales.map((locale) => {
+        const source = fillTemplate(template, locale, undefined, name as PartnerPage);
+        const suffix = locale === partner.locale ? '' : `.${locale}`;
+        this.emitFile({ type: 'asset', fileName: `${name}${suffix}.html`, source });
         return source;
-      });
+      }));
 
       this.emitFile({
         type: 'asset',

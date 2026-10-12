@@ -54,14 +54,14 @@ function stringLeaves(value: unknown): string[] {
 describe('funders prerender', () => {
   test('renders every static funder string verbatim, keeping the confirmation click-only', () => {
     const html = fillTemplate(template, 'en', undefined, 'funders');
-    const visible = [...new Set(stringLeaves(funders))].filter((text) => !text.startsWith('/'));
-    const strings = visible.filter((text) => text !== funders.contact.share.done);
+    const visible = [...new Set(stringLeaves(funders.en))].filter((text) => !text.startsWith('/'));
+    const strings = visible.filter((text) => text !== funders.en.contact.share.done);
 
     expect(visible).toHaveLength(85);
     expect(strings).toHaveLength(84);
     for (const text of strings) expect(html).toContain(text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'));
-    expect(html).not.toContain(funders.contact.share.done);
-    expect(stringLeaves(funders).join('')).not.toMatch(/[–—]/);
+    expect(html).not.toContain(funders.en.contact.share.done);
+    expect(stringLeaves(funders.en).join('')).not.toMatch(/[–—]/);
   });
 
   test('sets an English-only unlisted head and preserves English landing preview metadata', () => {
@@ -71,17 +71,17 @@ describe('funders prerender', () => {
     expect(html).toContain('data-locale="en" data-page="funders"');
     expect(html).toContain('<meta name="robots" content="noindex"');
     expect(html).toContain('rel="canonical" href="https://ateneo-abierto.org/funders"');
-    expect(html).toContain(`<title>${funders.meta.title}</title>`);
-    expect(html).toContain(`content="${funders.meta.description}"`);
+    expect(html).toContain(`<title>${funders.en.meta.title}</title>`);
+    expect(html).toContain(`content="${funders.en.meta.description}"`);
     expect(html).toContain('property="og:locale" content="en_US"');
     expect(html).toContain('https://ateneo-abierto.org/og-en.png');
-    expect(html).not.toMatch(/hreflang|og:locale:alternate|locale-toggle|<iframe|style="/);
+    expect(html).not.toMatch(/hreflang|og:locale:alternate|<iframe|style="/);
   });
 
   test('keeps all Spanish partner and landing strings out of the English frame', () => {
     const html = fillTemplate(template, 'en', undefined, 'funders');
     const english = new Set(stringLeaves(copy.en));
-    const spanish = [...new Set([...stringLeaves(aliados), ...stringLeaves(copy.es)])]
+    const spanish = [...new Set([...stringLeaves(aliados), ...stringLeaves(copy.es), ...stringLeaves(funders.es)])]
       .filter((text) => text.length >= 12 && !english.has(text));
 
     for (const text of spanish) {
@@ -99,7 +99,7 @@ describe('funders prerender', () => {
 
     expect(links.map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon', 'now', 'support']);
     expect([...html.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon', 'now', 'support', 'talk']);
-    expect(html).toContain(`<a class="chapter-join" href="#talk">${funders.contact.title}</a>`);
+    expect(html).toContain(`<a class="chapter-join" href="#talk">${funders.en.contact.title}</a>`);
     expect(html.match(/<header class="chapter-head/g)).toHaveLength(6);
     expect(html.match(/data-map/g)).toHaveLength(1);
     expect(html.match(/class="door aliados-format"/g)).toHaveLength(3);
@@ -109,7 +109,7 @@ describe('funders prerender', () => {
 
   test('renders all twenty now and support string leaves verbatim', () => {
     const html = fillTemplate(template, 'en', undefined, 'funders');
-    const strings = stringLeaves({ now: funders.now, support: funders.support });
+    const strings = stringLeaves({ now: funders.en.now, support: funders.en.support });
 
     expect(strings).toHaveLength(20);
     for (const text of strings) expect(html).toContain(text);
@@ -124,10 +124,10 @@ describe('funders prerender', () => {
     expect(section).toMatch(/<\/header>\s*<ol class="hz">/);
     expect(section).toContain('<ol class="hz">');
     expect(rows).toHaveLength(4);
-    expect(rows.map((row) => ({ label: row[2], text: row[3] }))).toEqual(funders.now.rows);
+    expect(rows.map((row) => ({ label: row[2], text: row[3] }))).toEqual(funders.en.now.rows);
     expect(rows.map((row) => row[1])).toEqual(['0', '120', '240', '360']);
     expect(section).toContain('<span class="chapter-n" aria-hidden="true">V</span>');
-    expect(section).toContain(`<h2 class="section-title chapter-title" id="funders-now-title"><span class="mask"><span>${funders.now.title}</span></span></h2>`);
+    expect(section).toContain(`<h2 class="section-title chapter-title" id="funders-now-title"><span class="mask"><span>${funders.en.now.title}</span></span></h2>`);
   });
 
   test('flattens all four status rows on desktop without changing the landing staircase', () => {
@@ -147,9 +147,9 @@ describe('funders prerender', () => {
 
     expect(section).toContain('<ol class="aliados-support-list">');
     expect(items).toHaveLength(4);
-    expect(items.map((item) => ({ title: item[1], body: item[2] }))).toEqual(funders.support.items);
+    expect(items.map((item) => ({ title: item[1], body: item[2] }))).toEqual(funders.en.support.items);
     expect(section).toContain('<span class="chapter-n" aria-hidden="true">VI</span>');
-    expect(section).toContain(`<h2 class="section-title chapter-title" id="funders-support-title"><span class="mask"><span>${funders.support.title}</span></span></h2>`);
+    expect(section).toContain(`<h2 class="section-title chapter-title" id="funders-support-title"><span class="mask"><span>${funders.en.support.title}</span></span></h2>`);
   });
 
   test('gives support rows the FAQ grammar and a two-column desktop layout without motion', () => {
@@ -171,7 +171,7 @@ describe('funders prerender', () => {
     expect(styles).toMatch(/\.hz-row:last-child \.hz-label\s*\{\s*color: var\(--c-accent\);/);
   });
 
-  test('emits funders.html and covers every one of its inline styles in csp.json', async () => {
+  test('emits both funder locales and covers every inline style in csp.json', async () => {
     const emitted: { fileName: string; source: string }[] = [];
     const plugin = prerender();
     const hook = plugin.generateBundle!;
@@ -181,14 +181,72 @@ describe('funders prerender', () => {
       'assets/index-abc123.css': { type: 'asset', fileName: 'assets/index-abc123.css', source: readFileSync('src/styles.css', 'utf8') }
     };
     await generate.call({ emitFile: (asset: unknown) => emitted.push(asset as typeof emitted[number]), error: (message: string) => { throw new Error(message); } } as never, {} as never, bundle as never, false);
-    const html = emitted.find((asset) => asset.fileName === 'funders.html')?.source;
-
-    expect(html).toBeDefined();
-    expect(html).toContain('data-page="funders"');
     const hashes = JSON.parse(emitted.find((asset) => asset.fileName === 'csp.json')!.source).styleSrc;
-    const blocks = [...html!.matchAll(/<style>([\s\S]*?)<\/style>/g)];
-    expect(blocks.length).toBeGreaterThan(1);
-    for (const [, css] of blocks) expect(hashes).toContain(`'sha256-${createHash('sha256').update(css).digest('base64')}'`);
+    for (const fileName of ['funders.html', 'funders.es.html']) {
+      const html = emitted.find((asset) => asset.fileName === fileName)?.source;
+      expect(html).toBeDefined();
+      expect(html).toContain('data-page="funders"');
+      const blocks = [...html!.matchAll(/<style>([\s\S]*?)<\/style>/g)];
+      expect(blocks.length).toBeGreaterThan(1);
+      for (const [, css] of blocks) expect(hashes).toContain(`'sha256-${createHash('sha256').update(css).digest('base64')}'`);
+    }
+  });
+});
+
+describe('Spanish funders prerender', () => {
+  test('renders all Spanish strings verbatim except the click-only share confirmation', () => {
+    const html = fillTemplate(template, 'es', undefined, 'funders');
+    const strings = [...new Set(stringLeaves(funders.es))];
+
+    expect(strings).toHaveLength(88);
+    for (const text of strings.filter((text) => text !== funders.es.contact.share.done)) {
+      expect(html).toContain(text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'));
+    }
+    expect(html).not.toContain(funders.es.contact.share.done);
+    expect(stringLeaves(funders.es).join('')).not.toMatch(/[–—]/);
+  });
+
+  test('sets Spanish metadata and preserves the unlisted partner identity', () => {
+    const html = fillTemplate(template, 'es', undefined, 'funders');
+
+    expect(html).toContain('<html lang="es">');
+    expect(html).toContain('data-locale="es" data-page="funders"');
+    expect(html).toContain('<meta name="robots" content="noindex"');
+    expect(html).toContain('rel="canonical" href="https://ateneo-abierto.org/funders?lang=es"');
+    expect(html).toContain(`<title>${funders.es.meta.title}</title>`);
+    expect(html).toContain(`content="${funders.es.meta.description}"`);
+    expect(html).toContain('property="og:locale" content="es_VE"');
+    expect(html).toContain('https://ateneo-abierto.org/og.png');
+    expect(html).not.toMatch(/hreflang|<iframe|style="/);
+  });
+
+  test('keeps English funder copy out of the Spanish page', () => {
+    const html = fillTemplate(template, 'es', undefined, 'funders');
+    const spanish = new Set([...stringLeaves(funders.es), ...stringLeaves(copy.es)]);
+    const english = [...new Set(stringLeaves(funders.en))].filter((text) => text.length >= 12 && !spanish.has(text));
+
+    for (const text of english) {
+      expect(html).not.toContain(text);
+      expect(html).not.toContain(text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'));
+    }
+    expect(html).toContain(copy.es.north.map.alt);
+    expect(html).toContain(copy.es.footer.contactLabel);
+  });
+
+  test.each(['es', 'en'] as const)('uses page-navigation locale links in the header and footer of %s', (locale) => {
+    const html = fillTemplate(template, locale, undefined, 'funders');
+    const header = html.match(/<header class="site-header">([\s\S]*?)<\/header>/)?.[1] ?? '';
+    const footer = html.match(/<footer class="site-footer">([\s\S]*?)<\/footer>/)?.[1] ?? '';
+
+    for (const frame of [header, footer]) {
+      const links = [...frame.matchAll(/<a class="locale-button([^" ]*(?: is-active)?)" href="\/funders\?lang=(es|en)"( aria-current="true")?>/g)];
+      expect(links).toHaveLength(2);
+      expect(links.map((link) => link[2])).toEqual(['es', 'en']);
+      expect(links.filter((link) => link[3]).map((link) => link[2])).toEqual([locale]);
+      expect(frame).not.toContain('data-locale=');
+      expect(frame).not.toContain('aria-pressed');
+    }
+    expect(fillTemplate(template, 'es', undefined, 'aliados')).not.toContain('locale-toggle');
   });
 });
 
@@ -872,7 +930,7 @@ describe('partner share click handler', () => {
     vi.resetModules();
   });
 
-  async function bindShare(writeText?: (text: string) => Promise<void>, page = 'aliados') {
+  async function bindShare(writeText?: (text: string) => Promise<void>, page = 'aliados', locale = 'en') {
     vi.resetModules();
     let onClick: (() => Promise<void>) | undefined;
     const button = {
@@ -883,7 +941,7 @@ describe('partner share click handler', () => {
     };
     const status = { textContent: '' };
     const root = {
-      dataset: { page },
+      dataset: { page, locale },
       innerHTML: 'partner content',
       querySelector: (selector: string) => selector === '[data-share]' ? button : selector === '.aliados-share-status' ? status : null,
       querySelectorAll: () => []
@@ -926,6 +984,14 @@ describe('partner share click handler', () => {
     await click();
     expect(written).toEqual(['https://dev.ateneo-abierto.org/funders']);
     expect(status.textContent).toBe('Link copied');
+  });
+
+  test('chooses Spanish funder confirmation from the rendered locale, not the saved English preference', async () => {
+    const { status, root, click } = await bindShare(async () => undefined, 'funders', 'es');
+
+    expect(root.innerHTML).toBe('partner content');
+    await click();
+    expect(status.textContent).toBe('Enlace copiado');
   });
 
   test('shows the URL for manual copying when clipboard permission is rejected', async () => {
