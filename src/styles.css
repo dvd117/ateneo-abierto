@@ -2716,21 +2716,18 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
 }
 
 .doors .door-row:hover .door-title,
-.doors .door-row:hover .door-cta-arrow {
+.doors .door-row:hover .door-cta-arrow,
+.doors .door-row:focus-visible .door-title,
+.doors .door-row:focus-visible .door-cta-arrow {
   color: var(--c-accent);
 }
 
 /* The whole row is the button; the arrow leans towards the dialog it opens.
-   On keyboard focus it takes the same offset without moving there. */
+   Keyboard focus uses colour and the outline, without changing the offset. */
 @media (hover: hover) {
   .doors .door-row:hover .door-cta-arrow {
     transform: translateX(0.35rem);
   }
-}
-
-.doors .door-row:focus-visible .door-cta-arrow {
-  transform: translateX(0.35rem);
-  transition: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
