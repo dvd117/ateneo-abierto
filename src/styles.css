@@ -1016,8 +1016,8 @@ main .door[id] {
 }
 
 /* ---------- hero ----------
-   The headline takes the whole measure, one line per sentence at desktop
-   sizes; under it the manifesto and the window share the row. On a phone the
+   The headline and manifesto share the left column at desktop sizes;
+   the window spans both rows on the right. On a phone the
    window comes straight after the call to action. */
 
 .hero {
@@ -1038,10 +1038,15 @@ main .door[id] {
 }
 
 @media (min-width: 861px) {
+  .hero {
+    --hero-pad-top: clamp(1.75rem, 3vw, 2.75rem);
+    --hero-title-size: clamp(2.6rem, 4.2vw, 3.75rem);
+  }
+
   .hero-grid {
     grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
     grid-template-areas:
-      "head   head"
+      "head   window"
       "copy   window";
     grid-template-rows: auto 1fr;
     column-gap: clamp(2rem, 4.5vw, 4.5rem);
@@ -1154,7 +1159,7 @@ main .door[id] {
 @media (prefers-reduced-motion: reduce) {
   .hero {
     height: auto;
-    padding-block: clamp(2.5rem, 6vw, 5rem) clamp(3.5rem, 8vw, 6.5rem);
+    padding-block: var(--hero-pad-top) clamp(3.5rem, 8vw, 6.5rem);
   }
 
   .hero-stage,
@@ -1271,16 +1276,14 @@ main .door[id] {
   overflow: hidden;
 }
 
-/* On a wide screen the window fits the room under the headline, so it is
-   whole on the first screen and its sequence starts on load. Its top is the
-   hero's own geometry: header (3.375rem), padding, eyebrow and title margin
-   (1.75rem), two headline lines (2em, the slot padding nets out) and the row
-   gap. A headline that wraps to a third line pushes it below the fold, and the
-   sequence waits for the scroll, as before. */
+/* On a wide screen the window starts beside the eyebrow and spans both
+   left-column rows, so its sequence starts on load. Its height uses the room
+   below the header (3.375rem) and hero padding, leaving 1rem at the bottom,
+   capped at 620px with a 420px floor for short viewports. */
 @media (min-width: 861px) {
   .hero .agent {
-    height: max(340px, min(clamp(460px, 72vh, 600px),
-      calc(100svh - 3.375rem - var(--hero-pad-top) - 1.75rem - 2 * var(--hero-title-size) - var(--hero-row-gap) - 1rem)));
+    height: max(420px, min(620px,
+      calc(100svh - 3.375rem - var(--hero-pad-top) - 1rem)));
   }
 }
 
