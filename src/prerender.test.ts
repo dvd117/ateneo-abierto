@@ -46,6 +46,35 @@ const template = `<!doctype html>
 </html>`;
 
 describe('build-time prerender', () => {
+  test.each(['es', 'en'] as const)('closes the hero copy with the three ordered steps in %s', (locale) => {
+    const html = fillTemplate(template, locale);
+    const heroCopy = html.match(/<div class="hero-copy">([\s\S]*?)<\/div>\s*<figure class="agent-figure">/)?.[1] ?? '';
+    const strip = heroCopy.match(/<ol class="hero-steps">([\s\S]*?)<\/ol>/);
+    const steps = locale === 'es'
+      ? [
+          ['Tú diriges', 'Le señalas la carpeta y le dices qué necesitas.'],
+          ['El agente trabaja', 'Arma un plan, abre tus archivos y guarda el resultado.'],
+          ['Tú decides', 'Lo revisas y decides qué sigue.']
+        ]
+      : [
+          ['You direct', 'You point it at the folder and say what you need.'],
+          ['The agent works', 'It builds a plan, opens your files and saves the result.'],
+          ['You decide', 'You check it and decide what comes next.']
+        ];
+
+    expect(html.match(/<ol class="hero-steps">/g)).toHaveLength(1);
+    expect(strip).not.toBeNull();
+    const items = [...(strip?.[1] ?? '').matchAll(/<li>([\s\S]*?)<\/li>/g)];
+    expect(items).toHaveLength(3);
+    for (const [index, [title, text]] of steps.entries()) {
+      expect(items[index][1]).toContain(`<span class="hero-step-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span>`);
+      expect(items[index][1]).toContain(`<span class="hero-step-title">${title}</span>`);
+      expect(items[index][1]).toContain(`<span class="hero-step-text">${text}</span>`);
+    }
+    expect(heroCopy).toMatch(/<div class="hero-actions">[\s\S]*?<\/div>\s*<ol class="hero-steps">/);
+    expect(heroCopy).toMatch(/<\/ol>\s*$/);
+  });
+
   test.each(['es', 'en'] as const)('renders the six desktop chapter links without a current chapter in %s', (locale) => {
     const html = fillTemplate(template, locale);
     const nav = html.match(/<nav class="nav-links chapter-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';

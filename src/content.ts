@@ -439,6 +439,8 @@ export type PageCopy = {
     manifesto: string;
     /** The one call to action: it goes to the form. */
     primaryCta: string;
+    /** Desktop-only strip under the call to action: you direct, the agent works, you decide. */
+    steps: { title: string; text: string }[];
     /** Who is behind it, beside the CTA, with a link down to the talk. */
     byline: string;
     bylineLink: string;
@@ -510,6 +512,11 @@ export const copy: Record<Locale, PageCopy> = {
       manifesto:
         'Un chatbot te responde. Un agente *hace el trabajo contigo*: lee tus archivos, sigue un plan y te entrega el documento. Aprender a dirigirlo es la habilidad que viene, y desde Venezuela puedes empezar hoy: gratis y sin saber programar.',
       primaryCta: 'Únete',
+      steps: [
+        { title: 'Tú diriges', text: 'Le señalas la carpeta y le dices qué necesitas.' },
+        { title: 'El agente trabaja', text: 'Arma un plan, abre tus archivos y guarda el resultado.' },
+        { title: 'Tú decides', text: 'Lo revisas y decides qué sigue.' }
+      ],
       byline: 'La idea, en 5 minutos',
       bylineLink: 'Mira la charla',
       windowCaption:
@@ -1031,6 +1038,11 @@ export const copy: Record<Locale, PageCopy> = {
       manifesto:
         'A chatbot answers you. An agent *does the work with you*: it reads your files, follows a plan and hands you the document. Learning to direct it is the skill that’s coming, and from Venezuela you can start today: free, and without knowing how to code.',
       primaryCta: 'Join',
+      steps: [
+        { title: 'You direct', text: 'You point it at the folder and say what you need.' },
+        { title: 'The agent works', text: 'It builds a plan, opens your files and saves the result.' },
+        { title: 'You decide', text: 'You check it and decide what comes next.' }
+      ],
       byline: 'The idea, in 5 minutes',
       bylineLink: 'Watch the talk',
       windowCaption:
