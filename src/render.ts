@@ -865,8 +865,26 @@ function renderTalkFigure(page: PageCopy): string {
         </figure>`;
 }
 
+/**
+ * Who stands with the project: one ruled line under the talk, names only, no
+ * logos and no links. Nothing until there are at least two names.
+ */
+export function renderAllies(allies: PageCopy['talk']['allies']): string {
+  if (!allies || allies.names.length < 2) {
+    return '';
+  }
+
+  return `
+          <div class="talk-allies">
+            <p class="talk-allies-label">${inline(allies.label)}</p>
+            <ul class="talk-allies-names">${allies.names.map((name) => `<li>${inline(name)}</li>`).join('')}</ul>
+          </div>`;
+}
+
 function renderTalk(page: PageCopy): string {
   const { talk } = page;
+  const allies = renderAllies(talk.allies);
+  const figure = allies ? `        <div class="talk-side">\n${renderTalkFigure(page)}${allies}\n        </div>` : renderTalkFigure(page);
 
   return `
     <section class="sec chapter chapter--cinema talk" id="charla" aria-labelledby="charla-title">
@@ -874,7 +892,7 @@ function renderTalk(page: PageCopy): string {
         <div class="talk-copy" data-reveal>
           ${renderChapter({ number: 'V', eyebrow: talk.eyebrow, title: inline(talk.title), id: 'charla-title', lead: talk.body })}
         </div>
-${renderTalkFigure(page)}
+${figure}
       </div>
     </section>
   `;
