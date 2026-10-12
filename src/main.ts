@@ -17,9 +17,6 @@ const root = app;
 /** The hero input variant: the build's HERO_INPUT, unless ?hero= asks for the other one to review it. */
 const heroParam = new URLSearchParams(window.location.search).get('hero');
 const heroInput: HeroInput = heroParam === 'typed' || heroParam === 'scripted' ? heroParam : HERO_INPUT;
-if (heroParam === 'stacked') {
-  document.documentElement.classList.add('hero-stacked');
-}
 
 /** Set by the prerender on /hackaton, /talleres and /demos: the door this page opens at. */
 const deepLink = DEEP_LINK_ROUTES.find((route) => route === root.dataset.deepLink);
@@ -83,16 +80,16 @@ function render(): void {
  * for anyone who asked for less of either.
  */
 function motionAllowed(): boolean {
+  if (!document.documentElement.classList.contains('motion-ok')) {
+    return false;
+  }
+
   if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
     return false;
   }
 
   const connection = (navigator as Navigator & { connection?: { saveData?: boolean } }).connection;
   return connection?.saveData !== true;
-}
-
-if (motionAllowed()) {
-  document.documentElement.classList.add('motion-ok');
 }
 
 let scenePlayer: ScenePlayer | undefined;
@@ -201,8 +198,6 @@ function bindAgent(page: PageCopy): void {
     insideToggle.setAttribute('aria-pressed', String(on));
     root.querySelector('.agent')?.classList.toggle('is-inside', on);
   });
-
-  hero?.addEventListener('focusin', () => hero.classList.add('is-focus-stable'), { once: true });
 
   /**
    * On a phone the session list is one scrolling row; bring the chosen task
@@ -417,6 +412,13 @@ function bindAgent(page: PageCopy): void {
    */
   const start = visibleEnough(window_);
   const figure = root.querySelector<HTMLElement>('.agent-figure') ?? window_;
+  // IO can run at any point during the hero's fade. Gate every start on the
+  // actual CSS animation lifecycle, including a bundle that initializes late.
+  getComputedStyle(figure).animationName;
+  const heroEntrance = figure.getAnimations().find(
+    (animation) => 'animationName' in animation && animation.animationName === 'hero-load-in'
+  );
+  let heroEntranceComplete = !heroEntrance || heroEntrance.playState === 'finished';
   let visibleRatio = 0;
 
   function currentVisibleRatio(element: HTMLElement): number {
@@ -424,16 +426,6 @@ function bindAgent(page: PageCopy): void {
     if (rect.height <= 0) return 0;
     const visible = Math.max(0, Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0));
     return visible / rect.height;
-  }
-
-  function visibleOpacity(element: HTMLElement): number {
-    let opacity = 1;
-    let current: HTMLElement | null = element;
-    while (current && current !== document.documentElement) {
-      opacity *= Number.parseFloat(getComputedStyle(current).opacity) || 0;
-      current = current.parentElement;
-    }
-    return opacity;
   }
 
   function maybePlay(): void {
@@ -446,7 +438,7 @@ function bindAgent(page: PageCopy): void {
       return;
     }
 
-    if (played || visibleRatio < start - 0.005 || visibleOpacity(figure) < 0.95) {
+    if (!heroEntranceComplete || played || visibleRatio < start - 0.005) {
       return;
     }
 
@@ -464,6 +456,24 @@ function bindAgent(page: PageCopy): void {
       afterRender: typedTurn?.sceneId === current ? typedTurn.write : undefined
     });
   }
+
+  function refreshVisibility(): void {
+    visibleRatio = currentVisibleRatio(window_);
+    maybePlay();
+  }
+
+  figure.addEventListener('animationend', (event) => {
+    if (event.animationName === 'hero-load-in') {
+      heroEntranceComplete = true;
+      refreshVisibility();
+    }
+  });
+  figure.addEventListener('animationcancel', (event) => {
+    if (event.animationName === 'hero-load-in') {
+      heroEntranceComplete = true;
+      refreshVisibility();
+    }
+  });
 
   const observer = new IntersectionObserver(
     (entries) => {
@@ -491,6 +501,7 @@ function bindAgent(page: PageCopy): void {
     visibleRatio = currentVisibleRatio(window_);
     window.requestAnimationFrame(maybePlay);
   }, { once: true });
+  refreshVisibility();
 }
 
 /**
@@ -805,3 +816,5 @@ if (root.dataset.page === 'aliados') {
 if (deepLink) {
   openAtDoor(root, deepLink);
 }
+
+document.documentElement.classList.add('motion-ready');
