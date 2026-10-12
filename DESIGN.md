@@ -270,8 +270,6 @@ opacities are composited over the ground before the ratio is taken).
 | bone-soft / graphite knockout over land (city label) | 11.08 | 4.5 |
 | bone-dim vs graphite-land (planned or unlit node ring, UI) | 3.17 | 3 |
 | paper vs graphite-land (lit library node) | 9.57 | 3 |
-| bone-dim at 0.5 vs graphite (hero network edge at rest) | 2.23 | ground |
-| bone-muted vs graphite (hero network node ring at rest, UI) | 7.19 | 3 |
 
 Pairs added 2026-09-14 for the bands' colour drift: `.bz-o` is
 `color-mix(in oklab, guacamaya, done-green)` at `--band-mix` × 100 %, computed in OKLab and
@@ -287,8 +285,8 @@ converted back to sRGB before the ratio is taken.
 The map's ground is visible on purpose. At 1.08 (land) and 1.41 (hatch) the country and the
 Zona en Reclamación disappeared on a phone at normal brightness, so the land is now
 `graphite-land` at 1.64 with a 1px `bone-dim` coastline, and the claim is hatched and
-outlined in `guacamaya` at 0.45, one colour for the whole zone. The ground, the coastline, the hatch and the resting edges of the hero
-network still sit below 3: they give the picture its shape, not its information. Every piece
+outlined in `guacamaya` at 0.45, one colour for the whole zone. The ground, the coastline and the
+hatch still sit below 3: they give the picture its shape, not its information. Every piece
 of information the map carries — which cities, which are lit, which are only planned — is in
 the labels and in the figure's alt text. Because the labels now cross a brighter land, each
 map label carries a solid graphite knockout (four 1px text-shadow offsets, no blur), so
@@ -388,10 +386,9 @@ still never loops:
     records progress, and tilt sits on top of it.
   **It is his method, never his image**: the stripes must not reproduce the
   Maiquetía floor (*Cromointerferencia de color aditivo*) or its yellow/black/red/blue modules.
-  The floor is quoted deliberately in words, once: a single line under band three, before Únete, the
-  only moment the page speaks in the founder's voice. It is a real paragraph beside the
-  `aria-hidden` band, Fraunces italic at the door "who" size, `bone-soft`, right-aligned on
-  desktop and centred on a phone, and unsigned.
+  The floor is quoted deliberately in words, once: the last line of the Únete column,
+  after the contact line, the only moment the page speaks in the founder's voice. It is a real
+  paragraph, Fraunces italic at display size, in `bone`, with balanced lines, and unsigned.
 
 Everything short-circuits under `prefers-reduced-motion` (bands stand still in resting ochre,
 still a moiré, and no orientation listener or permission prompt is ever attached), and
