@@ -448,7 +448,7 @@ function chaptersFor(page: PageCopy) {
 /** Each unlisted briefing supplies only the parts that differ from the landing frame. */
 export const PARTNER_PAGES = {
   aliados: { content: aliados, locale: 'es', ids: ['problema', 'metodo', 'camino', 'norte', 'tu-lugar', 'preguntas'], contactId: 'conversemos' },
-  funders: { content: funders, locale: 'en', ids: ['gap', 'method', 'path', 'horizon'], contactId: 'talk' }
+  funders: { content: funders, locale: 'en', ids: ['gap', 'method', 'path', 'horizon', 'now', 'support'], contactId: 'talk' }
 } as const;
 export type PartnerPage = keyof typeof PARTNER_PAGES;
 type PartnerDescriptor = (typeof PARTNER_PAGES)[PartnerPage];
@@ -458,6 +458,7 @@ function chaptersForPartner(partner: PartnerDescriptor) {
   const content = partner.content;
   const sections: { eyebrow: string }[] = [content.gap, content.approach, content.formats, content.vision];
   if ('roles' in content) sections.push(content.roles, content.faq);
+  if ('now' in content) sections.push(content.now, content.support);
 
   return sections.map((section, index) => ({
     number: ['I', 'II', 'III', 'IV', 'V', 'VI'][index],
@@ -1207,7 +1208,7 @@ export function renderPartnerPage(name: PartnerPage): string {
   const partner = PARTNER_PAGES[name];
   const briefing = partner.content;
   const page = copy[partner.locale];
-  const [gap, approach, formats, vision, roles, faq] = chaptersForPartner(partner);
+  const [gap, approach, formats, vision, fifth, sixth] = chaptersForPartner(partner);
   const headline = briefing.titleLines.map((line) =>
     `<span class="hero-line"><span class="hero-line-in">${line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)}</span></span>`
   ).join(' ');
@@ -1254,8 +1255,8 @@ export function renderPartnerPage(name: PartnerPage): string {
         </div>
         <p class="aliados-vision-closing" data-reveal>${inline(briefing.vision.closing)}</p>
       </div></section>
-      ${'roles' in briefing ? `<section class="sec chapter aliados-roles" id="${roles.id}" aria-labelledby="aliados-roles-title"><div class="shell">
-        ${renderChapter({ ...roles, id: 'aliados-roles-title', title: inline(briefing.roles.title), lead: briefing.roles.intro })}
+      ${'roles' in briefing ? `<section class="sec chapter aliados-roles" id="${fifth.id}" aria-labelledby="aliados-roles-title"><div class="shell">
+        ${renderChapter({ ...fifth, id: 'aliados-roles-title', title: inline(briefing.roles.title), lead: briefing.roles.intro })}
         <div class="aliados-role-table">
           <div class="aliados-role-head" aria-hidden="true"><span></span><span class="aliados-pill">${inline(briefing.roles.columns.gives)}</span><span class="aliados-pill aliados-pill--fill">${inline(briefing.roles.columns.gets)}</span></div>
           <ul class="aliados-role-list">${briefing.roles.rows.map((row) => `<li class="aliados-role-row"><h3>${inline(row.title)}<span class="aliados-role-effort">${inline(row.effort)}</span></h3><p class="aliados-role-gives"><span class="aliados-pill">${inline(briefing.roles.columns.gives)}</span> ${inline(row.gives)}</p><p class="aliados-role-gets"><span class="aliados-pill aliados-pill--fill">${inline(briefing.roles.columns.gets)}</span> ${inline(row.gets)}</p></li>`).join('')}</ul>
@@ -1263,9 +1264,27 @@ export function renderPartnerPage(name: PartnerPage): string {
         <div class="aliados-roles-give" data-reveal><p><strong>${inline(briefing.roles.give.label)}:</strong> ${inline(briefing.roles.give.text)}</p></div>
         <p class="aliados-roles-closing" data-reveal>${inline(briefing.roles.closing)}</p>
       </div></section>
-      <section class="sec chapter aliados-faq" id="${faq.id}" aria-labelledby="aliados-faq-title"><div class="shell">
-        ${renderChapter({ ...faq, id: 'aliados-faq-title', title: inline(briefing.faq.title) })}
+      <section class="sec chapter aliados-faq" id="${sixth.id}" aria-labelledby="aliados-faq-title"><div class="shell">
+        ${renderChapter({ ...sixth, id: 'aliados-faq-title', title: inline(briefing.faq.title) })}
         <div class="aliados-faq-list">${briefing.faq.items.map((item, index) => `<details class="aliados-faq-item"${index < 2 ? ' open' : ''}><summary>${inline(item.q)}</summary><p>${inline(item.a)}</p></details>`).join('')}</div>
+      </div></section>` : 'now' in briefing ? `<section class="sec chapter aliados-now" id="${fifth.id}" aria-labelledby="funders-now-title"><div class="shell">
+        ${renderChapter({ ...fifth, id: 'funders-now-title', title: inline(briefing.now.title) })}
+          <ol class="hz">
+            ${briefing.now.rows
+              .map(
+                (row, order) => `
+                  <li class="hz-row" data-reveal data-reveal-delay="${order * 120}">
+                    <span class="hz-label">${inline(row.label)}</span>
+                    <span class="hz-text">${inline(row.text)}</span>
+                  </li>
+                `
+              )
+              .join('')}
+          </ol>
+      </div></section>
+      <section class="sec chapter aliados-support" id="${sixth.id}" aria-labelledby="funders-support-title"><div class="shell">
+        ${renderChapter({ ...sixth, id: 'funders-support-title', title: inline(briefing.support.title) })}
+        <ol class="aliados-support-list">${briefing.support.items.map((item) => `<li class="aliados-support-item"><h3>${inline(item.title)}</h3><p>${inline(item.body)}</p></li>`).join('')}</ol>
       </div></section>` : ''}
       <section class="sec aliados-contact" id="${partner.contactId}" aria-labelledby="aliados-contact-title"><div class="shell aliados-contact-grid">
         <div data-reveal><h2 class="display join-title" id="aliados-contact-title">${inline(briefing.contact.title)}</h2><p class="lead join-lead">${inline(briefing.contact.line)}</p><a class="button button--fill" href="mailto:ateneo@aragort.com">${inline(briefing.contact.button)}</a></div>
