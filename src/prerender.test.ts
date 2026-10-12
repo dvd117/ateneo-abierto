@@ -847,6 +847,14 @@ describe('build-time prerender', () => {
     expect(styles).toMatch(/\.chapter-head--inline,\s*\.chapter-head:not\(:has\(\.chapter-lead\)\)\s*\{\s*min-height:/);
   });
 
+  test('keeps the partner footer contact in the last column when the marks are left out', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
+
+    expect(html).not.toContain('class="footer-marks"');
+    expect(styles).toMatch(/\.footer-brand \+ \.footer-meta\s*\{\s*grid-column: 3;\s*\}/);
+  });
+
   test('styles native FAQ markers without motion and retains the global summary focus ring', () => {
     const styles = readFileSync('src/styles.css', 'utf8');
     const rules = [...styles.matchAll(/([^{}]+)\{([^{}]*)\}/g)].filter(([, selector]) => selector.includes('.aliados-faq'));
