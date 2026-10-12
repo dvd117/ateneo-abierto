@@ -1148,13 +1148,6 @@ main .door[id] {
         animation: none;
       }
     }
-
-    html.motion-ok .chapter-title .mask > span {
-      animation: chapter-title-rise 1s linear both;
-      animation-timeline: --chapter;
-      animation-range: entry 0% cover 20%;
-    }
-
   }
 }
 
@@ -1178,20 +1171,11 @@ main .door[id] {
   .agent,
   .hero-line-in,
   .chapter-n,
-  .chapter-title .mask > span,
   .map-edge {
     animation: none;
     opacity: 1;
     visibility: visible;
     transform: none;
-  }
-
-  .north-body {
-    min-height: 0;
-  }
-
-  .map {
-    position: static;
   }
 }
 
@@ -1202,16 +1186,6 @@ main .door[id] {
 
   to {
     transform: translateY(-18%);
-  }
-}
-
-@keyframes chapter-title-rise {
-  from {
-    transform: translateY(105%);
-  }
-
-  to {
-    transform: none;
   }
 }
 
