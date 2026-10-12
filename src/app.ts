@@ -208,6 +208,17 @@ app.get('/aliados', (c, next) => {
   return c.html(html);
 });
 
+app.get('/funders', (c, next) => {
+  const html = readPage('funders.html');
+  if (html === null) {
+    return next();
+  }
+
+  c.header('Content-Language', 'en');
+  c.header('Cache-Control', 'no-cache');
+  return c.html(html);
+});
+
 /** A permanent redirect that keeps a supported ?lang= and drops anything else. */
 function redirectTo(path: string) {
   return (c: Context) => {

@@ -412,7 +412,7 @@ describe('the map is vendored, not fetched', () => {
 
   test('wires the partner map through the existing guarded lazy lighting runner', () => {
     const main = readFileSync('src/main.ts', 'utf8');
-    const branch = main.match(/if \(root.dataset.page === 'aliados'\) \{([\s\S]*?)\} else if/)?.[1] ?? '';
+    const branch = main.match(/if \(root.dataset.page === 'aliados' \|\| root.dataset.page === 'funders'\) \{([\s\S]*?)\} else if/)?.[1] ?? '';
     const runner = main.match(/function bindLighting\(\): void \{([\s\S]*?)\n\}/)?.[1] ?? '';
     const eligibility = main.match(/function motionAllowed\(\): boolean \{([\s\S]*?)\n\}/)?.[1] ?? '';
 
