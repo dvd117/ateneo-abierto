@@ -416,6 +416,8 @@ button {
 
 @media (min-width: 861px) {
   .chapter-head {
+    container-type: inline-size;
+    container-name: chapter-head;
     grid-template-columns: repeat(12, minmax(0, 1fr));
     column-gap: var(--gap-md);
   }
@@ -434,6 +436,22 @@ button {
 
   .chapter-head:not(.chapter-head--inline) .chapter-lead {
     grid-column: 1 / -1;
+  }
+
+  /* Five tracks need 36.25rem for a 12em lead; chapter II also reserves
+     up to 14rem for its numeral, so its safe inline measure is 70rem. */
+  @container chapter-head (width < 36.25rem) {
+    .chapter-head--inline .chapter-main,
+    .chapter-head--inline .chapter-lead {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @container chapter-head (width < 70rem) {
+    .chapter-head--inline.chapter-head--ii .chapter-main,
+    .chapter-head--inline.chapter-head--ii .chapter-lead {
+      grid-column: 1 / -1;
+    }
   }
 }
 

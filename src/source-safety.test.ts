@@ -120,6 +120,25 @@ describe('the skip link stays accessible above page chrome', () => {
   });
 });
 
+describe('inline chapter heads respect their available width', () => {
+  test('names the chapter head as an inline-size container only on desktop', () => {
+    const styles = css().replace(/\/\*[\s\S]*?\*\//g, '');
+    const base = styles.match(/\.chapter-head\s*\{([^}]*)\}/)?.[1] ?? '';
+    const desktop = styles.match(/@media \(min-width: 861px\)\s*\{\s*\.chapter-head\s*\{([^}]*)\}/)?.[1] ?? '';
+
+    expect(base).not.toMatch(/container-(?:type|name):/);
+    expect(desktop).toMatch(/container-type:\s*inline-size;/);
+    expect(desktop).toMatch(/container-name:\s*chapter-head;/);
+  });
+
+  test('stacks inline children with extra width reserved for the Programa numeral', () => {
+    const styles = css().replace(/\/\*[\s\S]*?\*\//g, '');
+
+    expect(styles).toMatch(/@container chapter-head \(width < 36\.25rem\)\s*\{\s*\.chapter-head--inline \.chapter-main,\s*\.chapter-head--inline \.chapter-lead\s*\{\s*grid-column:\s*1 \/ -1;\s*\}/);
+    expect(styles).toMatch(/@container chapter-head \(width < 70rem\)\s*\{\s*\.chapter-head--inline\.chapter-head--ii \.chapter-main,\s*\.chapter-head--inline\.chapter-head--ii \.chapter-lead\s*\{\s*grid-column:\s*1 \/ -1;\s*\}/);
+  });
+});
+
 describe('the header has no current-section indicator', () => {
   test('removes its initializer and styles while keeping the progress rail', () => {
     const main = readFileSync('src/main.ts', 'utf8');
