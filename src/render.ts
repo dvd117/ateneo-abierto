@@ -1,4 +1,4 @@
-import { aliados, copy, HERO_INPUT, LICENCE, REPO, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type NextEvent, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
+import { aliados, funders, copy, HERO_INPUT, LICENCE, REPO, type DeepLinkRoute, type Door, type HeroInput, type FileKind, type InsideLine, type NextEvent, type PageCopy, type Principle, type Scene, type ShiftColumn } from './content';
 import type { Locale } from './locale';
 import { MAP_CLAIM, MAP_MAINLAND, MAP_VIEWBOX, project } from './map-shape';
 
@@ -102,7 +102,7 @@ function renderLocaleButton(page: PageCopy, current: Locale, locale: Locale, lab
  * The sticky header keeps navigation and language controls in view. Its rail
  * fills as the visitor reads and is hidden from the tree.
  */
-function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
+function renderHeader(page: PageCopy, locale: Locale, partner?: PartnerDescriptor): string {
   return `
     <header class="site-header">
       <div class="shell header-inner">
@@ -113,9 +113,9 @@ function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
         ${partner ? '' : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
         </nav>`}
-        <nav class="nav-links chapter-nav" aria-label="${partner ? copy.es.indexLabel : page.indexLabel}">
-          ${(partner ? chaptersForAliados() : chaptersFor(page)).map(({ number, id, eyebrow }) => `<a class="chapter-nav-link" data-chapter-link href="#${id}" aria-label="${inline(`${number} ${eyebrow}`)}"><span class="chapter-nav-n" aria-hidden="true">${number}</span><span class="chapter-nav-name visually-hidden">${inline(eyebrow)}</span></a>`).join('')}
-          <a class="chapter-join" href="${partner ? '#conversemos' : '#unete'}">${inline(partner ? aliados.contact.title : page.hero.primaryCta)}</a>
+        <nav class="nav-links chapter-nav" aria-label="${page.indexLabel}">
+          ${(partner ? chaptersForPartner(partner) : chaptersFor(page)).map(({ number, id, eyebrow }) => `<a class="chapter-nav-link" data-chapter-link href="#${id}" aria-label="${inline(`${number} ${eyebrow}`)}"><span class="chapter-nav-n" aria-hidden="true">${number}</span><span class="chapter-nav-name visually-hidden">${inline(eyebrow)}</span></a>`).join('')}
+          <a class="chapter-join" href="${partner ? `#${partner.contactId}` : '#unete'}">${inline(partner ? partner.content.contact.title : page.hero.primaryCta)}</a>
         </nav>
         ${partner ? '' : `<div class="locale-toggle" role="group" aria-label="${page.languageLabel}">
           ${renderLocaleButton(page, locale, 'es', 'ES')}
@@ -445,16 +445,25 @@ function chaptersFor(page: PageCopy) {
   ];
 }
 
+/** Each unlisted briefing supplies only the parts that differ from the landing frame. */
+export const PARTNER_PAGES = {
+  aliados: { content: aliados, locale: 'es', ids: ['problema', 'metodo', 'camino', 'norte', 'tu-lugar', 'preguntas'], contactId: 'conversemos' },
+  funders: { content: funders, locale: 'en', ids: ['gap', 'method', 'path', 'horizon'], contactId: 'talk' }
+} as const;
+export type PartnerPage = keyof typeof PARTNER_PAGES;
+type PartnerDescriptor = (typeof PARTNER_PAGES)[PartnerPage];
+
 /** The partner's header and chapter heads share one ordered set of destinations. */
-function chaptersForAliados() {
-  return [
-    { number: 'I', id: 'problema', eyebrow: aliados.gap.eyebrow },
-    { number: 'II', id: 'metodo', eyebrow: aliados.approach.eyebrow },
-    { number: 'III', id: 'camino', eyebrow: aliados.formats.eyebrow },
-    { number: 'IV', id: 'norte', eyebrow: aliados.vision.eyebrow },
-    { number: 'V', id: 'tu-lugar', eyebrow: aliados.roles.eyebrow },
-    { number: 'VI', id: 'preguntas', eyebrow: aliados.faq.eyebrow }
-  ];
+function chaptersForPartner(partner: PartnerDescriptor) {
+  const content = partner.content;
+  const sections: { eyebrow: string }[] = [content.gap, content.approach, content.formats, content.vision];
+  if ('roles' in content) sections.push(content.roles, content.faq);
+
+  return sections.map((section, index) => ({
+    number: ['I', 'II', 'III', 'IV', 'V', 'VI'][index],
+    id: partner.ids[index],
+    eyebrow: section.eyebrow
+  }));
 }
 
 /** The six real destinations, gathered as a running contents index. */
@@ -1043,7 +1052,7 @@ function renderFooterMarks(page: PageCopy, locale: Locale): string {
         </ul>`;
 }
 
-function renderFooter(page: PageCopy, locale: Locale, partner = false): string {
+function renderFooter(page: PageCopy, locale: Locale, partner?: PartnerDescriptor): string {
   return `
     <footer class="site-footer">
       <div class="shell footer-grid">
@@ -1194,73 +1203,75 @@ export function renderPage(
 }
 
 /** The partner briefing shares the site's frame, but is not a door or a locale variant. */
-export function renderAliadosPage(): string {
-  const page = copy.es;
-  const [gap, approach, formats, vision, roles, faq] = chaptersForAliados();
-  const headline = aliados.titleLines.map((line) =>
+export function renderPartnerPage(name: PartnerPage): string {
+  const partner = PARTNER_PAGES[name];
+  const briefing = partner.content;
+  const page = copy[partner.locale];
+  const [gap, approach, formats, vision, roles, faq] = chaptersForPartner(partner);
+  const headline = briefing.titleLines.map((line) =>
     `<span class="hero-line"><span class="hero-line-in">${line.em ? `<em>${inline(line.text)}</em>` : inline(line.text)}</span></span>`
   ).join(' ');
 
   return `
     <a class="skip-link" href="#contenido">${page.skipToContent}</a>
     ${renderPositions(page)}
-    ${renderHeader(page, 'es', true)}
+    ${renderHeader(page, partner.locale, partner)}
     <main id="contenido">
       <section class="hero aliados-hero" aria-labelledby="hero-title"><div class="shell aliados-hero-grid">
         <div class="aliados-hero-copy">
-          <p class="eyebrow">${inline(aliados.eyebrow)}</p>
+          <p class="eyebrow">${inline(briefing.eyebrow)}</p>
           <h1 class="display hero-title" id="hero-title">${headline}</h1>
-          <p class="lead aliados-lead">${inline(aliados.lead)}</p>
-          <p class="aliados-audience"><span class="aliados-audience-label">${inline(aliados.audience.label)}</span> ${inline(aliados.audience.text)}</p>
-          <div class="hero-actions"><a class="button button--fill" href="#conversemos">${inline(aliados.contact.title)}</a></div>
+          <p class="lead aliados-lead">${inline(briefing.lead)}</p>
+          <p class="aliados-audience"><span class="aliados-audience-label">${inline(briefing.audience.label)}</span> ${inline(briefing.audience.text)}</p>
+          <div class="hero-actions"><a class="button button--fill" href="#${partner.contactId}">${inline(briefing.contact.title)}</a></div>
         </div>
-        <div class="aliados-talk-column">${renderTalkFigure(page)}<p class="aliados-talk-note">${inline(aliados.respaldo.body)}</p><p class="aliados-talk-caption">${inline(aliados.respaldo.caption)}</p></div>
+        <div class="aliados-talk-column">${renderTalkFigure(page)}<p class="aliados-talk-note">${inline(briefing.respaldo.body)}</p><p class="aliados-talk-caption">${inline(briefing.respaldo.caption)}</p></div>
       </div>
-      <div class="shell aliados-steps-row"><ol class="aliados-steps">${aliados.steps.map((step, index) => `<li><span class="aliados-step-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span><span class="aliados-step-title">${inline(step.title)}</span><span class="aliados-step-text">${inline(step.text)}</span></li>`).join('')}</ol></div></section>
+      <div class="shell aliados-steps-row"><ol class="aliados-steps">${briefing.steps.map((step, index) => `<li><span class="aliados-step-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span><span class="aliados-step-title">${inline(step.title)}</span><span class="aliados-step-text">${inline(step.text)}</span></li>`).join('')}</ol></div></section>
       <section class="sec chapter aliados-gap" id="${gap.id}" aria-labelledby="aliados-gap-title"><div class="shell">
-        ${renderChapter({ ...gap, id: 'aliados-gap-title', title: inline(aliados.gap.title) })}
-        <div class="aliados-gap-copy">${aliados.gap.paragraphs.map((text) => `<p class="lead" data-reveal>${inline(text)}</p>`).join('')}</div>
-        <p class="aliados-gap-thesis" data-reveal>${inline(aliados.gap.thesis)}</p>
+        ${renderChapter({ ...gap, id: 'aliados-gap-title', title: inline(briefing.gap.title) })}
+        <div class="aliados-gap-copy">${briefing.gap.paragraphs.map((text) => `<p class="lead" data-reveal>${inline(text)}</p>`).join('')}</div>
+        <p class="aliados-gap-thesis" data-reveal>${inline(briefing.gap.thesis)}</p>
       </div></section>
       <section class="sec chapter aliados-approach" id="${approach.id}" aria-labelledby="aliados-approach-title"><div class="shell">
-        ${renderChapter({ ...approach, id: 'aliados-approach-title', title: inline(aliados.approach.title), lead: aliados.approach.intro })}
-        <div class="aliados-pillar-grid">${aliados.approach.pillars.map((pillar) => `<div class="aliados-pillar" data-reveal><h3>${inline(pillar.title)}</h3><p>${inline(pillar.body)}</p></div>`).join('')}</div>
+        ${renderChapter({ ...approach, id: 'aliados-approach-title', title: inline(briefing.approach.title), lead: briefing.approach.intro })}
+        <div class="aliados-pillar-grid">${briefing.approach.pillars.map((pillar) => `<div class="aliados-pillar" data-reveal><h3>${inline(pillar.title)}</h3><p>${inline(pillar.body)}</p></div>`).join('')}</div>
       </div></section>
       <section class="sec chapter aliados-formats" id="${formats.id}" aria-labelledby="aliados-formats-title"><div class="shell">
-        ${renderChapter({ ...formats, id: 'aliados-formats-title', title: inline(aliados.formats.title), lead: aliados.formats.intro })}
+        ${renderChapter({ ...formats, id: 'aliados-formats-title', title: inline(briefing.formats.title), lead: briefing.formats.intro })}
         <div class="door-grid aliados-format-grid">
-          <div class="aliados-format-labels" aria-hidden="true">${aliados.formats.cards[0].fields.map((field) => `<span>${inline(field.label)}</span>`).join('')}</div>
-          ${aliados.formats.cards.map((card, index) => `<article class="door aliados-format" data-reveal><h3 class="door-title"><span class="aliados-format-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span>${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">Ver el formato <span aria-hidden="true">&nearr;</span></a></article>`).join('')}
+          <div class="aliados-format-labels" aria-hidden="true">${briefing.formats.cards[0].fields.map((field) => `<span>${inline(field.label)}</span>`).join('')}</div>
+          ${briefing.formats.cards.map((card, index) => `<article class="door aliados-format" data-reveal><h3 class="door-title"><span class="aliados-format-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span>${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">${inline(briefing.formats.cta)} <span aria-hidden="true">&nearr;</span></a></article>`).join('')}
         </div>
       </div></section>
       ${renderBand('aliados', 5)}
       <section class="sec chapter aliados-vision" id="${vision.id}" aria-labelledby="aliados-vision-title"><div class="shell">
-        ${renderChapter({ ...vision, id: 'aliados-vision-title', title: inline(aliados.vision.title) })}
-        <div class="aliados-vision-intro" data-reveal><p class="aliados-vision-near">${inline(aliados.vision.near)}</p><p class="aliados-vision-far">${inline(aliados.vision.far)}</p><p class="lead aliados-vision-far-detail">${inline(aliados.vision.farDetail)}</p></div>
+        ${renderChapter({ ...vision, id: 'aliados-vision-title', title: inline(briefing.vision.title) })}
+        <div class="aliados-vision-intro" data-reveal><p class="aliados-vision-near">${inline(briefing.vision.near)}</p><p class="aliados-vision-far">${inline(briefing.vision.far)}</p><p class="lead aliados-vision-far-detail">${inline(briefing.vision.farDetail)}</p></div>
         <div class="aliados-vision-body">
-          <ul class="aliados-vision-grid">${aliados.vision.items.map((item) => `<li data-reveal>${inline(item)}</li>`).join('')}</ul>
+          <ul class="aliados-vision-grid">${briefing.vision.items.map((item) => `<li data-reveal>${inline(item)}</li>`).join('')}</ul>
           ${renderMap(page)}
         </div>
-        <p class="aliados-vision-closing" data-reveal>${inline(aliados.vision.closing)}</p>
+        <p class="aliados-vision-closing" data-reveal>${inline(briefing.vision.closing)}</p>
       </div></section>
-      <section class="sec chapter aliados-roles" id="${roles.id}" aria-labelledby="aliados-roles-title"><div class="shell">
-        ${renderChapter({ ...roles, id: 'aliados-roles-title', title: inline(aliados.roles.title), lead: aliados.roles.intro })}
+      ${'roles' in briefing ? `<section class="sec chapter aliados-roles" id="${roles.id}" aria-labelledby="aliados-roles-title"><div class="shell">
+        ${renderChapter({ ...roles, id: 'aliados-roles-title', title: inline(briefing.roles.title), lead: briefing.roles.intro })}
         <div class="aliados-role-table">
-          <div class="aliados-role-head" aria-hidden="true"><span></span><span class="aliados-pill">${inline(aliados.roles.columns.gives)}</span><span class="aliados-pill aliados-pill--fill">${inline(aliados.roles.columns.gets)}</span></div>
-          <ul class="aliados-role-list">${aliados.roles.rows.map((row) => `<li class="aliados-role-row"><h3>${inline(row.title)}<span class="aliados-role-effort">${inline(row.effort)}</span></h3><p class="aliados-role-gives"><span class="aliados-pill">${inline(aliados.roles.columns.gives)}</span> ${inline(row.gives)}</p><p class="aliados-role-gets"><span class="aliados-pill aliados-pill--fill">${inline(aliados.roles.columns.gets)}</span> ${inline(row.gets)}</p></li>`).join('')}</ul>
+          <div class="aliados-role-head" aria-hidden="true"><span></span><span class="aliados-pill">${inline(briefing.roles.columns.gives)}</span><span class="aliados-pill aliados-pill--fill">${inline(briefing.roles.columns.gets)}</span></div>
+          <ul class="aliados-role-list">${briefing.roles.rows.map((row) => `<li class="aliados-role-row"><h3>${inline(row.title)}<span class="aliados-role-effort">${inline(row.effort)}</span></h3><p class="aliados-role-gives"><span class="aliados-pill">${inline(briefing.roles.columns.gives)}</span> ${inline(row.gives)}</p><p class="aliados-role-gets"><span class="aliados-pill aliados-pill--fill">${inline(briefing.roles.columns.gets)}</span> ${inline(row.gets)}</p></li>`).join('')}</ul>
         </div>
-        <div class="aliados-roles-give" data-reveal><p><strong>${inline(aliados.roles.give.label)}:</strong> ${inline(aliados.roles.give.text)}</p></div>
-        <p class="aliados-roles-closing" data-reveal>${inline(aliados.roles.closing)}</p>
+        <div class="aliados-roles-give" data-reveal><p><strong>${inline(briefing.roles.give.label)}:</strong> ${inline(briefing.roles.give.text)}</p></div>
+        <p class="aliados-roles-closing" data-reveal>${inline(briefing.roles.closing)}</p>
       </div></section>
       <section class="sec chapter aliados-faq" id="${faq.id}" aria-labelledby="aliados-faq-title"><div class="shell">
-        ${renderChapter({ ...faq, id: 'aliados-faq-title', title: inline(aliados.faq.title) })}
-        <div class="aliados-faq-list">${aliados.faq.items.map((item, index) => `<details class="aliados-faq-item"${index < 2 ? ' open' : ''}><summary>${inline(item.q)}</summary><p>${inline(item.a)}</p></details>`).join('')}</div>
-      </div></section>
-      <section class="sec aliados-contact" id="conversemos" aria-labelledby="aliados-contact-title"><div class="shell aliados-contact-grid">
-        <div data-reveal><h2 class="display join-title" id="aliados-contact-title">${inline(aliados.contact.title)}</h2><p class="lead join-lead">${inline(aliados.contact.line)}</p><a class="button button--fill" href="mailto:ateneo@aragort.com">${inline(aliados.contact.button)}</a></div>
-        <div class="aliados-share"><p>${inline(aliados.contact.share.text)}</p><button class="button button--line aliados-share-button" type="button" data-share hidden>${inline(aliados.contact.share.button)}</button><p class="aliados-share-status" role="status"></p></div>
+        ${renderChapter({ ...faq, id: 'aliados-faq-title', title: inline(briefing.faq.title) })}
+        <div class="aliados-faq-list">${briefing.faq.items.map((item, index) => `<details class="aliados-faq-item"${index < 2 ? ' open' : ''}><summary>${inline(item.q)}</summary><p>${inline(item.a)}</p></details>`).join('')}</div>
+      </div></section>` : ''}
+      <section class="sec aliados-contact" id="${partner.contactId}" aria-labelledby="aliados-contact-title"><div class="shell aliados-contact-grid">
+        <div data-reveal><h2 class="display join-title" id="aliados-contact-title">${inline(briefing.contact.title)}</h2><p class="lead join-lead">${inline(briefing.contact.line)}</p><a class="button button--fill" href="mailto:ateneo@aragort.com">${inline(briefing.contact.button)}</a></div>
+        <div class="aliados-share"><p>${inline(briefing.contact.share.text)}</p><button class="button button--line aliados-share-button" type="button" data-share hidden>${inline(briefing.contact.share.button)}</button><p class="aliados-share-status" role="status"></p></div>
       </div></section>
     </main>
-    ${renderFooter(page, 'es', true)}
+    ${renderFooter(page, partner.locale, partner)}
   `;
 }

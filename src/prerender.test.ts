@@ -1,8 +1,8 @@
 import { createHash } from 'node:crypto';
 import { existsSync, readFileSync } from 'node:fs';
 import { afterEach, describe, expect, test, vi } from 'vitest';
-import { fillTemplate, inlineStylesheet, pageFileName, styleHashes } from '../scripts/vite-prerender';
-import { aliados, copy } from './content';
+import { fillTemplate, inlineStylesheet, pageFileName, prerender, styleHashes } from '../scripts/vite-prerender';
+import { aliados, funders, copy } from './content';
 import { renderPage } from './render';
 
 /** The parts of index.html the prerender must find, in Vite's output shape. */
@@ -45,6 +45,89 @@ const template = `<!doctype html>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>`;
+
+function stringLeaves(value: unknown): string[] {
+  if (typeof value === 'string') return [value];
+  return value && typeof value === 'object' ? Object.values(value).flatMap(stringLeaves) : [];
+}
+
+describe('funders prerender', () => {
+  test('renders every F1 string verbatim, reserving later chapters and confirmation for their own turn', () => {
+    const html = fillTemplate(template, 'en', undefined, 'funders');
+    const { now, support, ...first } = funders;
+    const strings = [...new Set(stringLeaves(first))].filter((text) => text !== funders.contact.share.done);
+
+    expect(strings).toHaveLength(69);
+    for (const text of strings) expect(html).toContain(text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'));
+    expect(html).not.toContain(funders.contact.share.done);
+    expect(html).not.toContain(now.title);
+    expect(html).not.toContain(support.title);
+    expect(stringLeaves(funders).join('')).not.toMatch(/[–—]/);
+  });
+
+  test('sets an English-only unlisted head and preserves English landing preview metadata', () => {
+    const html = fillTemplate(template, 'en', undefined, 'funders');
+
+    expect(html).toContain('<html lang="en">');
+    expect(html).toContain('data-locale="en" data-page="funders"');
+    expect(html).toContain('<meta name="robots" content="noindex"');
+    expect(html).toContain('rel="canonical" href="https://ateneo-abierto.org/funders"');
+    expect(html).toContain(`<title>${funders.meta.title}</title>`);
+    expect(html).toContain(`content="${funders.meta.description}"`);
+    expect(html).toContain('property="og:locale" content="en_US"');
+    expect(html).toContain('https://ateneo-abierto.org/og-en.png');
+    expect(html).not.toMatch(/hreflang|og:locale:alternate|locale-toggle|<iframe|style="/);
+  });
+
+  test('keeps all Spanish partner and landing strings out of the English frame', () => {
+    const html = fillTemplate(template, 'en', undefined, 'funders');
+    const english = new Set(stringLeaves(copy.en));
+    const spanish = [...new Set([...stringLeaves(aliados), ...stringLeaves(copy.es)])]
+      .filter((text) => text.length >= 12 && !english.has(text));
+
+    for (const text of spanish) {
+      expect(html).not.toContain(text);
+      expect(html).not.toContain(text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'));
+    }
+    expect(html).toContain(copy.en.skipToContent);
+    expect(html).toContain(copy.en.footer.contactLabel);
+    expect(html).toContain(copy.en.north.map.alt);
+  });
+
+  test('orders four chapter destinations and joins at the English contact block', () => {
+    const html = fillTemplate(template, 'en', undefined, 'funders');
+    const links = [...html.matchAll(/data-chapter-link href="#([^" ]+)"/g)];
+
+    expect(links.map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon']);
+    expect([...html.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon', 'talk']);
+    expect(html).toContain(`<a class="chapter-join" href="#talk">${funders.contact.title}</a>`);
+    expect(html.match(/<header class="chapter-head/g)).toHaveLength(4);
+    expect(html.match(/data-map/g)).toHaveLength(1);
+    expect(html.match(/class="door aliados-format"/g)).toHaveLength(3);
+    expect(readFileSync('public/sitemap.xml', 'utf8')).not.toContain('/funders');
+    for (const locale of ['es', 'en'] as const) expect(renderPage(locale)).not.toContain('href="/funders"');
+  });
+
+  test('emits funders.html and covers every one of its inline styles in csp.json', async () => {
+    const emitted: { fileName: string; source: string }[] = [];
+    const plugin = prerender();
+    const hook = plugin.generateBundle!;
+    const generate = typeof hook === 'function' ? hook : hook.handler;
+    const bundle = {
+      'index.html': { type: 'asset', fileName: 'index.html', source: template },
+      'assets/index-abc123.css': { type: 'asset', fileName: 'assets/index-abc123.css', source: readFileSync('src/styles.css', 'utf8') }
+    };
+    await generate.call({ emitFile: (asset: unknown) => emitted.push(asset as typeof emitted[number]), error: (message: string) => { throw new Error(message); } } as never, {} as never, bundle as never, false);
+    const html = emitted.find((asset) => asset.fileName === 'funders.html')?.source;
+
+    expect(html).toBeDefined();
+    expect(html).toContain('data-page="funders"');
+    const hashes = JSON.parse(emitted.find((asset) => asset.fileName === 'csp.json')!.source).styleSrc;
+    const blocks = [...html!.matchAll(/<style>([\s\S]*?)<\/style>/g)];
+    expect(blocks.length).toBeGreaterThan(1);
+    for (const [, css] of blocks) expect(hashes).toContain(`'sha256-${createHash('sha256').update(css).digest('base64')}'`);
+  });
+});
 
 describe('build-time prerender', () => {
   test.each(['es', 'en'] as const)('closes the hero copy with the three ordered steps in %s', (locale) => {
@@ -102,7 +185,7 @@ describe('build-time prerender', () => {
   });
 
   test('runs six partner chapters and the contact pill without legacy nav or locale controls', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const header = html.match(/<header class="site-header">([\s\S]*?)<\/header>/)?.[1] ?? '';
     const nav = header.match(/<nav class="nav-links chapter-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
     const chapters = [...nav.matchAll(/<a class="chapter-nav-link" data-chapter-link href="#([^"]+)" aria-label="([^"]+)">([\s\S]*?)<\/a>/g)];
@@ -140,7 +223,7 @@ describe('build-time prerender', () => {
   });
 
   test('opens each partner chapter with the shared numeral, eyebrow, preserved title id and intro', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const chapters = [
       { key: 'gap', id: 'problema', number: 'I', eyebrow: 'El problema' },
       { key: 'approach', id: 'metodo', number: 'II', eyebrow: 'El método' },
@@ -203,7 +286,7 @@ describe('build-time prerender', () => {
   });
 
   test('opens three method pillars without doors, using one phone column and three desktop columns', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const section = html.match(/<section class="sec chapter aliados-approach"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
     const pillars = [...section.matchAll(/<div class="aliados-pillar" data-reveal><h3>([^<]+)<\/h3><p>([^<]+)<\/p><\/div>/g)];
     const styles = readFileSync('src/styles.css', 'utf8');
@@ -297,7 +380,7 @@ describe('build-time prerender', () => {
   });
 
   test('renders the Spanish-only unlisted partner page with no alternates and a click-to-play talk', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
 
     expect(html).toContain('<html lang="es"');
     expect(html).toContain('<title>Aliados · Ateneo Abierto</title>');
@@ -326,7 +409,7 @@ describe('build-time prerender', () => {
   });
 
   test('renders every v3 partner string verbatim in the eight-section layout', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     // The approved copy lives in the coordinator's untracked `.w/` notes, so
     // the verbatim check against it only runs where that file exists.
     const copyPath = '.w/aliados-copy-v3.md';
@@ -371,7 +454,7 @@ describe('build-time prerender', () => {
   });
 
   test('puts the talk and its context in the partner hero without a proposal or respaldo section', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const hero = html.match(/<section class="hero aliados-hero"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
 
     expect(hero).toContain('class="aliados-talk-column"');
@@ -386,7 +469,7 @@ describe('build-time prerender', () => {
 
   // David, 2026-10-12: hero D dropped the proposal card; who Ateneo teaches stays on the first screen.
   test('names who Ateneo teaches in the partner hero, between the lead and the call to action', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const copy = html.match(/<div class="aliados-hero-copy">([\s\S]*?)<div class="hero-actions">/)?.[1] ?? '';
 
     expect(aliados.audience).toEqual({ label: 'Para quién', text: 'Personas que trabajan en oficinas, docentes, comerciantes y equipos de organizaciones.' });
@@ -395,7 +478,7 @@ describe('build-time prerender', () => {
   });
 
   test('renders exactly three partner steps verbatim after the hero grid', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const hero = html.match(/<section class="hero aliados-hero"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
     const steps = hero.match(/<ol class="aliados-steps">([\s\S]*?)<\/ol>/)?.[1] ?? '';
     const expected = [
@@ -415,7 +498,7 @@ describe('build-time prerender', () => {
   });
 
   test('links the partner hero CTA to the unique contact anchor before the talk and steps', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const hero = html.match(/<section class="hero aliados-hero"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
 
     expect(hero).toMatch(/<div class="aliados-hero-copy">[\s\S]*?<div class="hero-actions"><a class="button button--fill" href="#conversemos">Conversemos<\/a><\/div>\s*<\/div>/);
@@ -450,7 +533,7 @@ describe('build-time prerender', () => {
 
 
   test('numbers the partner formats decoratively inside their headings', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const cards = [...html.matchAll(/<article class="door aliados-format"[^>]*>([\s\S]*?)<\/article>/g)];
 
     expect(cards).toHaveLength(3);
@@ -461,7 +544,7 @@ describe('build-time prerender', () => {
   });
 
   test('renders shared format labels once while retaining each description list label', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const labels = '<div class="aliados-format-labels" aria-hidden="true"><span>Para quién</span><span>Formato</span><span>Con qué sales</span></div>';
 
     expect(html.match(/class="aliados-format-labels"/g)).toHaveLength(1);
@@ -502,7 +585,7 @@ describe('build-time prerender', () => {
   });
 
   test('places one finished network map after the partner vision list and before its closing', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const body = html.match(/<div class="aliados-vision-body">([\s\S]*?)<\/figure>\s*<\/div>/)?.[1] ?? '';
 
     expect(body).toMatch(/^\s*<ul class="aliados-vision-grid">/);
@@ -519,7 +602,7 @@ describe('build-time prerender', () => {
 
   test('hashes the partner map positions once alongside the shared stylesheet', () => {
     const inlined = inlineStylesheet(template, 'assets/index-abc123.css', readFileSync('src/styles.css', 'utf8'));
-    const partner = fillTemplate(inlined, 'es', undefined, true);
+    const partner = fillTemplate(inlined, 'es', undefined, 'aliados');
     const blocks = [...partner.matchAll(/<style>([\s\S]*?)<\/style>/g)].map((match) => match[1]);
     const homePositions = renderPage('es').match(/<style>([\s\S]*?)<\/style>/)?.[1];
 
@@ -532,7 +615,7 @@ describe('build-time prerender', () => {
   });
 
   test('renders four partner role rows in effort order with separate gives and gets', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const list = html.match(/<ul class="aliados-role-list">([\s\S]*?)<\/ul>/)?.[1] ?? '';
     const rows = [...list.matchAll(/<li class="aliados-role-row">([\s\S]*?)<\/li>/g)];
     const rendered = rows.map(([, row]) => ({
@@ -552,7 +635,7 @@ describe('build-time prerender', () => {
   });
 
   test('keeps ten role pills with only the head pair hidden from screen readers', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const table = html.match(/<div class="aliados-role-table">([\s\S]*?)<\/ul>\s*<\/div>/)?.[1] ?? '';
     const pills = [...table.matchAll(/<span class="aliados-pill(?: aliados-pill--fill)?">(.*?)<\/span>/g)];
 
@@ -584,7 +667,7 @@ describe('build-time prerender', () => {
   });
 
   test('prerenders a hidden share button and empty live status after the mail invitation', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const contact = html.match(/<section class="sec aliados-contact" id="conversemos"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
 
     expect(contact).toMatch(/<div data-reveal><h2[\s\S]*?<p class="lead join-lead">[\s\S]*?<\/p><a class="button button--fill" href="mailto:ateneo@aragort.com">[\s\S]*?<\/a><\/div>\s*<div class="aliados-share">/);
@@ -609,7 +692,7 @@ describe('build-time prerender', () => {
   });
 
   test('places four native FAQs before contact with only the first two open and all approved answers', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     const section = html.match(/<section class="sec chapter aliados-faq" id="preguntas" aria-labelledby="aliados-faq-title">([\s\S]*?)<\/section>/)?.[1] ?? '';
     const items = [...section.matchAll(/<details class="aliados-faq-item"( open)?><summary>([^<]+)<\/summary><p>([^<]+)<\/p><\/details>/g)];
 
@@ -628,7 +711,7 @@ describe('build-time prerender', () => {
   });
 
   test('renders the roles closing sentence exactly once on the partner page', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
 
     expect(html.split(aliados.roles.closing)).toHaveLength(2);
   });
@@ -670,7 +753,7 @@ describe('build-time prerender', () => {
   });
 
   test('keeps the W5 vision split, plain role titles and close approach copy', () => {
-    const html = fillTemplate(template, 'es', undefined, true);
+    const html = fillTemplate(template, 'es', undefined, 'aliados');
     expect(aliados.vision.far).toBe('A largo plazo queremos una red de espacios públicos de conocimiento en Venezuela.');
     expect(aliados.vision.farDetail).toBe('La biblioteca pública del siglo XXI, abierta a cualquiera sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encontrar:');
     expect(html).toContain(`<p class="aliados-vision-far">${aliados.vision.far}</p><p class="lead aliados-vision-far-detail">${aliados.vision.farDetail}</p>`);
@@ -726,7 +809,7 @@ describe('partner share click handler', () => {
     vi.resetModules();
   });
 
-  async function bindShare(writeText?: (text: string) => Promise<void>) {
+  async function bindShare(writeText?: (text: string) => Promise<void>, page = 'aliados') {
     vi.resetModules();
     let onClick: (() => Promise<void>) | undefined;
     const button = {
@@ -737,12 +820,12 @@ describe('partner share click handler', () => {
     };
     const status = { textContent: '' };
     const root = {
-      dataset: { page: 'aliados' },
+      dataset: { page },
       innerHTML: 'partner content',
       querySelector: (selector: string) => selector === '[data-share]' ? button : selector === '.aliados-share-status' ? status : null,
       querySelectorAll: () => []
     };
-    const location = { origin: 'https://dev.ateneo-abierto.org', search: '?lang=en', hash: '#conversemos' };
+    const location = { origin: 'https://dev.ateneo-abierto.org', pathname: `/${page}`, search: '?lang=en', hash: '#conversemos' };
     vi.stubGlobal('location', location);
     vi.stubGlobal('window', { location, localStorage: { getItem: () => 'en' } });
     vi.stubGlobal('navigator', { languages: ['en-US'], ...(writeText ? { clipboard: { writeText } } : {}) });
@@ -769,6 +852,17 @@ describe('partner share click handler', () => {
     await click();
     expect(written).toEqual(['https://dev.ateneo-abierto.org/aliados']);
     expect(status.textContent).toBe('Enlace copiado');
+  });
+
+  test('keeps the English funders DOM and copies its path with its own confirmation', async () => {
+    const written: string[] = [];
+    const { button, status, root, click } = await bindShare(async (text) => { written.push(text); }, 'funders');
+
+    expect(button.hidden).toBe(false);
+    expect(root.innerHTML).toBe('partner content');
+    await click();
+    expect(written).toEqual(['https://dev.ateneo-abierto.org/funders']);
+    expect(status.textContent).toBe('Link copied');
   });
 
   test('shows the URL for manual copying when clipboard permission is rejected', async () => {
