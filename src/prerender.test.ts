@@ -444,6 +444,59 @@ describe('build-time prerender', () => {
     }
   });
 
+
+  test('numbers the partner formats decoratively inside their headings', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const cards = [...html.matchAll(/<article class="door aliados-format"[^>]*>([\s\S]*?)<\/article>/g)];
+
+    expect(cards).toHaveLength(3);
+    expect(html.match(/class="aliados-format-n" aria-hidden="true"/g)).toHaveLength(3);
+    for (const [index, numeral] of ['I', 'II', 'III'].entries()) {
+      expect(cards[index][1]).toContain(`<h3 class="door-title"><span class="aliados-format-n" aria-hidden="true">${numeral}</span>`);
+    }
+  });
+
+  test('renders shared format labels once while retaining each description list label', () => {
+    const html = fillTemplate(template, 'es', undefined, true);
+    const labels = '<div class="aliados-format-labels" aria-hidden="true"><span>Para quién</span><span>Formato</span><span>Con qué sales</span></div>';
+
+    expect(html.match(/class="aliados-format-labels"/g)).toHaveLength(1);
+    expect(html).toMatch(new RegExp(`class="door-grid aliados-format-grid">\\s*${labels}`));
+    const cards = [...html.matchAll(/<article class="door aliados-format"[^>]*>([\s\S]*?)<\/article>/g)];
+    expect(cards).toHaveLength(3);
+    for (const [, card] of cards) {
+      expect([...card.matchAll(/<dt>(.*?)<\/dt>/g)].map((match) => match[1])).toEqual(['Para quién', 'Formato', 'Con qué sales']);
+    }
+  });
+
+  test('shares five format rows with a label column only from 1024px', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
+    const wide = partner.slice(partner.indexOf('@media (min-width: 1024px)'));
+
+    expect(partner).toMatch(/\.aliados-format-labels\s*\{\s*display: none;/);
+    expect(wide).toMatch(/\.aliados-format-grid\s*\{[^}]*display: grid;[^}]*grid-template-columns: 9rem repeat\(3, minmax\(0, 1fr\)\);[^}]*grid-template-rows: repeat\(5, auto\);[^}]*column-gap: var\(--gap-lg\);[^}]*row-gap: 0;/);
+    expect(wide).toMatch(/\.aliados-format-labels\s*\{\s*display: contents;/);
+    for (const [index, row] of [2, 3, 4].entries()) {
+      expect(wide).toContain(`.aliados-format-labels span:nth-child(${index + 1}) {\n    grid-row: ${row};`);
+    }
+    expect(wide).toMatch(/\.aliados-format\s*\{[^}]*grid-row: 1 \/ span 5;[^}]*display: grid;[^}]*grid-template-rows: subgrid;/);
+    expect(wide).toMatch(/\.aliados-format dl\s*\{\s*display: contents;/);
+    expect(wide).toMatch(/\.aliados-format dl > div\s*\{[^}]*padding: 1rem 0 1\.5rem;[^}]*border-top: 1px solid var\(--c-border\);[^}]*margin: 0;/);
+    expect(wide.match(/\.aliados-format dl > div\s*\{[^}]*\}/)?.[0]).not.toContain('min-height');
+    expect(wide).toMatch(/\.aliados-format dt\s*\{[^}]*position: absolute;[^}]*width: 1px;[^}]*height: 1px;[^}]*clip-path: inset\(50%\);/);
+    expect(wide.match(/\.aliados-format dt\s*\{[^}]*\}/)?.[0]).not.toContain('display: none');
+  });
+
+  test('keeps format card offsets reset and colours the second article numeral independently of the labels', () => {
+    const styles = readFileSync('src/styles.css', 'utf8');
+    const partner = styles.slice(styles.indexOf('/* The partner page changes pace'));
+
+    expect(partner).toMatch(/\.aliados-format-grid \.door\s*\{\s*margin: 0;/);
+    expect(partner).toMatch(/\.aliados-format-n\s*\{[^}]*display: block;[^}]*margin-bottom: 0\.5rem;[^}]*font: italic 400 1\.4rem\/1 var\(--font-display\);[^}]*color: var\(--c-fg-3\);/);
+    expect(partner).toMatch(/\.aliados-format:nth-of-type\(2\) \.aliados-format-n\s*\{[^}]*color: var\(--c-accent\);/);
+  });
+
   // David, 2026-09-29: each hero sentence fits two lines, so the partner hero
   // sets its own, smaller size instead of the landing's display scale.
   test('keeps partner hero alignment and its two-line title size', () => {
