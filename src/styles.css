@@ -3996,6 +3996,23 @@ p > .link,
   margin-top: var(--gap-lg);
 }
 
+/* An ally should see their own people named on the first screen. */
+.aliados-audience {
+  max-width: 68ch;
+  margin: var(--gap-md) 0 0;
+  font: var(--t-body);
+  color: var(--c-fg-soft);
+}
+
+.aliados-audience-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  font: var(--t-label);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
 /* The partner's steps stay visible even when the landing's strip is hidden. */
 .aliados-steps-row {
   margin-top: var(--gap-lg);
