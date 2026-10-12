@@ -802,8 +802,9 @@ function openAtDoor(container: ParentNode, route: DeepLinkRoute): void {
 // Each partner briefing keeps its own locale, talk, map and share link:
 // never re-render it into the home page, whatever language was saved.
 if (root.dataset.page === 'aliados' || root.dataset.page === 'funders') {
-  const partner = root.dataset.page === 'funders' ? funders : aliados;
-  const page = root.dataset.page === 'funders' ? copy.en : copy.es;
+  const locale = root.dataset.page === 'funders' && root.dataset.locale === 'en' ? 'en' : 'es';
+  const partner = root.dataset.page === 'funders' ? funders[locale] : aliados;
+  const page = copy[locale];
   const share = root.querySelector<HTMLButtonElement>('[data-share]');
   const shareStatus = root.querySelector<HTMLElement>('.aliados-share-status');
   if (share && shareStatus) {

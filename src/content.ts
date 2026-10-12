@@ -1651,110 +1651,220 @@ export const aliados = {
 };
 
 export const funders = {
-  meta: {
-    title: 'For funders · Ateneo Abierto',
-    description: 'Ateneo Abierto teaches people without a technical background to use AI agents at work and in life. See what early support makes possible.'
-  },
-  eyebrow: 'For funders',
-  titleLines: [{ text: 'Technology is already within everyone’s reach.' }, { text: 'Knowing how to use it still isn’t.', em: true }],
-  lead: 'Ateneo Abierto teaches people without a technical background to use these tools in their work and their lives, and to teach them to others. We’re looking for support to reach more people.',
-  audience: { label: 'Who it’s for', text: 'Office workers, teachers, shopkeepers and teams at organizations.' },
-  steps: [
-    { title: 'Write to us', text: 'Tell us what you’d like to support.' },
-    { title: 'We talk', text: 'In 30 minutes we see where your support fits best.' },
-    { title: 'We report back', text: 'You see what your support made possible.' }
-  ],
-  gap: {
-    eyebrow: 'The problem',
-    title: 'The gap',
-    paragraphs: [
-      'Much of today’s work runs through digital tools, and many of the best are open. Nobody has to depend on a single company to use them.',
-      'Even so, many people are left out because no one taught them how. That gap closes doors to jobs, study and participation, and it widens with every new tool.'
+  en: {
+    meta: {
+      title: 'For funders · Ateneo Abierto',
+      description: 'Ateneo Abierto teaches people without a technical background to use AI agents at work and in life. See what early support makes possible.'
+    },
+    eyebrow: 'For funders',
+    titleLines: [{ text: 'Technology is already within everyone’s reach.' }, { text: 'Knowing how to use it still isn’t.', em: true }],
+    lead: 'Ateneo Abierto teaches people without a technical background to use these tools in their work and their lives, and to teach them to others. We’re looking for support to reach more people.',
+    audience: { label: 'Who it’s for', text: 'Office workers, teachers, shopkeepers and teams at organizations.' },
+    steps: [
+      { title: 'Write to us', text: 'Tell us what you’d like to support.' },
+      { title: 'We talk', text: 'In 30 minutes we see where your support fits best.' },
+      { title: 'We report back', text: 'You see what your support made possible.' }
     ],
-    thesis: 'We believe anyone who knows the basics of a computer can learn to use them.'
+    gap: {
+      eyebrow: 'The problem',
+      title: 'The gap',
+      paragraphs: [
+        'Much of today’s work runs through digital tools, and many of the best are open. Nobody has to depend on a single company to use them.',
+        'Even so, many people are left out because no one taught them how. That gap closes doors to jobs, study and participation, and it widens with every new tool.'
+      ],
+      thesis: 'We believe anyone who knows the basics of a computer can learn to use them.'
+    },
+    approach: {
+      eyebrow: 'The method',
+      title: 'How we close the gap',
+      intro: 'We start with AI agents: tools you give a task to, and that work alongside you. With them we train self-reliant people, able to use technology in their work and their lives, and to teach it. We don’t train programmers.',
+      pillars: [
+        { title: 'You direct.', body: 'The tool works for the person. They decide what to ask, check the result and correct it.' },
+        { title: 'What’s yours stays yours.', body: 'We teach open tools, so your files and your work stay yours.' },
+        { title: 'Whoever learns, teaches.', body: 'Everyone we train can train others, and that’s how knowledge multiplies.' }
+      ]
+    },
+    formats: {
+      eyebrow: 'The path',
+      title: 'One path, three steps',
+      intro: 'Each format leads to the next. First you see what others already do, then you learn to do it, and then you take it further as a team.',
+      cta: 'See the format',
+      cards: [
+        { title: 'Open Demos', href: '/demos?lang=en', fields: [
+          { label: 'Who it’s for', text: 'Anyone. Watching needs no sign-up; presenting does.' },
+          { label: 'Format', text: 'Talks of 2 to 5 minutes, no slides. People who already use these tools show what they solved, what failed along the way and how they got there.' },
+          { label: 'What you take away', text: 'Ideas other people have already tested, and contact with people solving similar problems. It’s also the way in for people with technical experience who want to mentor.' }
+        ] },
+        { title: 'Workshops', href: '/talleres?lang=en', fields: [
+          { label: 'Who it’s for', text: 'Open groups and teams at organizations. Knowing the basics of a computer is enough.' },
+          { label: 'Format', text: 'In person, two and a half hours, 8 to 15 people, one topic at a time. In the first, each person sets up an agent on their own computer, works with a sample company’s files (documents, spreadsheets, slides and PDFs) and, at the end, teaches the agent a task of their own.' },
+          { label: 'What you take away', text: 'The experience of having directed an agent on your own, on your own computer, and a workspace ready to keep using.' }
+        ] },
+        { title: 'Hackathon for non-technical people', href: '/hackaton?lang=en', fields: [
+          { label: 'Who it’s for', text: 'People who have been through a workshop or the demos and want to go further.' },
+          { label: 'Format', text: 'One day, in person, in small teams with a mentor per team. Each team picks a real task and solves it with agents.' },
+          { label: 'What you take away', text: 'What you learn from everyone else: which tools they use, how they use them and what works for them. What each team builds, such as instructions and skills for agents, is published in Ateneo Abierto’s repository, open and free for anyone to use.' }
+        ] }
+      ]
+    },
+    respaldo: {
+      body: 'Ateneo Abierto was presented at the Oslo Freedom Forum, the Human Rights Foundation’s annual gathering in Norway of human rights defenders from around the world.',
+      caption: '“What They Can’t Take”, an Ignite Talk by David Aragort, founder of Ateneo Abierto. More than seven years in digital security and human rights; HRF Freedom Fellow (2025-2026).'
+    },
+    vision: {
+      eyebrow: 'Where this goes',
+      title: 'Where we’re headed',
+      near: 'Today it’s demos, workshops and hackathons. The next step, still being explored, is technical hackathons that solve a community’s concrete problem, together with partner organizations and media.',
+      far: 'In the long run, we want a network of public knowledge spaces across Venezuela.',
+      farDetail: 'The 21st-century public library, open to anyone regardless of income, age, race, creed or education. A place to find:',
+      items: [
+        'Computers and equipment on loan, for people who don’t have their own.',
+        'Fast internet.',
+        'Ongoing training: digital, financial and professional.',
+        'Books and access to knowledge.',
+        'Spaces to work, meet and get to know other people.',
+        'Different communities meeting each other.',
+        'Digital literacy from zero, for people who have never used a computer.'
+      ],
+      closing: 'Knowledge as a public service, like transport or health care.'
+    },
+    now: {
+      eyebrow: 'Where we are',
+      title: 'Early, and in the open',
+      rows: [
+        { label: 'Done', text: 'The method and the three formats, public.' },
+        { label: 'Done', text: 'Presented at the Oslo Freedom Forum, in the talk above.' },
+        { label: 'Done', text: 'The first workshop, designed.' },
+        { label: 'Now', text: 'The first sessions, being scheduled.' }
+      ]
+    },
+    support: {
+      eyebrow: 'Support',
+      title: 'What support makes possible',
+      items: [
+        { title: 'Workshops that don’t depend on the grid', body: 'Backup power and satellite internet in every room, so a blackout doesn’t end the session.' },
+        { title: 'Paid facilitators', body: 'Everything so far is volunteer work. Paid time turns occasional sessions into a regular schedule, and trains alumni to lead their own.' },
+        { title: 'Hackathon days', body: 'Mentors, tool access for every team, and the open publishing of what the teams build.' },
+        { title: 'Where possible, loaner laptops', body: 'So not having a capable computer never keeps someone out.' }
+      ]
+    },
+    contact: {
+      title: 'Let’s talk',
+      line: 'We’re building this now, and early support shapes it most. If you’d like to help, write to us.',
+      button: 'Write to ateneo@aragort.com',
+      share: {
+        text: 'Not your decision alone? Share this page with your team.',
+        button: 'Copy link',
+        done: 'Link copied'
+      }
+    }
   },
-  approach: {
-    eyebrow: 'The method',
-    title: 'How we close the gap',
-    intro: 'We start with AI agents: tools you give a task to, and that work alongside you. With them we train self-reliant people, able to use technology in their work and their lives, and to teach it. We don’t train programmers.',
-    pillars: [
-      { title: 'You direct.', body: 'The tool works for the person. They decide what to ask, check the result and correct it.' },
-      { title: 'What’s yours stays yours.', body: 'We teach open tools, so your files and your work stay yours.' },
-      { title: 'Whoever learns, teaches.', body: 'Everyone we train can train others, and that’s how knowledge multiplies.' }
-    ]
-  },
-  formats: {
-    eyebrow: 'The path',
-    title: 'One path, three steps',
-    intro: 'Each format leads to the next. First you see what others already do, then you learn to do it, and then you take it further as a team.',
-    cta: 'See the format',
-    cards: [
-      { title: 'Open Demos', href: '/demos?lang=en', fields: [
-        { label: 'Who it’s for', text: 'Anyone. Watching needs no sign-up; presenting does.' },
-        { label: 'Format', text: 'Talks of 2 to 5 minutes, no slides. People who already use these tools show what they solved, what failed along the way and how they got there.' },
-        { label: 'What you take away', text: 'Ideas other people have already tested, and contact with people solving similar problems. It’s also the way in for people with technical experience who want to mentor.' }
-      ] },
-      { title: 'Workshops', href: '/talleres?lang=en', fields: [
-        { label: 'Who it’s for', text: 'Open groups and teams at organizations. Knowing the basics of a computer is enough.' },
-        { label: 'Format', text: 'In person, two and a half hours, 8 to 15 people, one topic at a time. In the first, each person sets up an agent on their own computer, works with a sample company’s files (documents, spreadsheets, slides and PDFs) and, at the end, teaches the agent a task of their own.' },
-        { label: 'What you take away', text: 'The experience of having directed an agent on your own, on your own computer, and a workspace ready to keep using.' }
-      ] },
-      { title: 'Hackathon for non-technical people', href: '/hackaton?lang=en', fields: [
-        { label: 'Who it’s for', text: 'People who have been through a workshop or the demos and want to go further.' },
-        { label: 'Format', text: 'One day, in person, in small teams with a mentor per team. Each team picks a real task and solves it with agents.' },
-        { label: 'What you take away', text: 'What you learn from everyone else: which tools they use, how they use them and what works for them. What each team builds, such as instructions and skills for agents, is published in Ateneo Abierto’s repository, open and free for anyone to use.' }
-      ] }
-    ]
-  },
-  respaldo: {
-    body: 'Ateneo Abierto was presented at the Oslo Freedom Forum, the Human Rights Foundation’s annual gathering in Norway of human rights defenders from around the world.',
-    caption: '“What They Can’t Take”, an Ignite Talk by David Aragort, founder of Ateneo Abierto. More than seven years in digital security and human rights; HRF Freedom Fellow (2025-2026).'
-  },
-  vision: {
-    eyebrow: 'Where this goes',
-    title: 'Where we’re headed',
-    near: 'Today it’s demos, workshops and hackathons. The next step, still being explored, is technical hackathons that solve a community’s concrete problem, together with partner organizations and media.',
-    far: 'In the long run, we want a network of public knowledge spaces across Venezuela.',
-    farDetail: 'The 21st-century public library, open to anyone regardless of income, age, race, creed or education. A place to find:',
-    items: [
-      'Computers and equipment on loan, for people who don’t have their own.',
-      'Fast internet.',
-      'Ongoing training: digital, financial and professional.',
-      'Books and access to knowledge.',
-      'Spaces to work, meet and get to know other people.',
-      'Different communities meeting each other.',
-      'Digital literacy from zero, for people who have never used a computer.'
+  es: {
+    meta: {
+      title: 'Para quienes financian · Ateneo Abierto',
+      description: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar agentes de IA en su trabajo y en su vida. Conoce qué hace posible el apoyo temprano.'
+    },
+    eyebrow: 'Para quienes financian',
+    titleLines: [{ text: 'La tecnología ya está al alcance de todos.' }, { text: 'Saber usarla, todavía no.', em: true }], // (aliados)
+    lead: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar estas herramientas en su trabajo y en su vida, y a enseñárselas a otras. Buscamos apoyo para llegar a más personas.',
+    audience: { label: 'Para quién', text: 'Personas que trabajan en oficinas, docentes, comerciantes y equipos de organizaciones.' }, // (aliados)
+    steps: [
+      { title: 'Nos escribes', text: 'Cuéntanos qué te gustaría apoyar.' },
+      { title: 'Conversamos', text: 'En 30 minutos vemos dónde encaja mejor tu apoyo.' },
+      { title: 'Te contamos', text: 'Te mostramos lo que tu apoyo hizo posible.' }
     ],
-    closing: 'Knowledge as a public service, like transport or health care.'
-  },
-  now: {
-    eyebrow: 'Where we are',
-    title: 'Early, and in the open',
-    rows: [
-      { label: 'Done', text: 'The method and the three formats, public.' },
-      { label: 'Done', text: 'Presented at the Oslo Freedom Forum, in the talk above.' },
-      { label: 'Done', text: 'The first workshop, designed.' },
-      { label: 'Now', text: 'The first sessions, being scheduled.' }
-    ]
-  },
-  support: {
-    eyebrow: 'Support',
-    title: 'What support makes possible',
-    items: [
-      { title: 'Workshops that don’t depend on the grid', body: 'Backup power and satellite internet in every room, so a blackout doesn’t end the session.' },
-      { title: 'Paid facilitators', body: 'Everything so far is volunteer work. Paid time turns occasional sessions into a regular schedule, and trains alumni to lead their own.' },
-      { title: 'Hackathon days', body: 'Mentors, tool access for every team, and the open publishing of what the teams build.' },
-      { title: 'Where possible, loaner laptops', body: 'So not having a capable computer never keeps someone out.' }
-    ]
-  },
-  contact: {
-    title: 'Let’s talk',
-    line: 'We’re building this now, and early support shapes it most. If you’d like to help, write to us.',
-    button: 'Write to ateneo@aragort.com',
-    share: {
-      text: 'Not your decision alone? Share this page with your team.',
-      button: 'Copy link',
-      done: 'Link copied'
+    gap: {
+      eyebrow: 'El problema',
+      title: 'La brecha',
+      paragraphs: [
+        'Hoy buena parte del trabajo pasa por herramientas digitales, y muchas de las mejores son abiertas. Nadie tiene que depender de una sola empresa para usarlas.',
+        'Aun así, muchas personas se quedan fuera porque nadie les enseñó a usarlas. Esa brecha cierra puertas de empleo, de estudio y de participación, y crece con cada herramienta nueva.'
+      ],
+      thesis: 'Creemos que cualquier persona que sepa lo básico de una computadora puede aprender a usarlas.'
+    },
+    approach: {
+      eyebrow: 'El método',
+      title: 'Cómo cerramos esa brecha',
+      intro: 'Hoy empezamos por los agentes de IA, herramientas a las que les das una tarea y trabajan contigo. Con ellas formamos personas con autonomía, capaces de usar la tecnología en su trabajo y en su vida, y de enseñarla. No formamos programadores.',
+      pillars: [
+        { title: 'Tú diriges.', body: 'La herramienta trabaja para la persona. Ella decide qué pedir, revisa el resultado y lo corrige.' },
+        { title: 'Lo tuyo se queda contigo.', body: 'Enseñamos herramientas abiertas, para que tus archivos y tu trabajo sigan siendo tuyos.' },
+        { title: 'Quien aprende, enseña.', body: 'Cada persona que formamos puede formar a otras, y así el conocimiento se multiplica.' }
+      ]
+    },
+    formats: {
+      eyebrow: 'El camino',
+      title: 'Un camino en tres pasos',
+      intro: 'Cada formato lleva al siguiente. Primero ves lo que otras personas ya hacen, luego aprendes a hacerlo, y después lo llevas más lejos en equipo.',
+      cta: 'Ver el formato',
+      cards: [
+        { title: 'Demos abiertas', href: '/demos', fields: [
+          { label: 'Para quién', text: 'Cualquier persona. Para mirar no hace falta inscribirse; para presentar, sí.' },
+          { label: 'Formato', text: 'Presentaciones de 2 a 5 minutos, sin diapositivas. Quien ya usa estas herramientas muestra qué resolvió, qué falló en el intento y cómo lo logró.' },
+          { label: 'Con qué sales', text: 'Ideas probadas por otras personas y contacto con quienes resuelven problemas parecidos. También es la entrada para quienes tienen experiencia técnica y quieren ser mentores.' }
+        ] },
+        { title: 'Talleres', href: '/talleres', fields: [
+          { label: 'Para quién', text: 'Grupos abiertos y equipos de organizaciones. Basta con saber lo básico de una computadora.' },
+          { label: 'Formato', text: 'Presencial, dos horas y media, de 8 a 15 personas, un tema a la vez. En el primero, cada persona instala un agente en su computadora, trabaja con los archivos de una empresa de ejemplo (documentos, hojas de cálculo, presentaciones y PDF) y al final le enseña al agente una tarea propia.' },
+          { label: 'Con qué sales', text: 'La experiencia de haber dirigido un agente por tu cuenta, en tu propia computadora, y un espacio de trabajo listo para seguir usándolo.' }
+        ] },
+        { title: 'Hackatón para no técnicos', href: '/hackaton', fields: [
+          { label: 'Para quién', text: 'Personas que ya pasaron por un taller o por las demos y quieren ir más lejos.' },
+          { label: 'Formato', text: 'Un día, presencial, en equipos pequeños con un mentor por equipo. Cada equipo elige una tarea real y la resuelve con agentes.' },
+          { label: 'Con qué sales', text: 'Lo que aprendes de las demás personas: qué herramientas usan, cómo las usan y qué les funciona. Lo que crea cada equipo, como instrucciones y habilidades para agentes, se publica en el repositorio de Ateneo Abierto, abierto y libre para que cualquiera lo use.' }
+        ] }
+      ]
+    },
+    respaldo: {
+      body: 'Ateneo Abierto se presentó en el Oslo Freedom Forum, el encuentro anual de la Human Rights Foundation que reúne en Noruega a defensores de derechos humanos de todo el mundo.',
+      caption: '"What They Can\'t Take", Ignite Talk de David Aragort, fundador de Ateneo Abierto. Más de siete años en seguridad digital y derechos humanos; Freedom Fellow de HRF (2025-2026).'
+    },
+    vision: {
+      eyebrow: 'El norte',
+      title: 'Hacia dónde vamos',
+      near: 'Hoy son demos, talleres y hackatones. El próximo paso, en exploración, son hackatones técnicas que resuelvan el problema concreto de una comunidad, junto a organizaciones y medios aliados.',
+      far: 'A largo plazo queremos una red de espacios públicos de conocimiento en Venezuela.',
+      farDetail: 'La biblioteca pública del siglo XXI, abierta a cualquiera sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encontrar:',
+      items: [
+        'Computadoras y equipos en préstamo, para quien no tiene los suyos.',
+        'Internet rápido.',
+        'Formación continua: digital, financiera y profesional.',
+        'Libros y acceso al conocimiento.',
+        'Espacios para trabajar, reunirse y conocer a otras personas.',
+        'Encuentro entre comunidades distintas.',
+        'Alfabetización digital desde cero, para quien nunca ha usado una computadora.'
+      ],
+      closing: 'El conocimiento como un servicio público, igual que el transporte o la salud.'
+    },
+    now: {
+      eyebrow: 'Dónde estamos',
+      title: 'Empezando, a la vista de todos',
+      rows: [
+        { label: 'Hecho', text: 'El método y los tres formatos, publicados.' },
+        { label: 'Hecho', text: 'Presentado en el Oslo Freedom Forum, en la charla de arriba.' },
+        { label: 'Hecho', text: 'El primer taller, diseñado.' },
+        { label: 'Ahora', text: 'Las primeras sesiones, en agenda.' }
+      ]
+    },
+    support: {
+      eyebrow: 'Apoyo',
+      title: 'Lo que el apoyo hace posible',
+      items: [
+        { title: 'Talleres que no dependen de la luz', body: 'Energía de respaldo e internet satelital en cada sala, para que un apagón no termine la sesión.' },
+        { title: 'Facilitación pagada', body: 'Hasta hoy, todo se ha hecho con trabajo voluntario. El tiempo pagado convierte sesiones ocasionales en un calendario regular, y forma a quienes ya pasaron por un taller para guiar los suyos.' },
+        { title: 'Días de hackatón', body: 'Mentores, acceso a herramientas para cada equipo y la publicación abierta de lo que crean.' },
+        { title: 'Donde sea posible, laptops en préstamo', body: 'Para que no tener una computadora capaz nunca deje a nadie fuera.' }
+      ]
+    },
+    contact: {
+      title: 'Conversemos', // (aliados)
+      line: 'Lo estamos construyendo ahora, y el apoyo temprano es el que más lo define. Si quieres ayudar, escríbenos.',
+      button: 'Escríbenos a ateneo@aragort.com', // (aliados)
+      share: {
+        text: '¿La decisión no es solo tuya? Comparte esta página con tu equipo.',
+        button: 'Copiar el enlace',
+        done: 'Enlace copiado'
+      }
     }
   }
 };
