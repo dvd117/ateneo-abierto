@@ -361,6 +361,7 @@ button {
   display: grid;
   gap: var(--gap-md);
   align-items: end;
+  align-content: end;
   min-height: clamp(10rem, 24vw, 17rem);
   margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
 }
@@ -3970,8 +3971,8 @@ p > .link,
   }
 }
 
-/* The partner page changes pace without changing the landing's vocabulary. */
-.sec[class*="aliados-"] {
+/* The partner page changes pace only at its open and close; its chapters keep the landing's padding. */
+.sec[class*="aliados-"]:not(.chapter) {
   padding-block: clamp(3rem, 6vw, 4.75rem);
 }
 
@@ -4338,7 +4339,6 @@ p > .link,
 /* Native disclosures answer the first questions without another script. */
 .aliados-faq-list {
   display: grid;
-  max-width: 52rem;
 }
 
 .aliados-faq-item {
