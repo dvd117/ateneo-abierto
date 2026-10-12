@@ -113,7 +113,7 @@ function renderHeader(page: PageCopy, locale: Locale, partner = false): string {
         ${partner ? '' : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
         </nav>`}
-        ${partner ? '' : `<nav class="nav-links chapter-nav" aria-label="${page.sectionsLabel}">
+        ${partner ? '' : `<nav class="nav-links chapter-nav" aria-label="${page.indexLabel}">
           ${chaptersFor(page).map(({ number, id, eyebrow }) => `<a class="chapter-nav-link" data-chapter-link href="#${id}" aria-label="${inline(`${number} ${eyebrow}`)}"><span class="chapter-nav-n" aria-hidden="true">${number}</span><span class="chapter-nav-name visually-hidden">${inline(eyebrow)}</span></a>`).join('')}
           <a class="chapter-join" href="#unete">${inline(page.hero.primaryCta)}</a>
         </nav>`}
