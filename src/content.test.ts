@@ -247,19 +247,20 @@ describe('landing page copy', () => {
     }
   });
 
-  test('gives band three the one line in the founder\'s voice, unsigned and outside the hidden band', () => {
+  test('closes the Únete column on the one line in the founder\'s voice, unsigned and outside the hidden band', () => {
     // Drafts until David approves the final wording (2026-09-14).
     expect(copy.es.voice).toBe('Este piso lo conoces. Esta vez no es para irte.');
     expect(copy.en.voice).toBe('You know this floor. This time it is not for leaving.');
 
     for (const locale of locales) {
       const html = renderPage(locale);
-      const voices = html.match(/<p class="band-voice[^"]*">[^<]*<\/p>/g) ?? [];
+      const voices = html.match(/<p class="join-voice">[^<]*<\/p>/g) ?? [];
 
-      expect(voices).toEqual([`<p class="band-voice shell">${copy[locale].voice}</p>`]);
-      // A sibling that follows band three's closing tag, not a child of the aria-hidden band.
-      expect(html).toMatch(/band--three" data-band aria-hidden="true">[\s\S]*?<\/svg>\s*<\/div>\s*<p class="band-voice shell">/);
-      expect(html.indexOf('band-voice')).toBeLessThan(html.indexOf('id="unete"'));
+      expect(voices).toEqual([`<p class="join-voice">${copy[locale].voice}</p>`]);
+      expect(html).not.toContain('band-voice');
+      // The last thing in the Únete copy column, after the contact line.
+      expect(html).toMatch(/<p class="join-allies">[\s\S]*?<\/p>\s*<p class="join-voice">[^<]*<\/p>\s*<\/div>\s*<form class="join-form"/);
+      expect(html.indexOf('join-voice')).toBeGreaterThan(html.indexOf('id="unete"'));
     }
   });
 

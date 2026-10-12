@@ -431,8 +431,8 @@ export type PageCopy = {
   doors: DoorsCopy;
   deepLinks: Record<DeepLinkRoute, DeepLinkCard>;
   /**
-   * The one line under the last band, before Únete: the only place the page
-   * speaks in the founder's voice. It quotes the Maiquetía floor in words,
+   * The line that closes the Únete column: the only place the page speaks in
+   * the founder's voice. It quotes the Maiquetía floor in words,
    * never in image. Unsigned.
    */
   voice: string;

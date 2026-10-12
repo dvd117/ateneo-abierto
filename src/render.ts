@@ -473,11 +473,11 @@ function titleFrom(lines: { text: string; em?: boolean }[]): string {
  * September 2026 the artist's family publicly objected to unauthorised
  * imitations of that pattern, and David chose the method over the image
  * (2026-09-11). The floor is referenced deliberately in words, and in one
- * place only: the line under band three, before Únete (`voice` in
- * content.ts), approved by David on 2026-09-14. The band itself is hidden
- * from the tree: it says nothing. The line is a real paragraph beside it.
+ * place only: the line that closes the Únete column (`voice` in content.ts),
+ * approved by David on 2026-09-14. The band itself is hidden from the tree:
+ * it says nothing.
  */
-function renderBand(name: string, seed: number, voice?: string): string {
+function renderBand(name: string, seed: number): string {
   // The stripes are drawn in the browser (reveal.ts, drawBand): three bands
   // of ~200 columns each would add tens of kilobytes to the first response.
   // Until then — and without JavaScript — a plain stripe pattern stands in.
@@ -495,8 +495,7 @@ function renderBand(name: string, seed: number, voice?: string): string {
         </g>
         <rect class="band-screen" x="-120" width="1440" height="100" fill="url(#band-${name}-screen)"/>
       </svg>
-    </div>${voice ? `
-    <p class="band-voice shell">${inline(voice)}</p>` : ''}
+    </div>
   `;
 }
 
@@ -875,6 +874,7 @@ function renderForm(page: PageCopy, locale: Locale): string {
           ${inline(form.allies)}
           <a class="link" href="mailto:${page.footer.contact}">${page.footer.contact}</a>
         </p>
+        <p class="join-voice">${inline(page.voice)}</p>
       </div>
 
       <form class="join-form" data-join novalidate>
@@ -1107,7 +1107,7 @@ export function renderPage(
       ${renderNorth(page)}
       ${renderPrinciples(page)}
       ${renderTalk(page)}
-      ${renderBand('three', 5, page.voice)}
+      ${renderBand('three', 5)}
       ${renderForm(page, locale)}
     </main>
     ${renderFooter(page, locale)}
