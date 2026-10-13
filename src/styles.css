@@ -315,43 +315,6 @@ button {
   padding-top: 0.75rem;
 }
 
-.sec-head {
-  display: grid;
-  gap: 1.25rem;
-  margin-bottom: clamp(2.5rem, 5vw, 4.5rem);
-}
-
-/* Title across the top, lead stepping in under it from the middle of the
-   measure: one editorial offset for every section, whatever the lead's length. */
-@media (min-width: 861px) {
-  .sec-head {
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    column-gap: var(--gap-md);
-    row-gap: 1.75rem;
-  }
-
-  .sec-head-main {
-    grid-column: 1 / span 10;
-  }
-
-  .sec-head-lead {
-    grid-column: 6 / -1;
-  }
-
-  .sec-head--inline {
-    align-items: end;
-  }
-
-  .sec-head--inline .sec-head-main {
-    grid-column: 1 / span 7;
-  }
-
-  .sec-head--inline .sec-head-lead {
-    grid-column: 8 / -1;
-    padding-bottom: 0.35rem;
-  }
-}
-
 /* ---------- chapters and their index ---------- */
 
 .chapter-head {
@@ -610,41 +573,6 @@ button {
   .chapter-index-arrow {
     grid-column: 3;
     grid-row: auto;
-  }
-}
-
-.sec-head .section-title {
-  margin-top: 0.9rem;
-}
-
-/* The title rises a beat after its eyebrow, the lead a beat after that. */
-.sec-head[data-reveal] {
-  opacity: 1;
-  transform: none;
-}
-
-html.motion-ok .sec-head[data-reveal] > * {
-  opacity: 0;
-  transform: translateY(1.25rem);
-  transition:
-    opacity 700ms var(--ease-out),
-    transform 900ms var(--ease-out);
-}
-
-html.motion-ok .sec-head[data-reveal] > :nth-child(2) {
-  transition-delay: 140ms;
-}
-
-html.motion-ok .sec-head[data-reveal].is-revealed > * {
-  opacity: 1;
-  transform: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .sec-head[data-reveal] > * {
-    opacity: 1;
-    transform: none;
-    transition: none;
   }
 }
 

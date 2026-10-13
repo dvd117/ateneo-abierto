@@ -507,33 +507,6 @@ function renderIndex(page: PageCopy): string {
   `;
 }
 
-/**
- * Every section opens the same way: eyebrow and title on the left, the lead
- * on the right, together spanning the whole measure. One pattern means every
- * section is as wide as every other, and a lead never breaks early for want
- * of a column (David's review, 2026-09-11).
- */
-function renderSecHead(options: {
-  eyebrow: string;
-  title: string;
-  id: string;
-  lead?: string;
-}): string {
-  // A one-sentence lead sits beside its title instead of under it: offset
-  // below a title, a single line reads as stranded.
-  const short = options.lead !== undefined && options.lead.length <= 120;
-
-  return `
-    <header class="sec-head${short ? ' sec-head--inline' : ''}" data-reveal>
-      <div class="sec-head-main">
-        <p class="eyebrow">${inline(options.eyebrow)}</p>
-        <h2 class="section-title" id="${options.id}">${options.title}</h2>
-      </div>
-      ${options.lead ? `<p class="lead sec-head-lead">${inline(options.lead)}</p>` : ''}
-    </header>
-  `;
-}
-
 /** Title lines joined, the `em` line set in the italic. */
 function titleFrom(lines: { text: string; em?: boolean }[]): string {
   return lines.map((line) => (line.em ? `<em>${inline(line.text)}</em>` : inline(line.text))).join(' ');
