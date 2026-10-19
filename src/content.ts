@@ -769,7 +769,7 @@ export const copy: Record<Locale, PageCopy> = {
         }
       ],
       more: {
-        lead: 'Esto mismo, explicado mejor:',
+        lead: 'Esto mismo, más a fondo:',
         label: 'Por qué dejé los chatbots',
         href: 'https://aragort.com/escritos/por-que-deje-los-chatbots'
       }
