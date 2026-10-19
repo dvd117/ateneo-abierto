@@ -875,6 +875,7 @@ main .door[id] {
   padding: 0.2rem 0.45rem;
   border-radius: var(--r-sm);
   color: var(--c-fg-2);
+  text-decoration: none;
 }
 
 .locale-button.is-active {
