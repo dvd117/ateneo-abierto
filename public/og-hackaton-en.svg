@@ -54,8 +54,8 @@
 
   <text class="serif" x="76" y="302" font-size="96" fill="#f0ece2" letter-spacing="-2.6">Hackathon for</text>
   <text class="serif-em" x="76" y="400" font-size="96" fill="#e2a638" letter-spacing="-1">non-technical people</text>
-  <text class="sans" x="80" y="474" font-size="28" fill="#cfc9bb">Office workers, teachers, shopkeepers,</text>
-  <text class="sans" x="80" y="512" font-size="28" fill="#cfc9bb">teams inside organizations.</text>
+  <text class="sans" x="80" y="474" font-size="28" fill="#cfc9bb">People who have been through a workshop or the demos</text>
+  <text class="sans" x="80" y="512" font-size="28" fill="#cfc9bb">and want to go further.</text>
 
   <line x1="80" y1="560" x2="1120" y2="560" stroke="#34312a" stroke-width="1"/>
   <text class="mono" x="80" y="592" font-size="16" fill="#a8a293">ateneo-abierto.org/hackaton</text>
