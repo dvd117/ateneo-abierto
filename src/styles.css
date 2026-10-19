@@ -682,7 +682,8 @@ main [id] {
 
 /* A door's own address (/hackaton, /talleres, /demos) opens the page
    with the door flush under the header: its margin is the header's height
-   (53.8 px at every width: one row, 0.85rem padding, 1px rule). */
+   (53.8 px at every width: one row, 0.85rem padding, 1px rule). /aliados has
+   no language links and is 52.6 px, but it has no door ids to land on. */
 main .door[id] {
   scroll-margin-top: 3.375rem;
 }
