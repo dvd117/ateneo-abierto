@@ -812,7 +812,7 @@ export const copy: Record<Locale, PageCopy> = {
           title: 'Demos abiertas',
           body: 'Entre 2 y 5 minutos: muestras la herramienta que te ha sido útil en tu trabajo, qué salió mal antes de que funcionara, y cómo llegaste ahí.',
           whoLabel: 'Para quién',
-          who: 'Quien ya armó algo y quiere enseñarlo, o aprender del intento de otro.',
+          who: 'Quien ya resolvió algo con estas herramientas y quiere enseñarlo, o aprender del intento de otro.',
           details: {
             goal: 'Aprender de lo que otros ya están haciendo, y mostrar lo tuyo.',
             activities: [
@@ -884,7 +884,7 @@ export const copy: Record<Locale, PageCopy> = {
     deepLinks: {
       demos: {
         headline: ['Demos', 'abiertas'],
-        who: ['Quien ya armó algo y quiere enseñarlo,', 'o aprender del intento de otro.']
+        who: ['Quien ya resolvió algo con estas herramientas y quiere enseñarlo,', 'o aprender del intento de otro.']
       },
       talleres: {
         headline: ['Talleres'],
@@ -1336,7 +1336,7 @@ export const copy: Record<Locale, PageCopy> = {
           title: 'Open Demos',
           body: 'Two to five minutes: you show the tool that has been useful in your work, what went wrong before it worked, and how you got there.',
           whoLabel: 'Who it’s for',
-          who: 'Anyone who has built something and wants to show it, or to learn from someone else\u2019s attempt.',
+          who: 'Anyone who has solved something with these tools and wants to show it, or to learn from someone else\u2019s attempt.',
           details: {
             goal: 'Learn from what others are already doing, and show your own.',
             activities: [
@@ -1403,7 +1403,7 @@ export const copy: Record<Locale, PageCopy> = {
     deepLinks: {
       demos: {
         headline: ['Open', 'Demos'],
-        who: ['Anyone who has built something and wants to show it,', 'or to learn from someone else\u2019s attempt.']
+        who: ['Anyone who has solved something with these tools and wants to show it,', 'or to learn from someone else\u2019s attempt.']
       },
       talleres: {
         headline: ['Workshops'],
