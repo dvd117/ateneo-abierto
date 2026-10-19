@@ -854,7 +854,7 @@ export const copy: Record<Locale, PageCopy> = {
           who: 'Personas que ya pasaron por un taller o por las demos y quieren ir más lejos.',
           // Facts revised 2026-09-29 (one day, for alumni, outputs published). Venue and places still to confirm.
           details: {
-            goal: 'Que aprendas de las demás personas: qué herramientas usan, cómo las usan y qué les funciona.',
+            goal: 'Resolver en equipo una tarea real, de principio a fin, y aprender de cómo lo hacen los demás.',
             activities: [
               'Cada equipo elige una tarea real que quiere resolver.',
               'Un mentor acompaña a cada equipo durante toda la jornada.',
@@ -1375,7 +1375,7 @@ export const copy: Record<Locale, PageCopy> = {
           who: 'People who have been through a workshop or the demos and want to go further.',
           // Facts revised 2026-09-29 (one day, for alumni, outputs published). Venue and places still to confirm.
           details: {
-            goal: 'That you learn from the others: which tools they use, how they use them and what works for them.',
+            goal: 'Solve a real task as a team, start to finish, and learn from how the others do it.',
             activities: [
               'Each team picks a real task it wants to solve.',
               'A mentor stays with each team for the whole day.',
