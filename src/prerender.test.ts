@@ -318,7 +318,7 @@ describe('build-time prerender', () => {
     for (const link of copy[locale].nav) expect(legacy).toContain(`<a href="${link.href}">${link.label}</a>`);
   });
 
-  test('runs six partner chapters, and the contact pill at every width, without locale controls', () => {
+  test('runs six partner chapters, and the contact link at every width, without locale controls', () => {
     const html = fillTemplate(template, 'es', undefined, 'aliados');
     const header = html.match(/<header class="site-header">([\s\S]*?)<\/header>/)?.[1] ?? '';
     const nav = header.match(/<nav class="nav-links chapter-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
