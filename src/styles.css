@@ -894,6 +894,13 @@ main .door[id] {
     column-gap: 0.5rem;
   }
 
+  /* /aliados has no language links: drop their column and its gap, so the
+     pill ends at the gutter. */
+  .header-inner:not(:has(.locale-toggle)) {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas: "brand nav";
+  }
+
   .nav-wordmark {
     grid-area: brand;
     margin-right: 0;
