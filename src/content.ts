@@ -1596,7 +1596,7 @@ export const aliados = {
   },
   respaldo: {
     body: 'Ateneo Abierto se presentó en el Oslo Freedom Forum, el encuentro anual de la Human Rights Foundation que reúne en Noruega a defensores de derechos humanos de todo el mundo. Todo lo hecho hasta hoy se ha hecho con trabajo voluntario.',
-    caption: '"What They Can\'t Take", Ignite Talk de David Aragort, fundador de Ateneo Abierto. Más de siete años en seguridad digital y derechos humanos; Freedom Fellow de HRF (2025-2026).'
+    caption: '“What They Can’t Take”, Ignite Talk de David Aragort, fundador de Ateneo Abierto. Más de siete años en seguridad digital y derechos humanos; Freedom Fellow de HRF (2025-2026).'
   },
   vision: {
     eyebrow: 'El norte',
@@ -1820,7 +1820,7 @@ export const funders = {
     },
     respaldo: {
       body: 'Ateneo Abierto se presentó en el Oslo Freedom Forum, el encuentro anual de la Human Rights Foundation que reúne en Noruega a defensores de derechos humanos de todo el mundo.',
-      caption: '"What They Can\'t Take", Ignite Talk de David Aragort, fundador de Ateneo Abierto. Más de siete años en seguridad digital y derechos humanos; Freedom Fellow de HRF (2025-2026).'
+      caption: '“What They Can’t Take”, Ignite Talk de David Aragort, fundador de Ateneo Abierto. Más de siete años en seguridad digital y derechos humanos; Freedom Fellow de HRF (2025-2026).'
     },
     vision: {
       eyebrow: 'El norte',
