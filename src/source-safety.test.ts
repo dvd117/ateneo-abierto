@@ -150,6 +150,10 @@ describe('the desktop running head', () => {
     expect(styles).toContain('.progress-rail {');
     expect(styles).toContain('.progress-rail span {');
   });
+
+  test('spaces the chapter numerals for the 24 px target rule', () => {
+    expect(css()).toMatch(/\.chapter-nav\s*\{[^}]*gap: 1rem;/);
+  });
 });
 
 describe('the shift actor pills', () => {
