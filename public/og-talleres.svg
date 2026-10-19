@@ -53,8 +53,8 @@
         letter-spacing="2.6">02 · PROGRAMA</text>
 
   <text class="serif-em" x="76" y="340" font-size="96" fill="#e2a638" letter-spacing="-1">Talleres</text>
-  <text class="sans" x="80" y="436" font-size="28" fill="#cfc9bb">Equipos, organizaciones, escuelas y universidades</text>
-  <text class="sans" x="80" y="474" font-size="28" fill="#cfc9bb">que quieren empezar juntos.</text>
+  <text class="sans" x="80" y="436" font-size="28" fill="#cfc9bb">Grupos abiertos y equipos de organizaciones, escuelas y universidades.</text>
+  <text class="sans" x="80" y="474" font-size="28" fill="#cfc9bb">Basta con saber lo básico de una computadora.</text>
 
   <line x1="80" y1="560" x2="1120" y2="560" stroke="#34312a" stroke-width="1"/>
   <text class="mono" x="80" y="592" font-size="16" fill="#a8a293">ateneo-abierto.org/talleres</text>
