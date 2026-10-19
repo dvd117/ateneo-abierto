@@ -975,6 +975,17 @@ main .door[id] {
     font-size: clamp(0.75rem, 3.5vw, 0.95rem);
     letter-spacing: 0.04em;
   }
+
+  /* Spanish /funders is the one header with «Conversemos» and a language
+     link, so its wordmark yields at rest and the pill gives up some padding. */
+  [data-page="funders"][data-locale="es"] .site-header .wordmark {
+    font-size: clamp(0.75rem, 3.5vw, 0.95rem);
+    letter-spacing: 0.04em;
+  }
+
+  [data-page="funders"][data-locale="es"] .site-header .nav-links a:last-child {
+    padding-inline: 0.45rem;
+  }
 }
 
 /* ---------- buttons ---------- */

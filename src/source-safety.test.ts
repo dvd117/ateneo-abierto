@@ -159,6 +159,13 @@ describe('the desktop running head', () => {
     expect(css()).toMatch(/\.locale-button\s*\{[^}]*text-decoration: none;/);
   });
 
+  test('lets the Spanish funder header fit on one row at 320 px', () => {
+    const narrow = css().match(/@media \(max-width: 360px\) \{([\s\S]*?)\n\}/)?.[1] ?? '';
+
+    expect(narrow).toMatch(/\[data-page="funders"\]\[data-locale="es"\] \.site-header \.wordmark\s*\{\s*font-size: clamp\(0\.75rem, 3\.5vw, 0\.95rem\);\s*letter-spacing: 0\.04em;\s*\}/);
+    expect(narrow).toMatch(/\[data-page="funders"\]\[data-locale="es"\] \.site-header \.nav-links a:last-child\s*\{\s*padding-inline: 0\.45rem;\s*\}/);
+  });
+
   test('ends the phone header at the gutter on a page without language links', () => {
     expect(css()).toMatch(/\.header-inner:not\(:has\(\.locale-toggle\)\)\s*\{\s*grid-template-columns: minmax\(0, 1fr\) auto;\s*grid-template-areas: "brand nav";\s*\}/);
   });
