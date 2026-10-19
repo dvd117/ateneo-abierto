@@ -161,6 +161,10 @@ describe('the shift actor pills', () => {
     expect(rule).toMatch(/color:\s*var\(--c-fg-soft\);/);
     expect(rule).not.toMatch(/#[0-9a-fA-F]{3,8}\b/);
   });
+
+  test('keeps the shift actor labels at 11.2 px or more on a phone', () => {
+    expect(css()).toMatch(/\.shift-who\s*\{[^}]*font-size: clamp\(0\.7rem, 0\.55rem \+ 0\.2vw, 0\.75rem\);/);
+  });
 });
 
 describe('DESIGN.md is the source of truth for colour', () => {
