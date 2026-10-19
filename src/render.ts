@@ -1229,7 +1229,7 @@ export function renderPartnerPage(name: PartnerPage, locale: Locale): string {
         ${renderChapter({ ...formats, id: 'aliados-formats-title', title: inline(briefing.formats.title), lead: briefing.formats.intro })}
         <div class="door-grid aliados-format-grid">
           <div class="aliados-format-labels" aria-hidden="true">${briefing.formats.cards[0].fields.map((field) => `<span>${inline(field.label)}</span>`).join('')}</div>
-          ${briefing.formats.cards.map((card, index) => `<article class="door aliados-format" data-reveal><h3 class="door-title"><span class="aliados-format-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span>${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">${inline(briefing.formats.cta)} <span aria-hidden="true">&nearr;</span></a></article>`).join('')}
+          ${briefing.formats.cards.map((card, index) => `<article class="door aliados-format" data-reveal><h3 class="door-title"><span class="aliados-format-n" aria-hidden="true">${['I', 'II', 'III'][index]}</span>${inline(card.title)}</h3><dl>${card.fields.map((field) => `<div><dt>${inline(field.label)}</dt><dd>${inline(field.text)}</dd></div>`).join('')}</dl><a class="door-cta aliados-format-link" href="${card.href}">${inline(briefing.formats.cta)} <span aria-hidden="true">&rarr;</span></a></article>`).join('')}
         </div>
       </div></section>
       ${renderBand('aliados', 5)}

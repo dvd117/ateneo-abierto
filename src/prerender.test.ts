@@ -343,6 +343,7 @@ describe('build-time prerender', () => {
     expect(header).not.toContain('data-locale');
     expect(header).not.toContain('aria-current');
     expect(header).toContain('data-progress');
+    expect(html).toContain('<a class="door-cta aliados-format-link" href="/demos">Ver el formato <span aria-hidden="true">&rarr;</span></a>');
   });
 
   // Captured on a950b3f: adding partner navigation must not alter either landing header.
