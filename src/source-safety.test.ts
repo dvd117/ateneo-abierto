@@ -158,6 +158,10 @@ describe('the desktop running head', () => {
   test('draws the language links like the language buttons', () => {
     expect(css()).toMatch(/\.locale-button\s*\{[^}]*text-decoration: none;/);
   });
+
+  test('ends the phone header at the gutter on a page without language links', () => {
+    expect(css()).toMatch(/\.header-inner:not\(:has\(\.locale-toggle\)\)\s*\{\s*grid-template-columns: minmax\(0, 1fr\) auto;\s*grid-template-areas: "brand nav";\s*\}/);
+  });
 });
 
 describe('the shift actor pills', () => {
