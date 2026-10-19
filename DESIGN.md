@@ -140,7 +140,7 @@ motion:
 
 ## Overview
 
-Ateneo Abierto teaches people in Venezuela to delegate office work to AI agents, and points at a
+Ateneo Abierto teaches people in Venezuela to direct agents on their office work, and points at a
 network of public libraries as the place where that happens. The redesign (direction D,
 "Instrumento") is built around one object: a simulated desktop agent window, in the visitor's
 language, doing the kind of work they already do. Everything else on the page is quiet so that
@@ -163,7 +163,7 @@ offer a theme toggle.
   metered and slow; power cuts are ordinary.
 - **Readers abroad:** laptops, good connections, often reading in English.
 - **Threat model:** public program, public site. No participant data on the page. The intake
-  form collects the minimum (name, city, what you do, what you would delegate). No third-party
+  form collects the minimum (email and list language; optionally name, city, a hackathon opt-in and a task to direct). No third-party
   scripts, no external fonts, no analytics that phone home; the agent window is fully local
   and makes no requests.
 - **Budget:** first paint under 2 s on throttled 3G; core HTML +
@@ -323,10 +323,10 @@ the page: about 123 KB.
 
 The desktop header is a running head: six chapter numerals, the current chapter named, ticks on the reading rail, and Únete as an outline pill.
 
-Page order (revised 2026-09-14): hero → El cambio → Programa (the three doors, the
-mentorías row, and the glossary as a closed strip) → El norte (map) → Cómo trabajamos →
-Ignite Talk → Únete → footer with the security line and ES/EN. Three bands: after the
-hero, before El norte, before Únete.
+Page order (revised 2026-09-14): hero → contents index → El cambio → Programa (the three doors,
+the mentorías row, and the glossary as a closed strip) → El norte (map) → Cómo trabajamos →
+Ignite Talk → Únete → footer with the contact line, ES/EN, and the source and licence marks.
+One band, before Únete.
 
 - **Hero.** Two columns on desktop, headline left, agent window right. On mobile the window
   stacks under the headline, and the window's session list — its one control, as in the real
