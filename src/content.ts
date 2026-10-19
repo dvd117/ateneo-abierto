@@ -1655,7 +1655,7 @@ export const funders = {
   en: {
     meta: {
       title: 'For funders · Ateneo Abierto',
-      description: 'Ateneo Abierto teaches people without a technical background to use AI agents at work and in life. See what early support makes possible.'
+      description: 'Ateneo Abierto teaches people without a technical background to use technology at work and in life. See what early support makes possible.'
     },
     eyebrow: 'For funders',
     titleLines: [{ text: 'Technology is already within everyone’s reach.' }, { text: 'Knowing how to use it still isn’t.', em: true }],
@@ -1764,7 +1764,7 @@ export const funders = {
   es: {
     meta: {
       title: 'Para quienes financian · Ateneo Abierto',
-      description: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar agentes de IA en su trabajo y en su vida. Conoce qué hace posible el apoyo temprano.'
+      description: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar la tecnología en su trabajo y en su vida. Conoce qué hace posible el apoyo temprano.'
     },
     eyebrow: 'Para quienes financian',
     titleLines: [{ text: 'La tecnología ya está al alcance de todos.' }, { text: 'Saber usarla, todavía no.', em: true }], // (aliados)
