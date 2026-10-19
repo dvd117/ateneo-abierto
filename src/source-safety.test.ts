@@ -154,6 +154,10 @@ describe('the desktop running head', () => {
   test('spaces the chapter numerals for the 24 px target rule', () => {
     expect(css()).toMatch(/\.chapter-nav\s*\{[^}]*gap: 1rem;/);
   });
+
+  test('draws the language links like the language buttons', () => {
+    expect(css()).toMatch(/\.locale-button\s*\{[^}]*text-decoration: none;/);
+  });
 });
 
 describe('the shift actor pills', () => {
