@@ -79,6 +79,9 @@ the server imports.
 opened at one door, each with its own title and link preview. `/hackathon` and
 `/workshops` redirect to the Spanish spellings; `/manifesto` is retired and
 redirects home. `?lang=es` and `?lang=en` override everything.
+`/aliados` (Spanish only) and `/funders` (English unless `?lang=es` or a Spanish
+`Accept-Language` asks otherwise) are briefings for allies and funders. Both are unlisted:
+`noindex`, left out of `sitemap.xml`, and never linked from the page.
 
 ### The page is prerendered
 
