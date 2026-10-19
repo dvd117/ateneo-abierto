@@ -1546,6 +1546,7 @@ export const aliados = {
   titleLines: [{ text: 'La tecnología ya está al alcance de todos.' }, { text: 'Saber usarla, todavía no.', em: true }],
   lead: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar estas herramientas en su trabajo y en su vida, y a enseñárselas a otras. Buscamos aliados para llegar a más personas.',
   audience: { label: 'Para quién', text: 'Personas que trabajan en oficinas, docentes, comerciantes y equipos de organizaciones.' },
+  home: { text: '¿Quieres ver lo que ven quienes aprenden?', link: 'Ir al sitio principal' },
   steps: [
     { title: 'Nos escribes', text: 'Cuéntanos qué espacio, comunidad o experiencia tienes.' },
     { title: 'Conversamos', text: 'En 30 minutos vemos qué formato encaja.' },
@@ -1660,6 +1661,7 @@ export const funders = {
     titleLines: [{ text: 'Technology is already within everyone’s reach.' }, { text: 'Knowing how to use it still isn’t.', em: true }],
     lead: 'Ateneo Abierto teaches people without a technical background to use these tools in their work and their lives, and to teach them to others. We’re looking for support to reach more people.',
     audience: { label: 'Who it’s for', text: 'Office workers, teachers, shopkeepers and teams at organizations.' },
+    home: { text: 'Want to see what learners see?', link: 'Visit the main site' },
     steps: [
       { title: 'Write to us', text: 'Tell us what you’d like to support.' },
       { title: 'We talk', text: 'In 30 minutes we see where your support fits best.' },
@@ -1768,6 +1770,7 @@ export const funders = {
     titleLines: [{ text: 'La tecnología ya está al alcance de todos.' }, { text: 'Saber usarla, todavía no.', em: true }], // (aliados)
     lead: 'Ateneo Abierto enseña a personas sin conocimientos técnicos a usar estas herramientas en su trabajo y en su vida, y a enseñárselas a otras. Buscamos apoyo para llegar a más personas.',
     audience: { label: 'Para quién', text: 'Personas que trabajan en oficinas, docentes, comerciantes y equipos de organizaciones.' }, // (aliados)
+    home: { text: '¿Quieres ver lo que ven quienes aprenden?', link: 'Ir al sitio principal' }, // (aliados)
     steps: [
       { title: 'Nos escribes', text: 'Cuéntanos qué te gustaría apoyar.' },
       { title: 'Conversamos', text: 'En 30 minutos vemos dónde encaja mejor tu apoyo.' },

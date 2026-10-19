@@ -1209,7 +1209,9 @@ export function renderPartnerPage(name: PartnerPage, locale: Locale): string {
           <h1 class="display hero-title" id="hero-title">${headline}</h1>
           <p class="lead aliados-lead">${inline(briefing.lead)}</p>
           <p class="aliados-audience"><span class="aliados-audience-label">${inline(briefing.audience.label)}</span> ${inline(briefing.audience.text)}</p>
-          <div class="hero-actions"><a class="button button--fill" href="#${partner.contactId}">${inline(briefing.contact.title)}</a></div>
+          <div class="hero-actions"><a class="button button--fill" href="#${partner.contactId}">${inline(briefing.contact.title)}</a>
+            <p class="hero-byline">${inline(briefing.home.text)} <a class="link" href="/?lang=${partner.locale}">${inline(briefing.home.link)} <span aria-hidden="true">&rarr;</span></a></p>
+          </div>
         </div>
         <div class="aliados-talk-column">${renderTalkFigure(page)}<p class="aliados-talk-note">${inline(briefing.respaldo.body)}</p><p class="aliados-talk-caption">${inline(briefing.respaldo.caption)}</p></div>
       </div>

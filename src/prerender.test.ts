@@ -52,13 +52,25 @@ function stringLeaves(value: unknown): string[] {
 }
 
 describe('funders prerender', () => {
+  test.each([
+    ['aliados', 'es', '¿Quieres ver lo que ven quienes aprenden?', 'Ir al sitio principal'],
+    ['funders', 'en', 'Want to see what learners see?', 'Visit the main site'],
+    ['funders', 'es', '¿Quieres ver lo que ven quienes aprenden?', 'Ir al sitio principal']
+  ] as const)('links the %s hero back to the main site in %s', (partner, locale, text, link) => {
+    const html = fillTemplate(template, locale, undefined, partner);
+    const hero = html.match(/<section class="hero aliados-hero"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
+    const actions = hero.match(/<div class="hero-actions">([\s\S]*?)<\/div>/)?.[1] ?? '';
+
+    expect(actions).toContain(`<p class="hero-byline">${text} <a class="link" href="/?lang=${locale}">${link} <span aria-hidden="true">&rarr;</span></a></p>`);
+  });
+
   test('renders every static funder string verbatim, keeping the confirmation click-only', () => {
     const html = fillTemplate(template, 'en', undefined, 'funders');
     const visible = [...new Set(stringLeaves(funders.en))].filter((text) => !text.startsWith('/'));
     const strings = visible.filter((text) => text !== funders.en.contact.share.done);
 
-    expect(visible).toHaveLength(85);
-    expect(strings).toHaveLength(84);
+    expect(visible).toHaveLength(87);
+    expect(strings).toHaveLength(86);
     for (const text of strings) expect(html).toContain(text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'));
     expect(html).not.toContain(funders.en.contact.share.done);
     expect(stringLeaves(funders.en).join('')).not.toMatch(/[–—]/);
@@ -198,7 +210,7 @@ describe('Spanish funders prerender', () => {
     const html = fillTemplate(template, 'es', undefined, 'funders');
     const strings = [...new Set(stringLeaves(funders.es))];
 
-    expect(strings).toHaveLength(88);
+    expect(strings).toHaveLength(90);
     for (const text of strings.filter((text) => text !== funders.es.contact.share.done)) {
       expect(html).toContain(text.replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;'));
     }
@@ -622,7 +634,7 @@ describe('build-time prerender', () => {
     const html = fillTemplate(template, 'es', undefined, 'aliados');
     const hero = html.match(/<section class="hero aliados-hero"[^>]*>([\s\S]*?)<\/section>/)?.[1] ?? '';
 
-    expect(hero).toMatch(/<div class="aliados-hero-copy">[\s\S]*?<div class="hero-actions"><a class="button button--fill" href="#conversemos">Conversemos<\/a><\/div>\s*<\/div>/);
+    expect(hero).toMatch(/<div class="aliados-hero-copy">[\s\S]*?<div class="hero-actions"><a class="button button--fill" href="#conversemos">Conversemos<\/a>\s*<p class="hero-byline">[\s\S]*?<\/p>\s*<\/div>\s*<\/div>/);
     expect(html.match(/id="conversemos"/g)).toHaveLength(1);
     expect(html).toMatch(/<section class="sec aliados-contact" id="conversemos" aria-labelledby="aliados-contact-title">/);
     expect(hero.indexOf('class="hero-actions"')).toBeLessThan(hero.indexOf('data-talk-play'));
