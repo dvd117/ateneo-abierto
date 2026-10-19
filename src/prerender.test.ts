@@ -112,6 +112,7 @@ describe('funders prerender', () => {
     expect(links.map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon', 'now', 'support']);
     expect([...html.matchAll(/<section\b[^>]*\bid="([^"]+)"/g)].map((match) => match[1])).toEqual(['gap', 'method', 'path', 'horizon', 'now', 'support', 'talk']);
     expect(html).toContain(`<a class="chapter-join" href="#talk">${funders.en.contact.title}</a>`);
+    expect(html).toContain('<nav class="nav-links" aria-label="Sections"><a href="#talk">Let’s talk</a></nav>');
     expect(html.match(/<header class="chapter-head/g)).toHaveLength(6);
     expect(html.match(/data-map/g)).toHaveLength(1);
     expect(html.match(/class="door aliados-format"/g)).toHaveLength(3);
@@ -317,7 +318,7 @@ describe('build-time prerender', () => {
     for (const link of copy[locale].nav) expect(legacy).toContain(`<a href="${link.href}">${link.label}</a>`);
   });
 
-  test('runs six partner chapters and the contact pill without legacy nav or locale controls', () => {
+  test('runs six partner chapters, and the contact pill at every width, without locale controls', () => {
     const html = fillTemplate(template, 'es', undefined, 'aliados');
     const header = html.match(/<header class="site-header">([\s\S]*?)<\/header>/)?.[1] ?? '';
     const nav = header.match(/<nav class="nav-links chapter-nav"[^>]*>([\s\S]*?)<\/nav>/)?.[1] ?? '';
@@ -337,7 +338,7 @@ describe('build-time prerender', () => {
     });
     expect(nav.match(/<a\b/g)).toHaveLength(7);
     expect(nav).toContain('<a class="chapter-join" href="#conversemos">Conversemos</a>');
-    expect(header).not.toContain('<nav class="nav-links"');
+    expect(header).toContain('<nav class="nav-links" aria-label="Secciones"><a href="#conversemos">Conversemos</a></nav>');
     expect(header).not.toContain('locale-toggle');
     expect(header).not.toContain('data-locale');
     expect(header).not.toContain('aria-current');
