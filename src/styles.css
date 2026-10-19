@@ -2300,7 +2300,7 @@ html.motion-ok .agent-thread.is-playing [data-beat]:not(.is-in) {
   text-align: center;
   padding-block: 0.3rem;
   font: var(--t-label);
-  font-size: clamp(0.62rem, 0.55rem + 0.2vw, 0.75rem);
+  font-size: clamp(0.7rem, 0.55rem + 0.2vw, 0.75rem);
   letter-spacing: var(--track-label);
   text-transform: uppercase;
   color: var(--c-fg-2);
