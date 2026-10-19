@@ -836,7 +836,7 @@ describe('build-time prerender', () => {
       { q: '¿Hace falta saber de tecnología?', a: 'No. Empezamos por lo que ya haces en tu trabajo, sin tecnicismos.' },
       { q: '¿Qué necesita mi espacio para un taller?', a: 'Un lugar para 8 a 15 personas durante dos horas y media, con una pantalla o un proyector. Cada persona trae su laptop, y nosotros llevamos energía de respaldo e internet propio.' },
       { q: '¿Tiene algún costo para mi organización?', a: 'No. Solo lo tiene si tu organización quiere un taller o una actividad exclusiva para su equipo.' },
-      { q: '¿Quién está detrás de Ateneo Abierto?', a: 'Un proyecto independiente. Hasta hoy, todo se ha hecho con trabajo voluntario.' }
+      { q: '¿Quién está detrás de Ateneo Abierto?', a: 'Un proyecto independiente, fundado por David Aragort. Hasta hoy, todo se ha hecho con trabajo voluntario.' }
     ]);
     expect(section).toContain('class="aliados-faq-list"');
     expect(section).not.toMatch(/aria-expanded|aria-controls|role=|<button|data-/);
