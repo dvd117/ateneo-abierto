@@ -1601,7 +1601,7 @@ export const aliados = {
   vision: {
     eyebrow: 'El norte',
     title: 'Hacia dónde vamos',
-    near: 'Hoy son demos, talleres y hackatones. El próximo paso, en exploración, son hackatones técnicas que resuelvan el problema concreto de una comunidad, junto a organizaciones y medios aliados.',
+    near: 'Empezamos por demos, talleres y hackatones. El próximo paso, en exploración, son hackatones técnicas que resuelvan el problema concreto de una comunidad, junto a organizaciones y medios aliados.',
     far: 'A largo plazo queremos una red de espacios públicos de conocimiento en Venezuela.',
     farDetail: 'La biblioteca pública del siglo XXI, abierta a cualquiera sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encontrar:',
     items: [
@@ -1716,7 +1716,7 @@ export const funders = {
     vision: {
       eyebrow: 'Where this goes',
       title: 'Where we’re headed',
-      near: 'Today it’s demos, workshops and hackathons. The next step, still being explored, is technical hackathons that solve a community’s concrete problem, together with partner organizations and media.',
+      near: 'We’re starting with demos, workshops and hackathons. The next step, still being explored, is technical hackathons that solve a community’s concrete problem, together with partner organizations and media.',
       far: 'In the long run, we want a network of public knowledge spaces across Venezuela.',
       farDetail: 'The 21st-century public library, open to anyone regardless of income, age, race, creed or education. A place to find:',
       items: [
@@ -1825,7 +1825,7 @@ export const funders = {
     vision: {
       eyebrow: 'El norte',
       title: 'Hacia dónde vamos',
-      near: 'Hoy son demos, talleres y hackatones. El próximo paso, en exploración, son hackatones técnicas que resuelvan el problema concreto de una comunidad, junto a organizaciones y medios aliados.',
+      near: 'Empezamos por demos, talleres y hackatones. El próximo paso, en exploración, son hackatones técnicas que resuelvan el problema concreto de una comunidad, junto a organizaciones y medios aliados.',
       far: 'A largo plazo queremos una red de espacios públicos de conocimiento en Venezuela.',
       farDetail: 'La biblioteca pública del siglo XXI, abierta a cualquiera sin importar sus ingresos, su edad, su raza, su credo o su educación. Un lugar donde encontrar:',
       items: [
