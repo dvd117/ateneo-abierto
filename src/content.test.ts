@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, test } from 'vitest';
 import { copy, DEEP_LINK_ROUTES, type DeepLinkRoute } from './content';
 import { renderPage } from './render';
+import { buildCard } from '../scripts/build-og-cards';
 
 const locales = ['es', 'en'] as const;
 
@@ -244,6 +245,25 @@ describe('landing page copy', () => {
       const html = renderPage(locale);
       for (const route of DEEP_LINK_ROUTES) {
         expect(html).toContain(`<article class="door" id="${route}"`);
+      }
+    }
+  });
+
+  test('keeps the home link-preview cards on the hero claim', () => {
+    for (const [locale, file] of [['es', 'public/og.svg'], ['en', 'public/og-en.svg']] as const) {
+      const svg = readFileSync(file, 'utf8');
+      expect(svg).toContain(`>${copy[locale].hero.eyebrow.toUpperCase()}</text>`);
+      for (const line of copy[locale].hero.titleLines) expect(svg).toContain(`>${line.text}</text>`);
+      expect(svg).not.toMatch(/delega|handing it work|hand office work/i);
+    }
+  });
+
+  test('keeps every door card exactly what build-og-cards writes', () => {
+    const template = readFileSync('public/og.svg', 'utf8');
+    for (const route of DEEP_LINK_ROUTES) {
+      for (const locale of locales) {
+        const file = `public/og-${route}${locale === 'en' ? '-en' : ''}.svg`;
+        expect(readFileSync(file, 'utf8')).toBe(buildCard(template, locale, route));
       }
     }
   });

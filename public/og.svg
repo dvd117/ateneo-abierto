@@ -53,9 +53,9 @@
         letter-spacing="2.6">MÁS ALLÁ DEL CHATBOT</text>
 
   <text class="serif" x="76" y="302" font-size="96" fill="#f0ece2" letter-spacing="-2.6">Deja de preguntarle.</text>
-  <text class="serif-em" x="76" y="400" font-size="96" fill="#e2a638" letter-spacing="-1">Empieza a delegarle.</text>
+  <text class="serif-em" x="76" y="400" font-size="96" fill="#e2a638" letter-spacing="-1">Empieza a dirigirlo.</text>
 
-  <text class="sans" x="80" y="474" font-size="28" fill="#cfc9bb">Aprende a delegarle trabajo de oficina a un agente,</text>
+  <text class="sans" x="80" y="474" font-size="28" fill="#cfc9bb">Aprende a dirigir un agente en la oficina,</text>
   <text class="sans" x="80" y="512" font-size="28" fill="#cfc9bb">con herramientas abiertas, desde Venezuela.</text>
 
   <line x1="80" y1="560" x2="1120" y2="560" stroke="#34312a" stroke-width="1"/>
