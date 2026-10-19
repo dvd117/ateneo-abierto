@@ -1567,7 +1567,7 @@ export const aliados = {
     intro: 'Hoy empezamos por los agentes de IA, herramientas a las que les das una tarea y trabajan contigo. Con ellas formamos personas con autonomía, capaces de usar la tecnología en su trabajo y en su vida, y de enseñarla. No formamos programadores.',
     pillars: [
       { title: 'Tú diriges.', body: 'La herramienta trabaja para la persona. Ella decide qué pedir, revisa el resultado y lo corrige.' },
-      { title: 'Lo tuyo se queda contigo.', body: 'Enseñamos herramientas abiertas, para que tus archivos y tu trabajo sigan siendo tuyos.' },
+      { title: 'Lo tuyo se queda contigo.', body: 'Enseñamos herramientas abiertas, para que los archivos y el trabajo de cada persona sigan siendo suyos.' },
       { title: 'Quien aprende, enseña.', body: 'Cada persona que formamos puede formar a otras, y así el conocimiento se multiplica.' }
     ]
   },
@@ -1682,7 +1682,7 @@ export const funders = {
       intro: 'We start with AI agents: tools you give a task to, and that work alongside you. With them we train self-reliant people, able to use technology in their work and their lives, and to teach it. We don’t train programmers.',
       pillars: [
         { title: 'You direct.', body: 'The tool works for the person. They decide what to ask, check the result and correct it.' },
-        { title: 'What’s yours stays yours.', body: 'We teach open tools, so your files and your work stay yours.' },
+        { title: 'What’s yours stays yours.', body: 'We teach open tools, so each person’s files and work stay theirs.' },
         { title: 'Whoever learns, teaches.', body: 'Everyone we train can train others, and that’s how knowledge multiplies.' }
       ]
     },
@@ -1791,7 +1791,7 @@ export const funders = {
       intro: 'Hoy empezamos por los agentes de IA, herramientas a las que les das una tarea y trabajan contigo. Con ellas formamos personas con autonomía, capaces de usar la tecnología en su trabajo y en su vida, y de enseñarla. No formamos programadores.',
       pillars: [
         { title: 'Tú diriges.', body: 'La herramienta trabaja para la persona. Ella decide qué pedir, revisa el resultado y lo corrige.' },
-        { title: 'Lo tuyo se queda contigo.', body: 'Enseñamos herramientas abiertas, para que tus archivos y tu trabajo sigan siendo tuyos.' },
+        { title: 'Lo tuyo se queda contigo.', body: 'Enseñamos herramientas abiertas, para que los archivos y el trabajo de cada persona sigan siendo suyos.' },
         { title: 'Quien aprende, enseña.', body: 'Cada persona que formamos puede formar a otras, y así el conocimiento se multiplica.' }
       ]
     },
