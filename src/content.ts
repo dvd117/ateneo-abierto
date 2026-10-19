@@ -859,7 +859,7 @@ export const copy: Record<Locale, PageCopy> = {
               'Cada equipo elige una tarea real que quiere resolver.',
               'Un mentor acompaña a cada equipo durante toda la jornada.',
               'Al cierre, cada equipo muestra lo que logró.',
-              'Lo que crea cada equipo, como instrucciones y habilidades para agentes, se publica en el repositorio de Ateneo Abierto, abierto y libre para que cualquiera lo use.'
+              'Lo que crea cada equipo, como instrucciones y skills para agentes, se publica en el repositorio de Ateneo Abierto, abierto y libre para que cualquiera lo use.'
             ],
             expect: 'Un día, presencial. No necesitas saber programar. Trae tu laptop; una modesta sirve. Mentorías incluidas.'
           }
@@ -1590,7 +1590,7 @@ export const aliados = {
       { title: 'Hackatón para no técnicos', href: '/hackaton', fields: [
         { label: 'Para quién', text: 'Personas que ya pasaron por un taller o por las demos y quieren ir más lejos.' },
         { label: 'Formato', text: 'Un día, presencial, en equipos pequeños con un mentor por equipo. Cada equipo elige una tarea real y la resuelve con agentes.' },
-        { label: 'Con qué sales', text: 'Lo que aprendes de las demás personas: qué herramientas usan, cómo las usan y qué les funciona. Lo que crea cada equipo, como instrucciones y habilidades para agentes, se publica en el repositorio de Ateneo Abierto, abierto y libre para que cualquiera lo use.' }
+        { label: 'Con qué sales', text: 'Lo que aprendes de las demás personas: qué herramientas usan, cómo las usan y qué les funciona. Lo que crea cada equipo, como instrucciones y skills para agentes, se publica en el repositorio de Ateneo Abierto, abierto y libre para que cualquiera lo use.' }
       ] }
     ]
   },
@@ -1814,7 +1814,7 @@ export const funders = {
         { title: 'Hackatón para no técnicos', href: '/hackaton', fields: [
           { label: 'Para quién', text: 'Personas que ya pasaron por un taller o por las demos y quieren ir más lejos.' },
           { label: 'Formato', text: 'Un día, presencial, en equipos pequeños con un mentor por equipo. Cada equipo elige una tarea real y la resuelve con agentes.' },
-          { label: 'Con qué sales', text: 'Lo que aprendes de las demás personas: qué herramientas usan, cómo las usan y qué les funciona. Lo que crea cada equipo, como instrucciones y habilidades para agentes, se publica en el repositorio de Ateneo Abierto, abierto y libre para que cualquiera lo use.' }
+          { label: 'Con qué sales', text: 'Lo que aprendes de las demás personas: qué herramientas usan, cómo las usan y qué les funciona. Lo que crea cada equipo, como instrucciones y skills para agentes, se publica en el repositorio de Ateneo Abierto, abierto y libre para que cualquiera lo use.' }
         ] }
       ]
     },
