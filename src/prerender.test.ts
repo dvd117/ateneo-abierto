@@ -230,6 +230,7 @@ describe('Spanish funders prerender', () => {
     expect(html).toContain(`content="${funders.es.meta.description}"`);
     expect(html).toContain('property="og:locale" content="es_VE"');
     expect(html).toContain('https://ateneo-abierto.org/og.png');
+    expect(html).toContain('<nav class="nav-links" aria-label="Secciones"><a href="#talk">Conversemos</a></nav>');
     expect(html).not.toMatch(/hreflang|<iframe|style="/);
   });
 
