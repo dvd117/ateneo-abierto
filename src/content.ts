@@ -506,7 +506,7 @@ export const copy: Record<Locale, PageCopy> = {
     ],
     meta: {
       description:
-        'Un chatbot te responde. Un agente hace el trabajo contigo. Aprende a dirigir a un agente en el trabajo de oficina, con herramientas abiertas, gratis para empezar, desde Venezuela.'
+        'Un chatbot te responde. Un agente hace el trabajo contigo. Aprende a dirigirlo en la oficina, con herramientas abiertas, gratis para empezar, desde Venezuela.'
     },
     hero: {
       eyebrow: 'Más allá del chatbot',
