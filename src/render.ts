@@ -118,7 +118,7 @@ function renderHeader(page: PageCopy, locale: Locale, partner?: PartnerDescripto
           ${renderMark()}
           <span class="wordmark">Ateneo Abierto</span>
         </a>
-        ${partner ? '' : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
+        ${partner ? `<nav class="nav-links" aria-label="${page.sectionsLabel}"><a href="#${partner.contactId}">${inline(partner.content.contact.title)}</a></nav>` : `<nav class="nav-links" aria-label="${page.sectionsLabel}">
           ${page.nav.map((link) => `<a href="${link.href}">${link.label}</a>`).join('')}
         </nav>`}
         <nav class="nav-links chapter-nav" aria-label="${page.indexLabel}">
