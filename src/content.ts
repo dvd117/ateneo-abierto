@@ -804,7 +804,7 @@ export const copy: Record<Locale, PageCopy> = {
     doors: {
       eyebrow: 'Qué hacemos',
       title: 'Tres puertas',
-      lead: 'Entra por la que te quede más cerca. Ninguna te pide saber programar.',
+      lead: 'Van en orden: miras, aprendes y luego lo llevas más lejos en equipo. Ninguna te pide saber programar.',
       doors: [
         {
           id: 'demos',
@@ -1328,7 +1328,7 @@ export const copy: Record<Locale, PageCopy> = {
     doors: {
       eyebrow: 'What we do',
       title: 'Three doors',
-      lead: 'Come in through whichever one is closest to you. None of them asks you to know how to code.',
+      lead: 'They run in order: watch, learn, then take it further as a team. None of them asks you to know how to code.',
       doors: [
         {
           id: 'demos',
